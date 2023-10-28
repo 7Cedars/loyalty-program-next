@@ -1,6 +1,22 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Loyalty Program Next 
+**Frontend of blockchain based modular platform for loyalty programs**
 
-## Getting Started
+This repository is meant as initial playground to develop and test front end as I develop to solidity backend. 
+Even though repository is public, For now, it is for personal use only. 
+
+## Idea and Design
+
+- Create an open and modular blockchain based framework for loyalty programs. 
+- Aimed at small and medium sized shops and companies. 
+- eventually deploy on multiple blockchains. 
+- Design of solidity frontend is on my Figma. 
+
+## Development / TO DO 
+- ... 
+- ... 
+- 
+
+## Yarn / NEXT 
 
 First, run the development server:
 
