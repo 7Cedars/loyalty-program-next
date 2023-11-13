@@ -12,9 +12,12 @@ Even though repository is public, For now, it is for personal use only.
 - Design of solidity frontend is on my Figma. 
 
 ## Development / TO DO 
-- ... 
-- ... 
-- 
+- [ ] setup page layout of customer app   
+- [ ] setup page layout of vendor app
+- [ ] insert / develop todo.md file in each subpage. 
+- [ ] setup redux store / notifications 
+- [ ]    
+
 
 ## Yarn / NEXT 
 
