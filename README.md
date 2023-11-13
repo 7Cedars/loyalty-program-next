@@ -13,11 +13,12 @@ Even though repository is public, For now, it is for personal use only.
 
 ## Development / TO DO
 ### Detailed to do's are in each separate page.  
-- [ ] setup page layout of customer app   
-- [ ] setup page layout of vendor app
-- [ ] insert / develop todo.md file in each subpage. 
-- [ ] setup redux store / notifications 
-- [ ] Build login page - use web3modal? 
+- [x] setup page layout of customer app   
+- [x] setup page layout of vendor app
+- [x] insert / develop todo.md file in each subpage. 
+- [x] setup redux store / notifications 
+- [ ] Build login page customer - use web3modal?
+- [ ] Build login page vendor - use web3modal?  
 - [ ] build landing page customer: retrieve data from blockchain logs - to check what loyalty cards they hold. 
 - [ ] build landing page vendor: retrieve data from blockchain logs: what programs they deployed. 
 - [ ] ... 
