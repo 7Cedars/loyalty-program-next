@@ -8,10 +8,15 @@ import React, { useState, useEffect, useLayoutEffect } from "react";
 export const useScreenDimensions = () => {
 
   const getDimensions = () => {
-    return {
-      width: window.innerWidth,
-      height: window.innerHeight
-    };
+
+    if (window) { // did not solve bug yet.. 
+      return {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+    } else {
+      return {width: 0, height: 0} 
+    }
   };
 
   const [dimensions, setDimensions] = useState(getDimensions);
