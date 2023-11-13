@@ -1,29 +1,22 @@
-// ALL examples from previous project. 
+export interface UserInputState  {
+  modal: string, // take out? 
+  screenDimensions: ScreenDimensions,
+  settings: {
+    darkMode: bool, 
+    developerMode: bool 
+  }
+}
 
-// export interface Temp  {
-// }
+export type ScreenDimensions = {
+  width: number,
+  height: number
+}
 
-// export interface Temp2 {
-//   modal: 'infoSpace' | 'search' | 'about' | 'settings' | 'savedSearches' | 'none'; 
-//   stopFetching: boolean;
-//   settings: {
-//     darkMode: boolean | undefined; 
-//     developerMode: boolean | undefined; 
-//   }
-// }
-
-// export type SelectedSpaces = string[];
-// export type StartDate = number;
-// export type EndDate = number;
-
-// export interface SearchParams {
-//   s: SelectedSpaces;
-//   d1: number; 
-//   d2: number;
-// }
-
-// export type OnlyNameSpace = Omit<Space, 'votesCount' | 'categories'>;
-// // export type NotificationWithoutId = Omit<Notification, 'id' >;
-// export type OnlyIdProposal = Omit<Proposal, 
-//   | 'space' | 'categories' | 'votes' | 'start' | 'end' 
-//   >;
+export type Notification = {
+  id: string;
+  message?: string;
+  colour?: "red" | "yellow" | "green" | "gray" | "invisible"
+  durationInMs?: number | "noTimer";
+  progressInPercent?: number | "noProgress";
+  visible?: boolean; 
+}
