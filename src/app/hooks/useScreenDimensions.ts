@@ -5,12 +5,12 @@ import React, { useState, useEffect, useLayoutEffect } from "react";
 // - listen to window size change
 // - return width and height
 
-export const useDimensions = (targetRef: React.RefObject<HTMLDivElement>) => {
+export const useScreenDimensions = () => {
 
   const getDimensions = () => {
     return {
-      width: targetRef.current ? targetRef.current.offsetWidth : 0,
-      height: targetRef.current ? targetRef.current.offsetHeight : 0
+      width: window.innerWidth,
+      height: window.innerHeight
     };
   };
 

@@ -4,11 +4,11 @@ import { notification } from '@/redux/reducers/notificationReducer';
 import Link from 'next/link';
 import { NotificationDialog } from '../ui/notificationDialog';
 import { 
+  Cog6ToothIcon, 
   DocumentArrowDownIcon, 
   DocumentArrowUpIcon,
   QrCodeIcon,
-  CircleStackIcon,
-  ArrowRightOnRectangleIcon
+  CircleStackIcon
  } from '@heroicons/react/24/outline'
 import { useScreenDimensions } from '../hooks/useScreenDimensions';
 
@@ -62,7 +62,7 @@ const NavbarBottom = ( ) => {
         </Link>
         <Link href='/login' className={layoutLinks}> 
           <div className={layoutIconBox}> 
-            <ArrowRightOnRectangleIcon
+            <Cog6ToothIcon
               className={layoutIcons}
               aria-hidden="true"
             />
