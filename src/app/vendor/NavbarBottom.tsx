@@ -4,11 +4,12 @@ import { notification } from '@/redux/reducers/notificationReducer';
 import Link from 'next/link';
 import { NotificationDialog } from '../ui/notificationDialog';
 import { 
-  Cog6ToothIcon, 
+  ArrowRightOnRectangleIcon, 
+  GiftIcon, 
   DocumentArrowDownIcon, 
-  DocumentArrowUpIcon,
+  SquaresPlusIcon,
   QrCodeIcon,
-  CircleStackIcon
+  ChartBarSquareIcon
  } from '@heroicons/react/24/outline'
 import { useScreenDimensions } from '../hooks/useScreenDimensions';
 
@@ -24,7 +25,7 @@ const NavbarBottom = ( ) => {
     :
     <header className="absolute bottom-0 flex justify-between h-12 w-full max-w-screen-lg text-sm border-t border-gray-400 ps-8 pe-8">
       
-        <Link href='/customer/landing' className={layoutLinks}> 
+        <Link href='/vendor/landing' className={layoutLinks}> 
           <div className='col-span-1 grid text-xs justify-items-center'> 
             <QrCodeIcon
               className={layoutIcons}
@@ -33,36 +34,36 @@ const NavbarBottom = ( ) => {
             Home
           </div> 
         </Link>
-        <Link href='/customer/points'  className={layoutLinks}> 
+        <Link href='/vendor/giftPoints' className={layoutLinks}> 
           <div className={layoutIconBox}> 
-            <CircleStackIcon
+            <GiftIcon
               className={layoutIcons}
               aria-hidden="true"
             />
             Points
           </div>  
         </Link>
-        <Link href='/customer/claim'   className={layoutLinks}> 
+        <Link href='/vendor/selectTokens'   className={layoutLinks}> 
           <div className={layoutIconBox}> 
-            <DocumentArrowDownIcon
+            <SquaresPlusIcon
               className={layoutIcons}
               aria-hidden="true"
             />
-            Claim 
+            Tokens
           </div> 
         </Link>
-        <Link href='/customer/redeem'  className={layoutLinks}> 
+        <Link href='/vendor/stats'  className={layoutLinks}> 
           <div className={layoutIconBox}> 
-            <DocumentArrowUpIcon
+            <ChartBarSquareIcon
               className={layoutIcons}
               aria-hidden="true"
             />
-            Redeem 
+            Stats 
           </div> 
         </Link>
-        <Link href='/login' className={layoutLinks}> 
+        <Link href='/vendor/login' className={layoutLinks}> 
           <div className={layoutIconBox}> 
-            <Cog6ToothIcon
+            <ArrowRightOnRectangleIcon
               className={layoutIcons}
               aria-hidden="true"
             />

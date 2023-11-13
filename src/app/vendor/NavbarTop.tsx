@@ -19,13 +19,13 @@ const NavbarTop = ( ) => {
       :
       <header className="absolute top-0 flex justify-between h-18 w-full text-sm border-b border-gray-400 py-0">
         <div className="flex divide-x p-3 divide-gray-400">
-          <Link href='/customer/landing' className={layoutLinks}> Home </Link>
-          <Link href='/customer/points'  className={layoutLinks}> Points </Link>
-          <Link href='/customer/claim'   className={layoutLinks}> Claim tokens </Link>
-          <Link href='/customer/redeem'  className={layoutLinks}> Redeem tokens </Link>
+          <Link href='/vendor/landing' className={layoutLinks}> Home </Link>
+          <Link href='/vendor/giftPoints'  className={layoutLinks}> Gift Points </Link>
+          <Link href='/vendor/selectTokens'  className={layoutLinks}> Select tokens </Link>
+          <Link href='/vendor/stats'  className={layoutLinks}> Stats </Link>
         </div> 
         <div className="flex divide-x p-3 divide-gray-400"> 
-          <Link href='/login' className={layoutLinks}> Login </Link>
+          <Link href='/vendor/login' className={layoutLinks}> Login </Link>
         </div>
 
       </header>

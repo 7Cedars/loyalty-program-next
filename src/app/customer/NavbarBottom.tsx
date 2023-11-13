@@ -60,7 +60,7 @@ const NavbarBottom = ( ) => {
             Redeem 
           </div> 
         </Link>
-        <Link href='/login' className={layoutLinks}> 
+        <Link href='/customer/login' className={layoutLinks}> 
           <div className={layoutIconBox}> 
             <ArrowRightOnRectangleIcon
               className={layoutIcons}
