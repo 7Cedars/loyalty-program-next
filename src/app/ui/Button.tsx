@@ -3,7 +3,7 @@
 
 type ButtonProps = {
   isDisabled?: boolean;
-  // isFilled?: boolean;
+  isFilled?: boolean;
   children: any;
   onClick: () => void;
   size?: "sm" | "md";
@@ -12,24 +12,24 @@ type ButtonProps = {
 export const Button = ({
   children,
   onClick,
-  // isFilled,
+  isFilled,
   size = "md",
 }: ButtonProps) => {
-  let appearance = "rounded m-1 cursor-pointer border-reactGallery border ";
+  let appearance = "rounded m-1 border border-blue-500 text-blue-500 ";
 
   if (size === "sm") {
-    appearance += "text-sm py-1 px-2";
+    appearance += "text-sm py-1 px-12";
   }
   if (size === "md") {
-    appearance += "text-md py-2 px-4";
+    appearance += "text-md py-2 px-16";
   }
 
-  // if (isFilled) {
-  //   appearance += " bg-reactGallery hover:bg-reactGallery text-white";
-  // } else {
-  //   appearance +=
-  //     " bg-white hover:bg-reactGallery hover:text-white text-reactGallery";
-  // }
+  if (isFilled) {
+    appearance += " bg-blue-200 hover:bg-blue-400 text-white";
+  } else {
+    appearance +=
+      " bg-white text-gray-400 hover:bg-gray-400 hover:text-white";
+  }
 
   return (
     <button className={appearance} onClick={onClick}>

@@ -1,24 +1,36 @@
 "use client"; 
 
-import { useWeb3Modal } from '@web3modal/wagmi/react'
+import { useAccount } from 'wagmi'
+import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { Button } from '@/app/ui/Button';
 
 export default function Page() {
+  const { address, isConnecting, isDisconnected } = useAccount()
   const { open, close } = useWeb3Modal()
 
-  open()
 
+  let connectionNote = "Error: No account state detected."
+  let buttonText = "error: no account state detected."
+
+  isConnecting ? connectionNote = "Connecting..." : null
+  isDisconnected ? connectionNote = "Please connect to a network." : null
+  if (isDisconnected) {buttonText= "connect"}
+  if (address) {buttonText= "disconnect"}
+  
   return (    
-    <>
-      <div className='mt-20 w-96 space-y-0 pt-4 grid grid-cols-1 ps-12 '> 
-        One
-      </div>
+    <main className="flex min-h-screen w-full flex-col items-center justify-between p-24 ">
+        <div className='flex flex-col divide-y items-center divide-gray-600 w-full justify-center border-2 border-green-500'> 
+          <div className='p-2 text-center text-gray-600 hover:text-gray-900'> 
+            {connectionNote} 
+          </div>
+          <div className='p-2 text-center text-gray-600 hover:text-gray-900'>
 
-      <button onClick={() => open()}>Open Connect Modal</button>
-      <button onClick={() => open({ view: 'Networks' })}>Open Network Modal</button>
-      
-      <div className='mt-20 flex-grow space-y-0 pt-4 grid grid-cols-1 pe-12'> 
-        Two
-      </div> 
-    </> 
+          <Button size="sm" isFilled={true} onClick = {() => open() }> 
+            {buttonText} 
+          </Button>
+            
+          </div>
+        </div>
+    </main>
   );
 }

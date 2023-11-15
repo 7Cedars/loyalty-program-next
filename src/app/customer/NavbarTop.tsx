@@ -25,7 +25,7 @@ const NavbarTop = ( ) => {
           <Link href='/customer/redeem'  className={layoutLinks}> Redeem tokens </Link>
         </div> 
         <div className="flex divide-x p-3 divide-gray-400"> 
-          <Link href='/login' className={layoutLinks}> Login </Link>
+          <Link href='/customer/login' className={layoutLinks}> Login </Link>
         </div>
 
       </header>

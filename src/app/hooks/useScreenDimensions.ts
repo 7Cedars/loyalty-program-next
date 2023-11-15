@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 // Cloned from: https://github.com/holtzy/react-graph-gallery
 // Hook:
 // - check the dimension of a target ref
@@ -9,15 +9,18 @@ export const useScreenDimensions = () => {
 
   const getDimensions = () => {
 
-    if (window) { // did not solve bug yet.. 
-      return {
-        width: window.innerWidth,
-        height: window.innerHeight
-      };
-    } else {
-      return {width: 0, height: 0} 
+    let dimensions = {
+      width: 1,
+      height: 1
     }
-  };
+
+    typeof window !== "undefined" ? dimensions = { 
+      width: window.innerWidth, 
+      height: window.innerHeight
+    } : null 
+    
+    return dimensions; 
+  }
 
   const [dimensions, setDimensions] = useState(getDimensions);
 
