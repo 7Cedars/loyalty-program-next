@@ -11,15 +11,16 @@ import {
   ArrowRightOnRectangleIcon
  } from '@heroicons/react/24/outline'
 import { useScreenDimensions } from '../hooks/useScreenDimensions';
+import { useEffect, useRef } from 'react';
 
 const NavbarBottom = ( ) => {
-  const dimensions = useScreenDimensions();  
+  const dimension = useScreenDimensions()
   const layoutLinks: string = 'py-1 px-6 text-gray-600 hover:text-gray-900 grid grid-cols-1'
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'
   const layoutIcons: string = 'h-7 w-7'
 
   return (
-    dimensions.width / dimensions.height >= 1 ? 
+    dimension < 1 ? 
     null
     :
     <header className="absolute bottom-0 flex justify-between h-12 w-full bg-stone-50/50 max-w-screen-lg text-sm border-t border-gray-400 ps-8 pe-8">

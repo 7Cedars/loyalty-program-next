@@ -2,19 +2,18 @@
 
 import { notification } from '@/redux/reducers/notificationReducer';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { updateScreenDimensions } from '@/redux/reducers/userInputReducer';
 import { useAppDispatch } from '@/redux/hooks';
 import { ScreenDimensions } from '@/types';
 import { useScreenDimensions } from '../hooks/useScreenDimensions';
 
 const NavbarTop = ( ) => {
-
-  const dimensions: ScreenDimensions = useScreenDimensions();
+  const dimensions = useScreenDimensions();
   const layoutLinks: string = 'p-1 px-6 text-gray-600 hover:text-gray-900'
 
     return (
-      dimensions.width / dimensions.height < 1 ? 
+      dimensions > 1 ? 
       null 
       :
       <header className="absolute top-0 flex justify-between h-18 w-full text-sm border-b border-gray-400 py-0">

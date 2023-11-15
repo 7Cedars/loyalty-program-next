@@ -1,13 +1,15 @@
 "use client"; 
 
 import { useAccount } from 'wagmi'
-import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { useWeb3Modal, useWeb3ModalState } from '@web3modal/wagmi/react';
 import { Button } from '@/app/ui/Button';
 
 export default function Page() {
   const { address, isConnecting, isDisconnected } = useAccount()
   const { open, close } = useWeb3Modal()
+  const { selectedNetworkId } = useWeb3ModalState()
 
+  console.log("selectedNetworkId: ", selectedNetworkId)
 
   let connectionNote = "Error: No account state detected."
   let buttonText = "error: no account state detected."
@@ -25,7 +27,7 @@ export default function Page() {
           </div>
           <div className='p-2 text-center text-gray-600 hover:text-gray-900'>
 
-          <Button size="sm" isFilled={true} onClick = {() => open() }> 
+          <Button size="sm" isFilled={true} onClick = {() => open({view: "Connect"})}> 
             {buttonText} 
           </Button>
             

@@ -7,34 +7,15 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 
 export const useScreenDimensions = () => {
 
-  const getDimensions = () => {
-
-    let dimensions = {
-      width: 1,
-      height: 1
-    }
-
-    typeof window !== "undefined" ? dimensions = { 
-      width: window.innerWidth, 
-      height: window.innerHeight
-    } : null 
-    
-    return dimensions; 
-  }
-
-  const [dimensions, setDimensions] = useState(getDimensions);
+  const [dimensions, setDimensions] = useState(1);
 
   const handleResize = () => {
-    setDimensions(getDimensions());
+    setDimensions(window.innerHeight / window.innerWidth);
   };
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useLayoutEffect(() => {
-    handleResize();
   }, []);
 
   return dimensions;

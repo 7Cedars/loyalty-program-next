@@ -20,7 +20,7 @@ const NavbarBottom = ( ) => {
   const layoutIcons: string = 'h-7 w-7'
 
   return (
-    dimensions.width / dimensions.height >= 1 ? 
+    dimensions <= 1 ? 
     null
     :
     <header className="absolute bottom-0 flex justify-between h-12 w-full bg-stone-50/50 max-w-screen-lg text-sm border-t border-gray-400 ps-8 pe-8">

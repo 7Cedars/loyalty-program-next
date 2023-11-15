@@ -7,11 +7,13 @@ import { localhost, sepolia, baseSepolia } from 'viem/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
+import { useWeb3ModalTheme } from '@web3modal/wagmi/react';
 
 // const selectedChains = [baseSepolia] // other options: , arbitrum, arbitrumGoerli, optimism, optimismSepolia,
 const SEPOLIA_RPC_HTPPS = process.env.NEXT_PUBLIC_SEPOLIA_RPC_HTPPS ? process.env.NEXT_PUBLIC_SEPOLIA_RPC_HTPPS : "none"
 const SEPOLIA_RPC_WEBSOCKET = process.env.NEXT_PUBLIC_SEPOLIA_RPC_WEBSOCKET ? process.env.NEXT_PUBLIC_SEPOLIA_RPC_WEBSOCKET : "none"
 const NEXT_PUBLIC_WALLETCONNECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_ID ? process.env.NEXT_PUBLIC_WALLETCONNECT_ID : "none"
+
 
 // 1. Get projectId
 const projectId = NEXT_PUBLIC_WALLETCONNECT_ID
@@ -45,6 +47,10 @@ const config = createConfig({
 
 createWeb3Modal({ wagmiConfig, projectId, chains })
 
+
 export function Web3Modal({ children }: any) {
+  // const { setThemeMode } = useWeb3ModalTheme()
+  // setThemeMode('light')
+
   return <WagmiConfig config={config}>{children}</WagmiConfig>;
 }
