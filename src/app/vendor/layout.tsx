@@ -10,15 +10,12 @@ export default function layout({
 
   return (   
     <main>
-        <div className="relative h-screen w-full grid grid-cols-1">
+        <div className="relative h-screen w-full grid grid-cols-1 border-2 border-blue-500">
           <NavbarTop/>
-            <div className='mt-14 flex justify-center w-full'>  
-              <div className='w-full max-w-screen-lg'>
+            <div className='flex justify-center'>  
                 {children}
                 <NavbarBottom/>
               </div>
-            </div> 
-
           </div>
     </main>
   )
