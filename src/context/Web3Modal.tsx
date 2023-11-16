@@ -34,6 +34,11 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
         http: "http://127.0.0.1:8545",
       }),
     }),
+    jsonRpcProvider({
+      rpc: (sepolia) => ({
+        http: SEPOLIA_RPC_HTPPS,
+      }),
+    }),
   ],
 )
 

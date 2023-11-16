@@ -1,5 +1,7 @@
 "use client"; 
 import { useBalance } from 'wagmi'
+import { ModalDialog } from '@/app/ui/ModalDialog';
+
 
 // NB: See here for getting contract events https://viem.sh/docs/contract/getContractEvents.html
 
@@ -14,7 +16,8 @@ export default function Page() {
   // if (isError) text = "error fetching balance."
   // if (data) text = `Balance: ${data.symbol} ${data.value}` 
 
-  return (    
+  return (
+    <ModalDialog>
     <div className="h-screen w-full flex flex-row space-x-0">
       <div className='mt-20 w-96 space-y-0 pt-4 grid grid-cols-1 ps-12 '> 
         {text}
@@ -24,5 +27,6 @@ export default function Page() {
         Two
       </div> 
     </div> 
+    </ModalDialog>
   );
 }

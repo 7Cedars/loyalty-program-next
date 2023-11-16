@@ -1,6 +1,5 @@
 export interface UserInputState  {
-  modal: string, // take out? 
-  screenDimensions: ScreenDimensions,
+  modalVisible: bool, 
   settings: {
     darkMode: bool, 
     developerMode: bool 

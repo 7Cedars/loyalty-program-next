@@ -5,9 +5,9 @@ import { ModalDialog } from "@/app/ui/ModalDialog";
 
 export default function Page() {
 
-  return (    
-    <div className="h-screen w-full flex flex-row space-x-0">
-      <ModalDialog>
+  return (
+    <ModalDialog> 
+      <div className="h-full w-full flex flex-row space-x-0">
         <div className='mt-20 w-96 space-y-0 pt-4 grid grid-cols-1 ps-12 '> 
           one
         </div>
@@ -15,7 +15,7 @@ export default function Page() {
         <div className='mt-20 flex-grow space-y-0 pt-4 grid grid-cols-1 pe-12'> 
           Two
         </div> 
-      </ModalDialog>
-    </div> 
+      </div> 
+    </ModalDialog>
   );
 }

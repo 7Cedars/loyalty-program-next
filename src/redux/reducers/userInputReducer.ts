@@ -5,11 +5,7 @@ const initialState: UserInputState = {
   // spaces: [], 
   // startDate: Date.now() - standardDateRange,
   // endDate: Date.now(),
-  modal: 'none',
-  screenDimensions: {
-    width: 0,
-    height: 0
-  },
+  modalVisible: true,
   settings: {
     darkMode: false, 
     developerMode: false 
@@ -21,12 +17,9 @@ export const selectedSpacesSlice = createSlice({
   name: 'userInput',
   initialState: initialState, 
   reducers: {
-    updateModal: (state, action: PayloadAction< 'infoSpace' | 'search' |'about' | 'settings' | 'savedSearches' | 'none'>) => {
-      state.modal = action.payload
+    updateModalVisible: (state, action: PayloadAction< boolean >) => {
+      state.modalVisible = action.payload
     },
-    updateScreenDimensions: (state, action: PayloadAction<ScreenDimensions>) => {
-      state.screenDimensions = action.payload
-    }, 
     setDarkMode: (state, action: PayloadAction<boolean | undefined>) => {
       state.settings.darkMode = action.payload
     },
@@ -37,8 +30,7 @@ export const selectedSpacesSlice = createSlice({
 })
 
 export const { 
-  updateModal,
-  updateScreenDimensions, 
+  updateModalVisible,
   setDarkMode,
   setDeveloperMode
  } = selectedSpacesSlice.actions

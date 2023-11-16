@@ -1,7 +1,7 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { updateModal } from "@/redux/reducers/userInputReducer";
+import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 type ModalProps = {
@@ -21,35 +21,47 @@ export const ModalDialog = ({
   // Note this ui modal dialog expects the use of redux. 
   // I can change this in other apps if needed. 
   const dispatch = useAppDispatch()
-  const { modal } = useAppSelector(state => state.userInput) // should be modalVisible
+  const { modalVisible } = useAppSelector(state => state.userInput) 
 
+  // later implement transitioning. WIP 
 
   return (
-    <div className="w-full h-full ">
-      <div className="grid grid-cols-1 h-full bg-slate-50 mx-8 mt-16 rounded-t-lg">
-        <div className="flex h-12 justify-end p-2"> 
+    
+      <div className="w-full h-full z-1">
+        { modalVisible ? 
+        <div className="flex flex-col my-16 mb-20 h-full bg-slate-50 mx-8 rounded-t-lg z-8">
+  
+            <div className="grow-0 flex justify-end"> 
+              <button 
+                  className="text-black font-bold pt-2 px-2"
+                  type="submit"
+                  onClick={() => dispatch(updateModalVisible(false))} // should be true / false
+                  >
+                  <XMarkIcon
+                    className="h-7 w-7"
+                    aria-hidden="true"
+                  />
+              </button>
+            </div>
+           <div className="h-full"> 
+
+            {children}
+
+          </div>
+        </div>
+        :
         <button 
-            className="text-black font-bold pt-1 px-2"
-            type="submit"
-            onClick={() => dispatch(updateModal('none'))} // should be true / false
-            >
-            <XMarkIcon
-              className="h-7 w-7"
-              aria-hidden="true"
-            />
+          className="w-full h-full"
+          type="submit"
+          onClick={() => dispatch(updateModalVisible(true))} // should be true / false
+          >
         </button>
-      </div>
-      <div > 
-
-        {children}
-
-      </div>
-      </div>
+      }
     </div>
   )};
 
 
-
+// Example from snapshot dashboard project. // 
 //   <Transition appear show={(modal === modalName)} as={Fragment}>
 //   <Dialog as="div" className="relative z-" 
 //     onClose={() => dispatch(updateModal('none'))}
