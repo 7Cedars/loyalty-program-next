@@ -20,7 +20,7 @@ export default function Page() {
   }, [selectedNetworkId, address])
   
   return (
-    <div className="absolute top-0 max-w-screen-lg h-screen w-full flex items-center justify-center space-x-0 border-2 border-red-800"> 
+    <div className="absolute top-0 z-5 h-screen w-full flex items-center justify-center space-x-0"> 
       <div className="flex min-h-screen flex items-center justify-center w-1/2">
           <div className='flex flex-col divide-y divide-gray-600 w-full justify-center'> 
             <div className='p-2 text-center text-gray-600 hover:text-gray-900'> 

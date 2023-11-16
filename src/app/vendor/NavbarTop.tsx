@@ -16,7 +16,7 @@ const NavbarTop = ( ) => {
       dimensions > 1 ? 
       null 
       :
-      <header className="absolute top-0 flex justify-between h-18 w-full text-sm border-b border-gray-400 py-0">
+      <header className="absolute top-0 z-10 flex justify-between h-18 w-full text-sm border-b border-gray-400 bg-slate-50 px-6">
         <div className="flex divide-x p-3 divide-gray-400">
           <Link href='/vendor/landing' className={layoutLinks}> Home </Link>
           <Link href='/vendor/giftPoints'  className={layoutLinks}> Gift Points </Link>

@@ -23,7 +23,7 @@ const NavbarBottom = ( ) => {
     dimensions <= 1 ? 
     null
     :
-    <header className="absolute bottom-0 flex justify-between h-12 w-full bg-stone-50/50 max-w-screen-lg text-sm border-t border-gray-400 ps-8 pe-8">
+    <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-stone-50/75 text-sm border-t border-gray-400 ps-8 pe-8">
       
         <Link href='/vendor/landing' className={layoutLinks}> 
           <div className='col-span-1 grid text-xs justify-items-center'> 
