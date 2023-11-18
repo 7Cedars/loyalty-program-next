@@ -1,20 +1,29 @@
 "use client"; 
-import { useBalance } from 'wagmi'
 import { ModalDialog } from '@/app/ui/ModalDialog';
+import {loyaltyProgramAbi} from "../../../context/abi" 
+import { useAccount, useConnect, useDisconnect, useBalance, usePublicClient, useContractEvent } from 'wagmi'
+import { useContractEvents } from '@/app/hooks/useContractEvents';
+
+export default function Page()  {
+
+  const eventLogs = useContractEvents({
+    abi: loyaltyProgramAbi,
+    eventName: 'DeployedLoyaltyProgram',
+    fromBlock: 1n,
+    toBlock: 16330050n
+  })
+
+  console.log("eventLogs: ", eventLogs)
 
 
-// NB: See here for getting contract events https://viem.sh/docs/contract/getContractEvents.html
-
-export default function Page() {
-
-  // const { data, isError, isLoading } = useBalance({
-  //   address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-  // })
+  const { data, isError, isLoading } = useBalance({
+    address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+  })
 
   let text = "TEST TEST"
-  // if (isLoading) text = "loading balance." 
-  // if (isError) text = "error fetching balance."
-  // if (data) text = `Balance: ${data.symbol} ${data.value}` 
+  if (isLoading) text = "loading balance." 
+  if (isError) text = "error fetching balance."
+  if (data) text = `Balance: ${data.symbol} ${data.value}` 
 
   return (
     <ModalDialog>

@@ -2,9 +2,6 @@
 
 import { notification } from '@/redux/reducers/notificationReducer';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
-import { useAppDispatch } from '@/redux/hooks';
-import { ScreenDimensions } from '@/types';
 import { useScreenDimensions } from '../hooks/useScreenDimensions';
 
 const NavbarTop = ( ) => {

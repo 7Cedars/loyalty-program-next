@@ -10,10 +10,8 @@ import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { useWeb3ModalTheme } from '@web3modal/wagmi/react';
 
 // const selectedChains = [baseSepolia] // other options: , arbitrum, arbitrumGoerli, optimism, optimismSepolia,
-const SEPOLIA_RPC_HTPPS = process.env.NEXT_PUBLIC_SEPOLIA_RPC_HTPPS ? process.env.NEXT_PUBLIC_SEPOLIA_RPC_HTPPS : "none"
-const SEPOLIA_RPC_WEBSOCKET = process.env.NEXT_PUBLIC_SEPOLIA_RPC_WEBSOCKET ? process.env.NEXT_PUBLIC_SEPOLIA_RPC_WEBSOCKET : "none"
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY ? process.env.NEXT_PUBLIC_API_KEY : "none"
 const NEXT_PUBLIC_WALLETCONNECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_ID ? process.env.NEXT_PUBLIC_WALLETCONNECT_ID : "none"
-
 
 // 1. Get projectId
 const projectId = NEXT_PUBLIC_WALLETCONNECT_ID
@@ -27,26 +25,23 @@ const metadata = {
 }
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [ localhost, sepolia ], // localhost,
+  [ localhost, sepolia ],
   [ 
-    // jsonRpcProvider({
-    //   rpc: (localhost) => ({
-    //     http: "http://127.0.0.1:8545",
-    //     chainId: 31337
-    //   }),
-    // }),
+    publicProvider(), 
     jsonRpcProvider({
-      rpc: (sepolia) => ({
-        http: SEPOLIA_RPC_HTPPS,
+      rpc: (localhost) => ({
+        http: "http://127.0.0.1:8545",
+        chainId: 31337
       }),
     }),
+    alchemyProvider({ apiKey: API_KEY }),
   ],
 )
 
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 
 const config = createConfig({
-  autoConnect: true, // this should be different, right? 
+  autoConnect: false,  
   publicClient,
   webSocketPublicClient,
 })
