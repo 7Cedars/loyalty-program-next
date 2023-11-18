@@ -11,7 +11,7 @@ export default function Page() {
   //   address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
   // })
 
-  let text = ""
+  let text = "TEST TEST"
   // if (isLoading) text = "loading balance." 
   // if (isError) text = "error fetching balance."
   // if (data) text = `Balance: ${data.symbol} ${data.value}` 

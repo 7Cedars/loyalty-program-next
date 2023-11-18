@@ -34,7 +34,7 @@ const NavbarBottom = ( ) => {
             Home
           </div> 
         </Link>
-        <Link href='/vendor/giftPoints' className={layoutLinks}> 
+        <Link href='/vendor/giftAndRedeem' className={layoutLinks}> 
           <div className={layoutIconBox}> 
             <GiftIcon
               className={layoutIcons}

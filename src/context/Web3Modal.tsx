@@ -29,11 +29,12 @@ const metadata = {
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [ localhost, sepolia ], // localhost,
   [ 
-    jsonRpcProvider({
-      rpc: (localhost) => ({
-        http: "http://127.0.0.1:8545",
-      }),
-    }),
+    // jsonRpcProvider({
+    //   rpc: (localhost) => ({
+    //     http: "http://127.0.0.1:8545",
+    //     chainId: 31337
+    //   }),
+    // }),
     jsonRpcProvider({
       rpc: (sepolia) => ({
         http: SEPOLIA_RPC_HTPPS,
