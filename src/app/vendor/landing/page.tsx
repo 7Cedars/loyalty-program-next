@@ -2,16 +2,18 @@
 import { ModalDialog } from '@/app/ui/ModalDialog';
 import {loyaltyProgramAbi} from "../../../context/abi" 
 import { useAccount, useConnect, useDisconnect, useBalance, usePublicClient, useContractEvent } from 'wagmi'
-import { useContractEvents } from '@/app/hooks/useContractEvents';
+import { useContractLogs } from '@/app/hooks/useContractLogs';
 
 export default function Page()  {
 
-  const eventLogs = useContractEvents({
+  const eventLogs = useContractLogs({
     abi: loyaltyProgramAbi,
-    eventName: 'DeployedLoyaltyProgram',
+    eventName: 'TransferSingle',
     fromBlock: 1n,
     toBlock: 16330050n
   })
+
+
 
   console.log("eventLogs: ", eventLogs)
 
