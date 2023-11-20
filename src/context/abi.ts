@@ -1,4 +1,6 @@
-export const loyaltyProgramAbi = [
+import { Abi } from "viem"
+
+export const loyaltyProgramAbi: Abi = [
   {
     "inputs": [
       {
@@ -212,7 +214,14 @@ export const loyaltyProgramAbi = [
   },
   {
     "anonymous": false,
-    "inputs": [],
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
     "name": "DeployedLoyaltyProgram",
     "type": "event"
   },

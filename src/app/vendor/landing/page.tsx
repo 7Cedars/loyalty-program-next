@@ -3,24 +3,51 @@ import { ModalDialog } from '@/app/ui/ModalDialog';
 import {loyaltyProgramAbi} from "../../../context/abi" 
 import { useAccount, useConnect, useDisconnect, useBalance, usePublicClient, useContractEvent } from 'wagmi'
 import { useContractLogs } from '@/app/hooks/useContractLogs';
+import { CreateContractEventFilterParameters } from 'viem'; 
 
 export default function Page()  {
+  const { address } = useAccount()
+  let parameters: CreateContractEventFilterParameters = {abi: loyaltyProgramAbi} 
 
-  const eventLogs = useContractLogs({
-    abi: loyaltyProgramAbi,
-    eventName: 'TransferSingle',
-    fromBlock: 1n,
-    toBlock: 16330050n
+  address ? parameters = 
+    { ... parameters,
+      eventName: 'DeployedLoyaltyProgram',
+      fromBlock: 1n,
+      toBlock: 16330050n 
+    } 
+    :
+    { ... parameters,
+      eventName: 'DeployedLoyaltyProgram',
+      args: {owner: address}, 
+      fromBlock: 1n,
+      toBlock: 16330050n 
+    } 
+
+  const {data, isError, isLoading} = useContractLogs(parameters)
+
+  if (data) 
+  { 
+    if (data.length == 0) {return (
+      <div> Zero deployed contract. Invite to deploy program here </div>
+    )}
+    if (data.length == 1) {return (
+      <div> One deployed contract. Login </div>
+    )}
+    if (data.length > 1) {return (
+      <div> Multiple deployed contracts. choose </div>
+    )}
+  }
+
+
+  const printDeployedPrograms = deployedPrograms.map(program => {
+    return (
+      <div> 
+
+      </div>
+    )
   })
 
 
-
-  console.log("eventLogs: ", eventLogs)
-
-
-  const { data, isError, isLoading } = useBalance({
-    address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-  })
 
   let text = "TEST TEST"
   if (isLoading) text = "loading balance." 
