@@ -3,9 +3,10 @@
 import { Log, CreateContractEventFilterParameters } from "viem"
 import { useState, useEffect } from "react"
 import { usePublicClient } from 'wagmi'
+import { getContractEventsProps } from "@/types"
 
 // see https://viem.sh/docs/contract/getContractEvents.html for documentation on params of getContractEvents action. 
-export const useContractLogs = (parameters: CreateContractEventFilterParameters) => { // {address, abi, eventName, args, fromBlock, toBlock}
+export const useContractLogs = (parameters: getContractEventsProps) => { // {address, abi, eventName, args, fromBlock, toBlock}
   const publicClient = usePublicClient()
   const [data, setData] = useState<{data: Log[]; isError: Error | null | unknown; isLoading: boolean}>({
         data: [],

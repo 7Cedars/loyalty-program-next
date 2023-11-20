@@ -1,3 +1,9 @@
+import { CreateContractEventFilterParameters } from "viem";
+
+export interface getContractEventsProps extends CreateContractEventFilterParameters {
+  args?: any; 
+}
+
 export interface UserInputState  {
   modalVisible: bool, 
   settings: {
