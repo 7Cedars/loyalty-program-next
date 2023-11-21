@@ -27,9 +27,9 @@ export const ModalDialog = ({
 
   return (
     
-      <div className="w-full h-full z-1">
+      <div className="absolute w-full max-w-4xl  h-screen z-1 pt-20">
         { modalVisible ? 
-        <div className="flex flex-col my-16 mb-20 h-full bg-slate-50 mx-8 rounded-t-lg z-8">
+        <div className="flex flex-col mb-20 h-full bg-slate-50 mx-8 rounded-t-lg z-8">
   
             <div className="grow-0 flex justify-end"> 
               <button 
@@ -43,7 +43,7 @@ export const ModalDialog = ({
                   />
               </button>
             </div>
-           <div className="h-full"> 
+           <div className="h-full justify-center"> 
 
             {children}
 

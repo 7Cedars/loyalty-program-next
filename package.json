@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/react-qr-reader": "^2.1.7",
     "@wagmi/core": "^1.4.6",
     "@web3modal/wagmi": "^3.3.1",
     "encoding": "^0.1.13",
@@ -19,6 +20,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-qr-code": "^2.0.12",
+    "react-qr-reader": "^3.0.0-beta-1",
     "react-redux": "^8.1.3",
     "viem": "^1.19.1",
     "wagmi": "^1.4.6"

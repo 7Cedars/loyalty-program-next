@@ -1,6 +1,6 @@
 "use client"
 
-import { Log, CreateContractEventFilterParameters } from "viem"
+import { Log } from "viem"
 import { useState, useEffect } from "react"
 import { usePublicClient } from 'wagmi'
 import { getContractEventsProps } from "@/types"

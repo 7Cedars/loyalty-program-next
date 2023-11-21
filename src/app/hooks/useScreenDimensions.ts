@@ -7,10 +7,13 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 
 export const useScreenDimensions = () => {
 
-  const [dimensions, setDimensions] = useState(1);
+  const [dimensions, setDimensions] = useState({height: 1, width: 1});
 
   const handleResize = () => {
-    setDimensions(window.innerHeight / window.innerWidth);
+    setDimensions({
+      height: window.innerHeight, 
+      width: window.innerWidth
+    })
   };
 
   useEffect(() => {

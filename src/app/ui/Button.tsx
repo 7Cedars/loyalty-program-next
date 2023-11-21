@@ -15,7 +15,7 @@ export const Button = ({
   isFilled,
   size = "md",
 }: ButtonProps) => {
-  let appearance = "rounded m-1 border border-blue-500 text-blue-500 ";
+  let appearance = "rounded m-1  text-blue-500 ";
 
   if (size === "sm") {
     appearance += "text-sm py-1 px-12";
@@ -25,10 +25,10 @@ export const Button = ({
   }
 
   if (isFilled) {
-    appearance += " bg-blue-200 hover:bg-blue-400 text-white";
+    appearance += " bg-blue-500 hover:bg-blue-600 text-white";
   } else {
     appearance +=
-      " bg-white text-gray-400 hover:bg-gray-400 hover:text-white";
+      "border border-blue-500 bg-white text-gray-400 hover:bg-gray-400 hover:text-white";
   }
 
   return (

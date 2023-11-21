@@ -20,7 +20,7 @@ const NavbarBottom = ( ) => {
   const layoutIcons: string = 'h-7 w-7'
 
   return (
-    dimensions <= 1 ? 
+    dimensions.width >= 896 ? 
     null
     :
     <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-stone-50/75 text-sm border-t border-gray-400 ps-8 pe-8">
@@ -34,7 +34,7 @@ const NavbarBottom = ( ) => {
             Home
           </div> 
         </Link>
-        <Link href='/vendor/giftAndRedeem' className={layoutLinks}> 
+        <Link href='/vendor/scanQrcode' className={layoutLinks}> 
           <div className={layoutIconBox}> 
             <GiftIcon
               className={layoutIcons}

@@ -21,7 +21,6 @@ export default function Page() {
   }, [selectedNetworkId, address])
   
   return (
-    <ModalDialog>
     <div className="absolute top-0 z-1 h-screen w-full flex items-center justify-center space-x-0"> 
       <div className="flex min-h-screen flex items-center justify-center w-1/2">
           <div className='flex flex-col divide-y divide-gray-600 w-full justify-center'> 
@@ -38,6 +37,5 @@ export default function Page() {
           </div>
       </div>
     </div>
-    </ModalDialog>
   );
 }
