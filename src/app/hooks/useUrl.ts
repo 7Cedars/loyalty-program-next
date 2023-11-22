@@ -1,10 +1,10 @@
 "use client"
 
-import { 
-  usePathname, 
-  useRouter, 
-  useSearchParams 
-} from 'next/navigation';
+// import { 
+//   usePathname, 
+//   useRouter, 
+//   useSearchParams 
+// } from 'next/navigation';
 // import { 
 //   getDateRangeFromUseSearchParams,
 //   getSpacesFromUseSearchParams
@@ -14,11 +14,11 @@ import {
 //   colourCodes 
 // } from '../../../constants';
 
-// export function useDateRange() {
+// export function useLoyaltyProgramAddress() {
 //   const params = useSearchParams();
 //   const pathname = usePathname();
 //   const router = useRouter();
-//   const { d1, d2 }  = getDateRangeFromUseSearchParams(params);
+//   const { address }  = getDateRangeFromUseSearchParams(params);
 
 //   const handleDates = (d1: string, d2: string) => {
 //     // console.log("handleDates called.")

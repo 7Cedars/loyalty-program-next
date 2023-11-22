@@ -7,7 +7,8 @@ const nextConfig = {
       "encoding"
     );
     return config;
-  }
+  }, 
+  reactStrictMode: false // this is normally set to true 
 }
 
 module.exports = nextConfig

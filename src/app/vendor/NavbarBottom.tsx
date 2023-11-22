@@ -40,7 +40,7 @@ const NavbarBottom = ( ) => {
               className={layoutIcons}
               aria-hidden="true"
             />
-            Points
+            Gift & Redeem
           </div>  
         </Link>
         <Link href='/vendor/selectTokens'   className={layoutLinks}> 
