@@ -9,6 +9,8 @@ export const useScreenDimensions = () => {
 
   const [dimensions, setDimensions] = useState({height: 1, width: 1});
 
+  console.log("dimensions: ", dimensions)
+
   const handleResize = () => {
     setDimensions({
       height: window.innerHeight, 
@@ -17,9 +19,15 @@ export const useScreenDimensions = () => {
   };
 
   useEffect(() => {
+    handleResize(); 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // useEffect(() => {
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, []);
 
   return dimensions;
 }

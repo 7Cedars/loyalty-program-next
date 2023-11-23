@@ -1,19 +1,25 @@
 "use client"; 
 
-import { ModalDialog } from "@/app/ui/ModalDialog";
+import { InputForm } from "../../components/InputForm"
+import { SectionTitle } from "@/app/ui/SectionTitle";
 
 
 export default function Page() {
 
   return (
-      <div className="h-full w-full flex flex-row space-x-0">
-        <div className='mt-20 w-96 space-y-0 pt-4 grid grid-cols-1 ps-12 '> 
-          one
-        </div>
-        
-        <div className='mt-20 flex-grow space-y-0 pt-4 grid grid-cols-1 pe-12'> 
-          Two
-        </div> 
+    <div className="h-full grid grid-cols-1 gap-2 divide-y place-content-center" > 
+      <div className="h-full grid grid-cols-1 gap-1 place-items-center max-h-72">
+          <SectionTitle size = "lg" title = "Loyalty Points Remaining" /> 
+          <InputForm type = "points" presetAmounts = {["5000", "25000", "500000"]} /> 
       </div> 
+
+      <div className="h-full grid grid-cols-1 gap-1 place-items-center max-h-72">
+          <SectionTitle size = "lg" title = "Loyalty Cards Remaining" /> 
+          <InputForm type = "points" presetAmounts = {["5", "25", "100"]} /> 
+      </div> 
+
+    </div>
+
+        
   );
 }

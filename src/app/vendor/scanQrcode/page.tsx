@@ -17,7 +17,7 @@ export default function Page() {
         Scan customer QR code 
 
           <QrReader 
-          className='pb-6 rounded-lg'
+          className='pb-12 rounded-lg'
             constraints={{ facingMode: 'environment' }}
             onResult={(result, error) => {
               if (!!result) {

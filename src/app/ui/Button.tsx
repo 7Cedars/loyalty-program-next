@@ -15,13 +15,13 @@ export const Button = ({
   isFilled,
   size = "md",
 }: ButtonProps) => {
-  let appearance = "rounded m-1  text-blue-500 ";
+  let appearance = "rounded m-1 text-blue-500 ";
 
   if (size === "sm") {
-    appearance += "text-sm py-1 px-12";
+    appearance += "text-sm py-1 px-8";
   }
   if (size === "md") {
-    appearance += "text-md py-2 px-16";
+    appearance += "text-md py-2 px-12";
   }
 
   if (isFilled) {

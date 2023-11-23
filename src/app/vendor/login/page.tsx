@@ -4,7 +4,6 @@ import { useAccount } from 'wagmi'
 import { useWeb3Modal, useWeb3ModalState } from '@web3modal/wagmi/react';
 import { Button } from '@/app/ui/Button';
 import { useEffect, useState } from 'react';
-import { ModalDialog } from "@/app/ui/ModalDialog";
 
 export default function Page() {
   const { address, isConnecting, isDisconnected } = useAccount()
