@@ -3,7 +3,7 @@
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
 
 import { WagmiConfig,  configureChains, createConfig } from 'wagmi'
-import { localhost, sepolia, baseSepolia } from 'viem/chains'
+import { foundry, sepolia, baseSepolia } from 'viem/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
@@ -25,12 +25,12 @@ const metadata = {
 }
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [ localhost, sepolia ],
+  [ foundry, sepolia ],
   [ 
     publicProvider(), 
     jsonRpcProvider({
       rpc: (localhost) => ({
-        http: "http://127.0.0.1:8545",
+        http: "http://localhost:8545",
         chainId: 31337
       }),
     }),
