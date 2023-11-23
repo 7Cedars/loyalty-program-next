@@ -1,42 +1,47 @@
 "use client"; 
-import { ModalDialog } from '@/app/ui/ModalDialog';
 import {loyaltyProgramAbi} from "../../../context/abi" 
 import { useAccount, useConnect, useDisconnect, useBalance, usePublicClient, useContractEvent, useContractReads } from 'wagmi'
 import { useContractLogs } from '@/app/hooks/useContractLogs';
 import { getContractEventsProps } from "@/types"
+import { useWeb3ModalState, useWeb3ModalEvents } from "@web3modal/wagmi/react";
 
 import ShowQrcode from './ShowQrcode';
+import { useEffect, useRef } from 'react';
 
 
 export default function Page()  {
-  const { address, isConnecting } = useAccount()
-  let parameters: getContractEventsProps = {abi: loyaltyProgramAbi}
-  
+  const { address } = useAccount()
+  let parameters:getContractEventsProps = {abi: loyaltyProgramAbi}; 
+
   address ? parameters = { 
-    abi: loyaltyProgramAbi, 
-    eventName: 'DeployedLoyaltyProgram', 
-    fromBlock: 1n,
-    toBlock: 16330050n
-  }
-  :
-  parameters = { 
     abi: loyaltyProgramAbi, 
     eventName: 'DeployedLoyaltyProgram', 
     args: {owner: address}, 
     fromBlock: 1n,
     toBlock: 16330050n
+  } : {
+    abi: loyaltyProgramAbi
   }
 
-  const {data, isError, isLoading} = useContractLogs(parameters)
+  const {data, isError, isLoading} = useContractLogs(parameters) 
+  //   parameters = { 
+  //     abi: loyaltyProgramAbi, 
+  //     eventName: 'DeployedLoyaltyProgram', 
+  //     args: {owner: address}, 
+  //     fromBlock: 1n,
+  //     toBlock: 16330050n
+  //   }
+  // )
   let page: JSX.Element =  <div> ...  </div>; 
 
-  // console.log("data: ", data)
-  // console.log("parameters: ", parameters)
+  console.log("logged in address: ", address)
+  console.log("data: ", data)
+  console.log("parameters: ", parameters)
 
   if (data) 
   { 
     if (data.length == 0) {page = (
-      <div> Zero deployed contract. Invite to deploy program here </div>
+      <div> Zero deployed contracts. Invite to deploy program here </div>
     )}
     if (data.length == 1) {page = (
       <ShowQrcode componentData = {data} selection = {0} /> 

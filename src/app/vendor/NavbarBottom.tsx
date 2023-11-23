@@ -1,23 +1,53 @@
 "use client";
 
-import { notification } from '@/redux/reducers/notificationReducer';
 import Link from 'next/link';
 import { NotificationDialog } from '../ui/notificationDialog';
+import { notification } from '@/redux/reducers/notificationReducer';
 import { 
   ArrowRightOnRectangleIcon, 
   GiftIcon, 
-  DocumentArrowDownIcon, 
   SquaresPlusIcon,
   QrCodeIcon,
   ChartBarSquareIcon
  } from '@heroicons/react/24/outline'
 import { useScreenDimensions } from '../hooks/useScreenDimensions';
+import { useDispatch } from 'react-redux';
+import { useAccount } from 'wagmi';
+import { useEffect } from 'react';
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
   const layoutLinks: string = 'py-1 px-6 text-gray-600 hover:text-gray-900 grid grid-cols-1'
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'
   const layoutIcons: string = 'h-7 w-7'
+  const dispatch = useDispatch() 
+  const { address } = useAccount() 
+
+
+  dispatch(notification({
+    id: "addingSpace",
+    message: `logged in at: ${address}`, 
+    colour: "gray"
+  }))
+
+  useEffect(() => {
+    dimensions ? 
+      dimensions.width >= 896 ? 
+        dispatch(notification({
+          id: "loggedIn",
+          visible: false
+        }))
+        :
+        dispatch(notification({
+          id: "loggedIn",
+          visible: true, 
+          message: `logged in at: ${address}`, 
+          colour: "gray"
+        }))
+      :
+      null
+  }, [dimensions, address, dispatch])
+
 
   return (
     dimensions.width >= 896 ? 

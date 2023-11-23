@@ -2,6 +2,7 @@ import '../globals.css'
 import NavbarTop from "./NavbarTop"; 
 import NavbarBottom from './NavbarBottom';
 import { ModalDialog } from '../ui/ModalDialog';
+import { NotificationDialog } from '../ui/notificationDialog';
 
 export default function layout({
   children,
@@ -10,7 +11,9 @@ export default function layout({
 }) {
 
   return (   
+ 
     <div className="relative h-screen w-full grid grid-cols-1 justify-items-center bg-slate-100">
+      {/* <NotificationDialog /> */}
       <NavbarTop/>
         <div className="flex justify-center w-full max-h-screen max-w-4xl bg-cover bg-center bg-[url('/img/CoffeeShopLoyaltyProgramNft.svg')]">  
             <ModalDialog>
