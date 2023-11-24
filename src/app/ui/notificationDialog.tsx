@@ -49,7 +49,7 @@ export const NotificationDialog = () => {
   return (
     notificationToShow?.colour === undefined ||  notificationToShow?.colour === "invisible" ? null   
     : 
-    <div className= {`relative border-2 rounded-lg h-12 flex flex-row items-center ${colourSchemeDialog[colour]}`}> 
+    <div className= {`absolute z-10 top-0 p-6 m-4 rounded-lg h-12 flex flex-row bg-slate-50/[.90] items-center ${colourSchemeDialog[colour]}`}> 
         <div className={`grow flex flex-row justify-center ${colourSchemeText[colour]}`}>  
           <div  className="font-bold"> 
           { notificationToShow.message  }
