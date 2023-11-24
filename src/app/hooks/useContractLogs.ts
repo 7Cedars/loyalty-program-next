@@ -2,13 +2,14 @@
 
 import { Log } from "viem"
 import { useState, useEffect } from "react"
-import { usePublicClient } from 'wagmi'
+import { usePublicClient, useAccount } from 'wagmi'
 import { getContractEventsProps } from "@/types"
 
 // see https://viem.sh/docs/contract/getContractEvents.html for documentation on params of getContractEvents action. 
 export const useContractLogs = (parameters: getContractEventsProps) => { // {address, abi, eventName, args, fromBlock, toBlock}
   console.log("useContractLogs CALLED")
   const publicClient = usePublicClient()
+  const { address } = useAccount()
   const [data, setData] = useState<{data: Log[]; isError: Error | null | unknown; isLoading: boolean}>({
         data: [],
         isError: null,
@@ -37,10 +38,11 @@ export const useContractLogs = (parameters: getContractEventsProps) => { // {add
       }
       console.log("RES: ", result)
 
-      // if (result.data.length == 0) {
+      if (result.data.length == 0) {
         getData()
-      // } 
-    }, []);
+      } 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [address]);
 
   return data 
 }

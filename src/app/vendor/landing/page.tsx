@@ -4,34 +4,29 @@ import { useAccount, useConnect, useDisconnect, useBalance, usePublicClient, use
 import { useContractLogs } from '@/app/hooks/useContractLogs';
 import { getContractEventsProps } from "@/types"
 import { useWeb3ModalState, useWeb3ModalEvents } from "@web3modal/wagmi/react";
-
+import { Log } from "viem";
 import ShowQrcode from './ShowQrcode';
 import { useEffect, useRef } from 'react';
 
-
 export default function Page()  {
-  const { address } = useAccount()
+  const publicClient = usePublicClient()
+  const { address, isReconnecting } = useAccount()
   let parameters:getContractEventsProps = {abi: loyaltyProgramAbi}; 
+  const dataRef = useRef();   
 
-  address ? parameters = { 
-    abi: loyaltyProgramAbi, 
-    eventName: 'DeployedLoyaltyProgram', 
-    args: {owner: address}, 
-    fromBlock: 1n,
-    toBlock: 16330050n
-  } : {
-    abi: loyaltyProgramAbi
+  if (isReconnecting) {
+    console.log("RECONNECTING")
   }
 
-  const {data, isError, isLoading} = useContractLogs(parameters) 
-  //   parameters = { 
-  //     abi: loyaltyProgramAbi, 
-  //     eventName: 'DeployedLoyaltyProgram', 
-  //     args: {owner: address}, 
-  //     fromBlock: 1n,
-  //     toBlock: 16330050n
-  //   }
-  // )
+  const {data, isError, isLoading} = useContractLogs(
+    { 
+      abi: loyaltyProgramAbi, 
+      eventName: 'DeployedLoyaltyProgram', 
+      args: {owner: address}, 
+      fromBlock: 1n,
+      toBlock: 16330050n
+    }
+  )
   let page: JSX.Element =  <div> ...  </div>; 
 
   console.log("logged in address: ", address)

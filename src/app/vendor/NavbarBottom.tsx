@@ -23,9 +23,8 @@ const NavbarBottom = ( ) => {
   const dispatch = useDispatch() 
   const { address } = useAccount() 
 
-
   dispatch(notification({
-    id: "addingSpace",
+    id: "loggedIn",
     message: `logged in at: ${address}`, 
     colour: "gray"
   }))
