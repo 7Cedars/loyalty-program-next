@@ -1,35 +1,31 @@
 "use client"
 
-// import { 
-//   usePathname, 
-//   useRouter, 
-//   useSearchParams 
-// } from 'next/navigation';
-// import { 
-//   getDateRangeFromUseSearchParams,
-//   getSpacesFromUseSearchParams
-// } from '../../utils/getDataFromUseSearch';
-// import { 
-//   tailwindColours, 
-//   colourCodes 
-// } from '../../../constants';
+import { 
+  usePathname, 
+  useRouter, 
+  useSearchParams 
+} from 'next/navigation';
+import { 
+  getProgAddressFromUrlParams,
+} from "../utils/getDataFromUrl";
+import { getProgAddressFromUseSearchParams } from '../utils/getDataFromUseSearch';
+import { EthAddress } from '@/types';
 
-// export function useLoyaltyProgramAddress() {
-//   const params = useSearchParams();
-//   const pathname = usePathname();
-//   const router = useRouter();
-//   const { address }  = getDateRangeFromUseSearchParams(params);
+export function useLoyaltyProgramAddress() {
+  const params = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+  const { progAddress }  = getProgAddressFromUseSearchParams(params);
 
-//   const handleDates = (d1: string, d2: string) => {
-//     // console.log("handleDates called.")
-//     let newParams = new URLSearchParams(params.toString());
-//     newParams.set('d1', d1)
-//     newParams.set('d2', d2)
-//     router.push(`${pathname}?${newParams.toString()}`);
-//   };
+  const handleProgAddress = (progAddress: EthAddress) => {
+    console.log("handleProgAddress called.")
+    let newParams = new URLSearchParams(params.toString());
+    newParams.set('prog', progAddress)
+    router.push(`${pathname}?${newParams.toString()}`);
+  };
 
-//   return { d1, d2, handleDates };
-// }
+  return { progAddress, handleProgAddress };
+}
 
 // export function useSpaces() {
 //   const params = useSearchParams();

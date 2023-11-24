@@ -12,10 +12,17 @@ export interface UserInputState  {
   }
 }
 
+export type EthAddress = `0x${string}`; 
+
 export type ScreenDimensions = {
   width: number,
   height: number
 }
+
+export interface SearchParams {
+  prog: EthAddress
+}
+
 
 export type Notification = {
   id: string;

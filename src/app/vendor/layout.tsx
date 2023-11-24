@@ -22,7 +22,6 @@ export default function layout({
             <ModalDialog>
               {children}
             </ModalDialog>
-            
             <NavbarBottom/>
           </div>
       </div>
