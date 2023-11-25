@@ -5,6 +5,7 @@ import { useWeb3Modal, useWeb3ModalState } from '@web3modal/wagmi/react';
 import { Button } from '@/app/ui/Button';
 import { useEffect, useState } from 'react';
 import { NotificationDialog } from '@/app/ui/notificationDialog';
+import { useLoyaltyProgramAddress } from '@/app/hooks/useUrl';
 
 export default function Page() {
   const { address, isConnecting, isDisconnected } = useAccount()
@@ -12,6 +13,9 @@ export default function Page() {
   const { selectedNetworkId } = useWeb3ModalState() 
   const [connectionNote, setConnectionNote] = useState("You need to connect to a network to use this app.")
   const [buttonText, setButtonText] = useState("Connect")
+
+
+
 
   useEffect(() => {
     if (address && selectedNetworkId != undefined) {

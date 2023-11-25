@@ -39,7 +39,7 @@ export const NotificationDialog = () => {
   const { notifications } = useAppSelector(state => state.notification)
   const dispatch = useAppDispatch()
 
-  const notificationToShow = notifications.findLast(notification => notification.colour !== "invisible")
+  const notificationToShow = notifications.findLast(notification => notification.visible !== false)
   let colour: "red" | "yellow" | "green" | "gray" | "invisible" = "gray"
   notificationToShow?.colour ? colour = notificationToShow?.colour : null 
 
@@ -47,22 +47,22 @@ export const NotificationDialog = () => {
   // See: https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values
 
   return (
-    notificationToShow?.colour === undefined ||  notificationToShow?.colour === "invisible" ? null   
+    notificationToShow?.visible === undefined ||  notificationToShow?.visible === false ? null   
     : 
     <div className= {`absolute z-10 top-0 p-6 m-4 rounded-lg h-12 flex flex-row bg-slate-50/[.90] items-center ${colourSchemeDialog[colour]}`}> 
         <div className={`grow flex flex-row justify-center ${colourSchemeText[colour]}`}>  
-          <div  className="font-bold"> 
+          <div  className="pe-4 text-center"> 
           { notificationToShow.message  }
           </div>
         </div>
         <button 
-          className="font-bold text-lg pe-2"
+          className="font-bold text-lg px-1"
           type="submit"
           onClick={() => dispatch(notification({
             id: notificationToShow.id,
-            message: "Here is a message", 
+            message: "..", 
             colour: "invisible", 
-            progressInPercent: 60, 
+            progressInPercent: 0, 
             visible: false
           }))}
           >

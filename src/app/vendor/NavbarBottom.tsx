@@ -23,12 +23,6 @@ const NavbarBottom = ( ) => {
   const dispatch = useDispatch() 
   const { address } = useAccount() 
 
-  dispatch(notification({
-    id: "loggedIn",
-    message: `logged in at: ${address}`, 
-    colour: "gray"
-  }))
-
   useEffect(() => {
     dimensions ? 
       dimensions.width >= 896 ? 
@@ -39,9 +33,9 @@ const NavbarBottom = ( ) => {
         :
         dispatch(notification({
           id: "loggedIn",
-          visible: true, 
           message: `logged in at: ${address}`, 
-          colour: "gray"
+          colour: "gray", 
+          visible: true
         }))
       :
       null
