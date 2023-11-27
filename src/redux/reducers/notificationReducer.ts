@@ -1,6 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Notification } from '../../types'
 
+type UpdateVisibiltyProps = {
+  id: string;
+  isVisible?: boolean; 
+}
+
 interface NotificationState {
   notifications: Notification[]
 }
@@ -23,7 +28,8 @@ export const notificationsSlice = createSlice({
       let notificationIds = state.notifications.map(notification => notification.id)
       let index = notificationIds.indexOf(action.payload.id)
 
-      console.log("INDEX notification1: ", index)
+      let notificationVisibles= state.notifications.map(notification => notification.isVisible)
+      console.log("notificationIds: ", notificationIds, notificationVisibles); 
 
       if (index === -1) { 
         const newNotification: Notification = {
@@ -32,7 +38,7 @@ export const notificationsSlice = createSlice({
           colour:  "gray",
           durationInMs: "noTimer",
           progressInPercent: "noProgress",
-          visible: true
+          isVisible: true
         }
         state.notifications.push(newNotification)
       }
@@ -40,7 +46,7 @@ export const notificationsSlice = createSlice({
       notificationIds = state.notifications.map(notification => notification.id)
       index = notificationIds.indexOf(action.payload.id) 
 
-      console.log("INDEX notification2: ", index)
+      // console.log("INDEX notification2: ", index)
 
       action.payload.message ? 
         state.notifications[index].message = action.payload.message : null 
@@ -49,22 +55,22 @@ export const notificationsSlice = createSlice({
         state.notifications[index].colour = action.payload.colour : null
 
       // Durantion still has to be coded - tough one.  
-      action.payload.durationInMs ? 
-        state.notifications[index].durationInMs = action.payload.durationInMs : null
+      // action.payload.durationInMs ? 
+      //   state.notifications[index].durationInMs = action.payload.durationInMs : null
 
-      action.payload.visible ? 
-        state.notifications[index].visible = false : null
+      action.payload.isVisible ? 
+        state.notifications[index].isVisible = action.payload.isVisible : null
 
       action.payload.progressInPercent ? 
         state.notifications[index].progressInPercent = action.payload.progressInPercent : null
 
-       console.log("action.payload.visible: ", action.payload.visible)
-      console.log("state.notifications[index]", Object.keys(state.notifications[index]),  Object.values(state.notifications[index]))
+      //  console.log("action.payload.visible: ", action.payload.visible)
+      // console.log("state.notifications[index]", Object.keys(state.notifications[index]),  Object.values(state.notifications[index]))
 
 
     }, 
     prioritizeNotification: (state, action: PayloadAction<string>) => {
-      console.log("prioritizeNotification called")
+      // console.log("prioritizeNotification called")
       const notificationIds = state.notifications.map(notification => notification.id)
       const index = notificationIds.indexOf(action.payload) 
 
@@ -73,6 +79,18 @@ export const notificationsSlice = createSlice({
         state.notifications.splice(index, 1)
       }
     }, 
+    updateNotificationVisibility: (state, action: PayloadAction< UpdateVisibiltyProps >) => {
+
+      const selectedNotification = state.notifications.find(notification => notification.id === action.payload.id)
+      if (selectedNotification) { 
+        selectedNotification.isVisible = action.payload.isVisible; 
+
+        state.notifications = state.notifications.map(notification => 
+          notification.id === action.payload.id ? selectedNotification : notification
+          )
+        }
+
+    },
     // purgeInvisibleNotifications: (state, action: PayloadAction<NotificationId>) => {
     //   console.log("removeNotification called")
     //   state.notifications.filter(
@@ -88,6 +106,6 @@ export const notificationsSlice = createSlice({
   }
 })
 
-export const { notification, prioritizeNotification } = notificationsSlice.actions
+export const { notification, prioritizeNotification, updateNotificationVisibility } = notificationsSlice.actions
 
 export default notificationsSlice.reducer

@@ -8,7 +8,9 @@ const nextConfig = {
     );
     return config;
   }, 
-  reactStrictMode: false // this is normally set to true 
+
+  reactStrictMode: false,  // this is normally set to true 
+  
 }
 
 module.exports = nextConfig

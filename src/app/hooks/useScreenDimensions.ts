@@ -9,7 +9,7 @@ export const useScreenDimensions = () => {
 
   const [dimensions, setDimensions] = useState({height: 1, width: 1});
 
-  console.log("dimensions: ", dimensions)
+  // console.log("dimensions: ", dimensions)
 
   const handleResize = () => {
     setDimensions({

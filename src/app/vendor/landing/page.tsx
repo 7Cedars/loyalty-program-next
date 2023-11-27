@@ -1,19 +1,22 @@
 "use client"; 
 import {loyaltyProgramAbi} from "../../../context/abi" 
-import { useAccount, useConnect, useDisconnect, useBalance, usePublicClient, useContractEvent, useContractReads } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { useContractLogs } from '@/app/hooks/useContractLogs';
 import { getContractEventsProps } from "@/types"
-import { useWeb3ModalState, useWeb3ModalEvents } from "@web3modal/wagmi/react";
 import { Log } from "viem";
 import ShowQrcode from './ShowQrcode';
-import { useEffect, useRef } from 'react';
+import { useDispatch } from "react-redux";
+import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { useLoyaltyProgramAddress } from "@/app/hooks/useUrl";
+import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 
 export default function Page()  {
   const { address, isReconnecting } = useAccount()
-  let parameters:getContractEventsProps = {abi: loyaltyProgramAbi}; 
+  const dispatch = useDispatch() 
   const { progAddress, handleProgAddress } = useLoyaltyProgramAddress()
 
+  // note that if not logged in, it loads ALL deployed loyalty programs. 
+  // need to optmise at later stage. 
   const {data, isError, isLoading} = useContractLogs(
     { 
       abi: loyaltyProgramAbi, 
@@ -24,11 +27,56 @@ export default function Page()  {
     }
   )
 
-  const selectedProgram:number | undefined = data.indexOf(item => item.address === progAddress);
+  console.log("progAddress: ", progAddress) 
+  if (address == undefined ) {
+    dispatch(notification({
+      id: "NotLoggedIn",
+      message: `Please log in at LINK HERE`, 
+      colour: "red", 
+      isVisible: true
+    }))
+    dispatch(updateModalVisible(false))
 
-  if (selectedProgram != undefined) {
-    return <ShowQrcode componentData = {data} selection = {0} /> // NB! 
-  } 
+    return null
+  }
+
+  const whichProgramSelected: boolean[] = data.map(item => item.address === progAddress); // naming of const's is still a bit ... iffy. 
+  const indexProgram: number = whichProgramSelected.indexOf(true); 
+
+  // NB! Need to implement actual redirecting to new page where necessary!
+  // first fix notifications...   
+  if (indexProgram != -1) {
+    return <ShowQrcode componentData = {data} selection = {indexProgram} /> // NB! 
+  } else {
+      if (data.length == 0) {
+        return (
+          <div> Zero deployed contracts. Invite to deploy program here </div>
+        )
+      }
+      if (data.length == 1) {
+        dispatch(notification({
+          id: "NotOwnerProgram",
+          message: `You do not own selected loyalty program, redirecting...`, 
+          colour: "red", 
+          isVisible: true
+        })); 
+
+        return (
+          <ShowQrcode componentData = {data} selection = {0} /> 
+        )
+      }
+      if (data.length > 1) {
+        dispatch(notification({
+          id: "NotOwnerProgram",
+          message: `You do not own selected loyalty program, redirecting...`, 
+          colour: "red", 
+          isVisible: true
+        })); 
+          return ( 
+            <div> Multiple deployed contracts. choose </div>
+          )
+      }
+  }
 
 
   // check if url address is owned by logged in address. 
@@ -41,34 +89,4 @@ export default function Page()  {
   // 1 address: is redirect to that page. 
   // 2 or more addresses: choose. 
 
-
-  let page: JSX.Element =  <div> ...  </div>; 
-
-
-
-  console.log("logged in address: ", address)
-  console.log("data: ", data)
-  console.log("parameters: ", parameters)
-
-  if (data) 
-  { 
-    if (data.length == 0) {page = (
-      <div> Zero deployed contracts. Invite to deploy program here </div>
-    )}
-    if (data.length == 1) {page = (
-      <ShowQrcode componentData = {data} selection = {0} /> 
-    )}
-    if (data.length > 1) {page = (
-      <div> Multiple deployed contracts. choose </div>
-    )}
-  }
-
-  return (
-    <div>
-    
-      {page }
-    
-    </div>
-        
-  );
 }

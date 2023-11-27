@@ -3,6 +3,7 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { NotificationDialog } from "./notificationDialog";
 
 type ModalProps = {
   // modalName: string; 
@@ -19,7 +20,7 @@ export const ModalDialog = ({
 }: ModalProps) => {
 
   // Note this ui modal dialog expects the use of redux. 
-  // I can change this in other apps if needed. 
+  // I can change this in other apps if needed.
   const dispatch = useAppDispatch()
   const { modalVisible } = useAppSelector(state => state.userInput) 
 
@@ -27,10 +28,12 @@ export const ModalDialog = ({
 
   return (
     
-      <div className="absolute w-full max-w-4xl  h-screen z-1 pt-20">
+      <div className="absolute w-full max-w-4xl h-screen z-1">
+        <div className="flex flex-col pt-20 h-full">
+        
+          <NotificationDialog/> 
         { modalVisible ? 
-        <div className="flex flex-col mb-20 h-full bg-slate-50/[.90] mx-8 rounded-t-lg z-8">
-  
+          <div className="flex flex-col mb-20 h-full bg-slate-50/[.90] mx-8 rounded-t-lg z-8">
             <div className="grow-0 flex justify-end"> 
               <button 
                   className="text-black font-bold pt-2 px-2"
@@ -43,12 +46,13 @@ export const ModalDialog = ({
                   />
               </button>
             </div>
-           <div className="h-full justify-center"> 
+            <div className="h-full justify-center"> 
 
             {children}
 
+            </div>
           </div>
-        </div>
+        
         :
         <button 
           className="w-full h-full"
@@ -57,7 +61,9 @@ export const ModalDialog = ({
           >
         </button>
       }
+      </div>
     </div>
+    
   )};
 
 

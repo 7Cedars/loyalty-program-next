@@ -30,5 +30,5 @@ export type Notification = {
   colour?: "red" | "yellow" | "green" | "gray" | "invisible"
   durationInMs?: number | "noTimer";
   progressInPercent?: number | "noProgress";
-  visible?: boolean; 
+  isVisible?: boolean; 
 }

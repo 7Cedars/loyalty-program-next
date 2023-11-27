@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector} from "@/redux/hooks"
 import { XMarkIcon } from "@heroicons/react/24/outline"
-import { notification } from "@/redux/reducers/notificationReducer"
+import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer"
 
 const colourSchemeDialog = { 
   red: `border-red-600 bg-red-300`, 
@@ -39,40 +39,43 @@ export const NotificationDialog = () => {
   const { notifications } = useAppSelector(state => state.notification)
   const dispatch = useAppDispatch()
 
-  const notificationToShow = notifications.findLast(notification => notification.visible !== false)
+  const notificationToShow = notifications.findLast(notification => notification.isVisible !== false)
   let colour: "red" | "yellow" | "green" | "gray" | "invisible" = "gray"
-  notificationToShow?.colour ? colour = notificationToShow?.colour : null 
+  notificationToShow?.colour ? colour = notificationToShow?.colour : "gray" 
+
+  console.log("notificationToShow: ", notificationToShow)
 
   // NB You can set colours dynamically in tailwind CSS. 
   // See: https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values
 
+  if (notificationToShow === undefined ) {
+    return null 
+  }
+
   return (
-    notificationToShow?.visible === undefined ||  notificationToShow?.visible === false ? null   
+    notificationToShow?.isVisible === false ? null  
     : 
-    <div className= {`absolute z-10 top-0 p-6 m-4 rounded-lg h-12 flex flex-row bg-slate-50/[.90] items-center ${colourSchemeDialog[colour]}`}> 
-        <div className={`grow flex flex-row justify-center ${colourSchemeText[colour]}`}>  
-          <div  className="pe-4 text-center"> 
+    <div className= {`p-2 mx-8 m-2 grow-0 rounded-lg h-10 flex flex-row bg-red-300 items-center ${colourSchemeDialog[colour]}`}> 
+        <div className={`grow flex flex-row justify-center text-red-800`}>  
+          <div className="pe-1 text-center"> 
           { notificationToShow.message  }
           </div>
         </div>
         <button 
-          className="font-bold text-lg px-1"
+          className="font-bold text-lg px-1 text-red-800"
           type="submit"
-          onClick={() => dispatch(notification({
+          onClick={() => dispatch(updateNotificationVisibility({
             id: notificationToShow.id,
-            message: "..", 
-            colour: "invisible", 
-            progressInPercent: 0, 
-            visible: false
+            isVisible: false
           }))}
           >
             <XMarkIcon
-              className={`h-6 w-6 content-center align-center ${colourSchemeXMarkIcon[colour]}`}
+              className={`h-6 w-6 content-center align-center text-red-800 `}
               aria-hidden="true"
             />
         </button>
       <div 
-        className={`absolute bottom-0 text-xs font-medium text-center leading-none rounded-bl-md h-1 ${colourProgressBar[colour]}`}
+        className={`absolute bottom-0 text-xs font-medium text-center leading-none rounded-bl-md h-1 text-red-800 `}
         style={{width:`${notificationToShow.progressInPercent}%`}}> . </div>
     </div>
   )

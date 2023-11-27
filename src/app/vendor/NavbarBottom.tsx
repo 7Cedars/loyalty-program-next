@@ -28,14 +28,14 @@ const NavbarBottom = ( ) => {
       dimensions.width >= 896 ? 
         dispatch(notification({
           id: "loggedIn",
-          visible: false
+          isVisible: false
         }))
         :
         dispatch(notification({
           id: "loggedIn",
           message: `logged in at: ${address}`, 
           colour: "gray", 
-          visible: true
+          isVisible: true
         }))
       :
       null
