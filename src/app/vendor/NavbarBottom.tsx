@@ -14,6 +14,7 @@ import { useScreenDimensions } from '../hooks/useScreenDimensions';
 import { useDispatch } from 'react-redux';
 import { useAccount } from 'wagmi';
 import { useEffect } from 'react';
+import { updateNotificationVisibility } from '@/redux/reducers/notificationReducer';
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
@@ -24,21 +25,30 @@ const NavbarBottom = ( ) => {
   const { address } = useAccount() 
 
   useEffect(() => {
-    dimensions ? 
-      dimensions.width >= 896 ? 
-        dispatch(notification({
+    if (dimensions && address) {
+      if (dimensions.width >= 896) {
+        dispatch(updateNotificationVisibility({
           id: "loggedIn",
           isVisible: false
         }))
-        :
+      }
+      if (dimensions.width <= 896 && dimensions.width >= 630) {
         dispatch(notification({
           id: "loggedIn",
           message: `logged in at: ${address}`, 
           colour: "gray", 
           isVisible: true
         }))
-      :
-      null
+      }
+      if (dimensions.width < 630 ) {
+        dispatch(notification({
+          id: "loggedIn",
+          message: `Logged in: ${address.slice(0,6)}...${address.slice(38,42)}`, 
+          colour: "gray", 
+          isVisible: true
+        }))
+      } 
+  }
   }, [dimensions, address, dispatch])
 
 

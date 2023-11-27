@@ -1,3 +1,4 @@
+import { JSXElementConstructor } from "react";
 import { CreateContractEventFilterParameters } from "viem";
 
 export interface getContractEventsProps extends CreateContractEventFilterParameters {
@@ -26,9 +27,20 @@ export interface SearchParams {
 
 export type Notification = {
   id: string;
+  // message?: JSXElementConstructor;
   message?: string;
+  linkText?: string; 
+  linkHref?: string; 
   colour?: "red" | "yellow" | "green" | "gray" | "invisible"
   durationInMs?: number | "noTimer";
   progressInPercent?: number | "noProgress";
   isVisible?: boolean; 
+}
+
+export type ProgramMetadata = {
+  description: string; 
+  image: string; 
+  vendorName: string; 
+  vendorAddress: string; 
+  vendorPhone?: string;
 }

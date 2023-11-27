@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector} from "@/redux/hooks"
 import { XMarkIcon } from "@heroicons/react/24/outline"
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer"
+import Link from "next/link"
 
 const colourSchemeDialog = { 
   red: `border-red-600 bg-red-300`, 
@@ -59,6 +60,12 @@ export const NotificationDialog = () => {
         <div className={`grow flex flex-row justify-center text-red-800`}>  
           <div className="pe-1 text-center"> 
           { notificationToShow.message  }
+
+          { notificationToShow.linkHref && notificationToShow.linkText ? 
+            <> <Link className = "underline" href= {notificationToShow.linkHref} > {notificationToShow.linkText} </Link> </> 
+            : 
+            null 
+          }
           </div>
         </div>
         <button 

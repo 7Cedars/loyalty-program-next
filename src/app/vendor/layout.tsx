@@ -12,12 +12,12 @@ export default function layout({
 }: {
   children: React.ReactNode
 }) {
-
+  
   return (   
  
     <div className="relative h-screen w-full grid grid-cols-1 justify-items-center bg-slate-100">
       <NavbarTop/>
-        <div className="flex justify-center w-full max-h-screen max-w-4xl bg-cover bg-center bg-[url('/img/CoffeeShopLoyaltyProgramNft.svg')]">  
+        <div className="flex justify-center w-full max-h-screen max-w-4xl bg-cover bg-center bg-[url('https://teal-opposite-tahr-194.mypinata.cloud/ipfs/QmeFibRsgCVAjGMfVJbk4hkMRAmfrmsoaQsj1Uk2PGpNd3')]">  
             <ModalDialog>
               {children}
             </ModalDialog>

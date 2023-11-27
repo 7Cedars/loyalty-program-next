@@ -4,8 +4,8 @@ import { useAccount } from 'wagmi'
 import { useWeb3Modal, useWeb3ModalState } from '@web3modal/wagmi/react';
 import { Button } from '@/app/ui/Button';
 import { useEffect, useState } from 'react';
-import { NotificationDialog } from '@/app/ui/notificationDialog';
-import { useLoyaltyProgramAddress } from '@/app/hooks/useUrl';
+import { useAppDispatch } from '@/redux/hooks';
+import { updateNotificationVisibility } from '@/redux/reducers/notificationReducer';
 
 export default function Page() {
   const { address, isConnecting, isDisconnected } = useAccount()
@@ -13,9 +13,7 @@ export default function Page() {
   const { selectedNetworkId } = useWeb3ModalState() 
   const [connectionNote, setConnectionNote] = useState("You need to connect to a network to use this app.")
   const [buttonText, setButtonText] = useState("Connect")
-
-
-
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (address && selectedNetworkId != undefined) {
@@ -23,9 +21,13 @@ export default function Page() {
       setButtonText(`On ${parseInt(selectedNetworkId)}`)
     }
   }, [selectedNetworkId, address])
+
+  dispatch(updateNotificationVisibility({
+    id: "NotLoggedIn",
+    isVisible: false
+  }))
   
   return (
-    
     <div className="absolute top-0 z-1 h-screen w-full flex items-center justify-center space-x-0"> 
       <div className="flex min-h-screen flex items-center justify-center">
           <div className='flex flex-col divide-y divide-gray-600 w-full justify-center'> 

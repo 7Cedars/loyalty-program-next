@@ -58,8 +58,11 @@ export const notificationsSlice = createSlice({
       // action.payload.durationInMs ? 
       //   state.notifications[index].durationInMs = action.payload.durationInMs : null
 
-      action.payload.isVisible ? 
-        state.notifications[index].isVisible = action.payload.isVisible : null
+      action.payload.linkText ? 
+        state.notifications[index].linkText = action.payload.linkText : null
+
+      action.payload.linkHref ? 
+        state.notifications[index].linkHref = action.payload.linkHref : null
 
       action.payload.progressInPercent ? 
         state.notifications[index].progressInPercent = action.payload.progressInPercent : null
