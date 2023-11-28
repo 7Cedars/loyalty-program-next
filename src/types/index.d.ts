@@ -52,3 +52,10 @@ export type TokenMetadata = {
   imageUri: string;
   attributes: Attribute[]
 }
+
+export type LoyaltyProgramMetadata = {
+  tokenAddress: EthAddress; 
+  uri: string | null; 
+  metadata: TokenMetadata | null
+  status: "loading" | "error" | "success"
+} 

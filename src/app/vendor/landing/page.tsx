@@ -1,37 +1,45 @@
 "use client"; 
 
 import { useLoyaltyPrograms } from "@/app/hooks/useLoyaltyPrograms";
+import { TitleText } from "@/app/ui/TitleText";
+import { LoyaltyProgramMetadata } from "@/types";
 
 export default function Page()  {
 
   const tempData: string[] = ["0x8464135c8f25da09e49bc8782676a84730c318bc", "0xbc9129dc0487fc2e169941c75aabc539f208fb01", "0x663f3ad617193148711d28f5334ee4ed07016602"]
-  const {loyaltyPrograms, metadata} = useLoyaltyPrograms() 
+  let {loggedIn, loyaltyPrograms, indexProgram} = useLoyaltyPrograms() 
 
-  console.log("loyaltyPrograms: ", loyaltyPrograms)
-  console.log("loyaltyPrograms metadata: ", metadata)
+  console.log("loyaltyPrograms at landing page: ", loyaltyPrograms)
 
   return (
-    <div className="grid grid-rows-1 grid-flow-col overflow-x-scroll overscroll-auto m-12"> 
-    {
-      tempData.map(item => {
 
-        return (
-          <div 
-            key={item}
-            className="ms-20 mt-20 w-96 h-128 border-2 border-red-500"
-            > {item} 
-          </div>
-        )
-      })
-    }
-      <div className="ms-20 mt-20 w-96 h-128 border-2 border-green-500"> 
+    <div> 
+      <TitleText title = "Choose Loyalty Program" subtitle="Choose existing program or deploy a new one." size={1} /> 
+      <div className="grid grid-rows-1 grid-flow-col overflow-x-scroll overscroll-auto m-12"> 
+      { loyaltyPrograms ? 
+        loyaltyPrograms.map((program: LoyaltyProgramMetadata) => {
 
-        And here comes an onboarding link 
+          return (
+            <div 
+              key={program.tokenAddress}
+              className="ms-20 mt-12 w-80 h-96 border-2 border-red-500"
+              > {program.uri} 
+            </div>
+          )
+        })
+        : 
+        null
+      }
+        <div className="ms-20 mt-12 w-80 h-96 border-2 border-green-500"> 
 
-      </div> 
+          And here comes an onboarding link 
+
+        </div> 
+      </div>
     </div>
-
-  ) 
+   
+    ) 
+  }
 
   // if (indexProgram != -1) {
   //   return <ShowQrcode componentData = {data} selection = {indexProgram} /> // NB! 
@@ -64,5 +72,3 @@ export default function Page()  {
   //         )
   //     }
   // }
-
-}

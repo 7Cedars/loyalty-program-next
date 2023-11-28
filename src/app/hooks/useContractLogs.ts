@@ -19,7 +19,7 @@ export const useContractLogs = (parameters: getContractEventsProps) => { // {add
 
   // adapted from: https://hackernoon.com/creating-a-custom-hook-for-fetching-asynchronus-data-useasync-hook-with-cache
   // and see https://stackoverflow.com/questions/57847626/using-async-await-inside-a-react-functional-component
-  console.log("parameters inside useContractLogs hook: ", parameters)
+  // console.log("parameters inside useContractLogs hook: ", parameters)
 
   useEffect(() => {
     const getData = async () => {  
