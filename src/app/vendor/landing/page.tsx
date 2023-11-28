@@ -1,61 +1,14 @@
 "use client"; 
-import {loyaltyProgramAbi} from "../../../context/abi" 
-import { useAccount, usePublicClient } from 'wagmi'
-import { useContractLogs } from '@/app/hooks/useContractLogs';
-import { EthAddress, getContractEventsProps } from "@/types"
-import { Log } from "viem";
-import ShowQrcode from './ShowQrcode';
-import { useDispatch } from "react-redux";
-import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
-import { useLoyaltyProgramAddress } from "@/app/hooks/useUrl";
-import { updateModalVisible } from "@/redux/reducers/userInputReducer";
-import Link from "next/link";
-import { useLoginAndProgram } from "@/app/hooks/useLoginAndPrograml";
-import { parseEthAddress } from "@/app/utils/parsers";
-import { useState, useRef, useEffect } from "react";
-import { parseUri } from "@/app/utils/parsers";
+
+import { useLoyaltyPrograms } from "@/app/hooks/useLoyaltyPrograms";
 
 export default function Page()  {
 
-  const { loggedIn, validProgram, data, indexProgram  } = useLoginAndProgram()  
-  const dispatch = useDispatch() 
-  const { progAddress, handleProgAddress } = useLoyaltyProgramAddress()
-  const publicClient = usePublicClient()
-  const uris = useRef<Array<string>>() 
-  const metadataPrograms = useRef<Array<object>>() 
   const tempData: string[] = ["0x8464135c8f25da09e49bc8782676a84730c318bc", "0xbc9129dc0487fc2e169941c75aabc539f208fb01", "0x663f3ad617193148711d28f5334ee4ed07016602"]
-  
-  const getUris = async(address: EthAddress) => {
-    const uri = await publicClient.readContract({
-      address: address, 
-      abi: loyaltyProgramAbi,
-      functionName: 'uri',
-      args: [0]
-    })
-    return uri
-  }
- 
-  const collectUriMetadata = async() => {
-      uris.current = [];  
-      for await (const address of tempData) {
-        // step 1: get & save Uris for metadata
-        const data: unknown = await getUris(parseEthAddress(address)) 
-        const uriMetadata = parseUri(data)
-        // step 2: get & save metadata
-        const fetchedMetadata: unknown = await (await fetch(uriMetadata)).json()
+  const {loyaltyPrograms, metadata} = useLoyaltyPrograms() 
 
-        console.log("fetchedMetadata: ", fetchedMetadata)
-        if (uriMetadata) {
-          uris.current.push(uriMetadata) 
-        }
-      }
-    }
-  
-  useEffect(() => {
-    collectUriMetadata() 
-  }, [])
-  
-  console.log("uriData.current: ", uris.current)
+  console.log("loyaltyPrograms: ", loyaltyPrograms)
+  console.log("loyaltyPrograms metadata: ", metadata)
 
   return (
     <div className="grid grid-rows-1 grid-flow-col overflow-x-scroll overscroll-auto m-12"> 

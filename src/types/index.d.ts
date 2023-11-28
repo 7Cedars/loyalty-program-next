@@ -24,6 +24,10 @@ export interface SearchParams {
   prog: EthAddress
 }
 
+export type DeployedLoyaltyProgramLog = {
+  address: EthAddress; 
+  blockHash: string;
+}
 
 export type Notification = {
   id: string;
@@ -37,10 +41,14 @@ export type Notification = {
   isVisible?: boolean; 
 }
 
-export type ProgramMetadata = {
+export type Attribute = {  
+  trait_type: string; 
+  value: string;
+}
+
+export type TokenMetadata = {
+  name: string; 
   description: string; 
-  image: string; 
-  vendorName: string; 
-  vendorAddress: string; 
-  vendorPhone?: string;
+  imageUri: string;
+  attributes: Attribute[]
 }

@@ -1,4 +1,10 @@
-import { EthAddress, ProgramMetadata } from "@/types";
+import { 
+  EthAddress, 
+  TokenMetadata, 
+  Attribute, 
+  DeployedLoyaltyProgramLog
+} from "@/types";
+import { Log } from "viem";
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -13,7 +19,44 @@ const isArray = (array: unknown): array is Array<string> => {
   return typeof array === 'string' || array instanceof Array;
 };
 
-export const parseEthAddress = (address: unknown): `0x${string}` => {
+const parseName = (name: unknown): string => {
+  if (!isString(name)) {
+    throw new Error(`Incorrect name, not a string: ${name}`);
+  }
+  // here can additional checks later. 
+
+  return name as string;
+};
+
+const parseDescription = (description: unknown): string => {
+  if (!isString(description)) {
+    throw new Error(`Incorrect uri, not a string: ${description}`);
+  }
+  // here can additional checks later. 
+
+  return description as string;
+};
+
+const parseTraitType = (description: unknown): string => {
+  if (!isString(description)) {
+    throw new Error(`Incorrect uri, not a string: ${description}`);
+  }
+  // here can additional checks later. 
+
+  return description as string;
+};
+
+
+const parseTraitValue = (description: unknown): string => {
+  if (!isString(description)) {
+    throw new Error(`Incorrect uri, not a string: ${description}`);
+  }
+  // here can additional checks later. 
+
+  return description as string;
+};
+
+export const parseEthAddress = (address: unknown): EthAddress => {
   if (!isString(address)) {
     throw new Error(`Incorrect address, not a string: ${address}`);
   }
@@ -24,19 +67,80 @@ export const parseEthAddress = (address: unknown): `0x${string}` => {
     throw new Error(`Incorrect address length: ${address}`);
   }
 
-  return address as `0x${string}`;
+  return address as EthAddress;
+};
+
+export const parseContractLogs = (logs: Log[]): DeployedLoyaltyProgramLog[] => {
+  if (!isArray(logs)) {
+    throw new Error(`Incorrect logs, not an array: ${logs}`);
+  }
+
+  try { 
+    const parsedLogs = logs.map((log: unknown) => {
+      if ( !log || typeof log !== 'object' ) {
+        throw new Error('Incorrect or missing data at log');
+      }
+
+      if (
+        'address' in log &&
+        'blockHash' in log
+        ) { return ({
+            address: parseTraitType(log.address),
+            blockHash: parseTraitValue(log.blockHash)
+          })
+        }
+        throw new Error('Incorrect data at LoyaltyProgram logs: some fields are missing or incorrect');
+    })
+
+    return parsedLogs as Array<DeployedLoyaltyProgramLog> 
+
+  } catch {
+    throw new Error('Incorrect data at LoyaltyProgram logs. Parser caught error');
+  }
+
+};
+
+
+export const parseAttributes = (attributes: unknown): Array<Attribute>  => {
+  if (!isArray(attributes)) {
+    throw new Error(`Incorrect attributes, not an array: ${attributes}`);
+  }
+
+  try { 
+    const parsedAttributes = attributes.map((attribute: unknown) => {
+      if ( !attribute || typeof attribute !== 'object' ) {
+        throw new Error('Incorrect or missing data at attribute');
+      }
+
+      if (
+        'trait_type' in attribute &&
+        'value' in attribute
+        ) { return ({
+            trait_type: parseTraitType(attribute.trait_type),
+            value: parseTraitValue(attribute.value)
+          })
+        }
+        throw new Error('Incorrect data at prgram Metadata: some fields are missing or incorrect');
+    })
+
+    return parsedAttributes as Array<Attribute> 
+
+  } catch {
+    throw new Error('Incorrect data at prgram Metadata: Parser caught error');
+  }
+
 };
 
 export const parseUri = (uri: unknown): string => {
   if (!isString(uri)) {
-    throw new Error(`Incorrect address, not a string: ${uri}`);
+    throw new Error(`Incorrect uri, not a string: ${uri}`);
   }
   // here can additional checks later. 
 
   return uri as string;
 };
 
-export const parseProgramMetadata = (metadata: unknown): ProgramMetadata => {
+export const parseProgramMetadata = (metadata: unknown): TokenMetadata => {
   if ( !metadata || typeof metadata !== 'object' ) {
     throw new Error('Incorrect or missing data');
   }
@@ -47,30 +151,12 @@ export const parseProgramMetadata = (metadata: unknown): ProgramMetadata => {
     'attributes' in metadata && 
     'image' in metadata 
       ) { return ({
-          name: parseId(item.id),
-          description: parseTimeStamp(item.start),
-          attributes: parseTimeStamp(item.end),
-          image: {id: toSpaceId(item.space)},
+          name: parseName(metadata.name),
+          description: parseDescription(metadata.description),
+          attributes: parseAttributes(metadata.attributes),
+          imageUri: parseUri(metadata.image),
         })
        }
-
-  if (!isString(uri)) {
-    throw new Error(`Incorrect address, not a string: ${uri}`);
-  }
-  // here can additional checks later. 
-
-  return uri as string;
+      
+       throw new Error('Incorrect data at prgram Metadata: some fields are missing or incorrect');
 };
-
-// export const toEthAddress = (object: unknown): EthAddress => {
-//   if ( !object || typeof object !== 'string' ) {
-//         throw new Error('Incorrect or missing data');
-//       }
-//   if ('a' in object )  
-//     {
-//       const address: EthAddress = parseEthAddress(object.a); 
-//       return address
-//     };
-
-//   throw new Error('Incorrect data at address: some fields are missing');
-// }

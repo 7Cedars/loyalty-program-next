@@ -5,7 +5,6 @@ import '../globals.css'
 import NavbarTop from "./NavbarTop"; 
 import NavbarBottom from './NavbarBottom';
 import { ModalDialog } from '../ui/ModalDialog';
-import { NotificationDialog } from '../ui/notificationDialog';
 
 export default function layout({
   children,

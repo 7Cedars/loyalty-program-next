@@ -6,16 +6,10 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { NotificationDialog } from "./notificationDialog";
 
 type ModalProps = {
-  // modalName: string; 
-  // title: string; 
-  // subtitle: string; 
   children: any;
 };
 
 export const ModalDialog = ({
-  // modalName, 
-  // title, 
-  // subtitle, 
   children 
 }: ModalProps) => {
 

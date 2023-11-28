@@ -42,7 +42,9 @@ export const useContractLogs = (parameters: getContractEventsProps) => { // {add
         getData()
       } 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [address]);
+    }, [address]); // NB! this needs to include chain Id UPDATE! 
+
+    console.log("data output inside useContractLogs hook: ", data)
 
   return data 
 }
