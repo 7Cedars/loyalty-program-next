@@ -18,10 +18,12 @@ Even though repository is public, For now, it is for personal use only.
 - [x] insert / develop todo.md file in each subpage. 
 - [x] setup redux store / notifications 
 - [ ] Build login page customer - use web3modal?
-- [ ] Build login page vendor - use web3modal?  
+- [x] Build login page vendor - use web3modal?  
 - [ ] build landing page customer: retrieve data from blockchain logs - to check what loyalty cards they hold. 
-- [ ] build landing page vendor: retrieve data from blockchain logs: what programs they deployed. 
-- [ ] ... 
+- [x] build landing page vendor: retrieve data from blockchain logs: what programs they deployed. 
+- [ ] Redo images so they fit in sizes I need for website. 
+- [ ] refactor login - do from topbar & notification menu. (if possible)
+- [ ] 
 
 
 ## Yarn / NEXT 

@@ -55,7 +55,7 @@ export type TokenMetadata = {
 
 export type LoyaltyProgramMetadata = {
   tokenAddress: EthAddress; 
-  uri: string | null; 
-  metadata: TokenMetadata | null
-  status: "loading" | "error" | "success"
+  uri: string; 
+  metadata: TokenMetadata 
+  status?: "loading" | "error" | "success"
 } 

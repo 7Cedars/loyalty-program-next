@@ -20,7 +20,7 @@
 // change in chain id. 
 
 import { useAccount } from "wagmi"
-import { useLoyaltyProgramAddress } from "./useUrl"
+import { useUrlProgramAddress } from "./useUrl"
 import { useContractLogs } from "./useContractLogs"
 import { useTokenMetadata } from "./useTokenMetadata"
 import { loyaltyProgramAbi } from "@/context/abi"
@@ -32,8 +32,8 @@ import { LoyaltyProgramMetadata } from "@/types"
 export const useLoyaltyPrograms = () => {
 
   let { address } = useAccount()
-  const { progAddress } = useLoyaltyProgramAddress()
-
+  const { progAddress } = useUrlProgramAddress()
+  const loyaltyPrograms = useRef<LoyaltyProgramMetadata[]>() 
   const status = useRef<"loading" | "error" | "success">() 
   status.current = "loading"
   const loggedIn = useRef<boolean>()
@@ -63,7 +63,7 @@ export const useLoyaltyPrograms = () => {
   console.log("loyaltyProgramsADDRESSES from useContractLogs at useLoyaltyProgram: ", loyaltyProgramsAddresses)
 
   // step 2: retrieve metadata of users loyalty programs. 
-  let loyaltyPrograms = useTokenMetadata(loyaltyProgramsAddresses)
+  loyaltyPrograms.current = useTokenMetadata(loyaltyProgramsAddresses)
   
   console.log("loyaltyPrograms METADATA from useTokenMetadata at useLoyaltyProgram: ", loyaltyPrograms)
 
@@ -73,7 +73,7 @@ export const useLoyaltyPrograms = () => {
 
   return {
     loggedIn: loggedIn.current,
-    // loyaltyPrograms: loyaltyPrograms.current, 
+    loyaltyPrograms: loyaltyPrograms.current, 
     indexProgram: indexProgram, 
     status: status.current
   }

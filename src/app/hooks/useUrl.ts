@@ -5,26 +5,23 @@ import {
   useRouter, 
   useSearchParams 
 } from 'next/navigation';
-import { 
-  getProgAddressFromUrlParams,
-} from "../utils/getDataFromUrl";
 import { getProgAddressFromUseSearchParams } from '../utils/getDataFromUseSearch';
 import { EthAddress } from '@/types';
 
-export function useLoyaltyProgramAddress() {
+export function useUrlProgramAddress() {
   const params = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
   const { progAddress }  = getProgAddressFromUseSearchParams(params);
 
-  const handleProgAddress = (progAddress: EthAddress) => {
-    console.log("handleProgAddress called.")
+  const putProgAddressInUrl = (progAddress: EthAddress) => {
+    console.log("putProgAddressInUrl called.")
     let newParams = new URLSearchParams(params.toString());
     newParams.set('prog', progAddress)
     router.push(`${pathname}?${newParams.toString()}`);
   };
 
-  return { progAddress, handleProgAddress };
+  return { progAddress, putProgAddressInUrl };
 }
 
 // export function useSpaces() {

@@ -24,8 +24,7 @@ export const useTokenMetadata = (tokenAddresses: EthAddress[]) => {
   const uriMetadataRef = useRef<Array<string>>() 
   const metadataRef = useRef<Array<TokenMetadata>>() 
   const programMetadata = useRef<Array<LoyaltyProgramMetadata>>() 
-  const { address } = useAccount() 
-  const [data, setData] = useState<string[]>([]) 
+  const { address } = useAccount()
 
   const getUris = async(address: EthAddress) => {
     const uri = await publicClient.readContract({
@@ -37,34 +36,40 @@ export const useTokenMetadata = (tokenAddresses: EthAddress[]) => {
     return uri
   }
 
-  console.log("tokenAddresses at useTokenMetadata: ", tokenAddresses)
+  console.log("tokenAddresses at before LOOP useTokenMetadata: ", tokenAddresses)
 
   useEffect(() => {
-    const collectUriMetadata = async() => {
-      
-      programMetadata.current = [{
-        tokenAddress: "0x0000000000000000000000000002",
-        uri: null, 
-        metadata: null, 
-        status: "loading"
-      }]
-
-      console.log("collectUriMetadata CALLED")
-
+    const getData = async() => {
+    
       try { 
         uriMetadataRef.current = []; 
         metadataRef.current = []; 
         const newData = []; 
+        let tokenAddress: string; 
+
         
-        for await (address of tokenAddresses)  
-          console.log("address in loop: ", address)
+        for await (tokenAddress of tokenAddresses) {
+          console.log("NB tokenAddress in LOOP: ", tokenAddress)
         
           // step 1: get & save Uris for metadata
-          const data: unknown = await getUris(parseEthAddress(address)) 
-          newData.push(parseUri(await getUris(parseEthAddress(address))))
-          setData(newData) 
+          const data: unknown = await getUris(parseEthAddress(tokenAddress)) 
+          console.log("DATA AT LOOP: ", data)
+
+          const fetchedMetadata: unknown = await (await fetch(parseUri(data))).json()
+          console.log("fetchedMetadata AT LOOP: ", fetchedMetadata)
+
+          newData.push({
+            tokenAddress: address ? address : "0x0", 
+            uri: parseUri(data), 
+            metadata: parseProgramMetadata(fetchedMetadata)
+          })
+
+          console.log("NEWDATA DURING LOOP: ", newData)
+        }
+        programMetadata.current = newData
+
+        console.log("programMetadata AFTER LOOP: ", programMetadata.current)
         
-          )
           // console.log("LOOP CALLED. Metadata fetched:", newData)
           
           // const fetchedMetadata: unknown = await (await fetch(parseUri(data))).json()
@@ -98,11 +103,11 @@ export const useTokenMetadata = (tokenAddresses: EthAddress[]) => {
       }
     }
 
-    if (uriMetadataRef.current == undefined || uriMetadataRef.current.length == 0 ) {
-      collectUriMetadata() 
+    if (programMetadata.current == undefined || programMetadata.current.length === 0 ) {
+      getData() 
     } 
 
-  }, [tokenAddresses, address])
+  }, [tokenAddresses])
 
   return programMetadata.current
 
