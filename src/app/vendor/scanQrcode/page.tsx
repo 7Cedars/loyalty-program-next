@@ -2,12 +2,27 @@
 import { QrReader } from 'react-qr-reader';
 import { useEffect, useState } from "react";
 import { useSearchParams, ReadonlyURLSearchParams } from 'next/navigation';
-
-
+import { useDispatch } from "react-redux";
+import { notification } from "@/redux/reducers/notificationReducer";
+import { useAccount } from 'wagmi';
+import { useRouter } from 'next/router';
 
 export default function Page() {
   const [data, setData] = useState('No result'); 
+  const {address} = useAccount();  
   const video = document.getElementsByTagName('video');
+  const dispatch = useDispatch();  
+  const router = useRouter() 
+
+  if (!address) {
+    // dispatch(notification({
+    //   id: "NotLoggedIn",
+    //   message: "You are not logged in. Redirected to login page", 
+    //   colour: "red", 
+    //   isVisible: true
+    // }))
+    // router.push(`/vendor/login`)
+  }
 
   return (
 

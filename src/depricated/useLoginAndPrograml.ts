@@ -1,7 +1,7 @@
 import { useAccount } from "wagmi"
 import { useDispatch } from "react-redux"
-import { useLoyaltyProgramAddress } from "./useUrl"
-import { useContractLogs } from "./useContractLogs"
+import { useUrlProgramAddress } from "../app/hooks/useUrl"
+import { useContractLogs } from "../app/hooks/useContractLogs"
 import { loyaltyProgramAbi } from "@/context/abi"
 import { notification } from "@/redux/reducers/notificationReducer"
 import { useRef } from "react"
@@ -11,7 +11,7 @@ export const useLoginAndProgram = () => {
 
   let { address } = useAccount()
   const dispatch = useDispatch() 
-  const { progAddress } = useLoyaltyProgramAddress()
+  const { progAddress } = useUrlProgramAddress()
 
   const loggedIn = useRef<boolean>()
   const validProgram = useRef<boolean>()
@@ -22,9 +22,7 @@ export const useLoginAndProgram = () => {
   if (address == undefined ) {
     dispatch(notification({
       id: "NotLoggedIn",
-      message: "You are not logged in.", 
-      linkText: "Go to login page.",
-      linkHref: "/vendor/login", 
+      message: "You are not logged in. Redirected to login page", 
       colour: "red", 
       isVisible: true
     }))

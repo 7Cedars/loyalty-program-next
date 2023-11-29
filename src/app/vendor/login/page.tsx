@@ -19,13 +19,12 @@ export default function Page() {
     if (address && selectedNetworkId != undefined) {
       setConnectionNote(`Connected to: ${address}`)
       setButtonText(`On ${parseInt(selectedNetworkId)}`)
+      dispatch(updateNotificationVisibility({
+        id: "NotLoggedIn",
+        isVisible: false
+      }))
     }
   }, [selectedNetworkId, address])
-
-  dispatch(updateNotificationVisibility({
-    id: "NotLoggedIn",
-    isVisible: false
-  }))
   
   return (
     <div className="absolute top-0 z-1 h-screen w-full flex items-center justify-center space-x-0"> 

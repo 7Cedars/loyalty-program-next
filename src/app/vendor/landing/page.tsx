@@ -9,27 +9,44 @@ import Image from "next/image";
 import { useAccount } from "wagmi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { useRouter } from 'next/navigation';
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { notification } from "@/redux/reducers/notificationReducer";
+import ShowQrcode from "./ShowQrcode";
 
 
 export default function Page()  {
   const { address }  = useAccount()
   const router = useRouter();
+  const dispatch = useDispatch() 
   const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
-  let {loggedIn, loyaltyPrograms, indexProgram} = useLoyaltyPrograms() 
+  let {data, logs, isLoading, indexProgram} = useLoyaltyPrograms() 
+  const [tokenAddresses, setTokenAddresses] = useState<string[]>()
 
-  console.log("ACCOUNT: ", address)
-
-  if (!address) {
-    // Here push message - redirecting... 
-    router.push(`/vendor/login`)
-  }
+  console.log("tokenAddresses: ", tokenAddresses, "loyaltyPrograms.data: ", data, "loyaltyPrograms.logs: ", logs)
 
   useEffect(() => {
+    const addresses = data?.map(item => item.tokenAddress)
+    setTokenAddresses(addresses)
 
   }, [address, progAddress])
 
+    // The following check might be good to put in custom hook. -- later. 
+    if (!address) {
+      //   // dispatch(notification({
+      //   //   id: "NotLoggedIn",
+      //   //   message: "You are not logged in. Redirected to login page", 
+      //   //   colour: "red", 
+      //   //   isVisible: true
+      //   // }))
+        router.push(`/vendor/login`)
+      }
+
+      console
+
+  if (indexProgram != -1 && data) {
+    return <ShowQrcode loyaltyProgram = {data[indexProgram]} /> // NB! 
+  } else { 
 
   return (
 
@@ -38,8 +55,8 @@ export default function Page()  {
       <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll overscroll-auto mb-12"> 
         {/* (The following div is an empty div for ui purposes)   */ }
         <div className="w-[16vw] h-96 ms-4 opacity-0 border-2 border-green-500" /> 
-        { loyaltyPrograms ? 
-          loyaltyPrograms.map((program: LoyaltyProgramMetadata) => {
+        { data ? 
+          data.map((program: LoyaltyProgramMetadata) => {
 
             return (
               <button 
@@ -75,6 +92,7 @@ export default function Page()  {
     </div>
    
     ) 
+      }
   }
 
   // if (indexProgram != -1) {

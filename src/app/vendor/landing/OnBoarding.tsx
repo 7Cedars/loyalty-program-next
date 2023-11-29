@@ -10,7 +10,7 @@ type InputProps = {
   selection: number
 }
 
-export default function ShowQrcode({componentData, selection}: InputProps)  {
+export default function OnBoarding({componentData, selection}: InputProps)  {
 
   const handler = () => {
     // empty placeholder for now. 
