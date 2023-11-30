@@ -37,6 +37,7 @@ export const notificationsSlice = createSlice({
           message: "",
           colour:  "gray",
           durationInMs: "noTimer",
+          loginButton: false, 
           progressInPercent: "noProgress",
           isVisible: true
         }
@@ -58,11 +59,8 @@ export const notificationsSlice = createSlice({
       // action.payload.durationInMs ? 
       //   state.notifications[index].durationInMs = action.payload.durationInMs : null
 
-      action.payload.linkText ? 
-        state.notifications[index].linkText = action.payload.linkText : null
-
-      action.payload.linkHref ? 
-        state.notifications[index].linkHref = action.payload.linkHref : null
+      action.payload.loginButton ? 
+        state.notifications[index].loginButton = action.payload.loginButton : null
 
       action.payload.progressInPercent ? 
         state.notifications[index].progressInPercent = action.payload.progressInPercent : null

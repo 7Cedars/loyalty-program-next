@@ -24,7 +24,7 @@ export interface SearchParams {
   prog: EthAddress
 }
 
-export type DeployedLoyaltyProgramLog = {
+export type DeployedContractLog = {
   address: EthAddress; 
   blockHash: string;
 }
@@ -33,8 +33,7 @@ export type Notification = {
   id: string;
   // message?: JSXElementConstructor;
   message?: string;
-  linkText?: string; 
-  linkHref?: string; 
+  loginButton?: boolean; 
   colour?: "red" | "yellow" | "green" | "gray" | "invisible"
   durationInMs?: number | "noTimer";
   progressInPercent?: number | "noProgress";
@@ -53,9 +52,15 @@ export type TokenMetadata = {
   attributes: Attribute[]
 }
 
-export type LoyaltyProgramMetadata = {
+export type LoyaltyProgram = {
   tokenAddress: EthAddress; 
   uri: string; 
   metadata: TokenMetadata 
-  status?: "loading" | "error" | "success"
+} 
+
+// for now type for program and token are the same - but might change in the future 
+export type LoyaltyToken = {
+  tokenAddress: EthAddress; 
+  uri: string; 
+  metadata: TokenMetadata 
 } 

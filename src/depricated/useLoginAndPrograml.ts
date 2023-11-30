@@ -1,7 +1,7 @@
 import { useAccount } from "wagmi"
 import { useDispatch } from "react-redux"
 import { useUrlProgramAddress } from "../app/hooks/useUrl"
-import { useContractLogs } from "../app/hooks/useContractLogs"
+import { useContractLogs } from "./useContractLogs"
 import { loyaltyProgramAbi } from "@/context/abi"
 import { notification } from "@/redux/reducers/notificationReducer"
 import { useRef } from "react"

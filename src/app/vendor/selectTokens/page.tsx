@@ -1,7 +1,12 @@
 "use client"; 
 import { ModalDialog } from "@/app/ui/ModalDialog";
+import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 
 export default function Page() {
+
+  const {data, logs, isLoading} = useLoyaltyTokens() 
+
+  console.log("data loyaltyTokens: ", data)
 
   return (
      <div className="h-screen w-full flex flex-row">

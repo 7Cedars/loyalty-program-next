@@ -1,7 +1,8 @@
 import { useAppDispatch, useAppSelector} from "@/redux/hooks"
 import { XMarkIcon } from "@heroicons/react/24/outline"
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer"
-import Link from "next/link"
+import { Button } from "./Button"
+import { useWeb3Modal } from "@web3modal/wagmi/react"
 
 const colourSchemeDialog = { 
   red: `border-red-600 bg-red-300`, 
@@ -38,6 +39,7 @@ const colourProgressBar = {
 
 export const NotificationDialog = () => {
   const { notifications } = useAppSelector(state => state.notification)
+  const { open, close } = useWeb3Modal()
   const dispatch = useAppDispatch()
 
   const notificationToShow = notifications.findLast(notification => notification.isVisible !== false)
@@ -60,13 +62,16 @@ export const NotificationDialog = () => {
         <div className={`grow flex flex-row justify-center text-red-800`}>  
           <div className="pe-1 text-center"> 
           { notificationToShow.message  }
-
-          { notificationToShow.linkHref && notificationToShow.linkText ? 
-            <> <Link className = "underline" href= {notificationToShow.linkHref} > {notificationToShow.linkText} </Link> </> 
-            : 
-            null 
-          }
           </div>
+
+          { notificationToShow.loginButton ? 
+            <div className="w-24 flex"> 
+              <Button size="sm" isFilled={false} onClick = {() => open({view: "Networks"})}> 
+               login
+              </Button>
+            </div> 
+            : null
+          } 
         </div>
         <button 
           className="font-bold text-lg px-1 text-red-800"
