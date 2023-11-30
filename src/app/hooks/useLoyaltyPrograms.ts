@@ -25,7 +25,7 @@ import { loyaltyProgramAbi } from "@/context/abi"
 import { useEffect, useRef } from "react"
 import { parseContractLogs, parseEthAddress } from "../utils/parsers"
 import { LoyaltyProgram, EthAddress, DeployedContractLog } from "@/types"
-import { parseUri, parseProgramMetadata } from "../utils/parsers"
+import { parseUri, parseMetadata } from "../utils/parsers"
 import { usePublicClient } from "wagmi"
 import { Log } from "viem"
 import { getContractEventsProps } from "@/types"
@@ -72,7 +72,7 @@ export const useLoyaltyPrograms = () => {
       const result = {
         tokenAddress: address ? address : "0x0000000000000000000000000000", 
         uri: parseUri(uri), 
-        metadata: parseProgramMetadata(fetchedMetadata)
+        metadata: parseMetadata(fetchedMetadata)
       }
 
       loyaltyProgramsData.current.data.push(result) 

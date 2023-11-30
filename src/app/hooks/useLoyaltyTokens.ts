@@ -18,11 +18,11 @@
 
 import { useAccount } from "wagmi"
 import { useUrlProgramAddress } from "./useUrl"
-import { loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi"
+import { loyaltyProgramAbi, loyaltyTokenAbi, implementedLoyaltyTokenAbi } from "@/context/abi"
 import { useEffect, useRef, useState } from "react"
 import { parseContractLogs, parseEthAddress } from "../utils/parsers"
 import { EthAddress, DeployedContractLog, LoyaltyToken } from "@/types"
-import { parseUri, parseProgramMetadata } from "../utils/parsers"
+import { parseUri, parseMetadata } from "../utils/parsers"
 import { usePublicClient } from "wagmi"
 import { Log } from "viem"
 import { getContractEventsProps } from "@/types"
@@ -42,19 +42,24 @@ export const useLoyaltyTokens = () => {
   })
 
   const getLogs = async (parameters: getContractEventsProps) => {
+    console.log("parameters at getLogs: ", parameters)
 
     try {
         const res: Log[] = await publicClient.getContractEvents(parameters); 
+        console.log("res: ", res)
         loyaltyTokensData.current.logs = parseContractLogs(res); 
+        console.log("loyaltyTokensData inside getlogs: ", loyaltyTokensData.current)
         return loyaltyTokensData; 
       } catch (error) {
-        const result = { data: [], logs:[], isError: error, isLoading: false };
+        const result = {...loyaltyTokensData.current, isError: error };
         loyaltyTokensData.current = result; 
         return loyaltyTokensData; 
       }
   }
 
   const getMetadata = async(address: EthAddress) => {
+
+    console.log("getMetadata called")
     
     try {
       const uri: unknown = await publicClient.readContract({
@@ -63,32 +68,49 @@ export const useLoyaltyTokens = () => {
         functionName: 'uri',
         args: [0]
       })
-      
+
+      console.log("retrieved uri at loyaltyToken: ", uri) 
+
       const fetchedMetadata: unknown = await(
         await fetch(parseUri(uri))
         ).json()
+
+      console.log("fetchedMetadata at loyaltyToken, getMetadata: ", fetchedMetadata) 
+      
       const result = {
         tokenAddress: address ? address : "0x0000000000000000000000000000", 
         uri: parseUri(uri), 
-        metadata: parseProgramMetadata(fetchedMetadata)
+        metadata: parseMetadata(fetchedMetadata)
       }
 
+      console.log("result at loyaltyToken, getMetadata: ", result) 
+
       loyaltyTokensData.current.data.push(result) 
+
+      console.log("loyaltyTokensData at loyaltyToken, getMetadata: ", loyaltyTokensData.current) 
+
       return result
 
     } catch(error) {
-      const result = { data: [], logs:[], isError: error, isLoading: false };
+      const result = { ...loyaltyTokensData.current, isError: error };
       loyaltyTokensData.current = result; 
       return loyaltyTokensData; 
     }
   }
 
   const getData = async () => {
+    loyaltyTokensData.current = ({
+      data: [],
+      logs: [], 
+      isError: null,
+      isLoading: false,
+    })
 
-    const loyaltyTokensData = await getLogs(
+    const data = await getLogs(
       { 
         abi: loyaltyTokenAbi, 
-        eventName: 'URI', 
+        // abi: loyaltyProgramAbi, 
+        eventName: 'DiscoverableLoyaltyToken', 
         // standard account 4 from Anvil chain -- for me this is the one that deploys the contracts.   
         // note that this can be used to whitelist sources of loyalty token addresses.  
         args: {issuer: "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65"}, 
@@ -97,17 +119,15 @@ export const useLoyaltyTokens = () => {
       }
     )
 
-    console.log("loyaltyTokensData: ", loyaltyTokensData)
-
     const tokenAddresses = loyaltyTokensData.current.logs.map(item => item.address)
     let tokenAddress: EthAddress; 
 
     try { 
       for await (tokenAddress of tokenAddresses) {
-        // console.log("NB tokenAddress in LOOP BEFORE calling getMetadata: ", tokenAddress)
+        console.log("NB tokenAddress in LOOP BEFORE calling getMetadata @loyaltytokens: ", tokenAddress)
         const metaDatatoken = await getMetadata(tokenAddress)
 
-        // console.log("metaDatatoken AFTER calling getMetadata: ", metaDatatoken)
+        console.log("metaDatatoken AFTER calling getMetadata @loyaltytokens: ", metaDatatoken)
       }
     } catch (error) {
       return ({
