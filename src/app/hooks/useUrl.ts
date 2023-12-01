@@ -14,11 +14,15 @@ export function useUrlProgramAddress() {
   const router = useRouter();
   const { progAddress }  = getProgAddressFromUseSearchParams(params);
 
-  const putProgAddressInUrl = (progAddress: EthAddress) => {
+  const putProgAddressInUrl = (progAddress: EthAddress | null) => {
     console.log("putProgAddressInUrl called.")
     let newParams = new URLSearchParams(params.toString());
-    newParams.set('prog', progAddress)
-    router.push(`${pathname}?${newParams.toString()}`);
+    if (progAddress) {
+      newParams.set('prog', progAddress)
+      router.push(`${pathname}?${newParams.toString()}`);
+    } else {
+      router.push(`${pathname}`);
+    }
   };
 
   return { progAddress, putProgAddressInUrl };

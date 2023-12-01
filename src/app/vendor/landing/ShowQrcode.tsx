@@ -1,3 +1,5 @@
+// NB DEPRICATED 
+
 import QRCode from "react-qr-code";
 import { Log } from "viem";
 import { Button } from "@/app/ui/Button";

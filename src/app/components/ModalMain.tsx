@@ -1,23 +1,5 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { updateModalVisible } from "@/redux/reducers/userInputReducer";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { NotificationDialog } from "../ui/notificationDialog";
-
-type ModalProps = {
-  children: any;
-};
-
-export const ModalMain = ({
-  children 
-}: ModalProps) => {
-
-  // Note this ui modal dialog expects the use of redux. 
-  // I can change this in other apps if needed.
-  const dispatch = useAppDispatch()
-  const { modalVisible } = useAppSelector(state => state.userInput) 
-
   // Here I can implement enforcement of login and valid accound and customer loyalty cards
   // - at each page check for login and valid card. 
   // - if not: send update to dedicated redux reducer
@@ -31,6 +13,71 @@ export const ModalMain = ({
   // This way: all this complexity is kept away from each page... 
 
   // later implement transitioning. WIP 
+
+  
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { updateModalVisible } from "@/redux/reducers/userInputReducer";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { NotificationDialog } from "../ui/notificationDialog";
+import { useAccount } from "wagmi";
+import { useUrlProgramAddress } from "../hooks/useUrl";
+import { useLoyaltyPrograms } from "../hooks/useLoyaltyPrograms";
+import { useState, useEffect } from "react";
+import { EthAddress, LoyaltyProgram } from "@/types";
+import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
+import { parseEthAddress } from "../utils/parsers";
+
+type ModalProps = {
+  children: any;
+};
+
+export const ModalMain = ({
+  children 
+}: ModalProps) => {
+
+  // Note this ui modal dialog expects the use of redux. 
+  // I can change this in other apps if needed.
+  const dispatch = useAppDispatch()
+  const { modalVisible } = useAppSelector(state => state.userInput) 
+  const { address }  = useAccount()
+
+  const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
+  let {data, logs, isLoading} = useLoyaltyPrograms() 
+  const [selectedProgram, setSelectedProgram] = useState<EthAddress>()
+  const [ownedPrograms, setOwnedPrograms] = useState<LoyaltyProgram[]>()
+
+  console.log("ownedPrograms: ", ownedPrograms, "selectedProgram: ", selectedProgram)
+
+
+
+  if (!address) {
+    dispatch(notification({
+      id: "NotLoggedIn",
+      message: "You are not connected to a network.", 
+      colour: "red",
+      loginButton: true, 
+      isVisible: true
+    }))
+  } 
+
+  useEffect(() => {
+    const indexProgram = logs.findIndex(item => item.address === progAddress); 
+
+    if (indexProgram !== -1 && progAddress) {
+      setSelectedProgram(parseEthAddress(progAddress))
+      
+      dispatch(updateNotificationVisibility({
+        id: "LoggedIn",
+        isVisible: false
+      }))
+    }
+    if (data) {
+      setOwnedPrograms(data)
+    }
+
+  }, [ , address, progAddress, data])
+
+
 
   return (
     
