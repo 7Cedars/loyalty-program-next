@@ -16,6 +16,7 @@ import { useAccount } from 'wagmi';
 import { useEffect } from 'react';
 import { updateNotificationVisibility } from '@/redux/reducers/notificationReducer';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { useUrlProgramAddress } from '../hooks/useUrl';
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
@@ -25,33 +26,7 @@ const NavbarBottom = ( ) => {
   const dispatch = useDispatch() 
   const { address } = useAccount() 
   const { open, close } = useWeb3Modal()
-
-  useEffect(() => {
-    if (dimensions && address) {
-      if (dimensions.width >= 896) {
-        dispatch(updateNotificationVisibility({
-          id: "loggedIn",
-          isVisible: false
-        }))
-      }
-      if (dimensions.width <= 896 && dimensions.width >= 630) {
-        dispatch(notification({
-          id: "loggedIn",
-          message: `logged in at: ${address}`, 
-          colour: "gray", 
-          isVisible: true
-        }))
-      }
-      if (dimensions.width < 630 ) {
-        dispatch(notification({
-          id: "loggedIn",
-          message: `Logged in: ${address.slice(0,6)}...${address.slice(38,42)}`, 
-          colour: "gray", 
-          isVisible: true
-        }))
-      } 
-  }
-  }, [dimensions, address, dispatch])
+  const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
 
 
   return (
@@ -60,7 +35,7 @@ const NavbarBottom = ( ) => {
     :
     <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-stone-50/75 text-sm border-t border-gray-400 ps-8 pe-8">
       
-        <Link href='/vendor/landing' className={layoutLinks}> 
+        <Link href={progAddress ? `/vendor/landing?prog=${progAddress}` : '/vendor/landing'}  className={layoutLinks}> 
           <div className='col-span-1 grid text-xs justify-items-center'> 
             <QrCodeIcon
               className={layoutIcons}
@@ -69,7 +44,7 @@ const NavbarBottom = ( ) => {
             Home
           </div> 
         </Link>
-        <Link href='/vendor/scanQrcode' className={layoutLinks}> 
+        <Link href={progAddress ? `/vendor/scanQrcode?prog=${progAddress}` : '/vendor/scanQrcode'} className={layoutLinks}> 
           <div className={layoutIconBox}> 
             <GiftIcon
               className={layoutIcons}
@@ -78,7 +53,7 @@ const NavbarBottom = ( ) => {
             Gift & Redeem
           </div>  
         </Link>
-        <Link href='/vendor/selectTokens'   className={layoutLinks}> 
+        <Link href={progAddress ? `/vendor/selectTokens?prog=${progAddress}` : '/vendor/selectTokens' } className={layoutLinks}> 
           <div className={layoutIconBox}> 
             <SquaresPlusIcon
               className={layoutIcons}
@@ -87,7 +62,7 @@ const NavbarBottom = ( ) => {
             Tokens
           </div> 
         </Link>
-        <Link href='/vendor/stats'  className={layoutLinks}> 
+        <Link href={progAddress ? `/vendor/stats?prog=${progAddress}` : '/vendor/stats' }  className={layoutLinks}> 
           <div className={layoutIconBox}> 
             <ChartBarSquareIcon
               className={layoutIcons}

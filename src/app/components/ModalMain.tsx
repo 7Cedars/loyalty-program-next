@@ -14,7 +14,7 @@
 
   // later implement transitioning. WIP 
 
-  
+
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -26,6 +26,7 @@ import { useState, useEffect } from "react";
 import { EthAddress, LoyaltyProgram } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { parseEthAddress } from "../utils/parsers";
+import ChooseProgram from "./ChooseProgram";
 
 type ModalProps = {
   children: any;
@@ -45,39 +46,46 @@ export const ModalMain = ({
   let {data, logs, isLoading} = useLoyaltyPrograms() 
   const [selectedProgram, setSelectedProgram] = useState<EthAddress>()
   const [ownedPrograms, setOwnedPrograms] = useState<LoyaltyProgram[]>()
+  const [userLoggedIn, setUserLoggedIn] = useState<boolean>(false) 
 
-  console.log("ownedPrograms: ", ownedPrograms, "selectedProgram: ", selectedProgram)
+  console.log("address at ModalMain: ", address)
 
+  useEffect(() => {
+    if (!address) {
+      dispatch(notification({
+        id: "NotLoggedIn",
+        message: "You are not connected to a network.", 
+        colour: "red",
+        loginButton: true, 
+        isVisible: true
+      }))
+      setUserLoggedIn(false)
+    }    
+    
+    if (address) {
+      dispatch(updateNotificationVisibility({
+        id: "NotLoggedIn",
+        isVisible: false
+      }))
+      setUserLoggedIn(true)
+    }
 
+  }, [ , address])
 
-  if (!address) {
-    dispatch(notification({
-      id: "NotLoggedIn",
-      message: "You are not connected to a network.", 
-      colour: "red",
-      loginButton: true, 
-      isVisible: true
-    }))
-  } 
-
+  // WIP 
+  // NB! I still need to check if progAddress is owned by user! 
   useEffect(() => {
     const indexProgram = logs.findIndex(item => item.address === progAddress); 
 
     if (indexProgram !== -1 && progAddress) {
       setSelectedProgram(parseEthAddress(progAddress))
-      
-      dispatch(updateNotificationVisibility({
-        id: "LoggedIn",
-        isVisible: false
-      }))
     }
+
     if (data) {
       setOwnedPrograms(data)
     }
 
   }, [ , address, progAddress, data])
-
-
 
   return (
     
@@ -86,7 +94,7 @@ export const ModalMain = ({
         
         <NotificationDialog/> 
         
-        { modalVisible ? 
+        { modalVisible && userLoggedIn? 
           <div className="flex flex-col mt-2 h-full bg-slate-50/[.90] mx-8 rounded-t-lg z-8">
             <div className="grow-0 flex justify-end"> 
               <button 
@@ -102,7 +110,7 @@ export const ModalMain = ({
             </div>
             <div className="h-full justify-center"> 
 
-            {children}
+            {progAddress ? children : <ChooseProgram /> } 
 
             </div>
           </div>

@@ -7,8 +7,7 @@ import { useAccount,  } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { useWeb3ModalState } from '@web3modal/wagmi/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
-
-
+import { useUrlProgramAddress } from '../hooks/useUrl';
 
 const NavbarTop = ( ) => {
   const dimensions = useScreenDimensions();
@@ -17,6 +16,7 @@ const NavbarTop = ( ) => {
   const { selectedNetworkId } = useWeb3ModalState() 
   const [text, setText] = useState('')
   const { open, close } = useWeb3Modal()
+  const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
 
   useEffect(() => {
     if (address && selectedNetworkId != undefined) {
@@ -32,10 +32,10 @@ const NavbarTop = ( ) => {
       :
       <header className="absolute top-0 z-10 flex justify-between h-18 w-full text-sm border-b border-gray-400 bg-slate-50 px-6">
         <div className="flex divide-x p-3 divide-gray-400">
-          <Link href='/vendor/landing' className={layoutLinks}> Home </Link>
-          <Link href='/vendor/scanQrcode'  className={layoutLinks}> Gift & Redeem </Link>
-          <Link href='/vendor/selectTokens'  className={layoutLinks}> Select tokens </Link>
-          <Link href='/vendor/stats'  className={layoutLinks}> Stats </Link>
+          <Link href={progAddress ? `/vendor/landing?prog=${progAddress}` : '/vendor/landing'} className={layoutLinks}> Home </Link>
+          <Link href={progAddress ? `/vendor/scanQrcode?prog=${progAddress}` : '/vendor/scanQrcode'}  className={layoutLinks}> Gift & Redeem </Link>
+          <Link href={progAddress ? `/vendor/selectTokens?prog=${progAddress}` : '/vendor/selectTokens' }  className={layoutLinks}> Select tokens </Link>
+          <Link href={progAddress ? `/vendor/stats?prog=${progAddress}` : '/vendor/stats' }  className={layoutLinks}> Stats </Link>
         </div> 
         <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )}> 
            {text} 

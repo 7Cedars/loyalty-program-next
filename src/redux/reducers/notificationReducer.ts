@@ -81,6 +81,7 @@ export const notificationsSlice = createSlice({
       }
     }, 
     updateNotificationVisibility: (state, action: PayloadAction< UpdateVisibiltyProps >) => {
+      console.log("updateNotificationVisibility CALLED: ", action.payload)
 
       const selectedNotification = state.notifications.find(notification => notification.id === action.payload.id)
       if (selectedNotification) { 

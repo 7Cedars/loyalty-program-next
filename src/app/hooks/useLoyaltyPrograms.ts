@@ -102,7 +102,7 @@ export const useLoyaltyPrograms = () => {
     try { 
       for await (tokenAddress of tokenAddresses) {
         const metaDatatoken = await getMetadata(tokenAddress)
-        console.log("metaDatatoken at useLoyaltyProgram: ", metaDatatoken)
+        // console.log("metaDatatoken at useLoyaltyProgram: ", metaDatatoken)
       }
     } catch (error) {
       loyaltyProgramsData.current.isError = error; 

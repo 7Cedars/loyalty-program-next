@@ -127,7 +127,7 @@ export const useLoyaltyTokens = () => {
         // console.log("NB tokenAddress in LOOP BEFORE calling getMetadata @loyaltytokens: ", tokenAddress)
         const metaDatatoken = await getMetadata(tokenAddress)
 
-        console.log("metaDatatoken AFTER calling getMetadata @loyaltytokens: ", metaDatatoken)
+        // console.log("metaDatatoken AFTER calling getMetadata @loyaltytokens: ", metaDatatoken)
       }
     } catch (error) {
       return ({
