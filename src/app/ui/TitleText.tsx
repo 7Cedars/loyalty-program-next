@@ -1,6 +1,6 @@
 type TitleTextProps = {
   title: string; 
-  subtitle: string;
+  subtitle?: string;
   size?: 0 | 1 | 2;
 }
 

@@ -1,5 +1,7 @@
 "use client"; 
 
+// NB DEPRICATED. 
+
 import { useAccount } from 'wagmi'
 import { useWeb3Modal, useWeb3ModalState } from '@web3modal/wagmi/react';
 import { Button } from '@/app/ui/Button';

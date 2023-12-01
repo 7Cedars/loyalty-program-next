@@ -42,13 +42,13 @@ export const useLoyaltyTokens = () => {
   })
 
   const getLogs = async (parameters: getContractEventsProps) => {
-    console.log("parameters at getLogs: ", parameters)
+    // console.log("parameters at getLogs: ", parameters)
 
     try {
         const res: Log[] = await publicClient.getContractEvents(parameters); 
-        console.log("res: ", res)
+        // console.log("res: ", res)
         loyaltyTokensData.current.logs = parseContractLogs(res); 
-        console.log("loyaltyTokensData inside getlogs: ", loyaltyTokensData.current)
+        // console.log("loyaltyTokensData inside getlogs: ", loyaltyTokensData.current)
         return loyaltyTokensData; 
       } catch (error) {
         const result = {...loyaltyTokensData.current, isError: error };
@@ -59,7 +59,7 @@ export const useLoyaltyTokens = () => {
 
   const getMetadata = async(address: EthAddress) => {
 
-    console.log("getMetadata called")
+    // console.log("getMetadata called")
     
     try {
       const uri: unknown = await publicClient.readContract({
@@ -69,13 +69,13 @@ export const useLoyaltyTokens = () => {
         args: [0]
       })
 
-      console.log("retrieved uri at loyaltyToken: ", uri) 
+      // console.log("retrieved uri at loyaltyToken: ", uri) 
 
       const fetchedMetadata: unknown = await(
         await fetch(parseUri(uri))
         ).json()
 
-      console.log("fetchedMetadata at loyaltyToken, getMetadata: ", fetchedMetadata) 
+      // console.log("fetchedMetadata at loyaltyToken, getMetadata: ", fetchedMetadata) 
       
       const result = {
         tokenAddress: address ? address : "0x0000000000000000000000000000", 
@@ -83,11 +83,11 @@ export const useLoyaltyTokens = () => {
         metadata: parseMetadata(fetchedMetadata)
       }
 
-      console.log("result at loyaltyToken, getMetadata: ", result) 
+      // console.log("result at loyaltyToken, getMetadata: ", result) 
 
       loyaltyTokensData.current.data.push(result) 
 
-      console.log("loyaltyTokensData at loyaltyToken, getMetadata: ", loyaltyTokensData.current) 
+      // console.log("loyaltyTokensData at loyaltyToken, getMetadata: ", loyaltyTokensData.current) 
 
       return result
 
@@ -124,7 +124,7 @@ export const useLoyaltyTokens = () => {
 
     try { 
       for await (tokenAddress of tokenAddresses) {
-        console.log("NB tokenAddress in LOOP BEFORE calling getMetadata @loyaltytokens: ", tokenAddress)
+        // console.log("NB tokenAddress in LOOP BEFORE calling getMetadata @loyaltytokens: ", tokenAddress)
         const metaDatatoken = await getMetadata(tokenAddress)
 
         console.log("metaDatatoken AFTER calling getMetadata @loyaltytokens: ", metaDatatoken)

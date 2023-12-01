@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import { useAccount } from 'wagmi';
 import { useEffect } from 'react';
 import { updateNotificationVisibility } from '@/redux/reducers/notificationReducer';
+import { useWeb3Modal } from '@web3modal/wagmi/react';
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
@@ -23,6 +24,7 @@ const NavbarBottom = ( ) => {
   const layoutIcons: string = 'h-7 w-7'
   const dispatch = useDispatch() 
   const { address } = useAccount() 
+  const { open, close } = useWeb3Modal()
 
   useEffect(() => {
     if (dimensions && address) {
@@ -94,7 +96,7 @@ const NavbarBottom = ( ) => {
             Stats 
           </div> 
         </Link>
-        <Link href='/vendor/login' className={layoutLinks}> 
+        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )}> 
           <div className={layoutIconBox}> 
             <ArrowRightOnRectangleIcon
               className={layoutIcons}
@@ -102,7 +104,7 @@ const NavbarBottom = ( ) => {
             />
             Login 
           </div> 
-        </Link>
+        </button>
     </header>
   );
 }

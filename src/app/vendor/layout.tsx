@@ -1,10 +1,10 @@
-"use client"; // NB: normally you would not do this, but I need redux here for 
+// "use client"; // NB: normally you would not do this, but I need redux here for 
 // notification area, and otherwise it will not load... 
 
 import '../globals.css'
 import NavbarTop from "./NavbarTop"; 
 import NavbarBottom from './NavbarBottom';
-import { ModalDialog } from '../ui/ModalDialog';
+import { ModalMain } from '../components/ModalMain';
 
 export default function layout({
   children,
@@ -16,10 +16,10 @@ export default function layout({
  
     <div className="relative h-screen w-full grid grid-cols-1 justify-items-center bg-slate-100">
       <NavbarTop/>
-        <div className="flex justify-center w-full max-h-screen max-w-4xl bg-cover bg-center bg-[url('https://teal-opposite-tahr-194.mypinata.cloud/ipfs/QmeFibRsgCVAjGMfVJbk4hkMRAmfrmsoaQsj1Uk2PGpNd3')]">  
-            <ModalDialog>
+        <div className="flex justify-center w-full max-h-screen max-w-4xl">  
+            <ModalMain>
               {children}
-            </ModalDialog>
+            </ModalMain>
             <NavbarBottom/>
           </div>
       </div>

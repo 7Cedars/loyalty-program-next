@@ -6,6 +6,8 @@ import { useScreenDimensions } from '../hooks/useScreenDimensions';
 import { useAccount,  } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { useWeb3ModalState } from '@web3modal/wagmi/react';
+import { useWeb3Modal } from '@web3modal/wagmi/react';
+
 
 
 const NavbarTop = ( ) => {
@@ -14,6 +16,7 @@ const NavbarTop = ( ) => {
   const { address, isConnecting, isDisconnected } = useAccount()
   const { selectedNetworkId } = useWeb3ModalState() 
   const [text, setText] = useState('')
+  const { open, close } = useWeb3Modal()
 
   useEffect(() => {
     if (address && selectedNetworkId != undefined) {
@@ -34,9 +37,9 @@ const NavbarTop = ( ) => {
           <Link href='/vendor/selectTokens'  className={layoutLinks}> Select tokens </Link>
           <Link href='/vendor/stats'  className={layoutLinks}> Stats </Link>
         </div> 
-        <div className="flex divide-x p-3 divide-gray-400"> 
-          <Link href='/vendor/login' className={layoutLinks}> {text} </Link>
-        </div>
+        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )}> 
+           {text} 
+        </button>
 
       </header>
       );
