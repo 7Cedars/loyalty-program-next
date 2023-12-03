@@ -57,7 +57,10 @@ export const useLoyaltyPrograms = () => {
       }
   }
 
-  const getMetadata = async(address: EthAddress) => {
+  const getMetadata = async (address: EthAddress): Promise<LoyaltyProgram[]>  => {
+
+    let metadata: LoyaltyProgram[] = [] 
+
     try {
       const uri: unknown = await publicClient.readContract({
         address: address, 
@@ -75,14 +78,15 @@ export const useLoyaltyPrograms = () => {
         metadata: parseMetadata(fetchedMetadata)
       }
 
-      loyaltyProgramsData.current.data.push(result) 
-      return result
+      metadata.push(result) 
+      // return result
 
     } catch(error) {
-      const result = { data: [], logs:[], isError: error, isLoading: false };
+      const result = {...loyaltyProgramsData.current, isError: error, isLoading: false };
       loyaltyProgramsData.current = result; 
-      return loyaltyProgramsData; 
     }
+
+    return metadata
   }
 
   const getData = async (ownerAddress: EthAddress) => {
@@ -102,6 +106,9 @@ export const useLoyaltyPrograms = () => {
     try { 
       for await (tokenAddress of tokenAddresses) {
         const metaDatatoken = await getMetadata(tokenAddress)
+        loyaltyProgramsData.current.data = metaDatatoken; 
+
+
         // console.log("metaDatatoken at useLoyaltyProgram: ", metaDatatoken)
       }
     } catch (error) {
@@ -111,10 +118,11 @@ export const useLoyaltyPrograms = () => {
   } 
 
   useEffect(() => {
-    // step 1: empty ref & set to loading. 
-    if (address) { 
-      getData(parseEthAddress(address))
+    const fetchData = async () => {
+      await getData(parseEthAddress(address)); 
     }
+
+    if (address) { fetchData() }
   }, [ , address]) // also has to update with change in chain id. -- implement later. 
 
   return loyaltyProgramsData.current

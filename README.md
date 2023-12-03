@@ -11,20 +11,47 @@ Even though repository is public, For now, it is for personal use only.
 - eventually deploy on multiple blockchains. 
 - Design of solidity frontend is on my Figma. 
 
-## Development / TO DO
-### Detailed to do's are in each separate page.  
-- [x] setup page layout of customer app   
-- [x] setup page layout of vendor app
-- [x] insert / develop todo.md file in each subpage. 
-- [x] setup redux store / notifications 
-- [ ] Build login page customer - use web3modal?
-- [x] Build login page vendor - use web3modal?  
-- [ ] build landing page customer: retrieve data from blockchain logs - to check what loyalty cards they hold. 
-- [x] build landing page vendor: retrieve data from blockchain logs: what programs they deployed. 
-- [ ] Redo images so they fit in sizes I need for website. 
-- [ ] refactor login - do from topbar & notification menu. (if possible)
-- [ ] 
-
+## Todo   
+- [ ] Implement standardised fonts: also font for 'nothing selected' texts. 
+- [ ] Implement picture of selected loyalty program in background. 
+- [ ] Develop landing page 
+  - [ ]  Insert correct (standardised) title & description. 
+- [ ] Develop vendor select tokens
+  - [ ]  Implement TokenBig
+  - [ ]  Read contract for selected tokens, properly populate page. 
+  - [ ]  Implement selecting and deslecting tokens at Token Big
+    - [ ]  Write to contract
+    - [ ]  Listen for correct event. 
+    - [ ]  Show loading circle 
+    - [ ]  show green notification when succeful
+    - [ ]  red if error returned. 
+- [ ]  Develop minting page 
+  - [ ]  Refactor layouting. Make choice what to see: mining points or cards. 
+  - [ ]  Insert proper titles - standardised. 
+  - [ ]  Implement writing to contract. 
+  - [ ]  Listening for correct event
+  - [ ]  show green notification when succeful
+  - [ ]  red if error returned.
+- [ ]  Develop QR reading page
+  - [ ]  Image of QR reading should fit whole modal + QR reading frame should be super imposed over this. 
+  - [ ]  Use QR create app on phone to create QR codes
+  - [ ]  Implement correct triggers: 
+    - [ ]  When seeing address -> send new loyalty card. 
+      - [ ]  show green notification when succeful
+      - [ ]  red if error returned.
+    - [ ]  When seeing card ID + program address -> send points.
+      - [ ]  show green notification when succeful
+      - [ ]  red if error returned. 
+    - [ ]  When seeing token ID + token address + loyalty prgram address -> redeem token.
+      - [ ] show green notification when succeful
+      - [ ]  red if error returned.
+- [ ]  Develop / fix data flow. 
+  - [ ]  The only thing that does not quite work, is loading data through custom hooks. 
+  - [ ]  This is a bug I need to sit on a bit, will take a bit of time.  
+- [ ]  When all this is done: Start building customer side of app! 
+  - [ ]  Follow as much as possible pages I already created. 
+  - [ ]  Copy complete layout and flow of app. 
+  - [ ]  This should be a lot easier an faster. 
 
 ## Yarn / NEXT 
 

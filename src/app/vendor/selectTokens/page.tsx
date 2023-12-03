@@ -5,6 +5,8 @@ import { TitleText } from "@/app/ui/TitleText";
 import TokenSmall from "./TokenSmall";
 import { LoyaltyToken } from "@/types";
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
+
 
 
 
@@ -15,13 +17,13 @@ export default function Page() {
 
   useEffect(() => {
 
-    if (data) {
+    if (data.length > 0 && !isLoading) {
       setLoyaltyTokens(data)
     }
 
-  }, [, data])
+  }, [ , data, isLoading])
 
-  console.log("data loyaltyTokens: ", data)
+  console.log("data loyaltyTokens: ", data, " isLoading at LoyaltyToken: ", isLoading )
 
   return (
      <div className=" w-full grid grid-cols-1 gap-1 ">

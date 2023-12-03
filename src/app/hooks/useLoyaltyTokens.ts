@@ -26,6 +26,7 @@ import { parseUri, parseMetadata } from "../utils/parsers"
 import { usePublicClient } from "wagmi"
 import { Log } from "viem"
 import { getContractEventsProps } from "@/types"
+import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants"
 
 export const useLoyaltyTokens = () => {
   let { address } = useAccount()
@@ -38,10 +39,12 @@ export const useLoyaltyTokens = () => {
     data: [],
     logs: [], 
     isError: null,
-    isLoading: false,
+    isLoading: true,
   })
 
+
   const getLogs = async (parameters: getContractEventsProps) => {
+    loyaltyTokensData.current.isLoading = true
     // console.log("parameters at getLogs: ", parameters)
 
     try {
@@ -58,6 +61,7 @@ export const useLoyaltyTokens = () => {
   }
 
   const getMetadata = async(address: EthAddress) => {
+    loyaltyTokensData.current.isLoading = true
 
     // console.log("getMetadata called")
     
@@ -103,7 +107,7 @@ export const useLoyaltyTokens = () => {
       data: [],
       logs: [], 
       isError: null,
-      isLoading: false,
+      isLoading: true,
     })
 
     const data = await getLogs(
@@ -111,9 +115,7 @@ export const useLoyaltyTokens = () => {
         abi: loyaltyTokenAbi, 
         // abi: loyaltyProgramAbi, 
         eventName: 'DiscoverableLoyaltyToken', 
-        // standard account 4 from Anvil chain -- for me this is the one that deploys the contracts.   
-        // note that this can be used to whitelist sources of loyalty token addresses.  
-        args: {issuer: "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65"}, 
+        args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, 
         fromBlock: 1n,
         toBlock: 16330050n
       }
@@ -126,16 +128,13 @@ export const useLoyaltyTokens = () => {
       for await (tokenAddress of tokenAddresses) {
         // console.log("NB tokenAddress in LOOP BEFORE calling getMetadata @loyaltytokens: ", tokenAddress)
         const metaDatatoken = await getMetadata(tokenAddress)
+        if (metaDatatoken) {loyaltyTokensData.current.isLoading = false}
 
         // console.log("metaDatatoken AFTER calling getMetadata @loyaltytokens: ", metaDatatoken)
       }
     } catch (error) {
-      return ({
-        tokenAddress: "0x0000000000000000000000000000",
-        uri: null, 
-        metadata: null, 
-        status: "error"
-      })
+      loyaltyTokensData.current.isError = error; 
+      loyaltyTokensData.current.isLoading = false; 
     }
   } 
 
@@ -145,6 +144,8 @@ export const useLoyaltyTokens = () => {
       getData()
     }
   }, [ , address]) // also has to update with change in chain id. -- implement later. 
+
+  console.log("loyaltyTokensData.current: ", loyaltyTokensData.current)
 
   return loyaltyTokensData.current
 
