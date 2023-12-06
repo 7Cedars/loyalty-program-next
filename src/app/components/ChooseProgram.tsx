@@ -1,6 +1,6 @@
 import { useAccount } from 'wagmi'
 import { LoyaltyProgram } from "@/types";
-import { TitleText } from "../ui/TitleText";
+import { TitleText } from "../ui/StandardisedFonts";
 import { useLoyaltyPrograms } from "../hooks/useLoyaltyPrograms";
 import { useEffect, useState } from "react";
 import Image from "next/image";

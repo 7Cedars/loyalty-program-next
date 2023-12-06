@@ -1,6 +1,6 @@
 "use client"; 
 
-import { TitleText } from "@/app/ui/TitleText";
+import { TitleText } from "@/app/ui/StandardisedFonts";
 import { InputForm } from "../../components/InputForm"
 
 
