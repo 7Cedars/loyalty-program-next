@@ -38,9 +38,9 @@ export const useLoyaltyPrograms = () => {
   status.current = "loading"
   const loggedIn = useRef<boolean>()
   loggedIn.current = true
-  const loyaltyProgramsData = useRef<{data: LoyaltyProgram[]; logs: DeployedContractLog[], isError: Error | null | unknown; isLoading: boolean}>({
+  const loyaltyProgramsData = useRef<{data: LoyaltyProgram[]; ethAddresses: EthAddress[], isError: Error | null | unknown; isLoading: boolean}>({
     data: [],
-    logs: [], 
+    ethAddresses: [], 
     isError: null,
     isLoading: false,
   })
@@ -48,10 +48,10 @@ export const useLoyaltyPrograms = () => {
   const getLogs = async (parameters: getContractEventsProps) => {
     try {
         const res: Log[] = await publicClient.getContractEvents(parameters); 
-        loyaltyProgramsData.current.logs = parseContractLogs(res); 
+        loyaltyProgramsData.current.ethAddresses = parseContractLogs(res); 
         return loyaltyProgramsData; 
       } catch (error) {
-        const result = { data: [], logs:[], isError: error, isLoading: false };
+        const result = { data: [], ethAddresses:[], isError: error, isLoading: false };
         loyaltyProgramsData.current = result; 
         return loyaltyProgramsData; 
       }
@@ -100,7 +100,7 @@ export const useLoyaltyPrograms = () => {
       }
     )
 
-    const tokenAddresses = loyaltyProgramsData.current.logs.map(item => item.address)
+    const tokenAddresses = loyaltyProgramsData.current.ethAddresses.map(item => item)
     let tokenAddress: EthAddress; 
 
     try { 

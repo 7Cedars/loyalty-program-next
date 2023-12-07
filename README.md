@@ -22,8 +22,8 @@ Even though repository is public, For now, it is for personal use only.
   - [x]  Read events for selecting tokens, properly populate page. 
   - [ ]  Implement selecting and deslecting tokens at Token Big
     - [x]  Write to contract
-    - [ ]  Listen for correct event. 
-    - [ ]  Show loading circle 
+    - [x]  Listen for correct event. 
+    - [x]  Show loading circle 
     - [ ]  show green notification when succeful
     - [ ]  red if error returned. 
   - [ ]  Implement minting loyaltyTokens 

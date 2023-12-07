@@ -65,7 +65,7 @@ export const NotificationDialog = () => {
           </div>
 
           { notificationToShow.loginButton ? 
-            <div className="w-24 flex"> 
+            <div className="w-24 px-3 flex underline"> 
               <button onClick = {() => open({view: "Networks"})}> 
                login
               </button>
@@ -74,7 +74,7 @@ export const NotificationDialog = () => {
           } 
         </div>
         <button 
-          className="font-bold text-lg px-1 text-red-800"
+          className="font-bold text-lg  px-1 text-red-800"
           type="submit"
           onClick={() => dispatch(updateNotificationVisibility({
             id: notificationToShow.id,

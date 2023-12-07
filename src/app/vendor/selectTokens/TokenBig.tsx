@@ -3,12 +3,14 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite } from "wagmi";
+import { useContractWrite, useContractEvent, useWaitForTransaction } from "wagmi";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
+import { foundry } from "viem/chains";
+import { useState } from "react";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -18,6 +20,9 @@ type SelectedTokenProps = {
 export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
   const { progAddress } =  useUrlProgramAddress();
+  // const [ isLoading, setIsLoading ] = useState<boolean>() 
+  const [ hashTransaction, setHashTransaction] = useState<any>() 
+  const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
 
   const addLoyaltyToken = useContractWrite(
@@ -36,8 +41,27 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
         console.log('addLoyaltyToken Error', error)
       }, 
       onSuccess(data) {
-        console.log('addLoyaltyToken Success', data)
+        setHashTransaction(data.hash)
       },
+    }
+  )
+
+  useContractEvent(
+    {
+      address: parseEthAddress(progAddress),
+      abi: loyaltyProgramAbi,
+      listener: (event) => {
+        dispatch(notification({
+          id: "addLoyaltyTokenContract",
+          message: `Loyalty gift activated.`, 
+          colour: "green",
+          isVisible: true
+        }))
+        // setIsLoading(false)
+        setIsDisabled(!isDisabled)
+      }, 
+      // chainId: TBI 
+      eventName: "AddedLoyaltyTokenContract"
     }
   )
 
@@ -54,13 +78,20 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
           colour: "red",
           isVisible: true
         }))
-        console.log('addLoyaltyToken Error', error)
+        console.log('removeLoyaltyToken Error', error)
       }, 
       onSuccess(data) {
-        console.log('addLoyaltyToken Success', data)
-      },
+        setHashTransaction(data.hash)
+        // setIsLoading(true)
+      }
     }
   )
+
+  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+    { confirmations: 1,
+      hash: hashTransaction })
+
+    console.log("isLoading: ", isLoading, "isSuccess: ", isSuccess)
 
   return (
     <div className="grid grid-cols-1"> 
@@ -88,19 +119,35 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
         </div>
       </div>
 
-      { disabled ? 
-        <div className="p-3 flex"> 
-          <Button appearance = {"greenEmpty"} onClick={addLoyaltyToken.write} >
-            Select Loyalty Gift
+      { isLoading ? 
+        <div className="p-3 flex "> 
+          <Button appearance = {"grayEmpty"} onClick={addLoyaltyToken.write} >
+            <div className="flex justify-center items-center">
+              <Image
+                className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
+                width={30}
+                height={30}
+                src={"/loading.svg"}
+                alt="Loading icon"
+              />
+              Waiting for confirmation (this can take a few minutes...)
+            </div>
           </Button>
         </div> 
-        : 
-        <div className="p-3 flex"> 
-          <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >
-            Remove Loyalty Gift
-          </Button>
-        </div>
-      } 
-    </div>      
+        :
+        isDisabled ? 
+          <div className="p-3 flex "> 
+            <Button appearance = {"greenEmpty"} onClick={addLoyaltyToken.write} >
+                Select Loyalty Gift
+            </Button>
+          </div> 
+          : 
+          <div className="p-3 flex "> 
+            <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >
+              Remove Loyalty Gift
+            </Button>
+          </div>
+        } 
+      </div>      
   );
 }

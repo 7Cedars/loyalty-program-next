@@ -43,7 +43,7 @@ export const ModalMain = ({
   const { address }  = useAccount()
 
   const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
-  let {data, logs, isLoading} = useLoyaltyPrograms() 
+  let {data, ethAddresses, isLoading} = useLoyaltyPrograms() 
   const [selectedProgram, setSelectedProgram] = useState<EthAddress>()
   const [ownedPrograms, setOwnedPrograms] = useState<LoyaltyProgram[]>()
   const [userLoggedIn, setUserLoggedIn] = useState<boolean>(false) 
@@ -75,7 +75,7 @@ export const ModalMain = ({
   // WIP 
   // NB! I still need to check if progAddress is owned by user! 
   useEffect(() => {
-    const indexProgram = logs.findIndex(item => item.address === progAddress); 
+    const indexProgram = ethAddresses.findIndex(item => item === progAddress); 
 
     if (indexProgram !== -1 && progAddress) {
       setSelectedProgram(parseEthAddress(progAddress))

@@ -24,8 +24,8 @@ type setSelectedTokenProps = {
 export default function Page() {
 
   const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
-  const activeLoyaltyTokens = useRef<LoyaltyToken[] | undefined>() 
-  const inactiveLoyaltyTokens = useRef<LoyaltyToken[] | undefined>() 
+  const activeLoyaltyTokens = useRef<LoyaltyToken[] >([]) 
+  const inactiveLoyaltyTokens = useRef<LoyaltyToken[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const { progAddress } = useUrlProgramAddress() 
   const {data, isLoading, isError} = useLoyaltyTokens() 
@@ -34,7 +34,10 @@ export default function Page() {
   useEffect(() => {
 
     const getSelectedtokens = async () => {
-      const data: Log[] = await publicClient.getContractEvents( { 
+      activeLoyaltyTokens.current = []
+      inactiveLoyaltyTokens.current = []
+
+      const addedTokensData: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(progAddress), 
         eventName: 'AddedLoyaltyTokenContract', 
@@ -42,18 +45,50 @@ export default function Page() {
         toBlock: 16330050n
       }); 
 
-      console.log("logs from AddedLoyaltyTokenContract: ", data)
+      const removedTokensData: Log[] = await publicClient.getContractEvents( { 
+        abi: loyaltyProgramAbi, 
+        address: parseEthAddress(progAddress), 
+        eventName: 'RemovedLoyaltyTokenClaimable', 
+        fromBlock: 1n,
+        toBlock: 16330050n
+      }); 
 
-      const parsedData: EthAddress[] = parseLoyaltyContractLogs(data)
+      const addedTokensDataEvents: EthAddress[] = parseLoyaltyContractLogs(addedTokensData)
+      const removedTokensDataEvents: EthAddress[] = parseLoyaltyContractLogs(removedTokensData)
+      console.log(
+        "addedTokensDataEvents: ", addedTokensDataEvents, 
+        "removedTokensDataEvents: ", removedTokensDataEvents
+      )
 
-      console.log("loyaltyTokens: ", loyaltyTokens, "parsedData: ", parsedData)
+      const uniqueTokens = Array.from(new Set([...addedTokensDataEvents, ...removedTokensDataEvents]))
+      console.log(
+        "uniqueTokens: ", uniqueTokens
+      )
 
-      if (loyaltyTokens) {
-        activeLoyaltyTokens.current = loyaltyTokens.filter(token => parsedData.indexOf(parseEthAddress(token.tokenAddress)) !== -1)
-        inactiveLoyaltyTokens.current = loyaltyTokens.filter(token => parsedData.indexOf(parseEthAddress(token.tokenAddress)) === -1)
-      }
+      const countTokensAddedEvents = uniqueTokens.map(tokenAddress => 
+        addedTokensDataEvents.filter(eventAddress => eventAddress === tokenAddress).length
+      )
+      console.log("countTokensAddedEvents:" , countTokensAddedEvents)
+      const countTokensRemovedEvents = uniqueTokens.map(tokenAddress => 
+        removedTokensDataEvents.filter(eventAddress => eventAddress === tokenAddress).length
+      )
+      console.log("countTokensRemovedEvents:" , countTokensRemovedEvents)
 
-      console.log("activeLoyaltyTokens.current: ", activeLoyaltyTokens.current)
+      if (loyaltyTokens)
+        loyaltyTokens.forEach((token, i) => { 
+          
+            const check = countTokensAddedEvents[i] - countTokensRemovedEvents[i]
+            console.log("check: ", check)
+            const selectedLoyaltyToken = loyaltyTokens.find(token => token.tokenAddress === uniqueTokens[i])
+            // console.log("selectedLoyaltyToken: ", selectedLoyaltyToken)
+
+            if (check > 0 && selectedLoyaltyToken) { 
+              activeLoyaltyTokens.current.push(selectedLoyaltyToken)
+            } 
+            if (check <= 0 && selectedLoyaltyToken) { 
+              inactiveLoyaltyTokens.current.push(selectedLoyaltyToken)
+            }
+          });
     } 
 
     getSelectedtokens() 
@@ -64,6 +99,7 @@ export default function Page() {
   console.log(
     "loyaltyTokens: ", loyaltyTokens, 
     "activeLoyaltyTokens: ", activeLoyaltyTokens.current, 
+    "inactiveLoyaltyTokens: ", inactiveLoyaltyTokens.current, 
     "dataLoyaltyTokens.isLoading: ", isLoading
     )
 
