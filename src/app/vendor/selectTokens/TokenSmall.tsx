@@ -3,18 +3,19 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 
 type SelectedTokenProps = {
-  token: LoyaltyToken
-  disabled: boolean
+  token: LoyaltyToken; 
+  disabled: boolean;
+  onClick: () => void;
 }
 
-export default function SelectToken( {token, disabled}: SelectedTokenProps ) {
+export default function SelectToken( {token, disabled, onClick}: SelectedTokenProps ) {
 
-  console.log("data loyaltyTokens: ", token)
+  // console.log("data loyaltyTokens: ", token)
   let appearance = `h-64 w-44 m-2 grid grid-cols-1 border rounded-lg border-gray-200 ${ disabled ? 'opacity-50' : null} `
 
   return (
      
-      <button className={appearance}> 
+      <button className={appearance} onClick={onClick}> 
       <Image
           className="rounded-t-lg"
           width={174}

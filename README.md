@@ -17,7 +17,7 @@ Even though repository is public, For now, it is for personal use only.
 - [ ] Develop landing page 
   - [ ]  Insert correct (standardised) title & description. 
 - [ ] Develop vendor select tokens
-  - [ ]  Implement TokenBig
+  - [X]  Implement TokenBig
   - [ ]  Read contract for selected tokens, properly populate page. 
   - [ ]  Implement selecting and deslecting tokens at Token Big
     - [ ]  Write to contract
@@ -45,13 +45,20 @@ Even though repository is public, For now, it is for personal use only.
     - [ ]  When seeing token ID + token address + loyalty prgram address -> redeem token.
       - [ ] show green notification when succeful
       - [ ]  red if error returned.
+- [ ]  Develop ui elements 
+  - [x]  implement different colours button
+  - [ ]  implement different colours notification
 - [ ]  Develop / fix data flow. 
-  - [ ]  The only thing that does not quite work, is loading data through custom hooks. 
-  - [ ]  This is a bug I need to sit on a bit, will take a bit of time.  
+  - [ ]  Fix loading data through custom hooks: only loads at reloading window.. 
+  - [ ]  When address is changed in metamask does not update app. Fix. 
 - [ ]  When all this is done: Start building customer side of app! 
   - [ ]  Follow as much as possible pages I already created. 
   - [ ]  Copy complete layout and flow of app. 
   - [ ]  This should be a lot easier an faster. 
+- [ ]  Deploy on Vercel 
+- [ ]  Deploy on test net
+  - [ ]  First on branched Sepolia network in Foundry.
+  - [ ]  Then Sepolia.  
 
 ## Yarn / NEXT 
 
