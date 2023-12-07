@@ -3,21 +3,64 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
+import { useContractWrite } from "wagmi";
+import { loyaltyProgramAbi } from "@/context/abi";
+import { useUrlProgramAddress } from "@/app/hooks/useUrl";
+import { parseEthAddress } from "@/app/utils/parsers";
+import { useDispatch } from "react-redux";
+import { notification } from "@/redux/reducers/notificationReducer";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
   disabled: boolean
 }
 
-const handleClick = () => {
-  // dummy func
-}
-
 export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
-  const dimensions = useScreenDimensions();  
+  const dimensions = useScreenDimensions();
+  const { progAddress } =  useUrlProgramAddress();
+  const dispatch = useDispatch() 
 
-  console.log("data loyaltyTokens: ", token)
-  // let appearance = `h-full w-11/12 m-2 grid grid-cols-2 border rounded-lg border-gray-200`
+  const addLoyaltyToken = useContractWrite(
+    {
+      address: parseEthAddress(progAddress),
+      abi: loyaltyProgramAbi,
+      functionName: "addLoyaltyTokenContract", 
+      args: [token.tokenAddress], 
+      onError(error) {
+        dispatch(notification({
+          id: "addLoyaltyTokenContract",
+          message: `Something went wrong. Loyalty gift has not been added.`, 
+          colour: "red",
+          isVisible: true
+        }))
+        console.log('addLoyaltyToken Error', error)
+      }, 
+      onSuccess(data) {
+        console.log('addLoyaltyToken Success', data)
+      },
+    }
+  )
+
+  const removeLoyaltyTokenClaimable = useContractWrite(
+    {
+      address: parseEthAddress(progAddress),
+      abi: loyaltyProgramAbi,
+      functionName: "removeLoyaltyTokenClaimable", 
+      args: [token.tokenAddress], 
+      onError(error) {
+        dispatch(notification({
+          id: "removeLoyaltyTokenClaimable",
+          message: `Something went wrong. Loyalty gift has not been removed.`, 
+          colour: "red",
+          isVisible: true
+        }))
+        console.log('addLoyaltyToken Error', error)
+      }, 
+      onSuccess(data) {
+        console.log('addLoyaltyToken Success', data)
+      },
+    }
+  )
 
   return (
     <div className="grid grid-cols-1"> 
@@ -47,14 +90,14 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
       { disabled ? 
         <div className="p-3 flex"> 
-          <Button appearance = {"greenEmpty"} onClick={() => handleClick} >
-            Select Token
+          <Button appearance = {"greenEmpty"} onClick={addLoyaltyToken.write} >
+            Select Loyalty Gift
           </Button>
         </div> 
         : 
         <div className="p-3 flex"> 
-          <Button appearance = {"redEmpty"}  onClick={() => handleClick} >
-            Deselect Token
+          <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >
+            Remove Loyalty Gift
           </Button>
         </div>
       } 

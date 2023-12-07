@@ -66,9 +66,9 @@ export const NotificationDialog = () => {
 
           { notificationToShow.loginButton ? 
             <div className="w-24 flex"> 
-              <Button size="sm" isFilled={false} onClick = {() => open({view: "Networks"})}> 
+              <button onClick = {() => open({view: "Networks"})}> 
                login
-              </Button>
+              </button>
             </div> 
             : null
           } 

@@ -58,6 +58,8 @@ export const notificationsSlice = createSlice({
       // Durantion still has to be coded - tough one.  
       // action.payload.durationInMs ? 
       //   state.notifications[index].durationInMs = action.payload.durationInMs : null
+      action.payload.isVisible ? 
+        state.notifications[index].isVisible = action.payload.isVisible : null
 
       action.payload.loginButton ? 
         state.notifications[index].loginButton = action.payload.loginButton : null
