@@ -51,8 +51,8 @@ export const NoteText = ({
 }: NoteTextProps) => {
 
   return (
-    <div className="grid grid-cols-1 gap-1">
-      <div className={`text-center font-bold ${appearanceNote[size]}`}>
+    <div className="grid grid-cols-1 gap-1 text-center text-gray-500 font-sm">
+      <div className={`text-center italic ${appearanceNote[size]}`}>
         {message}
       </div>
     </div>

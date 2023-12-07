@@ -31,9 +31,6 @@ export default function Page() {
       <div className="h-20 m-3"> 
        <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={1} />
       </div> 
-
-      
-        
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
         <div className="col-span-2 sm:col-span-3 md:col-span-4"> 
           <TitleText title = "Selected Gifts" size={0} />
@@ -49,7 +46,9 @@ export default function Page() {
 
        
         : 
-        <NoteText message=" Selected tokens will appear here."/>
+        <div className="col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+          <NoteText message=" Selected tokens will appear here."/>
+        </div>
       }
        </div> 
      
@@ -65,7 +64,9 @@ export default function Page() {
             </div>
           )
           : 
-          null
+          <div className="col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+            <NoteText message="Other available tokens will appear here."/>
+          </div>
         }
       </div>
 
