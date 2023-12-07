@@ -18,11 +18,18 @@ Even though repository is public, For now, it is for personal use only.
   - [ ]  Insert correct (standardised) title & description. 
 - [ ] Develop vendor select tokens
   - [X]  Implement TokenBig
-  - [ ]  Read contract for selected tokens, properly populate page. 
+  - [ ]  Read events for deployment tokens, properly populate page. 
+  - [ ]  Read events for selecting tokens, properly populate page. 
   - [ ]  Implement selecting and deslecting tokens at Token Big
     - [ ]  Write to contract
     - [ ]  Listen for correct event. 
     - [ ]  Show loading circle 
+    - [ ]  show green notification when succeful
+    - [ ]  red if error returned. 
+  - [ ]  Implement minting loyaltyTokens 
+    - [ ]  Write to contract
+    - [ ]  Listen for correct event. 
+    - [ ]  Show loading circle when loading
     - [ ]  show green notification when succeful
     - [ ]  red if error returned. 
 - [ ]  Develop minting page 

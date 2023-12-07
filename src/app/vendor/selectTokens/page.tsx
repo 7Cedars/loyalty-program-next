@@ -4,10 +4,16 @@ import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./TokenSmall";
 import TokenBig from "./TokenBig";
-import { LoyaltyToken } from "@/types";
-import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { DeployedContractLog, EthAddress, LoyaltyToken } from "@/types";
+import { useEffect, useState, useRef } from "react";
+import { useContractRead } from "wagmi";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { useUrlProgramAddress } from "@/app/hooks/useUrl";
+import { loyaltyProgramAbi } from "@/context/abi";
+import { Log } from "viem"
+import { usePublicClient, useAccount } from 'wagmi'
+import { getContractEventsProps } from "@/types"
+import { parseContractLogs, parseEthAddress, parseLoyaltyContractLogs } from "@/app/utils/parsers";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -17,10 +23,48 @@ type setSelectedTokenProps = {
 
 export default function Page() {
 
-  const [LoyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[]>() 
+  const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
+  const activeLoyaltyTokens = useRef<LoyaltyToken[] | undefined>() 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
-  const {data, logs, isLoading} = useLoyaltyTokens() 
-  console.log("selectedToken: ", selectedToken)
+  const { progAddress } = useUrlProgramAddress() 
+  const {data, isLoading, isError} = useLoyaltyTokens() 
+  const publicClient = usePublicClient()
+
+  useEffect(() => {
+
+    const getSelectedtokens = async () => {
+      const data: Log[] = await publicClient.getContractEvents( { 
+        abi: loyaltyProgramAbi, 
+        address: parseEthAddress(progAddress), 
+        eventName: 'AddedLoyaltyTokenContract', 
+        fromBlock: 1n,
+        toBlock: 16330050n
+      }); 
+
+      console.log("logs from AddedLoyaltyTokenContract: ", data)
+
+      const parsedData: EthAddress[] = parseLoyaltyContractLogs(data)
+
+      console.log("loyaltyTokens: ", loyaltyTokens, "parsedData: ", parsedData)
+
+      if (loyaltyTokens) {
+        console.log(loyaltyTokens.map(token => parseEthAddress(token.tokenAddress) === parseEthAddress(parsedData[0])))
+        activeLoyaltyTokens.current = loyaltyTokens.filter(token => String(token.tokenAddress) === String(parsedData[0]))
+      }
+
+      console.log("activeLoyaltyTokens.current: ", activeLoyaltyTokens.current)
+    } 
+
+    getSelectedtokens() 
+
+  }, [[ , progAddress, publicClient]])
+
+
+  console.log(
+    "loyaltyTokens: ", loyaltyTokens, 
+    "activeLoyaltyTokens: ", activeLoyaltyTokens.current, 
+    "dataLoyaltyTokens.isLoading: ", isLoading
+    )
 
   useEffect(() => {
 
@@ -28,9 +72,13 @@ export default function Page() {
       setLoyaltyTokens(data)
     }
 
-  }, [ , data, isLoading])
+  }, [ 
+    , 
+    data, 
+    isLoading
+  ])
 
-  console.log("data loyaltyTokens: ", data, " isLoading at LoyaltyToken: ", isLoading )
+  // console.log("data loyaltyTokens: ", data, " isLoading at LoyaltyToken: ", isLoading )
 
   return (
      <div className=" w-full grid grid-cols-1 gap-1">
@@ -64,9 +112,9 @@ export default function Page() {
             <TitleText title = "Selected Gifts" size={0} />
           </div>
 
-          { LoyaltyTokens ?
+          { activeLoyaltyTokens.current ?
           
-            LoyaltyTokens.map((token: LoyaltyToken) => 
+          activeLoyaltyTokens.current.map((token: LoyaltyToken) => 
               <div key = {token.tokenAddress} >
                 <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
               </div>
@@ -84,8 +132,8 @@ export default function Page() {
             <TitleText title = "Available Gift Programs" size={0} />
           </div>
           
-          { LoyaltyTokens ? 
-            LoyaltyTokens.map((token: LoyaltyToken) => 
+          { loyaltyTokens ? 
+            loyaltyTokens.map((token: LoyaltyToken) => 
               <div key = {token.tokenAddress} >
                 <TokenSmall token = {token} disabled = {true}  onClick={() => setSelectedToken({token: token, disabled: true})} /> 
               </div>

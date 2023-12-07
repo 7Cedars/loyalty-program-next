@@ -4,7 +4,7 @@ import {
   Attribute, 
   DeployedContractLog
 } from "@/types";
-import { Log } from "viem";
+import { Log, getAddress } from "viem";
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -65,6 +65,19 @@ const parseHash = (hash: unknown): string => {
   return hash as string;
 };
 
+const parseArgsLoyaltyToken = (args: unknown): EthAddress => {
+  if ( !args || typeof args !== 'object' ) {
+    throw new Error('Incorrect or missing data at args');
+  }
+
+  if (
+    'loyaltyToken' in args 
+    ) { 
+    return ( parseEthAddress(args.loyaltyToken) )
+  }
+  throw new Error(`Incorrect args format: ${args}`);
+}
+
 export const parseEthAddress = (address: unknown): EthAddress => {
   if (!isString(address)) {
     throw new Error(`Incorrect address, not a string: ${address}`);
@@ -76,10 +89,12 @@ export const parseEthAddress = (address: unknown): EthAddress => {
     throw new Error(`Incorrect address length: ${address}`);
   }
 
-  return address as EthAddress;
+  const returnAddress = getAddress(address) 
+
+  return returnAddress as EthAddress;
 };
 
-export const parseContractLogs = (logs: Log[]): DeployedContractLog[] => {
+export const parseContractLogs = (logs: Log[]): EthAddress[] => {
   if (!isArray(logs)) {
     throw new Error(`Incorrect logs, not an array: ${logs}`);
   }
@@ -93,15 +108,37 @@ export const parseContractLogs = (logs: Log[]): DeployedContractLog[] => {
       if (
         'address' in log &&
         'blockHash' in log
-        ) { return ({
-            address: parseTraitType(log.address),
-            blockHash: parseHash(log.blockHash)
-          })
+        ) { return ( parseEthAddress(log.address) )
         }
         throw new Error('Incorrect data at LoyaltyProgram logs: some fields are missing or incorrect');
     })
 
-    return parsedLogs as Array<DeployedContractLog> 
+    return parsedLogs as Array<EthAddress> 
+
+  } catch {
+    throw new Error('Incorrect data at LoyaltyProgram logs. Parser caught error');
+  }
+
+};
+
+export const parseLoyaltyContractLogs = (logs: Log[]): EthAddress[] => {
+  if (!isArray(logs)) {
+    throw new Error(`Incorrect logs, not an array: ${logs}`);
+  }
+
+  try { 
+    const parsedLogs = logs.map((log: unknown) => {
+      if ( !log || typeof log !== 'object' ) {
+        throw new Error('Incorrect or missing data at log');
+      }
+
+      if ( 'args' in log ) {
+        return ( parseArgsLoyaltyToken(log.args) ) 
+      } 
+        throw new Error('Incorrect data at LoyaltyProgram logs: some fields are missing or incorrect');
+    })
+
+    return parsedLogs as Array<EthAddress> 
 
   } catch {
     throw new Error('Incorrect data at LoyaltyProgram logs. Parser caught error');

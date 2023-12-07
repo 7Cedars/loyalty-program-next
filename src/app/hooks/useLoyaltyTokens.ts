@@ -35,13 +35,18 @@ export const useLoyaltyTokens = () => {
   status.current = "loading"
   const loggedIn = useRef<boolean>()
   loggedIn.current = true
-  const loyaltyTokensData = useRef<{data: LoyaltyToken[]; logs: DeployedContractLog[], isError: Error | null | unknown; isLoading: boolean}>({
+  const loyaltyTokensData = useRef<{data: LoyaltyToken[]; ethAddresses: EthAddress[], isError: Error | null | unknown; isLoading: boolean}>({
     data: [],
-    logs: [], 
+    ethAddresses: [], 
     isError: null,
     isLoading: true,
   })
-
+  const [output, setOutput] = useState<{data: LoyaltyToken[]; ethAddresses: EthAddress[], isError: Error | null | unknown; isLoading: boolean}>({
+    data: [],
+    ethAddresses: [], 
+    isError: null,
+    isLoading: true,
+  })
 
   const getLogs = async (parameters: getContractEventsProps) => {
     loyaltyTokensData.current.isLoading = true
@@ -49,8 +54,8 @@ export const useLoyaltyTokens = () => {
 
     try {
         const res: Log[] = await publicClient.getContractEvents(parameters); 
-        // console.log("res: ", res)
-        loyaltyTokensData.current.logs = parseContractLogs(res); 
+        // console.log("res inside loyaltyTokensData: ", res)
+        loyaltyTokensData.current.ethAddresses = parseContractLogs(res); 
         // console.log("loyaltyTokensData inside getlogs: ", loyaltyTokensData.current)
         return loyaltyTokensData; 
       } catch (error) {
@@ -105,7 +110,7 @@ export const useLoyaltyTokens = () => {
   const getData = async () => {
     loyaltyTokensData.current = ({
       data: [],
-      logs: [], 
+      ethAddresses: [], 
       isError: null,
       isLoading: true,
     })
@@ -121,14 +126,15 @@ export const useLoyaltyTokens = () => {
       }
     )
 
-    const tokenAddresses = loyaltyTokensData.current.logs.map(item => item.address)
     let tokenAddress: EthAddress; 
-
+   
     try { 
-      for await (tokenAddress of tokenAddresses) {
+      for await (tokenAddress of loyaltyTokensData.current.ethAddresses) {
         // console.log("NB tokenAddress in LOOP BEFORE calling getMetadata @loyaltytokens: ", tokenAddress)
         const metaDatatoken = await getMetadata(tokenAddress)
-        if (metaDatatoken) {loyaltyTokensData.current.isLoading = false}
+        if (metaDatatoken) {
+          loyaltyTokensData.current.isLoading = false
+        }
 
         // console.log("metaDatatoken AFTER calling getMetadata @loyaltytokens: ", metaDatatoken)
       }
@@ -143,10 +149,15 @@ export const useLoyaltyTokens = () => {
     if (address) { 
       getData()
     }
+
+    setOutput(loyaltyTokensData.current)
+
+
+
   }, [ , address]) // also has to update with change in chain id. -- implement later. 
 
   console.log("loyaltyTokensData.current: ", loyaltyTokensData.current)
 
-  return loyaltyTokensData.current
+  return output
 
 }
