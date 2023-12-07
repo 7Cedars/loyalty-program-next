@@ -17,9 +17,9 @@ Even though repository is public, For now, it is for personal use only.
 - [ ] Develop landing page 
   - [ ]  Insert correct (standardised) title & description. 
 - [ ] Develop vendor select tokens
-  - [X]  Implement TokenBig
-  - [ ]  Read events for deployment tokens, properly populate page. 
-  - [ ]  Read events for selecting tokens, properly populate page. 
+  - [x]  Implement TokenBig
+  - [x]  Read events for deployment tokens, properly populate page. 
+  - [x]  Read events for selecting tokens, properly populate page. 
   - [ ]  Implement selecting and deslecting tokens at Token Big
     - [ ]  Write to contract
     - [ ]  Listen for correct event. 

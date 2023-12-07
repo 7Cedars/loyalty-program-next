@@ -25,6 +25,7 @@ export default function Page() {
 
   const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
   const activeLoyaltyTokens = useRef<LoyaltyToken[] | undefined>() 
+  const inactiveLoyaltyTokens = useRef<LoyaltyToken[] | undefined>() 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const { progAddress } = useUrlProgramAddress() 
   const {data, isLoading, isError} = useLoyaltyTokens() 
@@ -48,8 +49,8 @@ export default function Page() {
       console.log("loyaltyTokens: ", loyaltyTokens, "parsedData: ", parsedData)
 
       if (loyaltyTokens) {
-        console.log(loyaltyTokens.map(token => parseEthAddress(token.tokenAddress) === parseEthAddress(parsedData[0])))
-        activeLoyaltyTokens.current = loyaltyTokens.filter(token => String(token.tokenAddress) === String(parsedData[0]))
+        activeLoyaltyTokens.current = loyaltyTokens.filter(token => parsedData.indexOf(parseEthAddress(token.tokenAddress)) !== -1)
+        inactiveLoyaltyTokens.current = loyaltyTokens.filter(token => parsedData.indexOf(parseEthAddress(token.tokenAddress)) === -1)
       }
 
       console.log("activeLoyaltyTokens.current: ", activeLoyaltyTokens.current)
@@ -132,8 +133,8 @@ export default function Page() {
             <TitleText title = "Available Gift Programs" size={0} />
           </div>
           
-          { loyaltyTokens ? 
-            loyaltyTokens.map((token: LoyaltyToken) => 
+          { inactiveLoyaltyTokens.current ? 
+            inactiveLoyaltyTokens.current.map((token: LoyaltyToken) => 
               <div key = {token.tokenAddress} >
                 <TokenSmall token = {token} disabled = {true}  onClick={() => setSelectedToken({token: token, disabled: true})} /> 
               </div>
