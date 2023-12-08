@@ -14,8 +14,8 @@ Even though repository is public, For now, it is for personal use only.
 ## Todo   
 - [x] Implement standardised fonts: also font for 'nothing selected' texts. 
 - [x] Implement picture of selected loyalty program in background. 
-- [ ] Develop landing page 
-  - [ ]  Insert correct (standardised) title & description. 
+- [x] Develop landing page 
+  - [x]  Insert correct (standardised) title & description. 
 - [ ] Develop vendor select tokens
   - [x]  Implement TokenBig
   - [x]  Read events for deployment tokens, properly populate page. 

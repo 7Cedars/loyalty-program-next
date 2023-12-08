@@ -98,7 +98,7 @@ export const ModalMain = ({
   return (
     <>
     
-      <div className="relative w-full max-w-4xl h-screen z-1 border-2 border-red-500">
+      <div className="relative w-full max-w-4xl h-screen z-1">
 
           <div className="flex flex-col pt-14 h-full z-3">
           { selectedProgram ? 
@@ -113,7 +113,7 @@ export const ModalMain = ({
           <NotificationDialog/> 
           
           { modalVisible && userLoggedIn? 
-            <div className="flex flex-col mt-2 h-full bg-slate-50 mx-8 rounded-t-lg z-10"> 
+            <div className="flex flex-col mt-2 h-full bg-slate-50/50 backdrop-blur-xl shadow-2xl mx-4 rounded-t-lg z-10"> 
             {/* /[.95] */}
               <div className="grow-0 flex justify-end"> 
                 <button 

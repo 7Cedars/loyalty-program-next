@@ -38,7 +38,7 @@ export const TitleText = ({
       <div className={`text-center font-bold ${appearanceTitle[size]}`}>
         {title}
       </div>
-      <div className={`text-center text-gray-400 ${appearanceSubtitle[size]}`}>
+      <div className={`text-center text-gray-800 ${appearanceSubtitle[size]}`}>
         {subtitle}
       </div>
     </div>
