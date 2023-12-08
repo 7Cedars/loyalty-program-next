@@ -10,7 +10,8 @@ import { parseEthAddress } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { foundry } from "viem/chains";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { NumPad } from "@/app/ui/NumPad";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -20,7 +21,6 @@ type SelectedTokenProps = {
 export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
   const { progAddress } =  useUrlProgramAddress();
-  // const [ isLoading, setIsLoading ] = useState<boolean>() 
   const [ hashTransaction, setHashTransaction] = useState<any>() 
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
@@ -46,24 +46,23 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     }
   )
 
-  useContractEvent(
-    {
-      address: parseEthAddress(progAddress),
-      abi: loyaltyProgramAbi,
-      listener: (event) => {
-        dispatch(notification({
-          id: "addLoyaltyTokenContract",
-          message: `Loyalty gift activated.`, 
-          colour: "green",
-          isVisible: true
-        }))
-        // setIsLoading(false)
-        setIsDisabled(!isDisabled)
-      }, 
-      // chainId: TBI 
-      eventName: "AddedLoyaltyTokenContract"
-    }
-  )
+  // useContractEvent(
+  //   {
+  //     address: parseEthAddress(progAddress),
+  //     abi: loyaltyProgramAbi,
+  //     listener: (event) => {
+  //       dispatch(notification({
+  //         id: "addLoyaltyTokenContract",
+  //         message: `Loyalty gift activated.`, 
+  //         colour: "green",
+  //         isVisible: true
+  //       }))
+  //       setIsDisabled(!isDisabled)
+  //     }, 
+  //     // chainId: TBI 
+  //     eventName: "AddedLoyaltyTokenContract"
+  //   }
+  // )
 
   const removeLoyaltyTokenClaimable = useContractWrite(
     {
@@ -82,16 +81,26 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
       }, 
       onSuccess(data) {
         setHashTransaction(data.hash)
-        // setIsLoading(true)
       }
     }
   )
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
-    { confirmations: 1,
-      hash: hashTransaction })
+    { 
+      confirmations: 1,
+      hash: hashTransaction 
+    })
 
-    console.log("isLoading: ", isLoading, "isSuccess: ", isSuccess)
+  useEffect(() => { 
+    if (isSuccess) {
+      setIsDisabled(!isDisabled)
+    }
+  }, [isSuccess])
+
+  const handleClick = (number: number) => {
+    console.log("handleClick: ", number)
+  }
+
 
   return (
     <div className="grid grid-cols-1"> 
@@ -108,14 +117,13 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
             />
         </div>
         
-        <div className="grid grid-cols-1 p-2 content-start">
+        <div className="grid grid-cols-1 p-2 content-start w-full h-full">
           <div className="text-center text-sm"> 
             {`${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
           </div> 
           <div className="text-center text-sm text-gray-500"> 
             {token.metadata.description}
           </div>
-        
         </div>
       </div>
 
@@ -142,10 +150,15 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
             </Button>
           </div> 
           : 
-          <div className="p-3 flex "> 
-            <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >
-              Remove Loyalty Gift
-            </Button>
+          <div className="grid grid-col-1 gap-0 w-full">
+            <div className="p-3 flex w-full"> 
+              <NumPad onClick = {(arg0) => handleClick(arg0) }  /> 
+            </div>
+            <div className="p-3 flex "> 
+              <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >
+                Remove Loyalty Gift
+              </Button>
+            </div>
           </div>
         } 
       </div>      

@@ -28,7 +28,7 @@ export default function Page() {
   const inactiveLoyaltyTokens = useRef<LoyaltyToken[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const { progAddress } = useUrlProgramAddress() 
-  const {data, isLoading, isError} = useLoyaltyTokens() 
+  const {data, ethAddresses, isLoading, isError} = useLoyaltyTokens() 
   const publicClient = usePublicClient()
 
   useEffect(() => {
@@ -60,16 +60,11 @@ export default function Page() {
         "removedTokensDataEvents: ", removedTokensDataEvents
       )
 
-      const uniqueTokens = Array.from(new Set([...addedTokensDataEvents, ...removedTokensDataEvents]))
-      console.log(
-        "uniqueTokens: ", uniqueTokens
-      )
-
-      const countTokensAddedEvents = uniqueTokens.map(tokenAddress => 
+      const countTokensAddedEvents = ethAddresses.map(tokenAddress => 
         addedTokensDataEvents.filter(eventAddress => eventAddress === tokenAddress).length
       )
       console.log("countTokensAddedEvents:" , countTokensAddedEvents)
-      const countTokensRemovedEvents = uniqueTokens.map(tokenAddress => 
+      const countTokensRemovedEvents = ethAddresses.map(tokenAddress => 
         removedTokensDataEvents.filter(eventAddress => eventAddress === tokenAddress).length
       )
       console.log("countTokensRemovedEvents:" , countTokensRemovedEvents)
@@ -79,7 +74,7 @@ export default function Page() {
           
             const check = countTokensAddedEvents[i] - countTokensRemovedEvents[i]
             console.log("check: ", check)
-            const selectedLoyaltyToken = loyaltyTokens.find(token => token.tokenAddress === uniqueTokens[i])
+            const selectedLoyaltyToken = loyaltyTokens.find(token => token.tokenAddress === ethAddresses[i])
             // console.log("selectedLoyaltyToken: ", selectedLoyaltyToken)
 
             if (check > 0 && selectedLoyaltyToken) { 

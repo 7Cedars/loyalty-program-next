@@ -14,13 +14,13 @@ import { BASE_URI } from "@/context/constants";
 export default function Page()  {
   const { address }  = useAccount()
   const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
-  let {data, logs} = useLoyaltyPrograms() 
+  let {data, ethAddresses} = useLoyaltyPrograms() 
   const [selectedProgram, setSelectedProgram] = useState<LoyaltyProgram>()
 
   useEffect(() => {
-    const indexProgram = logs.findIndex(item => item.address === progAddress); 
+    const indexProgram = ethAddresses.findIndex(item => item === progAddress); 
     setSelectedProgram(data[indexProgram])
-  },[, address, logs])
+  },[, address, ethAddresses])
 
   return (
     <div className="grid grid-cols-1">
