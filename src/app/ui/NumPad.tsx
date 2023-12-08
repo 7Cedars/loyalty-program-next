@@ -14,9 +14,7 @@ type NumPadProps = {
 const appearanceButtons = {
   blueFilled:  "rounded m-1 grow text-md text-cen bg-blue-500 hover:bg-blue-600 text-white"   
 }
-const numbers = [1, 5, 25, 150]
-
-
+const numbers = [1, 5, 25, 150] // this can be flexible input. 
 
 export const NumPad = ({
   onClick,
@@ -27,11 +25,8 @@ export const NumPad = ({
 
   const handleClick= (selectedAmount: number) => {
     if(typeof onClick === 'function'){
-      // call the callback passing in whatever parameters you decide
-      // in this simple case just sending numeric value
       onClick(selectedAmount)
    }    
-    // dummy for now
   }
 
   return (

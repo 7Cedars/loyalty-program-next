@@ -27,6 +27,8 @@ import { EthAddress, LoyaltyProgram } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { parseEthAddress } from "../utils/parsers";
 import ChooseProgram from "./ChooseProgram";
+import { useScreenDimensions } from "../hooks/useScreenDimensions";
+import Image from "next/image";
 
 type ModalProps = {
   children: any;
@@ -44,9 +46,12 @@ export const ModalMain = ({
 
   const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
   let {data, ethAddresses, isLoading} = useLoyaltyPrograms() 
-  const [selectedProgram, setSelectedProgram] = useState<EthAddress>()
+  const [indexProgram, setIndexProgram] = useState<number>()
+  const [selectedProgram, setSelectedProgram] = useState<LoyaltyProgram>()
   const [ownedPrograms, setOwnedPrograms] = useState<LoyaltyProgram[]>()
   const [userLoggedIn, setUserLoggedIn] = useState<boolean>(false) 
+  const {width, height} = useScreenDimensions() 
+  
 
   console.log("address at ModalMain: ", address)
 
@@ -75,10 +80,11 @@ export const ModalMain = ({
   // WIP 
   // NB! I still need to check if progAddress is owned by user! 
   useEffect(() => {
-    const indexProgram = ethAddresses.findIndex(item => item === progAddress); 
-
+    const indexProgram = data.findIndex(loyaltyProgram => loyaltyProgram.tokenAddress === progAddress); 
+  
     if (indexProgram !== -1 && progAddress) {
-      setSelectedProgram(parseEthAddress(progAddress))
+      setSelectedProgram(data[indexProgram] )
+      setIndexProgram(indexProgram) 
     }
 
     if (data) {
@@ -87,44 +93,60 @@ export const ModalMain = ({
 
   }, [ , address, progAddress, data])
 
+  console.log("data: ", data, "indexProgram: ", indexProgram)
+
   return (
+    <>
     
-      <div className="absolute w-full max-w-4xl h-screen z-1">
-        <div className="flex flex-col pt-14 h-full">
-        
-        <NotificationDialog/> 
-        
-        { modalVisible && userLoggedIn? 
-          <div className="flex flex-col mt-2 h-full bg-slate-50/[.90] mx-8 rounded-t-lg z-8">
-            <div className="grow-0 flex justify-end"> 
-              <button 
-                  className="text-black font-bold pt-2 px-2"
-                  type="submit"
-                  onClick={() => dispatch(updateModalVisible(false))} // should be true / false
-                  >
-                  <XMarkIcon
-                    className="h-7 w-7"
-                    aria-hidden="true"
-                  />
-              </button>
-            </div>
-            <div className="h-full justify-center"> 
+      <div className="relative w-full max-w-4xl h-screen z-1 border-2 border-red-500">
 
-            {progAddress ? children : <ChooseProgram /> } 
+          <div className="flex flex-col pt-14 h-full z-3">
+          { selectedProgram ? 
+            <Image
+            className="absolute inset-0 z-0"
+            width={896}
+            height={height}
+            src={selectedProgram.metadata.imageUri} 
+            alt="Loyalty Card Token"
+            />
+          : null }          
+          <NotificationDialog/> 
+          
+          { modalVisible && userLoggedIn? 
+            <div className="flex flex-col mt-2 h-full bg-slate-50 mx-8 rounded-t-lg z-10"> 
+            {/* /[.95] */}
+              <div className="grow-0 flex justify-end"> 
+                <button 
+                    className="text-black font-bold pt-2 px-2"
+                    type="submit"
+                    onClick={() => dispatch(updateModalVisible(false))} // should be true / false
+                    >
+                    <XMarkIcon
+                      className="h-7 w-7"
+                      aria-hidden="true"
+                    />
+                </button>
+              </div>
+              <div className="h-full justify-center"> 
 
+              {progAddress ? children : <ChooseProgram /> } 
+
+              </div>
             </div>
-          </div>
-        
-        :
-        <button 
-          className="w-full h-full"
-          type="submit"
-          onClick={() => dispatch(updateModalVisible(true))} // should be true / false
-          >
-        </button>
-      }
-      </div>
+          
+          :
+          <button 
+            className="w-full h-full z-10"
+            type="submit"
+            onClick={() => dispatch(updateModalVisible(true))} // should be true / false
+            >
+          </button>
+        }
+        </div>
+      
     </div>
+    </>
+
     
   )};
 

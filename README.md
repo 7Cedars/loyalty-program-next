@@ -13,7 +13,7 @@ Even though repository is public, For now, it is for personal use only.
 
 ## Todo   
 - [x] Implement standardised fonts: also font for 'nothing selected' texts. 
-- [ ] Implement picture of selected loyalty program in background. 
+- [x] Implement picture of selected loyalty program in background. 
 - [ ] Develop landing page 
   - [ ]  Insert correct (standardised) title & description. 
 - [ ] Develop vendor select tokens
