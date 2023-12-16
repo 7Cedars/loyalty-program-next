@@ -64,3 +64,12 @@ export type LoyaltyToken = {
   uri: string; 
   metadata: TokenMetadata 
 } 
+
+export type QrData = {
+  type: "giftPoints" | "redeemToken" | "requestCard"; 
+  loyaltyProgram: EthAddress; 
+  loyaltyCardId?: number; 
+  loyaltyToken?: EthAddress; 
+  loyaltyTokenId?: number; 
+  customerAddress?: EthAddress;
+} 

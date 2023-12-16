@@ -2,7 +2,8 @@ import {
   EthAddress, 
   TokenMetadata, 
   Attribute, 
-  DeployedContractLog
+  DeployedContractLog, 
+  QrData
 } from "@/types";
 import { Log, getAddress } from "viem";
 
@@ -63,6 +64,15 @@ const parseHash = (hash: unknown): string => {
   // here can additional checks later. 
 
   return hash as string;
+};
+
+const parseNumber = (number: unknown): number => {
+  if (!isNumber(number)) {
+    throw new Error(`Incorrect number, not a number: ${number}`);
+  }
+  // here can additional checks later. 
+
+  return number as number;
 };
 
 const parseArgsLoyaltyToken = (args: unknown): EthAddress => {
@@ -208,4 +218,54 @@ export const parseMetadata = (metadata: unknown): TokenMetadata => {
        }
       
        throw new Error('Incorrect data at program Metadata: some fields are missing or incorrect');
+};
+
+export const parseQrData = (qrText: unknown): QrData => {
+  console.log("parseQrData CALLED:", qrText)
+  if ( !qrText || typeof qrText !== 'string' ) {
+    throw new Error('Incorrect or missing data');
+  }
+
+  if ( 
+    qrText.includes('type') &&
+    qrText.includes(';')
+      ) { 
+        try {
+          const data = qrText.split(";")
+          // console.log("DATA: ", data)
+          
+          if (data[0].includes("giftPoints")) {
+            return {
+              type: "giftPoints",  
+              loyaltyProgram: parseEthAddress(data[1].slice(3)), 
+              loyaltyCardId: parseNumber(data[2].slice(3))
+              } 
+          }
+
+          if (data[0].includes("redeemToken")) {
+            return {
+              type: "redeemToken",  
+              loyaltyProgram: parseEthAddress(data[1].slice(3)), 
+              loyaltyCardId: parseNumber(data[2].slice(3)), 
+              loyaltyToken: parseEthAddress(data[3].slice(3)), 
+              loyaltyTokenId: parseNumber(data[4].slice(3)),
+              } 
+          } 
+
+          if (data[0].includes("requestCard")) {
+            return {
+              type: "requestCard",  
+              loyaltyProgram: parseEthAddress(data[1].slice(3)), 
+              customerAddress: parseEthAddress(data[2].slice(3)),
+              } 
+          } 
+          
+        } catch (error) {
+          throw new Error(`parseQrData caught error: ${error}`);
+        }
+
+        throw new Error('Incorrect data at QrData: type not recognised');
+       }
+      
+       throw new Error('Incorrect data at QrData: some fields are missing or incorrect');
 };

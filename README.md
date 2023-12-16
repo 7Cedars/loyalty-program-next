@@ -24,33 +24,32 @@ Even though repository is public, For now, it is for personal use only.
     - [x]  Write to contract
     - [x]  Listen for correct event. 
     - [x]  Show loading circle 
-    - [ ]  show green notification when succeful
+    - [ ]  show green notification when successful
     - [ ]  red if error returned. 
   - [ ]  Implement minting loyaltyTokens 
     - [ ]  Write to contract
     - [ ]  Listen for correct event. 
     - [ ]  Show loading circle when loading
-    - [ ]  show green notification when succeful
+    - [ ]  show green notification when successful
     - [ ]  red if error returned. 
 - [ ]  Develop minting page 
-  - [ ]  Refactor layouting. Make choice what to see: mining points or cards. 
   - [ ]  Insert proper titles - standardised. 
   - [ ]  Implement writing to contract. 
   - [ ]  Listening for correct event
-  - [ ]  show green notification when succeful
+  - [ ]  show green notification when successful
   - [ ]  red if error returned.
 - [ ]  Develop QR reading page
   - [ ]  Image of QR reading should fit whole modal + QR reading frame should be super imposed over this. 
   - [ ]  Use QR create app on phone to create QR codes
   - [ ]  Implement correct triggers: 
     - [ ]  When seeing address -> send new loyalty card. 
-      - [ ]  show green notification when succeful
+      - [ ]  show green notification when successful
       - [ ]  red if error returned.
     - [ ]  When seeing card ID + program address -> send points.
-      - [ ]  show green notification when succeful
+      - [ ]  show green notification when successful
       - [ ]  red if error returned. 
     - [ ]  When seeing token ID + token address + loyalty prgram address -> redeem token.
-      - [ ] show green notification when succeful
+      - [ ] show green notification when successful
       - [ ]  red if error returned.
 - [ ]  Develop ui elements 
   - [x]  implement different colours button

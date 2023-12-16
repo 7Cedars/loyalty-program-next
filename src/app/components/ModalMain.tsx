@@ -93,7 +93,7 @@ export const ModalMain = ({
 
   }, [ , address, progAddress, data])
 
-  console.log("data: ", data, "indexProgram: ", indexProgram)
+  console.log("width: ", width, "height: ", height)
 
   return (
     <>
@@ -104,7 +104,8 @@ export const ModalMain = ({
           { selectedProgram ? 
             <Image
             className="absolute inset-0 z-0"
-            width={896}
+            // fill 
+            width= {width > 896 ? 896 : width}
             height={height}
             src={selectedProgram.metadata.imageUri} 
             alt="Loyalty Card Token"
@@ -113,7 +114,7 @@ export const ModalMain = ({
           <NotificationDialog/> 
           
           { modalVisible && userLoggedIn? 
-            <div className="flex flex-col mt-2 h-full bg-slate-50/50 backdrop-blur-xl shadow-2xl mx-4 rounded-t-lg z-10"> 
+            <div className="flex flex-col mt-2 h-full scroll-auto bg-slate-50/[.95] backdrop-blur-xl shadow-2xl mx-4 rounded-t-lg z-10"> 
             {/* /[.95] */}
               <div className="grow-0 flex justify-end"> 
                 <button 
