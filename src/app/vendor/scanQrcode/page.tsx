@@ -74,7 +74,7 @@ export default function Page() {
   : 
   data.type === "redeemToken" ? <RedeemToken setData = {setData}/> 
   :
-  data.type === "requestCard" ? <TransferCard setData = {setData}/>
+  data.type === "requestCard" ? <TransferCard qrData = {data} setData = {setData}/>
   : null
   }
 
