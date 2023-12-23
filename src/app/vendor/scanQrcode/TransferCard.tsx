@@ -10,13 +10,14 @@ import {
   useContractRead, 
   usePublicClient 
 } from "wagmi";
-import { parseEthAddress } from "@/app/utils/parsers";
+import { parseEthAddress, parseTransactionLogs } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi"; 
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { Log } from "viem";
+import { bigIntMax } from "@/app/utils/bigIntOperations";
 
 type RedeemTokenProps = {
   qrData: QrData | undefined;  
@@ -27,26 +28,32 @@ type RedeemTokenProps = {
 export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>() 
+  const [ lastCardTransferred, setLastCardTransferred] = useState<any>() 
   const dispatch = useDispatch() 
   const { address } = useAccount() 
   const publicClient = usePublicClient()
 
-  const getTransferredLoyaltyCards = async () => {
+  const getLastTransferredLoyaltyCard = async () => {
+    console.log("getLastTransferredLoyaltyCard called")
 
-    const addedTokensData: Log[] = await publicClient.getContractEvents( { 
+    const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
       address: parseEthAddress(progAddress), 
       eventName: 'TransferSingle', 
       args: {
-        from: address,
-        to: '0xa5cc3c03994db5b0d9a5eedd10cabab0813678ac', 
-        id: !0
+        from: parseEthAddress(address)
       },
       fromBlock: 1n,
       toBlock: 16330050n
     });
-  }
 
+    const transferSingleData =  parseTransactionLogs(transferSingleLogs)
+    const transferredLoyaltyCards = transferSingleData.map(item => item.id)
+
+    // console.log()
+    setLastCardTransferred(bigIntMax(transferredLoyaltyCards))
+    // return bigIntMax(transferredLoyaltyCards)
+  }
 
   const loyaltyCardsMinted = useContractRead(
     {
@@ -75,7 +82,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
       functionName: "safeTransferFrom", 
-      args: [address, qrData?.customerAddress, , 1], 
+      args: [address, qrData?.customerAddress, lastCardTransferred, 1], 
       onError(error) {
         dispatch(notification({
           id: "addLoyaltyTokenContract",
@@ -97,12 +104,18 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
       hash: hashTransaction 
     })
 
+  const handleTransfer = async () => { 
+    await getLastTransferredLoyaltyCard(); 
+    console.log(lastCardTransferred)
+    transferCard.write
+  }
+
   return (
     <div className="grid grid-cols-1 ">
   
       <div className="text-center p-3 pt-12">
-      <Button onClick={() => {loyaltyCardsMinted}}>
-          Loyalty Cards Minted
+        <Button onClick={() => {handleTransfer()}}>
+          Transferred Loyalty Cards
         </Button>
       
         {/* TRANSFER CARD */}

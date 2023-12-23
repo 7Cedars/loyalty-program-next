@@ -73,3 +73,11 @@ export type QrData = {
   loyaltyTokenId?: number; 
   customerAddress?: EthAddress;
 } 
+
+export type Transaction = {
+  operator: EthAddress; 
+  from: EthAddress; 
+  to: EthAddress; 
+  id: BigInt; 
+  value: BigInt; 
+}
