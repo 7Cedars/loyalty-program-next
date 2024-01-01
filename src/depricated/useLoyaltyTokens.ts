@@ -17,12 +17,12 @@
 // change in chain id. 
 
 import { useAccount } from "wagmi"
-import { useUrlProgramAddress } from "./useUrl"
+import { useUrlProgramAddress } from "../app/hooks/useUrl"
 import { loyaltyProgramAbi, loyaltyTokenAbi, implementedLoyaltyTokenAbi } from "@/context/abi"
 import { useEffect, useRef, useState } from "react"
-import { parseContractLogs, parseEthAddress } from "../utils/parsers"
+import { parseContractLogs, parseEthAddress } from "../app/utils/parsers"
 import { EthAddress, DeployedContractLog, LoyaltyToken } from "@/types"
-import { parseUri, parseMetadata } from "../utils/parsers"
+import { parseUri, parseMetadata } from "../app/utils/parsers"
 import { usePublicClient } from "wagmi"
 import { Log } from "viem"
 import { getContractEventsProps } from "@/types"

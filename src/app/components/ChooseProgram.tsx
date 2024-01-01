@@ -1,7 +1,6 @@
 import { useAccount } from 'wagmi'
-import { EthAddress, LoyaltyProgram } from "@/types";
+import { LoyaltyProgram } from "@/types";
 import { TitleText } from "../ui/StandardisedFonts";
-import { useLoyaltyProgram } from "../hooks/useLoyaltyProgram";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +9,6 @@ import { usePublicClient } from 'wagmi';
 import { loyaltyProgramAbi } from '@/context/abi';
 import { Log } from 'viem';
 import { parseContractLogs, parseUri, parseMetadata } from '../utils/parsers';
-import { useLoginAndProgram } from '@/depricated/useLoginAndPrograml';
 import { useDispatch } from 'react-redux';
 import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer';
 

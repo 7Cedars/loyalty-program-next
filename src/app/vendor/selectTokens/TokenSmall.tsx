@@ -16,22 +16,28 @@ export default function SelectToken( {token, disabled, onClick}: SelectedTokenPr
   return (
      
       <button className={appearance} onClick={onClick}> 
-      <Image
-          className="rounded-t-lg"
-          width={174}
-          height={174}
-          src={token.metadata.imageUri}
-          alt="Loyalty Token icon "
-        />
-      <div className="grid grid-cols-1 p-2 content-start">
-        <div className="text-center text-sm"> 
-          {`${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
-        </div> 
-        <div className="text-center text-sm text-gray-500"> 
-          {token.metadata.description}
-        </div>
-       
-        </div> 
+      {token.metadata ? 
+        <>
+          <Image
+              className="rounded-t-lg"
+              width={174}
+              height={174}
+              src={token.metadata.imageUri}
+              alt="Loyalty Token icon "
+            />
+          <div className="grid grid-cols-1 p-2 content-start">
+            <div className="text-center text-sm"> 
+              {`${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
+            </div> 
+            <div className="text-center text-sm text-gray-500"> 
+              {token.metadata.description}
+            </div>
+          
+          </div> 
+        </>
+          : 
+          <div> loading </div>
+      }
       </button>
   );
 }

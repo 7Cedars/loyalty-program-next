@@ -21,7 +21,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { NotificationDialog } from "../ui/notificationDialog";
 import { useAccount } from "wagmi";
 import { useUrlProgramAddress } from "../hooks/useUrl";
-import { useLoyaltyProgram } from "../hooks/useLoyaltyProgram";
+import { useLoyaltyProgram } from "../../depricated/useLoyaltyProgram";
 import { useState, useEffect } from "react";
 import { EthAddress, LoyaltyProgram } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
