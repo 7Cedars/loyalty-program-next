@@ -6,7 +6,7 @@ import { Button } from "@/app/ui/Button";
 import { useState } from "react";
 import { Transaction } from "@/types";
 import { Log } from "viem";
-import { parseEthAddress, parseTransactionLogs } from "@/app/utils/parsers";
+import { parseEthAddress, parseTransferSingleLogs, parseTransferBatchLogs } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { 
@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
 import MintPoints from "./mintPoints";
+import MintCards from "./mintCards";
 
 export default function Page() {
   const [modal, setModal] = useState<'points' | 'cards' | undefined>()  
@@ -41,22 +42,34 @@ export default function Page() {
       fromBlock: 1n,
       toBlock: 16330050n
     });
-    const transferSingleData =  parseTransactionLogs(transferSingleLogs)
+    const transferSingleData =  parseTransferSingleLogs(transferSingleLogs)
 
-    const transferMintLogs: Log[] = await publicClient.getContractEvents( { 
+    const transferMintPointsLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
       address: parseEthAddress(progAddress), 
       eventName: 'TransferSingle', 
       args: {
-        // from: parseEthAddress(progAddress), 
-        // to: parseEthAddress(progAddress)
+        to: parseEthAddress(address)
       },
       fromBlock: 1n,
       toBlock: 16330050n
     });
-    const transferMintData =  parseTransactionLogs(transferMintLogs)
+    const transferMintPointsData =  parseTransferSingleLogs(transferMintPointsLogs)
 
-    const transferData = [...transferSingleData, ...transferMintData]
+    const transferMintCardLogs: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyProgramAbi, 
+      address: parseEthAddress(progAddress), 
+      eventName: 'TransferBatch', 
+      args: {
+        to: parseEthAddress(address)
+      },
+      fromBlock: 1n,
+      toBlock: 16330050n
+    });
+    console.log("transferMintCardLogs: ", transferMintCardLogs)
+    const transferMintCardData =  parseTransferBatchLogs(transferMintCardLogs)
+
+    const transferData = [...transferSingleData, ...transferMintPointsData, ...transferMintCardData]
     transferData.sort((firstTransaction, secondTransaction) => 
       Number(secondTransaction.blockNumber) - Number(firstTransaction.blockNumber));
 
@@ -76,34 +89,23 @@ export default function Page() {
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
 
         { 
-        
-        modal === 'points' ? 
-        
-          <div className="p-3 px-12 grid grid-cols-1 h-full ">
-
-            <MintPoints modal = {modal} setModal = {setModal} /> 
-
-          </div>
-
+          modal === 'points' ? 
+            <div className="p-3 px-12 grid grid-cols-1 h-full ">
+              <MintPoints modal = {modal} setModal = {setModal} /> 
+            </div>
         :
-
-        modal === 'cards' ? 
-
-          <div> 
-
-            cards
-
-          </div>
-
+          modal === 'cards' ? 
+            <div> 
+              <MintCards modal = {modal} setModal = {setModal} /> 
+            </div>
         : 
-
           transactions ? 
             <div className="grid grid-cols-1 overflow-auto m-4 mx-12 p-8 divide-y">  
               {
               transactions.map((transaction: Transaction, i) => 
                 <div key = {i} className="p-2 ">
                   {
-                  transaction.id === 0n && transaction.from === address ? 
+                   transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.from === address ? 
                     <div className="grid grid-cols-1">
                       <div className="flex justify-between">
                         <div className="font-bold">
@@ -117,11 +119,11 @@ export default function Page() {
                         {`to loyalty card address: ${transaction.to}`}
                       </div>
                       <div> 
-                        {`${transaction.value} points`}
+                        {`${transaction.values[0]} points`}
                       </div>
                     </div>
                   :
-                  transaction.id === 0n && transaction.to === address ?
+                  transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.to === address ?
                     <div className="grid grid-cols-1">
                     <div className="flex justify-between">
                       <div className="font-bold">
@@ -135,11 +137,11 @@ export default function Page() {
                       {`to loyalty card address: ${transaction.to}`}
                     </div>
                     <div> 
-                      {`${transaction.value} points`}
+                      {`${transaction.values[0]} points`}
                     </div>
                   </div>
                   : 
-                  transaction.id !== 0n && transaction.from === address ?
+                  transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.from === address ?
                     <div className="grid grid-cols-1">
                       <div className="flex justify-between">
                         <div className="font-bold">
@@ -153,14 +155,15 @@ export default function Page() {
                         {`to customer address: ${transaction.to}`}
                       </div>
                       <div> 
-                        {`Card ID: ${transaction.id}`}
-                      </div>
+                        {`Card ID: ${String(transaction.ids[0])}`}
+                </div>
                     </div>
                   :
+                  transaction.ids.length > 1 ? 
                     <div className="grid grid-cols-1">
                       <div className="flex justify-between">
                         <div className="font-bold">
-                          Mint Loyalty Card 
+                          Mint Loyalty Cards 
                         </div> 
                         <div className="">
                           Blocknumber: {Number(transaction.blockNumber)}
@@ -170,8 +173,25 @@ export default function Page() {
                         {`to customer address: ${transaction.to}`}
                       </div>
                       <div> 
-                        {`Card ID: ${transaction.id}`}
+                        {`number Cards minted ${transaction.ids.length}`}
+                   </div>
+                    </div>
+                  :
+                    <div className="grid grid-cols-1">
+                      <div className="flex justify-between">
+                        <div className="font-bold">
+                          Unrecognised
+                        </div> 
+                        <div className="">
+                          Blocknumber: {Number(transaction.blockNumber)}
+                        </div> 
                       </div>
+                      <div> 
+                        {`to customer address: ${transaction.to}`}
+                      </div>
+                      <div> 
+                        {`Card ID: ${transaction.ids}`}
+ [  ]                   </div>
                     </div>
                   }
                 </div>

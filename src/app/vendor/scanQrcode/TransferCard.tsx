@@ -10,7 +10,7 @@ import {
   useContractRead, 
   usePublicClient 
 } from "wagmi";
-import { parseEthAddress, parseTransactionLogs, parseBigInt } from "@/app/utils/parsers";
+import { parseEthAddress, parseTransferSingleLogs, parseBigInt } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi"; 
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { notification } from "@/redux/reducers/notificationReducer";
@@ -51,7 +51,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
       toBlock: 16330050n
     });
 
-    setTransferSingles(parseTransactionLogs(transferSingleLogs))
+    setTransferSingles(parseTransferSingleLogs(transferSingleLogs))
   
   }
 
@@ -106,7 +106,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   useEffect(() => {
 
     if (transferSingles) {
-      const transferredLoyaltyCards = transferSingles.map(item => item.id)
+      const transferredLoyaltyCards = transferSingles.map(item => item.ids[0])
       setLastCardTransferred(bigIntMax(transferredLoyaltyCards))
     }
 

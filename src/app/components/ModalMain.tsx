@@ -21,7 +21,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { NotificationDialog } from "../ui/notificationDialog";
 import { useAccount } from "wagmi";
 import { useUrlProgramAddress } from "../hooks/useUrl";
-import { useLoyaltyPrograms } from "../hooks/useLoyaltyPrograms";
+import { useLoyaltyProgram } from "../hooks/useLoyaltyProgram";
 import { useState, useEffect } from "react";
 import { EthAddress, LoyaltyProgram } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
@@ -43,17 +43,15 @@ export const ModalMain = ({
   const dispatch = useAppDispatch()
   const { modalVisible } = useAppSelector(state => state.userInput) 
   const { address }  = useAccount()
+  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
 
-  const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
-  let {data, ethAddresses, isLoading} = useLoyaltyPrograms() 
-  const [indexProgram, setIndexProgram] = useState<number>()
-  const [selectedProgram, setSelectedProgram] = useState<LoyaltyProgram>()
-  const [ownedPrograms, setOwnedPrograms] = useState<LoyaltyProgram[]>()
+  const { progAddress } = useUrlProgramAddress()
   const [userLoggedIn, setUserLoggedIn] = useState<boolean>(false) 
   const {width, height} = useScreenDimensions() 
   
 
   console.log("address at ModalMain: ", address)
+  console.log("selectedLoyaltyProgram at ModalMain: ", selectedLoyaltyProgram)
 
   useEffect(() => {
     if (!address) {
@@ -77,40 +75,22 @@ export const ModalMain = ({
 
   }, [ , address])
 
-  // WIP 
-  // NB! I still need to check if progAddress is owned by user! 
-  useEffect(() => {
-    const indexProgram = data.findIndex(loyaltyProgram => loyaltyProgram.tokenAddress === progAddress); 
-  
-    if (indexProgram !== -1 && progAddress) {
-      setSelectedProgram(data[indexProgram] )
-      setIndexProgram(indexProgram) 
-    }
-
-    if (data) {
-      setOwnedPrograms(data)
-    }
-
-  }, [ , address, progAddress, data])
-
-  console.log("width: ", width, "height: ", height)
-
   return (
     <>
     
       <div className="relative w-full max-w-4xl h-screen z-1">
 
           <div className="flex flex-col pt-14 h-full z-3">
-          { selectedProgram ? 
+          { selectedLoyaltyProgram?.metadata ? 
             <Image
             className="absolute inset-0 z-0"
             // fill 
             width= {width > 896 ? 896 : width}
             height={height}
-            src={selectedProgram.metadata.imageUri} 
+            src={selectedLoyaltyProgram.metadata.imageUri} 
             alt="Loyalty Card Token"
             />
-          : null }          
+          : null }        
           <NotificationDialog/> 
           
           { modalVisible && userLoggedIn? 
@@ -130,7 +110,7 @@ export const ModalMain = ({
               </div>
               <div className="h-full justify-center"> 
 
-              {progAddress ? children : <ChooseProgram /> } 
+              {selectedLoyaltyProgram ? children : <ChooseProgram /> } 
 
               </div>
             </div>

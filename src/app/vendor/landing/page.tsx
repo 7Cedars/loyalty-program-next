@@ -2,7 +2,6 @@
 "use client"; 
 
 // Will do clean up later. 
-import { useLoyaltyPrograms } from "@/app/hooks/useLoyaltyPrograms";
 import { useAccount } from "wagmi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { useEffect, useState } from "react";
@@ -11,24 +10,24 @@ import { Button } from "@/app/ui/Button";
 import { LoyaltyProgram } from "@/types";
 import { BASE_URI } from "@/context/constants";
 import { TitleText } from "@/app/ui/StandardisedFonts";
+import { loyaltyProgramAbi } from "@/context/abi";
+import { parseContractLogs, parseUri, parseMetadata } from "@/app/utils/parsers";
+import { usePublicClient } from "wagmi";
+import { Log } from "viem";
 
 export default function Page()  {
   const { address }  = useAccount()
+  const publicClient = usePublicClient(); 
   const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
-  let {data, ethAddresses} = useLoyaltyPrograms() 
-  const [selectedProgram, setSelectedProgram] = useState<LoyaltyProgram>()
-
-  useEffect(() => {
-    const indexProgram = ethAddresses.findIndex(item => item === progAddress); 
-    setSelectedProgram(data[indexProgram])
-  },[, address, ethAddresses])
+  const [ loyaltyPrograms, setLoyaltyPrograms ] = useState<LoyaltyProgram[]>() 
+  const [ selectedProgram, setSelectedProgram ] = useState<LoyaltyProgram>()
 
   return (
     <div className="grid grid-cols-1">
 
       <div className="text-center p-3">
         <TitleText 
-          title = {selectedProgram ? selectedProgram?.metadata.name : "Loyalty Card"} 
+          title = {selectedProgram?.metadata ? selectedProgram?.metadata.name : "Loyalty Card"} 
           subtitle="Scan to activate customer loyalty card" 
           size={2}
           /> 

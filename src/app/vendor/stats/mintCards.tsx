@@ -32,11 +32,11 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
       onError(error) {
         dispatch(notification({
           id: "mintLoyaltyCards",
-          message: `Something went wrong. Loyalty gift has not been removed.`, 
+          message: `Something went wrong. Loyalty crads not minted.`, 
           colour: "red",
           isVisible: true
         }))
-        console.log('removeLoyaltyToken Error', error)
+        console.log('mintLoyaltyCards Error', error)
       }, 
       onSuccess(data) {
         setHashTransaction(data.hash)
@@ -67,17 +67,14 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
   useEffect(() => { 
     if (waitForTransaction.isSuccess) {
       dispatch(notification({
-        id: "mintLoyaltyPoints",
-        message: `Success. ${numpadNumber} points minted.`, 
+        id: "mintLoyaltyCards",
+        message: `Success. ${numpadNumber} cards minted.`, 
         colour: "green",
         isVisible: true
       }))
     }
-    if (waitForTransaction.status) {
-      console.log("data waitForTransaction: ", waitForTransaction.status)
-    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [waitForTransaction.isSuccess, waitForTransaction.status ])
+  }, [waitForTransaction.isSuccess ])
 
   
   const handleChange = (number: number) => {
@@ -88,7 +85,7 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
   return (
     <div className="p-3 px-12 pt-12 grid grid-cols-1 justify-items-center"> 
       <p className="text-2xl text-center p-3">
-        {`${numpadNumber} points`}
+        {`${numpadNumber} cards`}
       </p>
       <div className="max-w-xl"> 
         <NumPad onChange={(number: number) => handleChange(number) } /> 
@@ -111,7 +108,7 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
           </Button>
           : 
           <Button appearance = {"blueFilled"} isDisabled={!mintCards.write} onClick={() => mintCards.write?.()}>
-            Mint Points
+            Mint Cards
           </Button>
         }
         

@@ -54,8 +54,8 @@ export type TokenMetadata = {
 
 export type LoyaltyProgram = {
   tokenAddress: EthAddress; 
-  uri: string; 
-  metadata: TokenMetadata 
+  uri?: string; 
+  metadata?: TokenMetadata 
 } 
 
 // for now type for program and token are the same - but might change in the future 
@@ -80,8 +80,8 @@ export type Transaction = {
   operator: EthAddress; 
   from: EthAddress; 
   to: EthAddress; 
-  id: BigInt; 
-  value: BigInt; 
+  ids: BigInt[]; 
+  values: BigInt[]; 
 }
 
 export type TransactionArgs = UnionOmit<Transaction, 'blockNumber' | 'logIndex'>;

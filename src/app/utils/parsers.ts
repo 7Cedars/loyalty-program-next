@@ -5,7 +5,8 @@ import {
   DeployedContractLog, 
   Transaction, 
   TransactionArgs, 
-  QrData
+  QrData,
+  LoyaltyProgram
 } from "@/types";
 import { Log, getAddress } from "viem";
 
@@ -104,8 +105,8 @@ const parseArgsLoyaltyToken = (args: unknown): EthAddress => {
   throw new Error(`Incorrect args format: ${args}`);
 }
 
-const parseArgsTransaction = (args: unknown): TransactionArgs => {
-  // console.log("parseArgsTransaction called ")
+const parseArgsTransferSingle = (args: unknown): TransactionArgs => {
+  // console.log("parseArgsTransferSingle called ")
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');
   }
@@ -122,8 +123,40 @@ const parseArgsTransaction = (args: unknown): TransactionArgs => {
       operator: parseEthAddress(args.operator),
       from: parseEthAddress(args.from), 
       to: parseEthAddress(args.to),
-      id: parseBigInt(args.id),  
-      value: parseBigInt(args.value),    
+      ids: [parseBigInt(args.id)],  
+      values: [parseBigInt(args.value)],    
+    })
+  }
+  throw new Error(`Incorrect args format: ${args}`);
+}
+
+const parseArgsTransferBatch = (args: unknown): TransactionArgs => {
+  // console.log("parseArgsTransferSingle called ")
+  if ( !args || typeof args !== 'object' ) {
+    throw new Error('Incorrect or missing data at args');
+  }
+
+  if (
+    'operator' in args &&
+    'from' in args && 
+    'to' in args && 
+    'ids' in args && 
+    'values' in args
+    ) { 
+      // console.log(parseNumber(args.id))
+      if ( !isArray(args.ids) ) {
+        throw new Error('args.ids is not an array');
+      } 
+      if ( !isArray(args.values) ) {
+        throw new Error('args.values is not an array');
+      } 
+
+    return ({
+      operator: parseEthAddress(args.operator),
+      from: parseEthAddress(args.from), 
+      to: parseEthAddress(args.to),
+      ids: args.ids.map(id => parseBigInt(id)),  
+      values: args.values.map(id => parseBigInt(id)),    
     })
   }
   throw new Error(`Incorrect args format: ${args}`);
@@ -145,7 +178,7 @@ export const parseEthAddress = (address: unknown): EthAddress => {
   return returnAddress as EthAddress;
 };
 
-export const parseContractLogs = (logs: Log[]): EthAddress[] => {
+export const parseContractLogs = (logs: Log[]): LoyaltyProgram[] => {
   if (!isArray(logs)) {
     throw new Error(`Incorrect logs, not an array: ${logs}`);
   }
@@ -159,12 +192,12 @@ export const parseContractLogs = (logs: Log[]): EthAddress[] => {
       if (
         'address' in log &&
         'blockHash' in log
-        ) { return ( parseEthAddress(log.address) )
+        ) { return ( {tokenAddress: parseEthAddress(log.address)} )
         }
         throw new Error('Incorrect data at LoyaltyProgram logs: some fields are missing or incorrect');
     })
 
-    return parsedLogs as Array<EthAddress> 
+    return parsedLogs as Array<LoyaltyProgram> 
 
   } catch {
     throw new Error('Incorrect data at LoyaltyProgram logs. Parser caught error');
@@ -197,7 +230,7 @@ export const parseLoyaltyContractLogs = (logs: Log[]): EthAddress[] => {
 
 };
 
-export const parseTransactionLogs = (logs: Log[]): Transaction[] => {
+export const parseTransferSingleLogs = (logs: Log[]): Transaction[] => {
   if (!isArray(logs)) {
     throw new Error(`Incorrect transaction logs, not an array: ${logs}`);
   }
@@ -217,7 +250,7 @@ export const parseTransactionLogs = (logs: Log[]): Transaction[] => {
         return ({
           blockNumber: parseBigInt(log.blockNumber),
           logIndex: parseNumber(log.logIndex),
-          ...parseArgsTransaction(log.args) 
+          ...parseArgsTransferSingle(log.args) 
         }) 
       } 
         throw new Error('Incorrect data at transaction logs: some fields are missing or incorrect');
@@ -229,6 +262,42 @@ export const parseTransactionLogs = (logs: Log[]): Transaction[] => {
     throw new Error('Incorrect data at transaction logs. Parser caught error');
   }
 };
+
+
+export const parseTransferBatchLogs = (logs: Log[]): Transaction[] => {
+  if (!isArray(logs)) {
+    throw new Error(`Incorrect transaction logs, not an array: ${logs}`);
+  }
+
+  try { 
+    const parsedLogs = logs.map((log: unknown) => {
+      if ( !log || typeof log !== 'object' ) {
+        throw new Error('Incorrect or missing data at transaction log');
+      }
+
+      if ( 
+        'args' in log && 
+        'logIndex' in log && 
+        'blockNumber' in log
+        ) {
+        // console.log('lala' , log.args )
+        return ({
+          blockNumber: parseBigInt(log.blockNumber),
+          logIndex: parseNumber(log.logIndex),
+          ...parseArgsTransferBatch(log.args) 
+        }) 
+      } 
+        throw new Error('Incorrect data at transaction logs: some fields are missing or incorrect');
+    })
+
+    return parsedLogs as Array<Transaction> 
+
+  } catch {
+    throw new Error('Incorrect data at transaction logs. Parser caught error');
+  }
+};
+
+
 
 export const parseAttributes = (attributes: unknown): Array<Attribute>  => {
   if (!isArray(attributes)) {

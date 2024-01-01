@@ -1,21 +1,116 @@
 import { useAccount } from 'wagmi'
-import { LoyaltyProgram } from "@/types";
+import { EthAddress, LoyaltyProgram } from "@/types";
 import { TitleText } from "../ui/StandardisedFonts";
-import { useLoyaltyPrograms } from "../hooks/useLoyaltyPrograms";
+import { useLoyaltyProgram } from "../hooks/useLoyaltyProgram";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useUrlProgramAddress } from '../hooks/useUrl';
+import { usePublicClient } from 'wagmi';
+import { loyaltyProgramAbi } from '@/context/abi';
+import { Log } from 'viem';
+import { parseContractLogs, parseUri, parseMetadata } from '../utils/parsers';
+import { useLoginAndProgram } from '@/depricated/useLoginAndPrograml';
+import { useDispatch } from 'react-redux';
+import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer';
 
 export default function ChooseProgram()  {
   const { address } = useAccount() 
-  let { data } = useLoyaltyPrograms() 
-  const [ownedPrograms, setOwnedPrograms] = useState<LoyaltyProgram[]>()
-  const { putProgAddressInUrl } = useUrlProgramAddress() 
+  const publicClient = usePublicClient(); 
+  const dispatch = useDispatch() 
+  const { putProgAddressInUrl } = useUrlProgramAddress()
+  const [ loyaltyPrograms, setLoyaltyPrograms ] = useState<LoyaltyProgram[]>() 
+
+  console.log(loyaltyPrograms)
+
+  const getLoyaltyProgramAddresses = async () => {
+    console.log("getLoyaltyProgramAddresses called")
+
+    const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyProgramAbi, 
+        eventName: 'DeployedLoyaltyProgram', 
+        args: {owner: address}, 
+        fromBlock: 1n,
+        toBlock: 16330050n
+    });
+    const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
+    setLoyaltyPrograms(loyaltyProgramAddresses)
+
+    console.log("loyaltyProgramAddresses: ", loyaltyProgramAddresses)
+  }
+
+  const getLoyaltyProgramsUris = async () => {
+    console.log("getLoyaltyProgramsUris called")
+
+    let loyaltyProgram: LoyaltyProgram
+    let loyaltyProgramsUpdated: LoyaltyProgram[] = []
+
+    if (loyaltyPrograms) { 
+
+      try {
+        for await (loyaltyProgram of loyaltyPrograms) {
+
+          const uri: unknown = await publicClient.readContract({
+            address: loyaltyProgram.tokenAddress, 
+            abi: loyaltyProgramAbi,
+            functionName: 'uri',
+            args: [0]
+          })
+
+          loyaltyProgramsUpdated.push({...loyaltyProgram, uri: parseUri(uri)})
+        }
+
+        setLoyaltyPrograms(loyaltyProgramsUpdated)
+
+        } catch (error) {
+          console.log(error)
+      }
+    }
+  }
+
+  const getLoyaltyProgramsMetaData = async () => {
+    console.log("getLoyaltyProgramsMetaData called")
+
+    let loyaltyProgram: LoyaltyProgram
+    let loyaltyProgramsUpdated: LoyaltyProgram[] = []
+
+    if (loyaltyPrograms) { 
+      try {
+        for await (loyaltyProgram of loyaltyPrograms) {
+
+          const fetchedMetadata: unknown = await(
+            await fetch(parseUri(loyaltyProgram.uri))
+            ).json()
+
+          loyaltyProgramsUpdated.push({...loyaltyProgram, metadata: parseMetadata(fetchedMetadata)})
+        }
+
+        setLoyaltyPrograms(loyaltyProgramsUpdated)
+
+        } catch (error) {
+          console.log(error)
+      }
+    }
+  }
 
   useEffect(() => {
-    if (data) { setOwnedPrograms(data) }
-  }, [, data, address]) // is address necessary here? 
+
+    if (!loyaltyPrograms) { getLoyaltyProgramAddresses() } // check when address has no deployed programs what happens..  
+    if (
+      loyaltyPrograms && 
+      loyaltyPrograms.findIndex(loyaltyProgram => loyaltyProgram.uri) === -1 
+      ) { getLoyaltyProgramsUris() } 
+    if (
+      loyaltyPrograms && 
+      loyaltyPrograms.findIndex(loyaltyProgram => loyaltyProgram.metadata) === -1 
+      ) { getLoyaltyProgramsMetaData() } 
+
+  }, [ , loyaltyPrograms])
+
+  const handleProgramSelection = (loyaltyProgram: LoyaltyProgram) => {
+    putProgAddressInUrl(loyaltyProgram.tokenAddress)
+    dispatch(selectLoyaltyProgram(loyaltyProgram))
+  }
 
   // Choosing program. -- This is what I have to get working 100% 
   return (
@@ -24,21 +119,19 @@ export default function ChooseProgram()  {
       <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll overscroll-auto mb-12"> 
         {/* (The following div is an empty div for ui purposes)   */ }
         <div className="w-[16vw] h-96 ms-4 opacity-0 border-2 border-green-500" /> 
-        { ownedPrograms ? 
-          ownedPrograms.map(program => {
+        { loyaltyPrograms ? 
+          loyaltyPrograms.map(program => {
 
             return (
               <button 
                 key={program.tokenAddress}
-                onClick = {() => putProgAddressInUrl(program.tokenAddress)}
-                
+                onClick = {() => handleProgramSelection(program)}
                   className="me-20 mt-12 w-72 h-128"> 
-                    
                       <Image
                         className="rounded-lg"
                         width={288}
                         height={420}
-                        src={program.metadata.imageUri}
+                        src={program.metadata? program.metadata.imageUri : `/vercel.svg`}
                         alt="DAO space icon"
                       />
                     
