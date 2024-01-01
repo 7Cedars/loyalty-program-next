@@ -80,7 +80,7 @@ const parseNumber = (number: unknown): number => {
   return number as number;
 };
 
-const parseBigInt = (number: unknown): BigInt => {
+export const parseBigInt = (number: unknown): BigInt => {
   if (!isBigInt(number)) {
     throw new Error(`Incorrect number, not a number: ${number}`);
   }

@@ -1,55 +1,48 @@
-// I am using this as an example for now to create modular range slider (and modal). 
-// Taken from react-graph-gallery github repo.  
-
 // 
 
 import { useState } from "react";
 import { Button } from "./Button";
+import { BackspaceIcon } from "@heroicons/react/24/outline";
 
 type NumPadProps = {
-  onClick: (arg0: number) => void;
-  appearance?: "blueFilled" | "blueEmpty" 
+  onChange: (arg0: number) => void;
 };
 
-const appearanceButtons = {
-  blueFilled:  "rounded m-1 grow text-md text-cen bg-blue-500 hover:bg-blue-600 text-white"   
-}
-const numbers = [1, 5, 25, 150] // this can be flexible input. 
+const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '00'] 
 
 export const NumPad = ({
-  onClick,
-  appearance = "blueEmpty"
+  onChange,
 }: NumPadProps) => {
 
-  const [ selectedAmount, setSelectedAmount ] = useState<number>(25) 
+  const [fullNumberString, setFullNumberString] = useState<string>('0')  
 
-  const handleClick= (selectedAmount: number) => {
-    if(typeof onClick === 'function'){
-      onClick(selectedAmount)
-   }    
+  const handleChange= ({target}: {target: string}) => {
+
+    if (target === '') {target = '0'}
+    setFullNumberString(target)
+    
+    if(typeof onChange === 'function'){
+      onChange( parseInt(target))
+    }    
   }
 
   return (
-    <div className="flex grow"> 
+    <div className="grid grid-cols-3"> 
     {
       numbers.map(number => 
-        number === selectedAmount ? 
-        <div key = {number} className="flex"> 
-          <Button  appearance = {"blueFilled"} onClick={() => setSelectedAmount(number)} >
-                {number} 
-          </Button>
-        </div>
-        :
-        <div key = {number} className="flex"> 
-          <Button  appearance = {"blueEmpty"} onClick={() => setSelectedAmount(number)} >
+        <div key = {number} className="flex w-24 h-16">
+          <Button  appearance = {"blueEmpty"} onClick={() => handleChange({target: fullNumberString.concat(number)})} >
                 {number} 
           </Button>
         </div>
       )
     }
       <div className="grow flex px-1"> 
-        <Button appearance = {"blueEmpty"} onClick={ () => handleClick(selectedAmount)} >
-            Mint {selectedAmount} Loyalty Gifts
+        <Button appearance = {"blueEmpty"} onClick={ () => handleChange({target: fullNumberString.slice(0, -1)})} >
+          <BackspaceIcon
+              className='h-5 w-5 m-2'
+              aria-hidden="true"
+            />
         </Button>
       </div>
     </div>

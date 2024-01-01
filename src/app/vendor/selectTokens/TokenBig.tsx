@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { foundry } from "viem/chains";
 import { useEffect, useState } from "react";
-import { NumPad } from "@/app/ui/NumPad";
+import { NumLine } from "@/app/ui/NumLine";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -129,7 +129,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
       { isLoading ? 
         <div className="p-3 flex "> 
-          <Button appearance = {"grayEmpty"} onClick={addLoyaltyToken.write} >
+          <Button appearance = {"grayEmpty"} onClick={() => {}} >
             <div className="flex justify-center items-center">
               <Image
                 className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
@@ -152,7 +152,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
           : 
           <div className="grid grid-col-1 gap-0 w-full">
             <div className="p-3 flex w-full"> 
-              <NumPad onClick = {(arg0) => handleClick(arg0) }  /> 
+              <NumLine onClick = {(arg0) => handleClick(arg0) }  /> 
             </div>
             <div className="p-3 flex "> 
               <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >

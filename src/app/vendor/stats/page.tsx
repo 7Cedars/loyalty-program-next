@@ -1,27 +1,160 @@
 "use client"; 
 
 import { TitleText } from "@/app/ui/StandardisedFonts";
-import { InputForm } from "../../components/InputForm"
-
+import { InputForm } from "../../components/InputForm";
+import { Button } from "@/app/ui/Button";
+import { useState } from "react";
+import { Transaction } from "@/types";
+import { Log } from "viem";
+import { parseEthAddress, parseTransactionLogs } from "@/app/utils/parsers";
+import { loyaltyProgramAbi } from "@/context/abi";
+import { useUrlProgramAddress } from "@/app/hooks/useUrl";
+import { 
+  useContractWrite, 
+  useWaitForTransaction, 
+  useAccount, 
+  useContractRead, 
+  usePublicClient 
+} from "wagmi";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { NoteText } from "@/app/ui/StandardisedFonts";
+import { NumPad } from "@/app/ui/NumPad";
+import MintPoints from "./mintPoints";
 
 export default function Page() {
+  const [modal, setModal] = useState<'points' | 'cards' | undefined>()  
+  const { progAddress } =  useUrlProgramAddress();
+  const publicClient = usePublicClient(); 
+  const dispatch = useDispatch() 
+  const { address } = useAccount() 
+  const [transactions, setTransactions] = useState<Transaction[] | undefined >()
+
+  const getTransactions = async () => {
+    console.log("getTransactions called")
+
+    const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyProgramAbi, 
+      address: parseEthAddress(progAddress), 
+      eventName: 'TransferSingle', 
+      args: {
+        from: parseEthAddress(address)
+      },
+      fromBlock: 1n,
+      toBlock: 16330050n
+    });
+
+    const transferSingleData =  parseTransactionLogs(transferSingleLogs)
+    setTransactions(transferSingleData)
+    console.log("transactions: ", transactions)
+  }
+
+  useEffect(() => {
+    getTransactions()
+  }, [])
 
   return (
-    <div className="h-full w-full grid justify-items-center place-content-center"> 
-      <div className="h-full w-full grid grid-cols-1 gap-2 divide-y-2 place-content-center" > 
-        <div className="h-full grid grid-cols-1 gap-1 place-items-center max-h-72">
-            <TitleText size = {1} title = "Loyalty Points Remaining" /> 
-            <InputForm type = "points" presetAmounts = {["5000", "25000", "500000"]} /> 
-        </div> 
+    <div className="grid grid-cols-1 h-full content-between">
 
-        <div className="h-full grid grid-cols-1 gap-1 place-items-center max-h-72">
-            <TitleText size = {1} title = "Loyalty Cards Remaining" /> 
-            <InputForm type = "points" presetAmounts = {["5", "25", "100"]} /> 
-        </div> 
+      <div className="grid grid-cols-1 h-full overflow-auto ">
+        <TitleText title = "Transaction overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
 
-      </div>
-    </div>
-
+        { 
         
-  );
+        modal === 'points' ? 
+        
+          <div className="p-3 px-12 grid grid-cols-1 h-full ">
+
+            <MintPoints modal = {modal} setModal = {setModal} /> 
+
+          </div>
+
+        :
+
+        modal === 'cards' ? 
+
+          <div> 
+
+            cards
+
+          </div>
+
+        : 
+
+          transactions ? 
+            <div className="grid grid-cols-1 overflow-auto m-4 mx-12 p-8 divide-y">  
+              {
+              transactions.map((transaction: Transaction, i) => 
+                <div key = {i} className="p-2 ">
+                  {transaction.id === 0n ? 
+                  <div className="grid grid-cols-1">
+                      <div className="font-bold">
+                        Transfer Points 
+                      </div> 
+                      <div> 
+                        {`to loyalty card address: ${transaction.to}`}
+                      </div>
+                      <div> 
+                        {`${transaction.value} points`}
+                      </div>
+                  </div>
+                  : 
+                  <div className="grid grid-cols-1">
+                      <div className="font-bold">
+                        Transfer Loyalty Card 
+                      </div> 
+                      <div> 
+                        {`to customer address: ${transaction.to}`}
+                      </div>
+                      <div> 
+                        {`Card ID: ${transaction.id}`}
+                      </div>
+                  </div>
+                  }
+                </div>
+              )
+              }
+            </div>    
+          :
+          <div className="m-6"> 
+              <NoteText message="Transaction history will appear here."/>
+          </div>           
+          }
+          </div> 
+          
+          {
+          modal === 'cards' || modal === 'points' ? 
+
+          <div className="grid grid-cols-1 gap-1 mb-12">
+            <div className="px-12 flex h-12">
+              <Button onClick={() => {setModal(undefined)} } appearance="blueEmpty">
+                <div className="justify-center items-center">
+                  Return to Transaction Overview
+                </div>
+              </Button>
+            </div>
+          </div>
+
+          :
+
+          <div className="grid grid-cols-1 gap-1 mb-12">
+            <div className="px-12 flex h-12">
+              <Button onClick={() => {setModal('points')} } appearance="blueFilled">
+                <div className="justify-center items-center">
+                  Mint Loyalty Points
+                </div>
+              </Button>
+            </div>
+            <div className="px-12 mb-12 flex h-12">
+              <Button onClick={() => {setModal('cards')} } appearance="blueFilled">
+                <div className="justify-center items-center">
+                  Mint Loyalty Cards
+                </div>
+              </Button>
+            </div>
+          </div>
+      }
+      
+    </div> 
+  )
 }
