@@ -4,6 +4,7 @@ import {
   Attribute, 
   DeployedContractLog, 
   Transaction, 
+  TransactionArgs, 
   QrData
 } from "@/types";
 import { Log, getAddress } from "viem";
@@ -103,7 +104,7 @@ const parseArgsLoyaltyToken = (args: unknown): EthAddress => {
   throw new Error(`Incorrect args format: ${args}`);
 }
 
-const parseArgsTransaction = (args: unknown): Transaction => {
+const parseArgsTransaction = (args: unknown): TransactionArgs => {
   // console.log("parseArgsTransaction called ")
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');
@@ -123,7 +124,7 @@ const parseArgsTransaction = (args: unknown): Transaction => {
       to: parseEthAddress(args.to),
       id: parseBigInt(args.id),  
       value: parseBigInt(args.value),    
-    } )
+    })
   }
   throw new Error(`Incorrect args format: ${args}`);
 }
@@ -207,9 +208,17 @@ export const parseTransactionLogs = (logs: Log[]): Transaction[] => {
         throw new Error('Incorrect or missing data at transaction log');
       }
 
-      if ( 'args' in log ) {
+      if ( 
+        'args' in log && 
+        'logIndex' in log && 
+        'blockNumber' in log
+        ) {
         // console.log('lala' , log.args )
-        return ( parseArgsTransaction(log.args) ) 
+        return ({
+          blockNumber: parseBigInt(log.blockNumber),
+          logIndex: parseNumber(log.logIndex),
+          ...parseArgsTransaction(log.args) 
+        }) 
       } 
         throw new Error('Incorrect data at transaction logs: some fields are missing or incorrect');
     })

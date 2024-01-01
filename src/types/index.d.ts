@@ -75,9 +75,14 @@ export type QrData = {
 } 
 
 export type Transaction = {
+  blockNumber: BigInt;
+  logIndex: number; 
   operator: EthAddress; 
   from: EthAddress; 
   to: EthAddress; 
   id: BigInt; 
   value: BigInt; 
 }
+
+export type TransactionArgs = UnionOmit<Transaction, 'blockNumber' | 'logIndex'>;
+ 

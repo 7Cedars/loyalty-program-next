@@ -18,7 +18,7 @@ export const NumPad = ({
 
   const handleChange= ({target}: {target: string}) => {
 
-    if (target === '') {target = '0'}
+    if (target === '' || undefined) {target = '0'}
     setFullNumberString(target)
     
     if(typeof onChange === 'function'){

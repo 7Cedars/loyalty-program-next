@@ -19,14 +19,12 @@ import {
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
-import { NumPad } from "@/app/ui/NumPad";
 import MintPoints from "./mintPoints";
 
 export default function Page() {
   const [modal, setModal] = useState<'points' | 'cards' | undefined>()  
   const { progAddress } =  useUrlProgramAddress();
   const publicClient = usePublicClient(); 
-  const dispatch = useDispatch() 
   const { address } = useAccount() 
   const [transactions, setTransactions] = useState<Transaction[] | undefined >()
 
@@ -46,18 +44,19 @@ export default function Page() {
 
     const transferSingleData =  parseTransactionLogs(transferSingleLogs)
     setTransactions(transferSingleData)
-    console.log("transactions: ", transactions)
+    console.log("transferSingleLogs: ", transferSingleLogs)
   }
 
   useEffect(() => {
     getTransactions()
   }, [])
 
+
   return (
     <div className="grid grid-cols-1 h-full content-between">
 
       <div className="grid grid-cols-1 h-full overflow-auto ">
-        <TitleText title = "Transaction overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
+        <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
 
         { 
         
@@ -88,9 +87,14 @@ export default function Page() {
                 <div key = {i} className="p-2 ">
                   {transaction.id === 0n ? 
                   <div className="grid grid-cols-1">
+                    <div className="flex">
                       <div className="font-bold">
                         Transfer Points 
                       </div> 
+                      <div className="">
+                        transaction logIndex
+                      </div> 
+                    </div>
                       <div> 
                         {`to loyalty card address: ${transaction.to}`}
                       </div>
