@@ -17,26 +17,26 @@ type RedeemTokenProps = {
   setModal: Dispatch<SetStateAction<'points' | 'cards' | undefined>>; 
 }
 
-export default function MintPoints( {modal, setModal}: RedeemTokenProps ) {
+export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
   const { progAddress } =  useUrlProgramAddress();
 
-  const mintPoints = useContractWrite(  
+  const mintCards = useContractWrite(  
     {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
-      functionName: 'mintLoyaltyPoints',
+      functionName: 'mintLoyaltyCards',
       args: [numpadNumber], 
       onError(error) {
         dispatch(notification({
-          id: "mintLoyaltyPoints",
-          message: `Something went wrong. Loyalty Points not minted.`, 
+          id: "mintLoyaltyCards",
+          message: `Something went wrong. Loyalty gift has not been removed.`, 
           colour: "red",
           isVisible: true
         }))
-        console.log('mintLoyaltyPoints Error', error)
+        console.log('removeLoyaltyToken Error', error)
       }, 
       onSuccess(data) {
         setHashTransaction(data.hash)
@@ -110,7 +110,7 @@ export default function MintPoints( {modal, setModal}: RedeemTokenProps ) {
             </div>
           </Button>
           : 
-          <Button appearance = {"blueFilled"} isDisabled={!mintPoints.write} onClick={() => mintPoints.write?.()}>
+          <Button appearance = {"blueFilled"} isDisabled={!mintCards.write} onClick={() => mintCards.write?.()}>
             Mint Points
           </Button>
         }

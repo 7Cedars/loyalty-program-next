@@ -12,7 +12,8 @@ type ButtonProps = {
 export const Button = ({
   children,
   onClick,
-  appearance = "blueEmpty"
+  appearance = "blueEmpty",
+  isDisabled = false
 }: ButtonProps) => {
 
   const appearanceButton = {
@@ -27,7 +28,7 @@ export const Button = ({
   }
 
   return (
-    <button className={appearanceButton[appearance]} onClick={onClick}>
+    <button className={appearanceButton[appearance]} onClick={onClick} disabled= {isDisabled} >
       {children}
     </button>
   );

@@ -41,15 +41,32 @@ export default function Page() {
       fromBlock: 1n,
       toBlock: 16330050n
     });
-
     const transferSingleData =  parseTransactionLogs(transferSingleLogs)
-    setTransactions(transferSingleData)
-    console.log("transferSingleLogs: ", transferSingleLogs)
+
+    const transferMintLogs: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyProgramAbi, 
+      address: parseEthAddress(progAddress), 
+      eventName: 'TransferSingle', 
+      args: {
+        // from: parseEthAddress(progAddress), 
+        // to: parseEthAddress(progAddress)
+      },
+      fromBlock: 1n,
+      toBlock: 16330050n
+    });
+    const transferMintData =  parseTransactionLogs(transferMintLogs)
+
+    const transferData = [...transferSingleData, ...transferMintData]
+    transferData.sort((firstTransaction, secondTransaction) => 
+      Number(secondTransaction.blockNumber) - Number(firstTransaction.blockNumber));
+
+    setTransactions(transferData)
+    console.log("transferData: ", transferData)
   }
 
   useEffect(() => {
     getTransactions()
-  }, [])
+  }, [, modal])
 
 
   return (
@@ -85,35 +102,77 @@ export default function Page() {
               {
               transactions.map((transaction: Transaction, i) => 
                 <div key = {i} className="p-2 ">
-                  {transaction.id === 0n ? 
-                  <div className="grid grid-cols-1">
-                    <div className="flex">
-                      <div className="font-bold">
-                        Transfer Points 
-                      </div> 
-                      <div className="">
-                        transaction logIndex
-                      </div> 
-                    </div>
+                  {
+                  transaction.id === 0n && transaction.from === address ? 
+                    <div className="grid grid-cols-1">
+                      <div className="flex justify-between">
+                        <div className="font-bold">
+                          Transfer Points 
+                        </div> 
+                        <div className="">
+                          Blocknumber: {Number(transaction.blockNumber)}
+                        </div> 
+                      </div>
                       <div> 
                         {`to loyalty card address: ${transaction.to}`}
                       </div>
                       <div> 
                         {`${transaction.value} points`}
                       </div>
+                    </div>
+                  :
+                  transaction.id === 0n && transaction.to === address ?
+                    <div className="grid grid-cols-1">
+                    <div className="flex justify-between">
+                      <div className="font-bold">
+                        Mint Points 
+                      </div> 
+                      <div className="">
+                        Blocknumber: {Number(transaction.blockNumber)}
+                      </div> 
+                    </div>
+                    <div> 
+                      {`to loyalty card address: ${transaction.to}`}
+                    </div>
+                    <div> 
+                      {`${transaction.value} points`}
+                    </div>
                   </div>
                   : 
-                  <div className="grid grid-cols-1">
-                      <div className="font-bold">
-                        Transfer Loyalty Card 
-                      </div> 
+                  transaction.id !== 0n && transaction.from === address ?
+                    <div className="grid grid-cols-1">
+                      <div className="flex justify-between">
+                        <div className="font-bold">
+                          Transfer Loyalty Card 
+                        </div> 
+                        <div className="">
+                          Blocknumber: {Number(transaction.blockNumber)}
+                        </div> 
+                      </div>
                       <div> 
                         {`to customer address: ${transaction.to}`}
                       </div>
                       <div> 
                         {`Card ID: ${transaction.id}`}
                       </div>
-                  </div>
+                    </div>
+                  :
+                    <div className="grid grid-cols-1">
+                      <div className="flex justify-between">
+                        <div className="font-bold">
+                          Mint Loyalty Card 
+                        </div> 
+                        <div className="">
+                          Blocknumber: {Number(transaction.blockNumber)}
+                        </div> 
+                      </div>
+                      <div> 
+                        {`to customer address: ${transaction.to}`}
+                      </div>
+                      <div> 
+                        {`Card ID: ${transaction.id}`}
+                      </div>
+                    </div>
                   }
                 </div>
               )

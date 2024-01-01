@@ -20,23 +20,6 @@ const colourSchemeText = {
   invisible: `text-purple-600`,
 }
 
-const colourSchemeXMarkIcon = { 
-  red: `text-red-600 hover:text-red-800`, 
-  green: `text-green-600 hover:text-green-800`, 
-  yellow: `text-yellow-600 hover:text-yellow-800`, 
-  gray: `text-gray-600 hover:text-gray-800`, 
-  invisible: `text-purple-600 hover:text-purple-800`, 
-}
-
-const colourProgressBar = { 
-  red: `text-red-100/0 bg-red-600`, 
-  green: `text-red-100/0 bg-green-600`, 
-  yellow: `text-red-100/0 bg-yellow-600`, 
-  gray: `text-red-100/0 bg-gray-600`, 
-  invisible: `text-purple-100/0 bg-purple-600`, 
-}
-
-
 export const NotificationDialog = () => {
   const { notifications } = useAppSelector(state => state.notification)
   const { open, close } = useWeb3Modal()
@@ -58,8 +41,8 @@ export const NotificationDialog = () => {
   return (
     notificationToShow?.isVisible === false ? null  
     : 
-    <div className= {`z-20 p-2 mx-8 m-2 grow-0 rounded-lg h-10 flex flex-row bg-red-300 items-center ${colourSchemeDialog[colour]}`}> 
-        <div className={`grow flex flex-row justify-center text-red-800`}>  
+    <div className= {`z-20 p-2 mx-8 m-2 grow-0 rounded-lg h-10 flex flex-row items-center ${colourSchemeDialog[colour]}`}> 
+        <div className={`grow flex flex-row justify-center ${colourSchemeText[colour]}`}>  
           <div className="pe-1 text-center"> 
           { notificationToShow.message  }
           </div>
@@ -74,7 +57,7 @@ export const NotificationDialog = () => {
           } 
         </div>
         <button 
-          className="font-bold text-lg  px-1 text-red-800"
+          className={`font-bold text-lg  px-1 ${colourSchemeText[colour]}`}         
           type="submit"
           onClick={() => dispatch(updateNotificationVisibility({
             id: notificationToShow.id,
@@ -82,12 +65,12 @@ export const NotificationDialog = () => {
           }))}
           >
             <XMarkIcon
-              className={`h-6 w-6 content-center align-center text-red-800 `}
+              className={`h-6 w-6 content-center align-center ${colourSchemeText[colour]} `}
               aria-hidden="true"
             />
         </button>
       <div 
-        className={`absolute bottom-0 text-xs font-medium text-center leading-none rounded-bl-md h-1 text-red-800 `}
+        className={`absolute bottom-0 text-xs font-medium text-center leading-none rounded-bl-md h-1 ${colourSchemeText[colour]} `}
         style={{width:`${notificationToShow.progressInPercent}%`}}> . </div>
     </div>
   )
