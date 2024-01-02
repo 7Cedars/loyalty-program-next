@@ -50,9 +50,7 @@ export default function Page() {
       <div className='w-full h-full p-4'> 
           <QrReader 
             ViewFinder={ViewFinder}
-            // videoContainerStyle={{ width: '400px', height:'600px', margin: "0px"}}
-            containerStyle={{width: '100%', height: '100%'}}
-            // videoStyle={{width: '400px', height:'600px', margin: "0px"}}
+            videoStyle={{ objectFit: 'cover' }}
             constraints={{ facingMode: 'environment' }}
             onResult={(result, error) => {
               if (!!result) {
