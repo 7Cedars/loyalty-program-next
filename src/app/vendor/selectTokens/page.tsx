@@ -36,6 +36,7 @@ export default function Page() {
   const [inactiveLoyaltyTokens, setInactiveLoyaltyTokens] = useState<LoyaltyToken[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const { progAddress } = useUrlProgramAddress() 
+  const {address} = useAccount() 
   // const {data, ethAddresses, isLoading, isError} = useLoyaltyTokens() 
   const publicClient = usePublicClient()
 
@@ -108,88 +109,37 @@ export default function Page() {
           console.log(error)
       }
     }
+  }   
+
+  const getAvailableTokens = async () => {
+
+    console.log("getAvailableTokens called")
+
+    let loyaltyToken: LoyaltyToken
+    let loyaltyTokensUpdated: LoyaltyToken[] = []
+
+    if (loyaltyTokens) { 
+      try {
+        for await (loyaltyToken of loyaltyTokens) {
+          console.log("getAvailableTokens CHECK ")
+
+          const availableTokens: unknown = await publicClient.readContract({
+            address: loyaltyToken.tokenAddress, 
+            abi: loyaltyTokenAbi,
+            functionName: 'getAvailableTokens', 
+            args: [parseEthAddress(address)]
+          })
+          console.log("getAvailableTokens: ", availableTokens )
+          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: parseAvailableTokens(availableTokens)})
+        }
+
+        setLoyaltyTokens(loyaltyTokensUpdated)
+
+        } catch (error) {
+          console.log(error)
+      }
+    }
   }
-
-
-  const {data, isError, isLoading} = useContractRead({
-    address: '0x8464135c8F25Da09e49BC8782676a84730C318bC',
-    abi: loyaltyTokenAbi,
-    functionName: 'getAvailableTokens'
-  })
-  if (isLoading) {
-    console.log("getAvailableTokens loading..")
-  }
- 
-  if (data) {
-    console.log("getAvailableTokens useContractRead: ",  data)
-  }
- 
-
-
-
-  
-
-  // const getAvailableTokens = async () => {
-  //   console.log("getAvailableTokens called")
-
-  //   let loyaltyToken: LoyaltyToken
-  //   let loyaltyTokensUpdated: LoyaltyToken[] = []
-
-  //   if (loyaltyTokens) { 
-
-  //     try {
-  //       for await (loyaltyToken of loyaltyTokens) {
-
-  //         const uri: unknown = await publicClient.readContract({
-  //           address: loyaltyToken.tokenAddress, 
-  //           abi: loyaltyTokenAbi,
-  //           functionName: 'getAvailableTokens',
-  //         })
-
-  //         console.log("loyaltyTokensUpdated CHECK:", uri)
-
-  //         loyaltyTokensUpdated.push({...loyaltyToken, uri: parseUri(uri)})
-  //       }
-
-  //       console.log("loyaltyTokensUpdated: ", loyaltyTokensUpdated)
-
-  //       // setLoyaltyTokens(loyaltyTokensUpdated)
-
-  //       } catch (error) {
-  //         console.log(error)
-  //     }
-  //   }
-  // }
-
-  //   console.log("getAvailableTokens called")
-
-  //   let loyaltyToken: LoyaltyToken
-  //   let loyaltyTokensUpdated: LoyaltyToken[] = []
-  //   let availableTokens: unknown = []
-
-  //   if (loyaltyTokens) { 
-  //     try {
-  //       for await (loyaltyToken of loyaltyTokens) {
-
-  //         const availableTokensRaw: unknown = await publicClient.readContract({
-  //           address: loyaltyToken.tokenAddress, 
-  //           abi: loyaltyTokenAbi,
-  //           functionName: 'uri', 
-  //           args: [0]
-  //         })
-  //         // loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: parseAvailableTokens(availableTokensRaw)})
-  //         availableTokens = availableTokensRaw
-  //       }
-
-  //       console.log("availableTokens check: ", availableTokens)
-
-  //       setLoyaltyTokens(loyaltyTokensUpdated)
-
-  //       } catch (error) {
-  //         console.log(error)
-  //     }
-  //   }
-  // }
 
   useEffect(() => {
 
@@ -204,11 +154,15 @@ export default function Page() {
       ) { 
         getLoyaltyTokensMetaData() 
       } 
-    // if (
-    //   loyaltyTokens && 
-    //   loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens) === -1 
-    //   ) { getAvailableTokens() } 
+    if (
+      loyaltyTokens && 
+      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens != undefined) === -1 
+      ) { getAvailableTokens() } 
   }, [ , loyaltyTokens])
+
+  useEffect(() => {
+    getAvailableTokens()
+  }, [ ] ) 
   
   console.log("loyaltyTokens: ", loyaltyTokens)
 
@@ -285,10 +239,7 @@ export default function Page() {
 
       <div className="h-20 m-3"> 
        <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={1} />
-      </div> 
-      {/* <Button onClick={getAvailableTokens} >
-        getAvailableTokens  
-      </Button>  */}
+      </div>
 
       { selectedToken ? 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">

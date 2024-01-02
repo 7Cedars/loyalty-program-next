@@ -5,10 +5,12 @@
 
 import { useState } from "react";
 import { Button } from "./Button";
+import Image from "next/image";
 
 type NumLineProps = {
   onClick: (arg0: number) => void;
-  appearance?: "blueFilled" | "blueEmpty" 
+  appearance?: "blueFilled" | "blueEmpty";
+  isLoading: boolean;
 };
 
 const appearanceButtons = {
@@ -18,7 +20,8 @@ const numbers = [1, 5, 25, 150] // this can be flexible input.
 
 export const NumLine = ({
   onClick,
-  appearance = "blueEmpty"
+  appearance = "blueEmpty", 
+  isLoading = false
 }: NumLineProps) => {
 
   const [ selectedAmount, setSelectedAmount ] = useState<number>(25) 
@@ -48,9 +51,24 @@ export const NumLine = ({
       )
     }
       <div className="grow flex px-1"> 
+        { !isLoading ? 
+
         <Button appearance = {"blueEmpty"} onClick={ () => handleClick(selectedAmount)} >
             Mint {selectedAmount} Loyalty Gifts
         </Button>
+        : 
+        <Button appearance = {"grayEmpty"} onClick={() => {}} >
+            <div className="flex justify-center items-center">
+              <Image
+                className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
+                width={30}
+                height={30}
+                src={"/loading.svg"}
+                alt="Loading icon"
+              />
+            </div>
+          </Button>
+      }
       </div>
     </div>
   );

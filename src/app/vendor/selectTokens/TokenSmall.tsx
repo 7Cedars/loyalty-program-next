@@ -27,12 +27,18 @@ export default function SelectToken( {token, disabled, onClick}: SelectedTokenPr
             />
           <div className="grid grid-cols-1 p-2 content-start">
             <div className="text-center text-sm"> 
-              {`${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
-            </div> 
-            <div className="text-center text-sm text-gray-500"> 
               {token.metadata.description}
             </div>
-          
+            <div className="text-center text-sm text-gray-500 mt-1"> 
+              {`${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
+            </div> 
+            { !disabled ? 
+              <div className="text-center text-sm text-gray-500"> 
+                {`${Number(token.availableTokens)} gifts remaining`}
+              </div>
+              :
+              null
+            }
           </div> 
         </>
           : 

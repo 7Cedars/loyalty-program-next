@@ -63,7 +63,7 @@ export type LoyaltyToken = {
   tokenAddress: EthAddress; 
   uri?: string; 
   metadata?: TokenMetadata;
-  availableTokens?: BigInt[];  
+  availableTokens?: BigInt;  
 } 
 
 export type QrData = {

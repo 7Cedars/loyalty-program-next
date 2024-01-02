@@ -22,6 +22,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
   const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>()
+  const [ hashMintTransaction, setHashMintTransaction] = useState<any>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
 
@@ -67,6 +68,12 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     }
   )
 
+  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+    { 
+      confirmations: 1,
+      hash: hashTransaction 
+    })
+  
 
   const mintLoyaltyTokens = useContractWrite(
     {
@@ -82,17 +89,18 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
         }))
         console.log('mintLoyaltyTokens Error', error)
       }, 
-      // onSuccess(data) {
-      //   setHashTransaction(data.hash)
-      // }
+      onSuccess(data) {
+        setHashMintTransaction(data.hash)
+      }
     }
   )
 
-  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+  const mintTransaction = useWaitForTransaction(
     { 
       confirmations: 1,
-      hash: hashTransaction 
+      hash: hashMintTransaction 
     })
+
 
   useEffect(() => { 
     if (isSuccess) {
@@ -131,7 +139,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
             </div> 
           </div>
           <div className="text-center text-lg"> 
-            X remaining tokens
+            {`${token.availableTokens} remaining tokens`}
           </div>
         </div>
         </>
@@ -165,7 +173,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
           : 
           <div className="grid grid-col-1 gap-0 w-full">
             <div className="p-3 flex w-full"> 
-              <NumLine onClick = {(arg0) => mintLoyaltyTokens.write({args: [arg0]}) }  /> 
+              <NumLine onClick = {(arg0) => mintLoyaltyTokens.write({args: [arg0]})} isLoading = {mintTransaction.isLoading} /> 
             </div>
             <div className="p-3 flex "> 
               <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >

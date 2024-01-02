@@ -374,18 +374,11 @@ export const parseUri = (uri: unknown): string => {
   return uri as string;
 };
 
-export const parseAvailableTokens = (availableTokens: unknown): BigInt[] => {
-  if (!isArray(availableTokens)) {
-    throw new Error(`Incorrect availableTokens, not an array: ${availableTokens}`);
+export const parseAvailableTokens = (availableTokens: unknown): BigInt => {
+  if (!isBigInt(availableTokens)) {
+    throw new Error(`Incorrect token, not a BigInt: ${availableTokens}`);
   }
-  const availableTolkensBigInt = availableTokens.map(token => {
-    if (!isBigInt(token)) {
-      throw new Error(`Incorrect token, not a BigInt: ${token}`);
-    }
-    return token as BigInt
-  })
-
-  return availableTolkensBigInt as BigInt[];
+  return availableTokens as BigInt
 };
 
 export const parseMetadata = (metadata: unknown): TokenMetadata => {
