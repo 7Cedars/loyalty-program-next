@@ -4,13 +4,13 @@ import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
 import { useContractWrite, useContractEvent, useWaitForTransaction } from "wagmi";
-import { loyaltyProgramAbi } from "@/context/abi";
+import { loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { foundry } from "viem/chains";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { NumLine } from "@/app/ui/NumLine";
 
 type SelectedTokenProps = {
@@ -21,7 +21,7 @@ type SelectedTokenProps = {
 export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
   const { progAddress } =  useUrlProgramAddress();
-  const [ hashTransaction, setHashTransaction] = useState<any>() 
+  const [ hashTransaction, setHashTransaction] = useState<any>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
 
@@ -46,24 +46,6 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     }
   )
 
-  // useContractEvent(
-  //   {
-  //     address: parseEthAddress(progAddress),
-  //     abi: loyaltyProgramAbi,
-  //     listener: (event) => {
-  //       dispatch(notification({
-  //         id: "addLoyaltyTokenContract",
-  //         message: `Loyalty gift activated.`, 
-  //         colour: "green",
-  //         isVisible: true
-  //       }))
-  //       setIsDisabled(!isDisabled)
-  //     }, 
-  //     // chainId: TBI 
-  //     eventName: "AddedLoyaltyTokenContract"
-  //   }
-  // )
-
   const removeLoyaltyTokenClaimable = useContractWrite(
     {
       address: parseEthAddress(progAddress),
@@ -85,6 +67,27 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     }
   )
 
+
+  const mintLoyaltyTokens = useContractWrite(
+    {
+      address: parseEthAddress(token.tokenAddress),
+      abi: loyaltyTokenAbi,
+      functionName: "mintLoyaltyTokens",
+      onError(error) {
+        dispatch(notification({
+          id: "mintLoyaltyTokens",
+          message: `Something went wrong. Loyalty tokens not minted.`, 
+          colour: "red",
+          isVisible: true
+        }))
+        console.log('mintLoyaltyTokens Error', error)
+      }, 
+      // onSuccess(data) {
+      //   setHashTransaction(data.hash)
+      // }
+    }
+  )
+
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
     { 
       confirmations: 1,
@@ -97,17 +100,14 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     }
   }, [isSuccess])
 
-  const handleClick = (number: number) => {
-    console.log("handleClick: ", number)
-  }
-
-
   return (
     <div className="grid grid-cols-1"> 
 
       <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center "> 
-      
+      { token.metadata ? 
+        <>
         <div className="rounded-lg w-max"> 
+         
           <Image
               className="rounded-lg"
               width={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
@@ -117,14 +117,27 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
             />
         </div>
         
-        <div className="grid grid-cols-1 p-2 content-start w-full h-full">
-          <div className="text-center text-sm"> 
-            {`${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
-          </div> 
-          <div className="text-center text-sm text-gray-500"> 
-            {token.metadata.description}
+        <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
+          <div> 
+            <div className="text-center text-lg text-gray-900 text-bold px-1"> 
+              {token.metadata.description}
+            </div>
+            <div className="text-center text-sm text-gray-500 pb-4"> 
+              {token.metadata.attributes[0].value}
+            </div>
+
+            <div className="text-center text-sm"> 
+              {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
+            </div> 
+          </div>
+          <div className="text-center text-lg"> 
+            X remaining tokens
           </div>
         </div>
+        </>
+        : 
+        null 
+        }
       </div>
 
       { isLoading ? 
@@ -152,7 +165,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
           : 
           <div className="grid grid-col-1 gap-0 w-full">
             <div className="p-3 flex w-full"> 
-              <NumLine onClick = {(arg0) => handleClick(arg0) }  /> 
+              <NumLine onClick = {(arg0) => mintLoyaltyTokens.write({args: [arg0]}) }  /> 
             </div>
             <div className="p-3 flex "> 
               <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >

@@ -13,14 +13,21 @@ import { loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
 import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { getContractEventsProps } from "@/types"
-import { parseContractLogs, parseEthAddress, parseLoyaltyTokenLogs, parseLoyaltyContractLogs, parseUri, parseMetadata } from "@/app/utils/parsers";
+import { 
+  parseContractLogs, 
+  parseEthAddress, 
+  parseLoyaltyContractLogs, 
+  parseUri, 
+  parseMetadata, 
+  parseAvailableTokens 
+} from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
+import { Button } from "@/app/ui/Button";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
   disabled: boolean; 
 }
-
 
 export default function Page() {
 
@@ -103,6 +110,87 @@ export default function Page() {
     }
   }
 
+
+  const {data, isError, isLoading} = useContractRead({
+    address: '0x8464135c8F25Da09e49BC8782676a84730C318bC',
+    abi: loyaltyTokenAbi,
+    functionName: 'getAvailableTokens'
+  })
+  if (isLoading) {
+    console.log("getAvailableTokens loading..")
+  }
+ 
+  if (data) {
+    console.log("getAvailableTokens useContractRead: ",  data)
+  }
+ 
+
+
+
+  
+
+  // const getAvailableTokens = async () => {
+  //   console.log("getAvailableTokens called")
+
+  //   let loyaltyToken: LoyaltyToken
+  //   let loyaltyTokensUpdated: LoyaltyToken[] = []
+
+  //   if (loyaltyTokens) { 
+
+  //     try {
+  //       for await (loyaltyToken of loyaltyTokens) {
+
+  //         const uri: unknown = await publicClient.readContract({
+  //           address: loyaltyToken.tokenAddress, 
+  //           abi: loyaltyTokenAbi,
+  //           functionName: 'getAvailableTokens',
+  //         })
+
+  //         console.log("loyaltyTokensUpdated CHECK:", uri)
+
+  //         loyaltyTokensUpdated.push({...loyaltyToken, uri: parseUri(uri)})
+  //       }
+
+  //       console.log("loyaltyTokensUpdated: ", loyaltyTokensUpdated)
+
+  //       // setLoyaltyTokens(loyaltyTokensUpdated)
+
+  //       } catch (error) {
+  //         console.log(error)
+  //     }
+  //   }
+  // }
+
+  //   console.log("getAvailableTokens called")
+
+  //   let loyaltyToken: LoyaltyToken
+  //   let loyaltyTokensUpdated: LoyaltyToken[] = []
+  //   let availableTokens: unknown = []
+
+  //   if (loyaltyTokens) { 
+  //     try {
+  //       for await (loyaltyToken of loyaltyTokens) {
+
+  //         const availableTokensRaw: unknown = await publicClient.readContract({
+  //           address: loyaltyToken.tokenAddress, 
+  //           abi: loyaltyTokenAbi,
+  //           functionName: 'uri', 
+  //           args: [0]
+  //         })
+  //         // loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: parseAvailableTokens(availableTokensRaw)})
+  //         availableTokens = availableTokensRaw
+  //       }
+
+  //       console.log("availableTokens check: ", availableTokens)
+
+  //       setLoyaltyTokens(loyaltyTokensUpdated)
+
+  //       } catch (error) {
+  //         console.log(error)
+  //     }
+  //   }
+  // }
+
   useEffect(() => {
 
     if (!loyaltyTokens) { getLoyaltyTokenAddresses() } // check when address has no deployed programs what happens..  
@@ -113,8 +201,13 @@ export default function Page() {
     if (
       loyaltyTokens && 
       loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.metadata) === -1 
-      ) { getLoyaltyTokensMetaData() } 
-
+      ) { 
+        getLoyaltyTokensMetaData() 
+      } 
+    // if (
+    //   loyaltyTokens && 
+    //   loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens) === -1 
+    //   ) { getAvailableTokens() } 
   }, [ , loyaltyTokens])
   
   console.log("loyaltyTokens: ", loyaltyTokens)
@@ -193,6 +286,9 @@ export default function Page() {
       <div className="h-20 m-3"> 
        <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={1} />
       </div> 
+      {/* <Button onClick={getAvailableTokens} >
+        getAvailableTokens  
+      </Button>  */}
 
       { selectedToken ? 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
