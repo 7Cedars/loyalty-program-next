@@ -84,9 +84,8 @@ export const ModalMain = ({
           { selectedLoyaltyProgram?.metadata ? 
             <Image
             className="absolute inset-0 z-0"
-            // fill 
-            width= {width > 896 ? 896 : width}
-            height={height}
+            fill 
+            style = {{ objectFit: "cover" }} 
             src={selectedLoyaltyProgram.metadata.imageUri} 
             alt="Loyalty Card Token"
             />
