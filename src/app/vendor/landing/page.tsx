@@ -15,7 +15,7 @@ export default function Page()  {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
 
   return (
-    <div className="grid grid-cols-1">
+    <div className="grid grid-cols-1 h-full content-between py-24">
 
       <div className="text-center p-3">
         <TitleText 
@@ -24,10 +24,10 @@ export default function Page()  {
           size={2}
           /> 
       </div>
-      <div className="grid justify-center justify-items-center pt-6">
+      <div className="grid justify-center justify-items-center p-6">
           <QRCode 
             value={`${BASE_URI}?customer/landing/?prog:${selectedLoyaltyProgram?.tokenAddress}`}
-            style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+            style={{ height: "500px", width: "100%", objectFit: "cover"  }}
             />
       </div>
       <div className="text-center p-3 pt-12">

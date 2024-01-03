@@ -105,6 +105,10 @@ export default function ChooseProgram()  {
 
   }, [ , loyaltyPrograms])
 
+  useEffect(() => {
+    if (loyaltyPrograms) { setLoyaltyPrograms(undefined) } // check when address has no deployed programs what happens..  
+  }, [, address])
+
   const handleProgramSelection = (loyaltyProgram: LoyaltyProgram) => {
     putProgAddressInUrl(loyaltyProgram.tokenAddress)
     dispatch(selectLoyaltyProgram(loyaltyProgram))
@@ -129,10 +133,10 @@ export default function ChooseProgram()  {
                         className="rounded-lg"
                         width={288}
                         height={420}
+                        style = {{ objectFit: "cover" }} 
                         src={program.metadata? program.metadata.imageUri : `/vercel.svg`}
                         alt="DAO space icon"
                       />
-                    
               </button>
             )
           })

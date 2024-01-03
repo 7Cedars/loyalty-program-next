@@ -25,6 +25,7 @@ import { useLoyaltyProgram } from "../../depricated/useLoyaltyProgram";
 import { useState, useEffect } from "react";
 import { EthAddress, LoyaltyProgram } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
+import { resetLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { parseEthAddress } from "../utils/parsers";
 import ChooseProgram from "./ChooseProgram";
 import { useScreenDimensions } from "../hooks/useScreenDimensions";
@@ -44,16 +45,20 @@ export const ModalMain = ({
   const { modalVisible } = useAppSelector(state => state.userInput) 
   const { address }  = useAccount()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
-
-  const { progAddress } = useUrlProgramAddress()
-  const [userLoggedIn, setUserLoggedIn] = useState<boolean>(false) 
-  const {width, height} = useScreenDimensions() 
-  
+  const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
+  const { putProgAddressInUrl } = useUrlProgramAddress()
 
   console.log("address at ModalMain: ", address)
   console.log("selectedLoyaltyProgram at ModalMain: ", selectedLoyaltyProgram)
+  console.log("userLoggedIn at ModalMain: ", selectedLoyaltyProgram)
 
   useEffect(() => {
+    if (address != userLoggedIn) {
+      setUserLoggedIn(undefined)
+      dispatch(resetLoyaltyProgram(true))
+      putProgAddressInUrl(null)
+    }
+
     if (!address) {
       dispatch(notification({
         id: "NotLoggedIn",
@@ -62,7 +67,7 @@ export const ModalMain = ({
         loginButton: true, 
         isVisible: true
       }))
-      setUserLoggedIn(false)
+      setUserLoggedIn(undefined)
     }    
     
     if (address) {
@@ -70,14 +75,23 @@ export const ModalMain = ({
         id: "NotLoggedIn",
         isVisible: false
       }))
-      setUserLoggedIn(true)
+      setUserLoggedIn(address)
     }
 
   }, [ , address])
 
+  if (!selectedLoyaltyProgram) {
+    return (
+      <div className="relative w-full max-w-4xl h-screen z-1">
+        <div className="flex flex-col pt-14 h-full z-3">
+          <ChooseProgram />
+        </div> 
+      </div>
+    )
+  }
+
   return (
     <>
-    
       <div className="relative w-full max-w-4xl h-screen z-1">
 
           <div className="flex flex-col pt-14 h-full z-3">
@@ -92,7 +106,7 @@ export const ModalMain = ({
           : null }        
           <NotificationDialog/> 
           
-          { modalVisible && userLoggedIn? 
+          { modalVisible && userLoggedIn != undefined ? 
             <div className="flex flex-col mt-2 h-full scroll-auto bg-slate-50/[.95] backdrop-blur-xl shadow-2xl mx-4 rounded-t-lg z-10"> 
             {/* /[.95] */}
               <div className="grow-0 flex justify-end"> 
@@ -107,13 +121,10 @@ export const ModalMain = ({
                     />
                 </button>
               </div>
-              <div className="h-full justify-center"> 
 
-              {selectedLoyaltyProgram ? children : <ChooseProgram /> } 
+              { children }  
 
-              </div>
             </div>
-          
           :
           <button 
             className="w-full h-full z-10"

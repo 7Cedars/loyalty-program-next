@@ -43,11 +43,11 @@ export default function Page() {
 
     <div className="grid grid-cols-1 pt-12">
       <TitleText title = "Scan customer QR code" subtitle='Send loyalty card, redeem gifts or transfer points' size={1} /> 
-      <div className="flex justify-center justify-items-center pt-3">
+      <div className="flex items-center justify-items-center pt-3">
         {/* <div className='text-center text-2xl h-4/5 w-4/5 p-6 border border-gray-500 pb-12 rounded-lg'> */}
 
         
-      <div className='w-full h-full p-4'> 
+      <div className='w-full p-4'> 
           <QrReader 
             ViewFinder={ViewFinder}
             videoStyle={{ objectFit: 'cover' }}
