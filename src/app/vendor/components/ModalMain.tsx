@@ -84,7 +84,8 @@ export const ModalMain = ({
     return (
       <div className="relative w-full max-w-4xl h-screen z-1">
         <div className="flex flex-col pt-14 h-full z-3">
-          <ChooseProgram />
+          <NotificationDialog/> 
+          { address ?  <ChooseProgram /> : null }  
         </div> 
       </div>
     )

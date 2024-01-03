@@ -14,7 +14,7 @@ import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { getContractEventsProps } from "@/types"
 import { 
-  parseContractLogs, 
+  parseTokenContractLogs, 
   parseEthAddress, 
   parseLoyaltyContractLogs, 
   parseUri, 
@@ -43,7 +43,7 @@ export default function Page() {
   const getLoyaltyTokenAddresses = async () => {
     console.log("getLoyaltyTokenAddresses called")
 
-    const loggedAdresses: Log[] = await publicClient.getContractEvents({
+    const loggedAddresses: Log[] = await publicClient.getContractEvents({
       abi: loyaltyTokenAbi, 
       // abi: loyaltyProgramAbi, 
       eventName: 'DiscoverableLoyaltyToken', 
@@ -51,7 +51,7 @@ export default function Page() {
       fromBlock: 1n,
       toBlock: 16330050n
     });
-    const loyaltyTokenAddresses = parseContractLogs(loggedAdresses)
+    const loyaltyTokenAddresses = parseTokenContractLogs(loggedAddresses)
     setLoyaltyTokens(loyaltyTokenAddresses)
 
     console.log("loyaltyTokenAddresses: ", loyaltyTokenAddresses)

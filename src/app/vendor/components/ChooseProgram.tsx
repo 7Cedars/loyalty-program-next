@@ -49,7 +49,7 @@ export default function ChooseProgram()  {
         for await (loyaltyProgram of loyaltyPrograms) {
 
           const uri: unknown = await publicClient.readContract({
-            address: loyaltyProgram.tokenAddress, 
+            address: loyaltyProgram.programAddress, 
             abi: loyaltyProgramAbi,
             functionName: 'uri',
             args: [0]
@@ -93,7 +93,8 @@ export default function ChooseProgram()  {
 
   useEffect(() => {
 
-    if (!loyaltyPrograms) { getLoyaltyProgramAddresses() } // check when address has no deployed programs what happens..  
+    // check when address has no deployed programs what happens. Answer: It goes into a unforgiving loop... 
+    if (!loyaltyPrograms) { getLoyaltyProgramAddresses() } 
     if (
       loyaltyPrograms && 
       loyaltyPrograms.findIndex(loyaltyProgram => loyaltyProgram.uri) === -1 
@@ -110,7 +111,7 @@ export default function ChooseProgram()  {
   }, [, address])
 
   const handleProgramSelection = (loyaltyProgram: LoyaltyProgram) => {
-    putProgAddressInUrl(loyaltyProgram.tokenAddress)
+    putProgAddressInUrl(loyaltyProgram.programAddress)
     dispatch(selectLoyaltyProgram(loyaltyProgram))
   }
 
@@ -121,12 +122,13 @@ export default function ChooseProgram()  {
       <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll overscroll-auto mb-12"> 
         {/* (The following div is an empty div for ui purposes)   */ }
         <div className="w-[16vw] h-96 ms-4 opacity-0 border-2 border-green-500" /> 
+        
         { loyaltyPrograms ? 
           loyaltyPrograms.map(program => {
 
             return (
               <button 
-                key={program.tokenAddress}
+                key={program.programAddress}
                 onClick = {() => handleProgramSelection(program)}
                   className="me-20 mt-12 w-72 h-128"> 
                       <Image

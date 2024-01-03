@@ -35,7 +35,7 @@ const NavbarBottom = ( ) => {
     :
     <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-stone-50/75 text-sm border-t border-gray-400 ps-8 pe-8">
       
-        <Link href={progAddress ? `/vendor/landing?prog=${progAddress}` : '/vendor/home'}  className={layoutLinks}> 
+        <Link href={progAddress ? `/vendor/home?prog=${progAddress}` : '/vendor/home'}  className={layoutLinks}> 
           <div className='col-span-1 grid text-xs justify-items-center'> 
             <QrCodeIcon
               className={layoutIcons}

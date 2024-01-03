@@ -26,7 +26,7 @@ export default function Page()  {
       </div>
       <div className="grid justify-center justify-items-center p-6">
           <QRCode 
-            value={`${BASE_URI}?customer/landing/?prog:${selectedLoyaltyProgram?.tokenAddress}`}
+            value={`${BASE_URI}?customer/landing/?prog:${selectedLoyaltyProgram?.programAddress}`}
             style={{ height: "500px", width: "100%", objectFit: "cover"  }}
             />
       </div>

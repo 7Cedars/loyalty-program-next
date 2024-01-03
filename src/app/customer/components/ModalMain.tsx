@@ -53,11 +53,11 @@ export const ModalMain = ({
   console.log("userLoggedIn at ModalMain: ", selectedLoyaltyProgram)
 
   useEffect(() => {
-    if (address != userLoggedIn) {
-      setUserLoggedIn(undefined)
-      dispatch(resetLoyaltyProgram(true))
-      putProgAddressInUrl(null)
-    }
+    // if (address != userLoggedIn) {
+    //   setUserLoggedIn(undefined)
+    //   dispatch(resetLoyaltyProgram(true))
+    //   putProgAddressInUrl(null)
+    // }
 
     if (!address) {
       dispatch(notification({
@@ -84,7 +84,8 @@ export const ModalMain = ({
     return (
       <div className="relative w-full max-w-4xl h-screen z-1">
         <div className="flex flex-col pt-14 h-full z-3">
-          <ChooseLoyaltyCard />
+          <NotificationDialog/> 
+          {address ? <ChooseLoyaltyCard /> : null } 
         </div> 
       </div>
     )

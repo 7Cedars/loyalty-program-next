@@ -53,15 +53,15 @@ export type TokenMetadata = {
 }
 
 export type LoyaltyProgram = {
-  tokenAddress: EthAddress; 
+  programAddress: EthAddress; 
   uri?: string; 
   metadata?: TokenMetadata 
 } 
 
 export type LoyaltyCard = {
-  tokenId: BigInt; 
-  tokenAddress: EthAddress; 
-  loyaltyProgram: LoyaltyProgram;
+  cardId: BigInt; 
+  cardAddress?: EthAddress; 
+  loyaltyProgramAddress?: EthAddress;
 }
 
 // for now type for program and token are the same - but might change in the future 

@@ -6,7 +6,8 @@ import {
   Transaction, 
   TransactionArgs, 
   QrData,
-  LoyaltyProgram
+  LoyaltyProgram, 
+  LoyaltyToken
 } from "@/types";
 import { Log, getAddress } from "viem";
 
@@ -204,7 +205,7 @@ export const parseContractLogs = (logs: Log[]): LoyaltyProgram[] => {
       if (
         'address' in log &&
         'blockHash' in log
-        ) { return ( {tokenAddress: parseEthAddress(log.address)} )
+        ) { return ( {programAddress: parseEthAddress(log.address)} )
         }
         throw new Error('Incorrect data at LoyaltyProgram logs: some fields are missing or incorrect');
     })
@@ -216,6 +217,35 @@ export const parseContractLogs = (logs: Log[]): LoyaltyProgram[] => {
   }
 
 };
+
+
+export const parseTokenContractLogs = (logs: Log[]): LoyaltyToken[] => {
+  if (!isArray(logs)) {
+    throw new Error(`Incorrect logs, not an array: ${logs}`);
+  }
+
+  try { 
+    const parsedLogs = logs.map((log: unknown) => {
+      if ( !log || typeof log !== 'object' ) {
+        throw new Error('Incorrect or missing data at log');
+      }
+
+      if (
+        'address' in log &&
+        'blockHash' in log
+        ) { return ( {tokenAddress: parseEthAddress(log.address)} )
+        }
+        throw new Error('Incorrect data at LoyaltyProgram logs: some fields are missing or incorrect');
+    })
+
+    return parsedLogs as Array<LoyaltyToken> 
+
+  } catch {
+    throw new Error('Incorrect data at LoyaltyProgram logs. Parser caught error');
+  }
+
+};
+
 
 export const parseLoyaltyContractLogs = (logs: Log[]): EthAddress[] => {
   if (!isArray(logs)) {
@@ -298,7 +328,6 @@ export const parseTransferSingleLogs = (logs: Log[]): Transaction[] => {
     throw new Error('Incorrect data at transaction logs. Parser caught error');
   }
 };
-
 
 export const parseTransferBatchLogs = (logs: Log[]): Transaction[] => {
   if (!isArray(logs)) {

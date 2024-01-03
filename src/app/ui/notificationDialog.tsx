@@ -29,10 +29,7 @@ export const NotificationDialog = () => {
   let colour: "red" | "yellow" | "green" | "gray" | "invisible" = "gray"
   notificationToShow?.colour ? colour = notificationToShow?.colour : "gray" 
 
-  // console.log("notificationToShow: ", notificationToShow)
-
-  // NB You can set colours dynamically in tailwind CSS. 
-  // See: https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values
+  console.log("notificationToShow: ", notificationToShow)
 
   if (notificationToShow === undefined ) {
     return null 
@@ -77,4 +74,5 @@ export const NotificationDialog = () => {
 
   //  ${notifications[0].progress}
 
-}
+}  // NB You can set colours dynamically in tailwind CSS. 
+// See: https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values
