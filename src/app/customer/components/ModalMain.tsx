@@ -27,7 +27,7 @@ import { EthAddress, LoyaltyProgram } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { resetLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { parseEthAddress } from "../../utils/parsers";
-import ChooseProgram from "./ChooseLoyaltyCard";
+import ChooseLoyaltyCard from "./ChooseLoyaltyCard";
 import { useScreenDimensions } from "../../hooks/useScreenDimensions";
 import Image from "next/image";
 
@@ -84,7 +84,7 @@ export const ModalMain = ({
     return (
       <div className="relative w-full max-w-4xl h-screen z-1">
         <div className="flex flex-col pt-14 h-full z-3">
-          <ChooseProgram />
+          <ChooseLoyaltyCard />
         </div> 
       </div>
     )

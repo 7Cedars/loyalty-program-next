@@ -1,7 +1,6 @@
 "use client"; 
 
 import { TitleText } from "@/app/ui/StandardisedFonts";
-import { InputForm } from "../components/InputForm";
 import { Button } from "@/app/ui/Button";
 import { useState } from "react";
 import { Transaction } from "@/types";
@@ -116,7 +115,7 @@ export default function Page() {
                         </div> 
                       </div>
                       <div> 
-                        {`to loyalty card address: ${transaction.to}`}
+                        {`to loyalty card address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
                       </div>
                       <div> 
                         {`${transaction.values[0]} points`}
@@ -134,7 +133,7 @@ export default function Page() {
                       </div> 
                     </div>
                     <div> 
-                      {`to loyalty card address: ${transaction.to}`}
+                      {`to loyalty card address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
                     </div>
                     <div> 
                       {`${transaction.values[0]} points`}
@@ -152,7 +151,7 @@ export default function Page() {
                         </div> 
                       </div>
                       <div> 
-                        {`to customer address: ${transaction.to}`}
+                        {`to customer address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
                       </div>
                       <div> 
                         {`Card ID: ${String(transaction.ids[0])}`}
@@ -170,7 +169,7 @@ export default function Page() {
                         </div> 
                       </div>
                       <div> 
-                        {`to customer address: ${transaction.to}`}
+                        {`to customer address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
                       </div>
                       <div> 
                         {`number Cards minted ${transaction.ids.length}`}

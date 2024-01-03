@@ -12,7 +12,7 @@ import { parseContractLogs, parseUri, parseMetadata } from '../../utils/parsers'
 import { useDispatch } from 'react-redux';
 import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer';
 
-export default function ChooseProgram()  {
+export default function ChooseLoyaltyCard()  {
   const { address } = useAccount() 
   const publicClient = usePublicClient(); 
   const dispatch = useDispatch() 
