@@ -1,5 +1,5 @@
 "use client"; 
-import { ModalMain } from "@/app/components/ModalMain";
+import { ModalMain } from "@/app/vendor/components/ModalMain";
 import { useLoyaltyTokens } from "@/depricated/useLoyaltyTokens";
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./TokenSmall";

@@ -18,17 +18,17 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { NotificationDialog } from "../ui/notificationDialog";
+import { NotificationDialog } from "../../ui/notificationDialog";
 import { useAccount } from "wagmi";
-import { useUrlProgramAddress } from "../hooks/useUrl";
-import { useLoyaltyProgram } from "../../depricated/useLoyaltyProgram";
+import { useUrlProgramAddress } from "../../hooks/useUrl";
+import { useLoyaltyProgram } from "../../../depricated/useLoyaltyProgram";
 import { useState, useEffect } from "react";
 import { EthAddress, LoyaltyProgram } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { resetLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
-import { parseEthAddress } from "../utils/parsers";
+import { parseEthAddress } from "../../utils/parsers";
 import ChooseProgram from "./ChooseProgram";
-import { useScreenDimensions } from "../hooks/useScreenDimensions";
+import { useScreenDimensions } from "../../hooks/useScreenDimensions";
 import Image from "next/image";
 
 type ModalProps = {

@@ -1,31 +1,41 @@
 "use client";
 
-import { notification } from '@/redux/reducers/notificationReducer';
 import Link from 'next/link';
 import { NotificationDialog } from '../ui/notificationDialog';
+import { notification } from '@/redux/reducers/notificationReducer';
 import { 
-  DocumentArrowDownIcon, 
-  DocumentArrowUpIcon,
+  ArrowRightOnRectangleIcon, 
+  GiftIcon, 
+  SquaresPlusIcon,
   QrCodeIcon,
-  CircleStackIcon,
-  ArrowRightOnRectangleIcon
+  ChartBarSquareIcon
  } from '@heroicons/react/24/outline'
 import { useScreenDimensions } from '../hooks/useScreenDimensions';
-import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { useAccount } from 'wagmi';
+import { useEffect } from 'react';
+import { updateNotificationVisibility } from '@/redux/reducers/notificationReducer';
+import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { useUrlProgramAddress } from '../hooks/useUrl';
 
 const NavbarBottom = ( ) => {
-  const dimension = useScreenDimensions()
+  const dimensions = useScreenDimensions();  
   const layoutLinks: string = 'py-1 px-6 text-gray-600 hover:text-gray-900 grid grid-cols-1'
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'
   const layoutIcons: string = 'h-7 w-7'
+  const dispatch = useDispatch() 
+  const { address } = useAccount() 
+  const { open, close } = useWeb3Modal()
+  const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
+
 
   return (
-    dimension < 1 ? 
+    dimensions.width >= 896 ? 
     null
     :
-    <header className="absolute bottom-0 flex justify-between h-12 w-full bg-stone-50/50 max-w-screen-lg text-sm border-t border-gray-400 ps-8 pe-8">
+    <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-stone-50/75 text-sm border-t border-gray-400 ps-8 pe-8">
       
-        <Link href='/customer/landing' className={layoutLinks}> 
+        <Link href={progAddress ? `/vendor/landing?prog=${progAddress}` : '/vendor/home'}  className={layoutLinks}> 
           <div className='col-span-1 grid text-xs justify-items-center'> 
             <QrCodeIcon
               className={layoutIcons}
@@ -34,34 +44,34 @@ const NavbarBottom = ( ) => {
             Home
           </div> 
         </Link>
-        <Link href='/customer/points'  className={layoutLinks}> 
+        <Link href={progAddress ? `/vendor/scanQrcode?prog=${progAddress}` : '/vendor/scanQrcode'} className={layoutLinks}> 
           <div className={layoutIconBox}> 
-            <CircleStackIcon
+            <GiftIcon
               className={layoutIcons}
               aria-hidden="true"
             />
-            Points
+            Gift & Redeem
           </div>  
         </Link>
-        <Link href='/customer/claim'   className={layoutLinks}> 
+        <Link href={progAddress ? `/vendor/selectTokens?prog=${progAddress}` : '/vendor/selectTokens' } className={layoutLinks}> 
           <div className={layoutIconBox}> 
-            <DocumentArrowDownIcon
+            <SquaresPlusIcon
               className={layoutIcons}
               aria-hidden="true"
             />
-            Claim 
+            Tokens
           </div> 
         </Link>
-        <Link href='/customer/redeem'  className={layoutLinks}> 
+        <Link href={progAddress ? `/vendor/stats?prog=${progAddress}` : '/vendor/stats' }  className={layoutLinks}> 
           <div className={layoutIconBox}> 
-            <DocumentArrowUpIcon
+            <ChartBarSquareIcon
               className={layoutIcons}
               aria-hidden="true"
             />
-            Redeem 
+            Stats 
           </div> 
         </Link>
-        <Link href='/customer/login' className={layoutLinks}> 
+        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )}> 
           <div className={layoutIconBox}> 
             <ArrowRightOnRectangleIcon
               className={layoutIcons}
@@ -69,7 +79,7 @@ const NavbarBottom = ( ) => {
             />
             Login 
           </div> 
-        </Link>
+        </button>
     </header>
   );
 }
