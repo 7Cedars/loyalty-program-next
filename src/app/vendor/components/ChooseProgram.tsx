@@ -107,7 +107,7 @@ export default function ChooseProgram()  {
   }, [ , loyaltyPrograms])
 
   useEffect(() => {
-    if (loyaltyPrograms) { setLoyaltyPrograms(undefined) } // check when address has no deployed programs what happens..  
+    if (loyaltyPrograms) { setLoyaltyPrograms(undefined) } 
   }, [, address])
 
   const handleProgramSelection = (loyaltyProgram: LoyaltyProgram) => {
