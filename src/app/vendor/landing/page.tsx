@@ -15,7 +15,7 @@ export default function Page()  {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
 
   return (
-    <div className="grid grid-cols-1 h-full content-between py-24">
+    <div className="grid grid-cols-1 h-full content-between pt-2">
 
       <div className="text-center p-3">
         <TitleText 
@@ -30,7 +30,7 @@ export default function Page()  {
             style={{ height: "500px", width: "100%", objectFit: "cover"  }}
             />
       </div>
-      <div className="text-center p-3 pt-12">
+      <div className="text-center p-3 pb-16">
         <Button isFilled={true} onClick = {() => dispatch(resetLoyaltyProgram(true)) }> 
           Choose another Loyalty Program
         </Button>

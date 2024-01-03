@@ -143,15 +143,8 @@ export default function ChooseProgram()  {
           : 
           null
         }
-        <div className="me-20 mt-12 w-72 h-128 p-3 grid grid-cols-1 content-center border-2 rounded-lg border-gray-300"> 
-          <div className="h-12 flex justify-center"> 
-          {/* Here layouting still has to be fixed  */}
-            <Link href={`/vendor/deployProgram`} > 
-              Deploy New LoyaltyProgram
-            </Link>
-          </div> 
-        </div> 
-        <div className="w-[14vw] h-96 ms-4 opacity-0 border-2 border-green-500" /> 
+
+        {/* TODO: insert button here: 'deploy new program'  */}
 
       </div>
     </div>
