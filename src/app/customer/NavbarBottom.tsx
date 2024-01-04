@@ -37,22 +37,13 @@ const NavbarBottom = ( ) => {
             Home
           </div> 
         </Link>
-        <Link href={progAddress ? `/customer/transactions?prog=${progAddress}` : '/customer/home'} className={layoutLinks}> 
-          <div className={layoutIconBox}> 
-            <ChartBarSquareIcon
-              className={layoutIcons}
-              aria-hidden="true"
-            />
-            Transactions
-          </div>  
-        </Link>
         <Link href={progAddress ? `/customer/claim?prog=${progAddress}` : '/customer/home' } className={layoutLinks}> 
           <div className={layoutIconBox}> 
             <SquaresPlusIcon
               className={layoutIcons}
               aria-hidden="true"
             />
-            Claim gifts
+            Claim
           </div> 
         </Link>
         <Link href={progAddress ? `/customer/redeem?prog=${progAddress}` : '/customer/home' }  className={layoutLinks}> 
@@ -61,8 +52,17 @@ const NavbarBottom = ( ) => {
               className={layoutIcons}
               aria-hidden="true"
             />
-            Redeem gifts 
+            Redeem 
           </div> 
+        </Link>
+        <Link href={progAddress ? `/customer/transactions?prog=${progAddress}` : '/customer/home'} className={layoutLinks}> 
+          <div className={layoutIconBox}> 
+            <ChartBarSquareIcon
+              className={layoutIcons}
+              aria-hidden="true"
+            />
+            Transactions
+          </div>  
         </Link>
         <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )}> 
           <div className={layoutIconBox}> 

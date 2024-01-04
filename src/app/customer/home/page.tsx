@@ -27,7 +27,7 @@ import RequestPoints from "./RequestPoints";
 export default function Page()  {
   const { address } = useAccount() 
   const publicClient = usePublicClient(); 
-  const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
+  const { progAddress } = useUrlProgramAddress()
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[] | undefined>() 
   const dispatch = useDispatch() 
@@ -60,7 +60,7 @@ export default function Page()  {
     console.log("loyaltyCards: ", loyaltyCards)
   }
 
-  const getLoyaltyCardAddresses = async () => {
+  const getLoyaltyCardData = async () => {
     console.log("getLoyaltyCardAddresses called")
 
     let loyaltyCard: LoyaltyCard
@@ -102,7 +102,7 @@ export default function Page()  {
       loyaltyCards && 
       loyaltyCards.findIndex(loyaltyCard => loyaltyCard.cardAddress) === -1 
       ) { 
-        getLoyaltyCardAddresses() 
+        getLoyaltyCardData() 
       } 
   }, [ , loyaltyCards])
 
@@ -118,7 +118,8 @@ export default function Page()  {
   }, [, loyaltyCards])
 
   return (
-    <div className="grid grid-cols-1 h-full content-between pt-2">
+    <div className="flex flex-col justify-between pt-2 h-full">
+      <div className="grow"> 
       { 
       selectedLoyaltyCard ? 
         <RequestPoints /> 
@@ -130,7 +131,29 @@ export default function Page()  {
         <SelectLoyaltyCard loyaltyCards = {loyaltyCards}/> 
       :
       <div> Something went wrong, no loyalty card selected. </div> 
-      }   
+      }
+      </div>
+
+      <div className="grow-0 grid grid-cols-1">
+        
+        { !loyaltyCards ?
+        <Button onClick={() => {}} appearance="blueEmpty">
+          Request new Card
+        </Button>
+        :
+        null
+        } 
+        { 
+          loyaltyCards && loyaltyCards.length > 1 ? 
+          <Button onClick={() => {}} appearance="blueEmpty">
+            Switch to other card
+          </Button> 
+          : 
+          null
+        }
+        
+      </div> 
+      <div className="h-16"/> 
     </div>  
     )
   }

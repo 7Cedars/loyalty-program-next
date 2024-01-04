@@ -32,9 +32,9 @@ const NavbarTop = ( ) => {
       <header className="absolute top-0 z-10 flex justify-between h-18 w-full text-sm border-b border-gray-400 bg-slate-50 px-6">
         <div className="flex divide-x p-3 divide-gray-400">
           <Link href={progAddress ? `/customer/home?prog=${progAddress}` : '/customer/home'} className={layoutLinks}> Home </Link>
-          <Link href={progAddress ? `/customer/transactions?prog=${progAddress}` : '/customer/home'}  className={layoutLinks}> Transactions </Link>
           <Link href={progAddress ? `/customer/claim?prog=${progAddress}` : '/customer/home' }  className={layoutLinks}> Claim tokens </Link>
           <Link href={progAddress ? `/customer/redeem?prog=${progAddress}` : '/customer/home' }  className={layoutLinks}> Redeem tokens </Link>
+          <Link href={progAddress ? `/customer/transactions?prog=${progAddress}` : '/customer/home'}  className={layoutLinks}> Transactions </Link>
         </div> 
         <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )}> 
            {text} 

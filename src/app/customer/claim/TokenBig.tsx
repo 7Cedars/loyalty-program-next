@@ -12,26 +12,32 @@ import { notification } from "@/redux/reducers/notificationReducer";
 import { foundry } from "viem/chains";
 import { useEffect, useState, useRef } from "react";
 import { NumLine } from "@/app/ui/NumLine";
+import { useAppSelector } from "@/redux/hooks";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
+  loyaltyPoints: number | undefined
   disabled: boolean
 }
 
-export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
+export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
   const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>()
-  const [ hashMintTransaction, setHashMintTransaction] = useState<any>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
+  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const dispatch = useDispatch() 
 
-  const addLoyaltyToken = useContractWrite(
+  const claimLoyaltyToken = useContractWrite(
     {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
-      functionName: "addLoyaltyTokenContract", 
-      args: [token.tokenAddress], 
+      functionName: "redeemLoyaltyPoints", 
+      args: [
+        token.tokenAddress, 
+        Number(token.metadata?.attributes[1].value), 
+        selectedLoyaltyCard?.cardId
+      ],
       onError(error) {
         dispatch(notification({
           id: "addLoyaltyTokenContract",
@@ -47,60 +53,11 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     }
   )
 
-  const removeLoyaltyTokenClaimable = useContractWrite(
-    {
-      address: parseEthAddress(progAddress),
-      abi: loyaltyProgramAbi,
-      functionName: "removeLoyaltyTokenClaimable", 
-      args: [token.tokenAddress], 
-      onError(error) {
-        dispatch(notification({
-          id: "removeLoyaltyTokenClaimable",
-          message: `Something went wrong. Loyalty gift has not been removed.`, 
-          colour: "red",
-          isVisible: true
-        }))
-        console.log('removeLoyaltyToken Error', error)
-      }, 
-      onSuccess(data) {
-        setHashTransaction(data.hash)
-      }
-    }
-  )
-
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
     { 
       confirmations: 1,
       hash: hashTransaction 
     })
-  
-
-  const mintLoyaltyTokens = useContractWrite(
-    {
-      address: parseEthAddress(token.tokenAddress),
-      abi: loyaltyTokenAbi,
-      functionName: "mintLoyaltyTokens",
-      onError(error) {
-        dispatch(notification({
-          id: "mintLoyaltyTokens",
-          message: `Something went wrong. Loyalty tokens not minted.`, 
-          colour: "red",
-          isVisible: true
-        }))
-        console.log('mintLoyaltyTokens Error', error)
-      }, 
-      onSuccess(data) {
-        setHashMintTransaction(data.hash)
-      }
-    }
-  )
-
-  const mintTransaction = useWaitForTransaction(
-    { 
-      confirmations: 1,
-      hash: hashMintTransaction 
-    })
-
 
   useEffect(() => { 
     if (isSuccess) {
@@ -149,38 +106,40 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
       </div>
 
       { isLoading ? 
-        <div className="p-3 flex "> 
-          <Button appearance = {"grayEmpty"} onClick={() => {}} >
-            <div className="flex justify-center items-center">
-              <Image
-                className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
-                width={30}
-                height={30}
-                src={"/loading.svg"}
-                alt="Loading icon"
-              />
-              Waiting for confirmation (this can take a few minutes...)
-            </div>
-          </Button>
-        </div> 
-        :
-        isDisabled ? 
           <div className="p-3 flex "> 
-            <Button appearance = {"greenEmpty"} onClick={addLoyaltyToken.write} >
-                Select Loyalty Gift
+            <Button appearance = {"grayEmpty"} onClick={() => {}} >
+              <div className="flex justify-center items-center">
+                <Image
+                  className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
+                  width={30}
+                  height={30}
+                  src={"/loading.svg"}
+                  alt="Loading icon"
+                />
+                Waiting for confirmation (this can take a few minutes...)
+              </div>
             </Button>
           </div> 
-          : 
-          <div className="grid grid-col-1 gap-0 w-full">
-            <div className="p-3 flex w-full"> 
-              <NumLine onClick = {(arg0) => mintLoyaltyTokens.write({args: [arg0]})} isLoading = {mintTransaction.isLoading} /> 
-            </div>
-            <div className="p-3 flex "> 
-              <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >
-                Remove Loyalty Gift
-              </Button>
-            </div>
-          </div>
+        :
+        token.availableTokens == 0n ? 
+          <div className="p-3 flex "> 
+            <Button appearance = {"grayEmpty"} isDisabled onClick={() => {}} >
+                No Loyalty Gifts available
+            </Button>
+          </div> 
+        :
+        token.metadata && loyaltyPoints && Number(token.metadata.attributes[1].value) > loyaltyPoints ? 
+          <div className="p-3 flex "> 
+            <Button appearance = {"grayEmpty"} isDisabled onClick={() => {}} >
+                Not enough points to claim this gift
+            </Button>
+          </div> 
+        :
+          <div className="p-3 flex "> 
+            <Button appearance = {"greenEmpty"} onClick={claimLoyaltyToken.write} >
+              Claim Loyalty Gift
+            </Button>
+          </div> 
         } 
       </div>      
   );

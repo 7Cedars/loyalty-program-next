@@ -53,11 +53,11 @@ export const ModalMain = ({
   console.log("userLoggedIn at ModalMain: ", selectedLoyaltyProgram)
 
   useEffect(() => {
-    if (address != userLoggedIn) {
-      setUserLoggedIn(undefined)
-      dispatch(resetLoyaltyProgram(true))
-      putProgAddressInUrl(null)
-    }
+    // if (address != userLoggedIn) {
+    //   setUserLoggedIn(undefined)
+    //   dispatch(resetLoyaltyProgram(true))
+    //   putProgAddressInUrl(null)
+    // }
 
     if (!address) {
       dispatch(notification({

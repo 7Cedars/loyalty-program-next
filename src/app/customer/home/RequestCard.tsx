@@ -17,7 +17,7 @@ export default function RequestCard()  {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
 
   return (
-    <div className="grid grid-cols-1 h-full content-between pt-2">
+    <div className="grid grid-cols-1 h-4/5 content-between pt-2">
 
       <div className="text-center p-3">
         <TitleText 
@@ -29,7 +29,7 @@ export default function RequestCard()  {
       <div className="grid justify-center justify-items-center p-6">
           <QRCode 
             value={`type:requestCard;lp:${selectedLoyaltyProgram?.programAddress};ca:${address}`}
-            style={{ height: "500px", width: "100%", objectFit: "cover"  }}
+            style={{ height: "400px", width: "100%", objectFit: "cover"  }}
             />
       </div>
     </div>

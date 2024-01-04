@@ -2,7 +2,7 @@
 import { ModalMain } from "@/app/vendor/components/ModalMain";
 import { useLoyaltyTokens } from "@/depricated/useLoyaltyTokens";
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
-import TokenSmall from "../components/TokenSmall";
+import TokenSmall from "./TokenSmall";
 import TokenBig from "./TokenBig";
 import { DeployedContractLog, EthAddress, LoyaltyToken } from "@/types";
 import { useEffect, useState, useRef } from "react";
@@ -19,10 +19,13 @@ import {
   parseLoyaltyContractLogs, 
   parseUri, 
   parseMetadata, 
-  parseAvailableTokens 
+  parseAvailableTokens,
+  parseTokenContractLogs,
+  parseBigInt
 } from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
 import { Button } from "@/app/ui/Button";
+import { useAppSelector } from "@/redux/hooks";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -30,28 +33,42 @@ type setSelectedTokenProps = {
 }
 
 export default function Page() {
-
+  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+  const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
   const [activeLoyaltyTokens, setActiveLoyaltyTokens]  = useState<LoyaltyToken[] >([]) 
   const [inactiveLoyaltyTokens, setInactiveLoyaltyTokens] = useState<LoyaltyToken[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const { progAddress } = useUrlProgramAddress() 
   const {address} = useAccount() 
+
   // const {data, ethAddresses, isLoading, isError} = useLoyaltyTokens() 
   const publicClient = usePublicClient()
+
+  const getLoyaltyCardPoints = async () => {
+    console.log("getLoyaltyCardPoints called")
+
+    const loyaltyCardPointsData = await publicClient.readContract({
+      address: parseEthAddress(progAddress), 
+      abi: loyaltyProgramAbi,
+      functionName: 'getBalanceLoyaltyCard', 
+      args: [ selectedLoyaltyCard?.cardId ]
+    });
+    const loyaltyCardPoints = parseBigInt(loyaltyCardPointsData)
+    setLoyaltyPoints(Number(loyaltyCardPoints))
+  }
 
   const getLoyaltyTokenAddresses = async () => {
     console.log("getLoyaltyTokenAddresses called")
 
     const loggedAdresses: Log[] = await publicClient.getContractEvents({
-      abi: loyaltyTokenAbi, 
-      // abi: loyaltyProgramAbi, 
+      abi: loyaltyTokenAbi,
       eventName: 'DiscoverableLoyaltyToken', 
       args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, 
       fromBlock: 1n,
       toBlock: 16330050n
     });
-    const loyaltyTokenAddresses = parseContractLogs(loggedAdresses)
+    const loyaltyTokenAddresses = parseTokenContractLogs(loggedAdresses)
     setLoyaltyTokens(loyaltyTokenAddresses)
 
     console.log("loyaltyTokenAddresses: ", loyaltyTokenAddresses)
@@ -162,6 +179,7 @@ export default function Page() {
 
   useEffect(() => {
     getAvailableTokens()
+    getLoyaltyCardPoints()
   }, [ ] ) 
   
   console.log("loyaltyTokens: ", loyaltyTokens)
@@ -230,16 +248,18 @@ export default function Page() {
 
   }, [ , selectedToken, loyaltyTokens]) 
 
-
-
   // console.log("data loyaltyTokens: ", data, " isLoading at LoyaltyToken: ", isLoading )
 
   return (
      <div className=" w-full grid grid-cols-1 gap-1">
 
-      <div className="h-20 m-3"> 
-       <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={1} />
+      <div className="h-20 m-1"> 
+       <TitleText title = "Claim Loyalty Gifts" subtitle="View and redeem loyalty points for gifts." size={2} />
       </div>
+
+      <p className="m-3 text-center text-bold text-md"> 
+       {`${loyaltyPoints} loyalty points remaining`}
+      </p>
 
       { selectedToken ? 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
@@ -254,16 +274,14 @@ export default function Page() {
           />
         </button>
 
-        <TokenBig token={selectedToken.token} disabled = {selectedToken.disabled} /> 
+        <TokenBig token={selectedToken.token} loyaltyPoints = {loyaltyPoints} disabled = {selectedToken.disabled} /> 
       
       </div>
       :
-      
       <>
-
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
           <div className="col-span-2 sm:col-span-3 md:col-span-4"> 
-            <TitleText title = "Selected Gifts" size={0} />
+            <TitleText title = "Available Gifts" size={0} />
           </div>
 
           { activeLoyaltyTokens ?
@@ -277,30 +295,10 @@ export default function Page() {
             )
           : 
           <div className="col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-            <NoteText message=" Selected tokens will appear here."/>
+            <NoteText message="No gifts available. Ask vendor to enable gifts."/>
           </div>
           }
         </div> 
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
-          <div className="col-span-2 sm:col-span-3 md:col-span-4"> 
-            <TitleText title = "Available Gift Programs" size={0} />
-          </div>
-          
-          { inactiveLoyaltyTokens ? 
-            inactiveLoyaltyTokens.map((token: LoyaltyToken) => 
-              token.metadata ? 
-              <div key = {token.tokenAddress} >
-                <TokenSmall token = {token} disabled = {true}  onClick={() => setSelectedToken({token: token, disabled: true})} /> 
-              </div>
-              : null 
-            )
-            : 
-            <div className="col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-              <NoteText message="Other available tokens will appear here."/>
-            </div>
-          }
-        </div>
       </>
 
     }
