@@ -17,80 +17,11 @@ import { selectLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
 
 // 0x8464135c8F25Da09e49BC8782676a84730C318bC
 
-export default function SelectLoyaltyCard()  {
+export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: LoyaltyCard[]}) {
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
   const dispatch = useDispatch() 
 
-
-  // const getLoyaltyCardIds = async () => {
-  //   console.log("getLoyaltyCardIds called, address: ", address)
-
-  //   const transferSingleData: Log[] = await publicClient.getContractEvents( { 
-  //     abi: loyaltyProgramAbi,
-  //     address: parseEthAddress(progAddress), 
-  //     eventName: 'TransferSingle',
-  //     args: {to: address}, 
-  //     fromBlock: 1n,
-  //     toBlock: 16330050n
-  //   });
-  //   const transferredTokens = parseTransferSingleLogs(transferSingleData)
-  //   const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)
-
-  //   if (!loyaltyCardData) {setLoyaltyCards("noCardDetected")}
-
-  //   if (loyaltyCardData && loyaltyCards != "noCardDetected" && progAddress) { 
-  //     const data: LoyaltyCard[] = loyaltyCardData.map(item => { return ({
-  //       cardId: item.ids[0], 
-  //       loyaltyProgramAddress: parseEthAddress(progAddress)
-  //     })})
-  //     setLoyaltyCards(data)
-  //   } 
-  //   console.log("loyaltyCards: ", loyaltyCards)
-  // }
-
-  // const getLoyaltyCardAddresses = async () => {
-  //   console.log("getLoyaltyCardAddresses called")
-
-  //   let loyaltyCard: LoyaltyCard
-  //   let loyaltyCardsUpdated: LoyaltyCard[] = []
-
-  //   if (loyaltyCards && loyaltyCards.length > 0 && loyaltyCards != "noCardDetected") { 
-  //     try {
-  //       for await (loyaltyCard of loyaltyCards) {
-
-  //           const cardAddress: unknown = await publicClient.readContract({
-  //             address: parseEthAddress(progAddress), 
-  //             abi: loyaltyProgramAbi,
-  //             functionName: 'getTokenBoundAddress', 
-  //             args: [loyaltyCard.cardId]
-  //           })
-  //           console.log("getTokenBoundAddress: ", cardAddress )
-  //           loyaltyCardsUpdated.push({...loyaltyCard, cardAddress: parseEthAddress(cardAddress)})
-  //         }
-        
-  //         setLoyaltyCards(loyaltyCardsUpdated)
-
-  //       } catch (error) {
-  //         console.log(error)
-  //     }
-  //   }
-  // }
-
-  // useEffect(() => {
-
-  //   if (!loyaltyCards) { getLoyaltyCardIds() } // check when address has no cards what happens..  
-  //   if (
-  //     loyaltyCards && 
-  //     loyaltyCards != "noCardDetected" && 
-  //     loyaltyCards.findIndex(loyaltyCard => loyaltyCard.cardAddress) === -1 
-  //     ) { getLoyaltyCardAddresses() } 
-     
-  // }, [ , loyaltyCards])
-
-  // useEffect(() => {
-  //   if (loyaltyCards) { setLoyaltyCards(undefined) } 
-  // }, [, address])
-
-  const handleProgramSelection = (loyaltyCard: LoyaltyCard) => {
+  const handleCardSelection = (loyaltyCard: LoyaltyCard) => {
     dispatch(selectLoyaltyCard(loyaltyCard))
   }
 
@@ -101,30 +32,36 @@ export default function SelectLoyaltyCard()  {
       <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll overscroll-auto mb-12"> 
         {/* (The following div is an empty div for ui purposes)   */ }
         <div className="w-[16vw] h-96 ms-4 opacity-0 border-2 border-green-500" /> 
-        {/* { loyaltyPrograms ? 
-          loyaltyPrograms.map(program => {
+        { loyaltyCards && selectedLoyaltyProgram ? 
+          loyaltyCards.map(card => {
 
-            return (
+            return (                
               <button 
-                key={program.tokenAddress}
-                onClick = {() => handleProgramSelection(program)}
-                  className="me-20 mt-12 w-72 h-128"> 
-                      <Image
-                        className="rounded-lg"
-                        width={288}
-                        height={420}
-                        style = {{ objectFit: "cover" }} 
-                        src={program.metadata? program.metadata.imageUri : `/vercel.svg`}
-                        alt="DAO space icon"
-                      />
+                key={String(card.cardId)}
+                onClick = {() => handleCardSelection(card)}
+                className="me-20 m-12 mx-6 w-60 p-3 h-fit justify-self-center border border-gray-300 rounded-lg grid grid-cols-1 gap-4"> 
+                  <div className='text-center h-fit'> 
+                    {`Card ID: ${card.cardId}`} 
+                  </div> 
+
+                  <Image
+                    className="rounded-lg "
+                    width={288}
+                    height={420}
+                    style = {{ objectFit: "cover" }} 
+                    src={selectedLoyaltyProgram.metadata? selectedLoyaltyProgram.metadata.imageUri : `/vercel.svg`}
+                    alt="DAO space icon"
+                  />
+
+                  <div className='text-center'>   
+                    POINTS HERE 
+                  </div> 
               </button>
             )
           })
           : 
           null
-        } */}
-
-        {/* TODO: insert button here: 'deploy new program'  */}
+        }
 
       </div>
     </div>

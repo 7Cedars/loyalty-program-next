@@ -130,6 +130,17 @@ export const loyaltyProgramAbi: Abi = [
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "loyaltyToken",
+        "type": "address"
+      }
+    ],
+    "name": "LoyaltyProgram__IncorrectContractInterface",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "LoyaltyProgram__LoyaltyCardNotAvailable",
     "type": "error"
@@ -1281,13 +1292,6 @@ export const loyaltyProgramAbi: Abi = [
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "makeDiscoverable",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

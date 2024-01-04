@@ -59,7 +59,7 @@ export type LoyaltyProgram = {
 } 
 
 export type LoyaltyCard = {
-  cardId: BigInt; 
+  cardId: Number; 
   cardAddress?: EthAddress; 
   loyaltyProgramAddress?: EthAddress;
   ownershipChecked?: boolean;

@@ -22,13 +22,15 @@ import { useAppSelector } from '@/redux/hooks';
 import { selectLoyaltyCard, resetLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
 import RequestCard from "./RequestCard";
 import SelectLoyaltyCard from "./SelectLoyaltyCard";
+import RequestPoints from "./RequestPoints";
 
 export default function Page()  {
   const { address } = useAccount() 
   const publicClient = usePublicClient(); 
   const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[] | "noCardDetected" | undefined>() 
+  const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[] | undefined>() 
+  const dispatch = useDispatch() 
 
   console.log("address at home: ", address)
   console.log("loyaltyCards at home: ", loyaltyCards)
@@ -48,11 +50,9 @@ export default function Page()  {
     const transferredTokens = parseTransferSingleLogs(transferSingleData)
     const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)
 
-    if (!loyaltyCardData) {setLoyaltyCards("noCardDetected")}
-
-    if (loyaltyCardData && loyaltyCards != "noCardDetected" && progAddress) { 
+    if (loyaltyCardData && progAddress) { 
       const data: LoyaltyCard[] = loyaltyCardData.map(item => { return ({
-        cardId: item.ids[0], 
+        cardId: Number(item.ids[0]), 
         loyaltyProgramAddress: parseEthAddress(progAddress)
       })})
       setLoyaltyCards(data)
@@ -66,7 +66,7 @@ export default function Page()  {
     let loyaltyCard: LoyaltyCard
     let loyaltyCardsUpdated: LoyaltyCard[] = []
 
-    if (loyaltyCards && loyaltyCards.length > 0 && loyaltyCards != "noCardDetected") { 
+    if (loyaltyCards && loyaltyCards.length > 0 ) { 
       try {
         for await (loyaltyCard of loyaltyCards) {
 
@@ -100,50 +100,37 @@ export default function Page()  {
     if (!loyaltyCards) { getLoyaltyCardIds() } // check when address has no cards what happens..  
     if (
       loyaltyCards && 
-      loyaltyCards != "noCardDetected" && 
       loyaltyCards.findIndex(loyaltyCard => loyaltyCard.cardAddress) === -1 
       ) { 
         getLoyaltyCardAddresses() 
       } 
   }, [ , loyaltyCards])
 
-
-
   useEffect(() => {
     if (loyaltyCards) { setLoyaltyCards(undefined) } 
   }, [, address])
 
+  useEffect(() => {
+    if (
+      loyaltyCards && 
+      loyaltyCards.length == 1 
+      ) { dispatch(selectLoyaltyCard(loyaltyCards[0])) } 
+  }, [, loyaltyCards])
+
   return (
     <div className="grid grid-cols-1 h-full content-between pt-2">
-
       { 
+      selectedLoyaltyCard ? 
+        <RequestPoints /> 
+      : 
       loyaltyCards && loyaltyCards.length == 0 ? 
         <RequestCard /> 
       : 
       loyaltyCards && loyaltyCards.length > 1 && !selectedLoyaltyCard ? 
-        <SelectLoyaltyCard /> 
+        <SelectLoyaltyCard loyaltyCards = {loyaltyCards}/> 
       :
-      <div> </div> 
+      <div> Something went wrong, no loyalty card selected. </div> 
       }   
-{/* 
-      <div className="text-center p-3">
-        <TitleText 
-          title = {selectedLoyaltyProgram?.metadata ? selectedLoyaltyProgram?.metadata.attributes[0].value  : "Loyalty Card"} 
-          subtitle="Scan to activate customer loyalty card" 
-          size={2}
-          /> 
-      </div>
-      <div className="grid justify-center justify-items-center p-6">
-          <QRCode 
-            value={`${BASE_URI}?customer/home/?prog:${selectedLoyaltyProgram?.programAddress}`}
-            style={{ height: "500px", width: "100%", objectFit: "cover"  }}
-            />
-      </div>
-      <div className="text-center p-3 pb-16">
-        <Button isFilled={true} onClick = {() => dispatch(resetLoyaltyCard(true)) }> 
-          Choose another Loyalty Card or Request a new one. 
-        </Button>
-      </div> */}
-    </div>
+    </div>  
     )
   }
