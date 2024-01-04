@@ -62,6 +62,7 @@ export type LoyaltyCard = {
   cardId: BigInt; 
   cardAddress?: EthAddress; 
   loyaltyProgramAddress?: EthAddress;
+  ownershipChecked?: boolean;
 }
 
 // for now type for program and token are the same - but might change in the future 

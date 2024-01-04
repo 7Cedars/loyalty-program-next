@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useUrlProgramAddress } from '../../hooks/useUrl';
 import { usePublicClient } from 'wagmi';
 import { loyaltyProgramAbi } from '@/context/abi';
-import { Log } from 'viem';
+import { Log, Transaction } from 'viem';
 import { parseContractLogs, parseUri, parseMetadata, parseEthAddress, parseTransferSingleLogs } from '../../utils/parsers';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/redux/hooks';
@@ -44,6 +44,7 @@ export default function Page()  {
       fromBlock: 1n,
       toBlock: 16330050n
     });
+    
     const transferredTokens = parseTransferSingleLogs(transferSingleData)
     const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)
 
@@ -75,10 +76,17 @@ export default function Page()  {
               functionName: 'getTokenBoundAddress', 
               args: [loyaltyCard.cardId]
             })
-            console.log("getTokenBoundAddress: ", cardAddress )
-            loyaltyCardsUpdated.push({...loyaltyCard, cardAddress: parseEthAddress(cardAddress)})
+
+            const isOwned: unknown = await publicClient.readContract({
+              address: parseEthAddress(progAddress), 
+              abi: loyaltyProgramAbi,
+              functionName: 'balanceOf', 
+              args: [address, loyaltyCard.cardId]
+            })
+
+            isOwned ? loyaltyCardsUpdated.push({...loyaltyCard, cardAddress: parseEthAddress(cardAddress)}) : null 
+
           }
-        
           setLoyaltyCards(loyaltyCardsUpdated)
 
         } catch (error) {
@@ -94,9 +102,12 @@ export default function Page()  {
       loyaltyCards && 
       loyaltyCards != "noCardDetected" && 
       loyaltyCards.findIndex(loyaltyCard => loyaltyCard.cardAddress) === -1 
-      ) { getLoyaltyCardAddresses() } 
-     
+      ) { 
+        getLoyaltyCardAddresses() 
+      } 
   }, [ , loyaltyCards])
+
+
 
   useEffect(() => {
     if (loyaltyCards) { setLoyaltyCards(undefined) } 
