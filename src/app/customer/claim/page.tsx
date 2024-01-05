@@ -47,15 +47,17 @@ export default function Page() {
 
   const getLoyaltyCardPoints = async () => {
     console.log("getLoyaltyCardPoints called")
-
-    const loyaltyCardPointsData = await publicClient.readContract({
-      address: parseEthAddress(progAddress), 
-      abi: loyaltyProgramAbi,
-      functionName: 'getBalanceLoyaltyCard', 
-      args: [ selectedLoyaltyCard?.cardId ]
-    });
-    const loyaltyCardPoints = parseBigInt(loyaltyCardPointsData)
-    setLoyaltyPoints(Number(loyaltyCardPoints))
+      if (selectedLoyaltyCard) {
+      const loyaltyCardPointsData = await publicClient.readContract({
+        address: parseEthAddress(progAddress), 
+        abi: loyaltyProgramAbi,
+        functionName: 'getBalanceLoyaltyCard', 
+        args: [ selectedLoyaltyCard?.cardId ]
+      });
+      
+      const loyaltyCardPoints = parseBigInt(loyaltyCardPointsData)
+      setLoyaltyPoints(Number(loyaltyCardPoints))
+    }
   }
 
   const getLoyaltyTokenAddresses = async () => {

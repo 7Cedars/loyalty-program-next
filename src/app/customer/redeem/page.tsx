@@ -2,7 +2,7 @@
 import { ModalMain } from "@/app/vendor/components/ModalMain";
 import { useLoyaltyTokens } from "@/depricated/useLoyaltyTokens";
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
-import TokenSmall from "../components/TokenSmall";
+import TokenSmall from "./TokenSmall";
 import TokenBig from "./TokenBig";
 import { DeployedContractLog, EthAddress, LoyaltyToken } from "@/types";
 import { useEffect, useState, useRef } from "react";
