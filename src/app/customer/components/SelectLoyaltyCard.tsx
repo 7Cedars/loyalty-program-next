@@ -21,10 +21,6 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
   const dispatch = useDispatch() 
 
-  // const handleCardSelection = (loyaltyCard: LoyaltyCard) => {
-  //   dispatch(selectLoyaltyCard(loyaltyCard))
-  // }
-
   // Choosing program. -- This is what I have to get working 100% 
   return (
     <div> 

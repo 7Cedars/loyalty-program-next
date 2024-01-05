@@ -45,15 +45,11 @@ import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { getContractEventsProps } from "@/types"
 import { 
-  parseContractLogs, 
   parseEthAddress, 
-  parseLoyaltyContractLogs, 
   parseUri, 
   parseMetadata, 
-  parseAvailableTokens,
   parseTransferSingleLogs
 } from "@/app/utils/parsers";
-import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
 import { Button } from "@/app/ui/Button";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 

@@ -3,7 +3,6 @@ import { LoyaltyProgram } from "@/types";
 import { TitleText } from "../../ui/StandardisedFonts";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useUrlProgramAddress } from '../../hooks/useUrl';
 import { usePublicClient } from 'wagmi';
 import { loyaltyProgramAbi } from '@/context/abi';
@@ -31,6 +30,7 @@ export default function ChooseProgram()  {
         fromBlock: 1n,
         toBlock: 16330050n
     });
+
     const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
     setLoyaltyPrograms(loyaltyProgramAddresses)
 
@@ -97,17 +97,19 @@ export default function ChooseProgram()  {
     if (!loyaltyPrograms) { getLoyaltyProgramAddresses() } 
     if (
       loyaltyPrograms && 
+      loyaltyPrograms.length != 0 &&
       loyaltyPrograms.findIndex(loyaltyProgram => loyaltyProgram.uri) === -1 
       ) { getLoyaltyProgramsUris() } 
     if (
       loyaltyPrograms && 
+      loyaltyPrograms.length != 0 &&
       loyaltyPrograms.findIndex(loyaltyProgram => loyaltyProgram.metadata) === -1 
       ) { getLoyaltyProgramsMetaData() } 
 
   }, [ , loyaltyPrograms])
 
   useEffect(() => {
-    if (loyaltyPrograms) { setLoyaltyPrograms(undefined) } 
+    if (loyaltyPrograms) { setLoyaltyPrograms(undefined) } // check when address has no deployed programs what happens..  
   }, [, address])
 
   const handleProgramSelection = (loyaltyProgram: LoyaltyProgram) => {
@@ -123,7 +125,7 @@ export default function ChooseProgram()  {
         {/* (The following div is an empty div for ui purposes)   */ }
         <div className="w-[16vw] h-96 ms-4 opacity-0 border-2 border-green-500" /> 
         
-        { loyaltyPrograms ? 
+        { loyaltyPrograms  ? 
           loyaltyPrograms.map(program => {
 
             return (
