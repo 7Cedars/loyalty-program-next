@@ -26,6 +26,11 @@ export default function Page()  {
             size={2}
             /> 
         </div>
+        <div className="flex justify-center"> 
+          <div className="p-2 w-1/2 text-center border-b border-blue-800">
+            {` Loyalty Card Id: ${selectedLoyaltyCard?.cardId}`}
+          </div>
+        </div>
         <div className="grid justify-center justify-items-center p-6">
             <QRCode 
               value={`type:giftPoints;lp:${selectedLoyaltyProgram?.programAddress};lc:${selectedLoyaltyCard?.cardId}`}

@@ -53,8 +53,6 @@ export const ModalMain = ({
   children 
 }: ModalProps) => {
 
-  // Note this ui modal dialog expects the use of redux. 
-  // I can change this in other apps if needed.
   const dispatch = useAppDispatch()
   const { modalVisible } = useAppSelector(state => state.userInput) 
   const { address }  = useAccount()
@@ -67,9 +65,9 @@ export const ModalMain = ({
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[]>() 
   const [showRequestCard, setShowRequestCard] = useState<boolean>(false)
 
-  // console.log("address at ModalMain customer: ", address)
-  // console.log("selectedLoyaltyProgram at ModalMain customer: ", selectedLoyaltyProgram)
-  // console.log("userLoggedIn at ModalMain customer: ", selectedLoyaltyProgram)
+  /////////////////////////////////////////////////// 
+  /// Loading data loyalty cards owned by address /// 
+  ///////////////////////////////////////////////////  
 
   const getLoyaltyCardIds = async () => {
     console.log("getLoyaltyCardIds called, address: ", address)
@@ -155,8 +153,15 @@ export const ModalMain = ({
       ) { dispatch(selectLoyaltyCard(loyaltyCards[0])) } 
   }, [, loyaltyCards, address])
 
+
+  ///////////////////////////////////////////// 
+  /// Loading data selected loyalty Program /// 
+  ///////////////////////////////////////////// 
+
+  console.log("loyaltyProgram UPDATES: ", loyaltyProgram)
+
   const getLoyaltyProgramUri = async () => {
-    // console.log("getLoyaltyProgramsUris called. ProgAddress:", progAddress)
+    console.log("getLoyaltyProgramsUris called. ProgAddress:", progAddress)
 
     if (progAddress) {
 
@@ -168,7 +173,7 @@ export const ModalMain = ({
           args: [0]
         })
 
-        setLoyaltyProgram({programAddress: parseEthAddress(progAddress), uri: parseUri(uri)})
+        setLoyaltyProgram({...loyaltyProgram, programAddress: parseEthAddress(progAddress), uri: parseUri(uri)})
       } catch (error) {
         console.log(error)
       }
@@ -176,7 +181,7 @@ export const ModalMain = ({
   }
 
   const getLoyaltyProgramOwner = async () => {
-    // console.log("getLoyaltyProgramsUris called. ProgAddress:", progAddress)
+    console.log("getLoyaltyProgramOwner called. ProgAddress:", progAddress)
 
     if (progAddress) {
 
@@ -187,9 +192,9 @@ export const ModalMain = ({
           functionName: 'getOwner'
         })
 
-        console.log("getOwner: ", owner)
+        console.log("getLoyaltyProgramOwner: ", owner)
 
-        setLoyaltyProgram({programAddress: parseEthAddress(progAddress), programOwner: parseEthAddress(owner)})
+        setLoyaltyProgram({...loyaltyProgram, programAddress: parseEthAddress(progAddress), programOwner: parseEthAddress(owner)})
       } catch (error) {
         console.log(error)
       }
@@ -197,7 +202,7 @@ export const ModalMain = ({
   }
 
   const getLoyaltyProgramMetaData = async () => {
-    // console.log("getLoyaltyProgramMetaData called. ProgAddress:", progAddress )
+    console.log("getLoyaltyProgramMetaData called. ProgAddress:", progAddress )
 
     if (loyaltyProgram) {
       try {
@@ -225,8 +230,7 @@ export const ModalMain = ({
       !loyaltyProgram.programOwner 
       ) { getLoyaltyProgramOwner() }
     if (
-      loyaltyProgram && 
-      loyaltyProgram.metadata 
+      loyaltyProgram 
       ) { dispatch(selectLoyaltyProgram(loyaltyProgram))}
   
   }, [, progAddress, loyaltyProgram])
@@ -259,6 +263,12 @@ export const ModalMain = ({
     }
 
   }, [ , address])
+
+  console.log(
+    "pre render console log", 
+    "selectedLoyaltyCard: ", selectedLoyaltyCard, 
+    "loyaltyCards: ", loyaltyCards
+  )
 
   return (
     <div className="relative w-full max-w-4xl h-screen z-1">

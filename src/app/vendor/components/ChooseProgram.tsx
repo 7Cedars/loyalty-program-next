@@ -18,7 +18,7 @@ export default function ChooseProgram()  {
   const { putProgAddressInUrl } = useUrlProgramAddress()
   const [ loyaltyPrograms, setLoyaltyPrograms ] = useState<LoyaltyProgram[]>() 
 
-  console.log(loyaltyPrograms)
+  console.log("loyaltyPrograms: ", loyaltyPrograms)
 
   const getLoyaltyProgramAddresses = async () => {
     console.log("getLoyaltyProgramAddresses called")

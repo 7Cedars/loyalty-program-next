@@ -127,7 +127,7 @@ export default function Page() {
             address: loyaltyToken.tokenAddress, 
             abi: loyaltyTokenAbi,
             functionName: 'getAvailableTokens', 
-            args: [parseEthAddress(address)]
+            args: [parseEthAddress(progAddress)]
           })
           console.log("getAvailableTokens: ", availableTokens )
           loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseAvailableTokens(availableTokens))})

@@ -6,7 +6,7 @@ import TokenSmall from "./TokenSmall";
 import TokenBig from "./TokenBig";
 import { DeployedContractLog, EthAddress, LoyaltyToken } from "@/types";
 import { useEffect, useState, useRef } from "react";
-import { useContractRead } from "wagmi";
+import { useContractRead, useContractEvent } from "wagmi";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
@@ -47,8 +47,26 @@ export default function Page() {
   // const {data, ethAddresses, isLoading, isError} = useLoyaltyTokens() 
   const publicClient = usePublicClient()
 
+  useContractEvent({
+    address: parseEthAddress(progAddress),
+    abi: loyaltyProgramAbi,
+    eventName: 'TransferSingle',
+    listener(log) {
+      console.log("Prog address TransferSingle event observed: ", log)
+    },
+  })
+
+  useContractEvent({
+    address: parseEthAddress(loyaltyTokens ? loyaltyTokens[0].tokenAddress : progAddress),
+    abi: loyaltyTokenAbi,
+    eventName: 'TransferSingle',
+    listener(log) {
+      console.log("generic TransferSingle event observed: ", log)
+    },
+  })
+
   const getLoyaltyCardPoints = async () => {
-    console.log("getLoyaltyCardPoints called")
+    console.log("getLoyaltyCardPoints called") 
       if (selectedLoyaltyCard) {
       const loyaltyCardPointsData = await publicClient.readContract({
         address: parseEthAddress(progAddress), 
@@ -142,13 +160,13 @@ export default function Page() {
     if (loyaltyTokens) { 
       try {
         for await (loyaltyToken of loyaltyTokens) {
-          console.log("getAvailableTokens CHECK ")
+          console.log("getAvailableTokens called. selectedLoyaltyProgram?.programOwner: ", selectedLoyaltyProgram?.programOwner)
 
           const availableTokens: unknown = await publicClient.readContract({
             address: loyaltyToken.tokenAddress, 
             abi: loyaltyTokenAbi,
             functionName: 'getAvailableTokens', 
-            args: [parseEthAddress(selectedLoyaltyProgram?.programOwner)] // needsto be OWNER of program! 
+            args: [parseEthAddress(selectedLoyaltyProgram?.programAddress)] // needsto be OWNER of program! 
           })
           console.log("getAvailableTokens: ", availableTokens )
           loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseAvailableTokens(availableTokens))})
@@ -261,9 +279,11 @@ export default function Page() {
        <TitleText title = "Claim Loyalty Gifts" subtitle="View and redeem loyalty points for gifts." size={2} />
       </div>
 
-      <p className="m-3 text-center text-bold text-md"> 
-       {`${loyaltyPoints} loyalty points remaining`}
-      </p>
+      <div className="flex justify-center"> 
+        <p className="p-2 w-1/2 text-center border-b border-blue-800">
+          {`${loyaltyPoints} loyalty points remaining`}
+        </p>
+      </div>
 
       { selectedToken ? 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">

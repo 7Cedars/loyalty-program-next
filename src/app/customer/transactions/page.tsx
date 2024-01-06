@@ -5,7 +5,12 @@ import { Button } from "@/app/ui/Button";
 import { useState } from "react";
 import { Transaction } from "@/types";
 import { Log } from "viem";
-import { parseEthAddress, parseTransferSingleLogs, parseTransferBatchLogs } from "@/app/utils/parsers";
+import { 
+  parseEthAddress, 
+  parseTransferSingleLogs, 
+  parseTransferBatchLogs, 
+  parseBigInt
+} from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { 
@@ -15,12 +20,31 @@ import {
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
+import { useAppSelector } from "@/redux/hooks";
+
 
 export default function Page() {
+  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+  const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const { progAddress } =  useUrlProgramAddress();
   const publicClient = usePublicClient(); 
   const { address } = useAccount() 
   const [transactions, setTransactions] = useState<Transaction[] | undefined >()
+
+  const getLoyaltyCardPoints = async () => {
+    console.log("getLoyaltyCardPoints called")
+      if (selectedLoyaltyCard) {
+      const loyaltyCardPointsData = await publicClient.readContract({
+        address: parseEthAddress(progAddress), 
+        abi: loyaltyProgramAbi,
+        functionName: 'getBalanceLoyaltyCard', 
+        args: [ selectedLoyaltyCard?.cardId ]
+      });
+      
+      const loyaltyCardPoints = parseBigInt(loyaltyCardPointsData)
+      setLoyaltyPoints(Number(loyaltyCardPoints))
+    }
+  }
 
   const getTransactions = async () => {
     console.log("getTransactions called")
@@ -48,12 +72,19 @@ export default function Page() {
 
   useEffect(() => {
     getTransactions()
+    getLoyaltyCardPoints()
   }, [ ])
 
   return (
     <div className="grid grid-cols-1 h-full content-between">
-      <div className="grid grid-cols-1 h-full overflow-auto ">
+      <div className="grid grid-cols-1 h-full overflow-auto px-2">
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
+
+        <div className="flex justify-center"> 
+          <p className="p-2 w-1/2 text-center border-b border-blue-800">
+            {`${loyaltyPoints} loyalty points remaining`}
+          </p>
+        </div>
 
         { transactions ? 
             <div className="grid grid-cols-1 overflow-auto m-4 mx-12 p-8 divide-y">  

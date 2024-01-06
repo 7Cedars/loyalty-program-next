@@ -40,14 +40,15 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
       ],
       onError(error) {
         dispatch(notification({
-          id: "addLoyaltyTokenContract",
-          message: `Something went wrong. Loyalty gift has not been added.`, 
+          id: "redeemLoyaltyPoints",
+          message: `Something went wrong. Loyalty gift was not claimed.`, 
           colour: "red",
           isVisible: true
-        }))
-        console.log('addLoyaltyToken Error', error)
+        })) 
+        console.log('redeemLoyaltyPoints Error', error)
       }, 
       onSuccess(data) {
+        console.log("DATA claimLoyaltyToken: ", data)
         setHashTransaction(data.hash)
       },
     }

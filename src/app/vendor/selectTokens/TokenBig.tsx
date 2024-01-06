@@ -77,8 +77,8 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   const mintLoyaltyTokens = useContractWrite(
     {
-      address: parseEthAddress(token.tokenAddress),
-      abi: loyaltyTokenAbi,
+      address: parseEthAddress(progAddress),
+      abi: loyaltyProgramAbi,
       functionName: "mintLoyaltyTokens",
       onError(error) {
         dispatch(notification({
@@ -173,7 +173,10 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
           : 
           <div className="grid grid-col-1 gap-0 w-full">
             <div className="p-3 flex w-full"> 
-              <NumLine onClick = {(arg0) => mintLoyaltyTokens.write({args: [arg0]})} isLoading = {mintTransaction.isLoading} /> 
+              <NumLine onClick = {(arg0) => mintLoyaltyTokens.write({
+                args: [token.tokenAddress, arg0]}
+                )} 
+                isLoading = {mintTransaction.isLoading} /> 
             </div>
             <div className="p-3 flex "> 
               <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >

@@ -12,32 +12,15 @@ Even though repository is public, For now, it is for personal use only.
 - Design of solidity frontend is on my Figma. 
 
 ## Todo   
-- [x] Implement standardised fonts: also font for 'nothing selected' texts. 
-- [x] Implement picture of selected loyalty program in background. 
-- [x] Develop landing page 
-  - [x]  Insert correct (standardised) title & description. 
-- [ ] Develop vendor select tokens
-  - [x]  Implement TokenBig
-  - [x]  Read events for deployment tokens, properly populate page. 
-  - [x]  Read events for selecting tokens, properly populate page. 
-  - [x]  Implement selecting and deslecting tokens at Token Big
-    - [x]  Write to contract
-    - [x]  Listen for correct event. 
-    - [x]  Show loading circle 
-    - [x]  show green notification when successful
-    - [x]  red if error returned. 
-  - [ ]  Implement minting loyaltyTokens 
-    - [x]  Write to contract
-    - [ ]  Listen for correct event. 
-    - [x]  Show loading circle when loading
-    - [ ]  show green notification when successful
-    - [ ]  red if error returned. 
-- [ ]  Develop minting page 
-  - [x]  Insert proper titles - standardised. 
-  - [x]  Implement writing to contract. 
-  - [x]  Listening for correct event
-  - [x]  show green notification when successful
-  - [x]  red if error returned.
+VENDOR APP 
+- [ ]  Implement minting loyaltyTokens 
+  - [x]  Write to contract
+  - [ ]  Listen for correct event. 
+  - [x]  Show loading circle when loading
+  - [ ]  show green notification when successful
+  - [ ]  red if error returned. 
+- [ ]  Stats page: 
+  - [ ]  Include at top view # tokens & # points 
 - [ ]  Develop QR reading page
   - [x]  Image of QR reading should fit whole modal + QR reading frame should be super imposed over this. 
   - [x]  Use QR create app on phone to create QR codes
@@ -51,16 +34,15 @@ Even though repository is public, For now, it is for personal use only.
     - [ ]  When seeing token ID + token address + loyalty prgram address -> redeem token.
       - [ ] show green notification when successful
       - [ ]  red if error returned.
-- [x]  Develop ui elements 
-  - [x]  implement different colours button
-  - [x]  implement different colours notification
-- [x]  Develop / fix data flow. 
-  - [x]  Fix loading data through custom hooks: only loads at reloading window.. 
-  - [x]  When address is changed in metamask does not update app. Fix. 
-- [x]  When all this is done: Start building customer side of app! 
-  - [x]  Follow as much as possible pages I already created. 
-  - [x]  Copy complete layout and flow of app. 
-  - [x]  This should be a lot easier an faster. 
+- [ ]  Develop ui elements 
+  - [ ]  scaling has to take into account screens of width as low as 350px. 
+  - [ ]  scaling height has to be correct throguh out (see minting at vendor stats page for correct example)
+
+CUSTOMER APP 
+- [ ]  Building customer app side 
+
+
+GENERAL 
 - [ ]  Deploy on Vercel 
 - [ ]  Deploy on test net
   - [ ]  First on branched Sepolia network in Foundry.

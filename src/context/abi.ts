@@ -565,7 +565,7 @@ export const loyaltyProgramAbi: Abi = [
   {
     "inputs": [
       {
-        "internalType": "address payable",
+        "internalType": "address",
         "name": "loyaltyTokenAddress",
         "type": "address"
       },
