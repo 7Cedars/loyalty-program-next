@@ -26,6 +26,7 @@ import {
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
 import { Button } from "@/app/ui/Button";
 import { useAppSelector } from "@/redux/hooks";
+import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -34,6 +35,7 @@ type setSelectedTokenProps = {
 
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
   const [activeLoyaltyTokens, setActiveLoyaltyTokens]  = useState<LoyaltyToken[] >([]) 
@@ -146,10 +148,10 @@ export default function Page() {
             address: loyaltyToken.tokenAddress, 
             abi: loyaltyTokenAbi,
             functionName: 'getAvailableTokens', 
-            args: [parseEthAddress(address)]
+            args: [parseEthAddress(selectedLoyaltyProgram?.programOwner)] // needsto be OWNER of program! 
           })
           console.log("getAvailableTokens: ", availableTokens )
-          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: parseAvailableTokens(availableTokens)})
+          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseAvailableTokens(availableTokens))})
         }
 
         setLoyaltyTokens(loyaltyTokensUpdated)

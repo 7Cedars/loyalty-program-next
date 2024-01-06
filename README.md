@@ -20,27 +20,27 @@ Even though repository is public, For now, it is for personal use only.
   - [x]  Implement TokenBig
   - [x]  Read events for deployment tokens, properly populate page. 
   - [x]  Read events for selecting tokens, properly populate page. 
-  - [ ]  Implement selecting and deslecting tokens at Token Big
+  - [x]  Implement selecting and deslecting tokens at Token Big
     - [x]  Write to contract
     - [x]  Listen for correct event. 
     - [x]  Show loading circle 
-    - [ ]  show green notification when successful
-    - [ ]  red if error returned. 
+    - [x]  show green notification when successful
+    - [x]  red if error returned. 
   - [ ]  Implement minting loyaltyTokens 
-    - [ ]  Write to contract
+    - [x]  Write to contract
     - [ ]  Listen for correct event. 
-    - [ ]  Show loading circle when loading
+    - [x]  Show loading circle when loading
     - [ ]  show green notification when successful
     - [ ]  red if error returned. 
 - [ ]  Develop minting page 
-  - [ ]  Insert proper titles - standardised. 
-  - [ ]  Implement writing to contract. 
-  - [ ]  Listening for correct event
-  - [ ]  show green notification when successful
-  - [ ]  red if error returned.
+  - [x]  Insert proper titles - standardised. 
+  - [x]  Implement writing to contract. 
+  - [x]  Listening for correct event
+  - [x]  show green notification when successful
+  - [x]  red if error returned.
 - [ ]  Develop QR reading page
-  - [ ]  Image of QR reading should fit whole modal + QR reading frame should be super imposed over this. 
-  - [ ]  Use QR create app on phone to create QR codes
+  - [x]  Image of QR reading should fit whole modal + QR reading frame should be super imposed over this. 
+  - [x]  Use QR create app on phone to create QR codes
   - [ ]  Implement correct triggers: 
     - [ ]  When seeing address -> send new loyalty card. 
       - [ ]  show green notification when successful
@@ -51,16 +51,16 @@ Even though repository is public, For now, it is for personal use only.
     - [ ]  When seeing token ID + token address + loyalty prgram address -> redeem token.
       - [ ] show green notification when successful
       - [ ]  red if error returned.
-- [ ]  Develop ui elements 
+- [x]  Develop ui elements 
   - [x]  implement different colours button
-  - [ ]  implement different colours notification
-- [ ]  Develop / fix data flow. 
-  - [ ]  Fix loading data through custom hooks: only loads at reloading window.. 
-  - [ ]  When address is changed in metamask does not update app. Fix. 
-- [ ]  When all this is done: Start building customer side of app! 
-  - [ ]  Follow as much as possible pages I already created. 
-  - [ ]  Copy complete layout and flow of app. 
-  - [ ]  This should be a lot easier an faster. 
+  - [x]  implement different colours notification
+- [x]  Develop / fix data flow. 
+  - [x]  Fix loading data through custom hooks: only loads at reloading window.. 
+  - [x]  When address is changed in metamask does not update app. Fix. 
+- [x]  When all this is done: Start building customer side of app! 
+  - [x]  Follow as much as possible pages I already created. 
+  - [x]  Copy complete layout and flow of app. 
+  - [x]  This should be a lot easier an faster. 
 - [ ]  Deploy on Vercel 
 - [ ]  Deploy on test net
   - [ ]  First on branched Sepolia network in Foundry.

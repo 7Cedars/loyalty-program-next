@@ -14,13 +14,11 @@
 
   // later implement transitioning. WIP 
 
-
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { NotificationDialog } from "../../ui/notificationDialog";
 import { useUrlProgramAddress } from "../../hooks/useUrl";
-import { useLoyaltyProgram } from "../../../depricated/useLoyaltyProgram";
 import { useState, useEffect } from "react";
 import { 
   EthAddress, 
@@ -29,17 +27,11 @@ import {
   LoyaltyCard 
 } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
-import { resetLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
-import ChooseLoyaltyCard from "./SelectLoyaltyCard";
-import { useScreenDimensions } from "../../hooks/useScreenDimensions";
 import Image from "next/image";
 import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { resetLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import RequestCard from "./RequestCard";
 import SelectLoyaltyCard from "./SelectLoyaltyCard";
-import { useLoyaltyTokens } from "@/depricated/useLoyaltyTokens";
-import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
 import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
@@ -56,11 +48,6 @@ import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 type ModalProps = {
   children: any;
 };
-
-type setSelectedTokenProps = {
-  token: LoyaltyToken; 
-  disabled: boolean; 
-}
 
 export const ModalMain = ({
   children 
@@ -79,10 +66,6 @@ export const ModalMain = ({
   const [ loyaltyProgram, setLoyaltyProgram ] = useState<LoyaltyProgram>() 
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[]>() 
   const [showRequestCard, setShowRequestCard] = useState<boolean>(false)
-  const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
-  const [activeLoyaltyTokens, setActiveLoyaltyTokens]  = useState<LoyaltyToken[] >([]) 
-  const [inactiveLoyaltyTokens, setInactiveLoyaltyTokens] = useState<LoyaltyToken[] >([]) 
-  const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
 
   // console.log("address at ModalMain customer: ", address)
   // console.log("selectedLoyaltyProgram at ModalMain customer: ", selectedLoyaltyProgram)
@@ -91,25 +74,27 @@ export const ModalMain = ({
   const getLoyaltyCardIds = async () => {
     console.log("getLoyaltyCardIds called, address: ", address)
 
-    const transferSingleData: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi,
-      address: parseEthAddress(progAddress), 
-      eventName: 'TransferSingle',
-      args: {to: address}, 
-      fromBlock: 1n,
-      toBlock: 16330050n
-    });
-    
-    const transferredTokens = parseTransferSingleLogs(transferSingleData)
-    const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)
+    if (address != undefined) {
+      const transferSingleData: Log[] = await publicClient.getContractEvents( { 
+        abi: loyaltyProgramAbi,
+        address: parseEthAddress(progAddress), 
+        eventName: 'TransferSingle',
+        args: {to: address}, 
+        fromBlock: 1n,
+        toBlock: 16330050n
+      });
+      const transferredTokens = parseTransferSingleLogs(transferSingleData)
+      const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)
 
-    if (loyaltyCardData && progAddress) { 
-      const data: LoyaltyCard[] = loyaltyCardData.map(item => { return ({
-        cardId: Number(item.ids[0]), 
-        loyaltyProgramAddress: parseEthAddress(progAddress)
-      })})
-      setLoyaltyCards(data)
-    } 
+      if (loyaltyCardData && progAddress) { 
+        const data: LoyaltyCard[] = loyaltyCardData.map(item => { return ({
+          cardId: Number(item.ids[0]), 
+          loyaltyProgramAddress: parseEthAddress(progAddress)
+        })})
+        setLoyaltyCards(data)
+      } 
+    }
+
     console.log("loyaltyCards: ", loyaltyCards)
   }
 
@@ -150,7 +135,7 @@ export const ModalMain = ({
 
   useEffect(() => {
 
-    if (!loyaltyCards) { getLoyaltyCardIds() } // check when address has no cards what happens..  
+    if (!loyaltyCards && loyaltyCards == undefined ) { getLoyaltyCardIds() } // check when address has no cards what happens..  
     if (
       loyaltyCards && 
       loyaltyCards.findIndex(loyaltyCard => loyaltyCard.cardAddress) === -1 
@@ -168,7 +153,7 @@ export const ModalMain = ({
       loyaltyCards && 
       loyaltyCards.length == 1 
       ) { dispatch(selectLoyaltyCard(loyaltyCards[0])) } 
-  }, [, loyaltyCards])
+  }, [, loyaltyCards, address])
 
   const getLoyaltyProgramUri = async () => {
     // console.log("getLoyaltyProgramsUris called. ProgAddress:", progAddress)
@@ -183,9 +168,28 @@ export const ModalMain = ({
           args: [0]
         })
 
-        console.log("URI: ", uri)
-
         setLoyaltyProgram({programAddress: parseEthAddress(progAddress), uri: parseUri(uri)})
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
+
+  const getLoyaltyProgramOwner = async () => {
+    // console.log("getLoyaltyProgramsUris called. ProgAddress:", progAddress)
+
+    if (progAddress) {
+
+      try { 
+        const owner: unknown = await publicClient.readContract({
+          address: parseEthAddress(progAddress), 
+          abi: loyaltyProgramAbi,
+          functionName: 'getOwner'
+        })
+
+        console.log("getOwner: ", owner)
+
+        setLoyaltyProgram({programAddress: parseEthAddress(progAddress), programOwner: parseEthAddress(owner)})
       } catch (error) {
         console.log(error)
       }
@@ -211,15 +215,20 @@ export const ModalMain = ({
 
   useEffect(() => {
 
-    if (!loyaltyProgram || !loyaltyProgram.uri ) { getLoyaltyProgramUri() } // check when address has no deployed programs what happens..  
+    if (!loyaltyProgram ) { getLoyaltyProgramUri() } // check when address has no deployed programs what happens..  
     if (
       loyaltyProgram && 
       !loyaltyProgram.metadata  
       ) { getLoyaltyProgramMetaData() } 
     if (
       loyaltyProgram && 
+      !loyaltyProgram.programOwner 
+      ) { getLoyaltyProgramOwner() }
+    if (
+      loyaltyProgram && 
       loyaltyProgram.metadata 
       ) { dispatch(selectLoyaltyProgram(loyaltyProgram))}
+  
   }, [, progAddress, loyaltyProgram])
 
   // console.log("loyaltyProgram : ", loyaltyProgram)

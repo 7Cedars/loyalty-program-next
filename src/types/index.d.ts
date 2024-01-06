@@ -55,7 +55,8 @@ export type TokenMetadata = {
 export type LoyaltyProgram = {
   programAddress: EthAddress; 
   uri?: string; 
-  metadata?: TokenMetadata 
+  metadata?: TokenMetadata;
+  programOwner?: EthAddress;
 } 
 
 export type LoyaltyCard = {
@@ -70,7 +71,7 @@ export type LoyaltyToken = {
   tokenAddress: EthAddress; 
   uri?: string; 
   metadata?: TokenMetadata;
-  availableTokens?: BigInt;  
+  availableTokens?: Number;  
 } 
 
 export type QrData = {

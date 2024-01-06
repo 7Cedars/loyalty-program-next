@@ -130,7 +130,7 @@ export default function Page() {
             args: [parseEthAddress(address)]
           })
           console.log("getAvailableTokens: ", availableTokens )
-          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: parseAvailableTokens(availableTokens)})
+          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseAvailableTokens(availableTokens))})
         }
 
         setLoyaltyTokens(loyaltyTokensUpdated)
