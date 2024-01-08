@@ -20,6 +20,7 @@ import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
 import MintPoints from "./mintPoints";
 import MintCards from "./mintCards";
+import { useAppSelector } from "@/redux/hooks";
 
 export default function Page() {
   const [modal, setModal] = useState<'points' | 'cards' | undefined>()  
@@ -27,7 +28,9 @@ export default function Page() {
   const publicClient = usePublicClient(); 
   const { address } = useAccount() 
   const [transactions, setTransactions] = useState<Transaction[] | undefined >()
+  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
 
+  
   const getTransactions = async () => {
     console.log("getTransactions called")
 
@@ -82,14 +85,19 @@ export default function Page() {
 
 
   return (
-    <div className="grid grid-cols-1 h-full content-between">
+    <div className="grid grid-cols-1 h-full justify-items-center content-between">
 
-      <div className="grid grid-cols-1 h-full overflow-auto ">
+      <div className="grid grid-cols-1 justify-items-center  h-full overflow-auto ">
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
+
+        <div className="grid grid-cols-1 w-1/2 p-2 pt-6 text-center justify-items-center border-b border-blue-800"> 
+          <p> ... remaining points </p>
+          <p> ... remaining cards </p>
+        </div>
 
         { 
           modal === 'points' ? 
-            <div className="p-3 px-12 grid grid-cols-1 h-full ">
+            <div className="p-3 px-4 grid grid-cols-1 h-full">
               <MintPoints modal = {modal} setModal = {setModal} /> 
             </div>
         :
@@ -99,7 +107,7 @@ export default function Page() {
             </div>
         : 
           transactions ? 
-            <div className="grid grid-cols-1 overflow-auto m-4 mx-12 p-8 divide-y">  
+            <div className="grid grid-cols-1 overflow-auto m-1 mx-1 p-2 divide-y">  
               {
               transactions.map((transaction: Transaction, i) => 
                 <div key = {i} className="p-2 ">

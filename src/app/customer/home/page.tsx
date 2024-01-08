@@ -33,7 +33,7 @@ export default function Page()  {
         </div>
         <div className="grid justify-center justify-items-center p-6">
             <QRCode 
-              value={`type:giftPoints;lp:${selectedLoyaltyProgram?.programAddress};lc:${selectedLoyaltyCard?.cardId}`}
+              value={`type:giftPoints;lp:${selectedLoyaltyProgram?.programAddress};lc:${selectedLoyaltyCard?.cardAddress}`}
               style={{ height: "400px", width: "100%", objectFit: "cover"  }}
               />
         </div>

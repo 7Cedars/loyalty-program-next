@@ -452,7 +452,7 @@ export const parseQrData = (qrText: unknown): QrData => {
             return {
               type: "giftPoints",  
               loyaltyProgram: parseEthAddress(data[1].slice(3)), 
-              loyaltyCardId: parseNumber(data[2].slice(3))
+              loyaltyCardAddress: parseEthAddress(data[2].slice(3))
               } 
           }
 
@@ -460,7 +460,7 @@ export const parseQrData = (qrText: unknown): QrData => {
             return {
               type: "redeemToken",  
               loyaltyProgram: parseEthAddress(data[1].slice(3)), 
-              loyaltyCardId: parseNumber(data[2].slice(3)), 
+              loyaltyCardAddress: parseEthAddress(data[2].slice(3)), 
               loyaltyToken: parseEthAddress(data[3].slice(3)), 
               loyaltyTokenId: parseNumber(data[4].slice(3)),
               } 

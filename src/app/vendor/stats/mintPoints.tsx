@@ -44,18 +44,6 @@ export default function MintPoints( {modal, setModal}: RedeemTokenProps ) {
     }, 
   )
 
-  // NB: use of useContractEvent versus waitForTransaction to check confirmaiton of transaction
-  // has to be tried out on actual test network. Not anvil. 
-  /// 
-  // useContractEvent({
-  //   address: parseEthAddress(progAddress),
-  //   abi: loyaltyProgramAbi,
-  //   eventName: 'TransferSingle',
-  //   listener(log) {
-  //     console.log("TransferSingle log:", log)
-  //   },
-  // })
-
   const waitForTransaction = useWaitForTransaction(
     { 
       confirmations: 1,

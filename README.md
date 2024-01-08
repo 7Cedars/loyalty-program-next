@@ -56,6 +56,19 @@ GENERAL
   - [ ]  First on branched Sepolia network in Foundry.
   - [ ]  Then Sepolia.  
 
+## Additional notes 
+  // NB: use of useContractEvent versus waitForTransaction (viem) versus useWaitForTransaction (wagmi) to check confirmaiton of transaction
+  // has to be tried out on actual test network. Not anvil. 
+  /// 
+  // useContractEvent({
+  //   address: parseEthAddress(progAddress),
+  //   abi: loyaltyProgramAbi,
+  //   eventName: 'TransferSingle',
+  //   listener(log) {
+  //     console.log("TransferSingle log:", log)
+  //   },
+  // })
+
 ## Yarn / NEXT 
 
 First, run the development server:

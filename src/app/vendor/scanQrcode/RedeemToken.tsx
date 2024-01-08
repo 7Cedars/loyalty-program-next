@@ -5,12 +5,13 @@ import { QrData } from "@/types";
 import { Button } from "@/app/ui/Button";
 
 type RedeemTokenProps = {
+  qrData: QrData | undefined;  
   setData: Dispatch<SetStateAction<QrData | undefined>>; 
 }
 // use Setdata to reset qrdata when action is completed. 
 
 
-export default function RedeemToken({setData}: RedeemTokenProps)  {
+export default function RedeemToken({qrData, setData}: RedeemTokenProps)  {
 
 return (
   <div className="grid grid-cols-1">

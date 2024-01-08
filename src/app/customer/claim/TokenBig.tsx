@@ -32,29 +32,7 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   
   console.log("token.tokenAddress: ",  token.tokenAddress)
   console.log("selectedLoyaltyCard: ", selectedLoyaltyCard)
-  // NB: look into waitForTransactionReceipt from wagmi (at actions). 
-
-  // const encodedAbiParamsRedeemLoyaltyPoints = encodeAbiParameters(
-  //   [{
-  //     "internalType": "address payable",
-  //     "name": "loyaltyToken",
-  //     "type": "address"
-  //   },
-  //   {
-  //     "internalType": "uint256",
-  //     "name": "loyaltyPoints",
-  //     "type": "uint256"
-  //   },
-  //   {
-  //     "internalType": "uint256",
-  //     "name": "loyaltyCardId",
-  //     "type": "uint256"
-  //   }],
-  //   [
-  //     token.tokenAddress, 
-  //     token.metadata? BigInt(token.metadata.attributes[1].value) : 0n, 
-  //     selectedLoyaltyCard ? BigInt(Number(selectedLoyaltyCard.cardId)) : 0n]
-  // )
+  // NB: look into waitForTransactionReceipt from viem (at actions). 
 
   const encodedFunctionCall: Hex = encodePacked(
     ['bytes16', 'address', 'uint256', 'uint256'], 

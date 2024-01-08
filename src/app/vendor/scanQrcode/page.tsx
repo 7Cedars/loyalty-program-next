@@ -68,9 +68,9 @@ export default function Page() {
       </div>
   </div>
   : 
-  data.type === "giftPoints" ? <SendPoints setData = {setData}/> 
+  data.type === "giftPoints" ? <SendPoints qrData = {data} setData = {setData}/> 
   : 
-  data.type === "redeemToken" ? <RedeemToken setData = {setData}/> 
+  data.type === "redeemToken" ? <RedeemToken qrData = {data} setData = {setData}/> 
   :
   data.type === "requestCard" ? <TransferCard qrData = {data} setData = {setData}/>
   : null

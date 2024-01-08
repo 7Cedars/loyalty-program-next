@@ -37,23 +37,23 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const { address } = useAccount() 
   const publicClient = usePublicClient()
 
-  const getTransferSingleData = async () => {
-    console.log("getTransferSingleData called")
+  // const getTransferSingleData = async () => {
+  //   console.log("getTransferSingleData called")
 
-    const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
-      eventName: 'TransferSingle', 
-      args: {
-        from: parseEthAddress(address)
-      },
-      fromBlock: 1n,
-      toBlock: 16330050n
-    });
+  //   const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
+  //     abi: loyaltyProgramAbi, 
+  //     address: parseEthAddress(progAddress), 
+  //     eventName: 'TransferSingle', 
+  //     args: {
+  //       from: parseEthAddress(address)
+  //     },
+  //     fromBlock: 1n,
+  //     toBlock: 16330050n
+  //   });
 
-    setTransferSingles(parseTransferSingleLogs(transferSingleLogs))
+  //   setTransferSingles(parseTransferSingleLogs(transferSingleLogs))
   
-  }
+  // }
 
   const loyaltyCardsMinted = useContractRead(
     {
