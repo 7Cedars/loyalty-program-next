@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
 import { useContractWrite, useContractEvent, useWaitForTransaction } from "wagmi";
-import { loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
+import { loyaltyProgramAbi, loyaltyTokenAbi, ERC6551AccountAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
@@ -13,6 +13,7 @@ import { foundry } from "viem/chains";
 import { useEffect, useState, useRef } from "react";
 import { NumLine } from "@/app/ui/NumLine";
 import { useAppSelector } from "@/redux/hooks";
+import { encodeAbiParameters, encodePacked, Hex } from "viem";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -28,29 +29,71 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const dispatch = useDispatch() 
 
+  
+  console.log("token.tokenAddress: ",  token.tokenAddress)
+  console.log("selectedLoyaltyCard: ", selectedLoyaltyCard)
+  // NB: look into waitForTransactionReceipt from wagmi (at actions). 
+
+  // const encodedAbiParamsRedeemLoyaltyPoints = encodeAbiParameters(
+  //   [{
+  //     "internalType": "address payable",
+  //     "name": "loyaltyToken",
+  //     "type": "address"
+  //   },
+  //   {
+  //     "internalType": "uint256",
+  //     "name": "loyaltyPoints",
+  //     "type": "uint256"
+  //   },
+  //   {
+  //     "internalType": "uint256",
+  //     "name": "loyaltyCardId",
+  //     "type": "uint256"
+  //   }],
+  //   [
+  //     token.tokenAddress, 
+  //     token.metadata? BigInt(token.metadata.attributes[1].value) : 0n, 
+  //     selectedLoyaltyCard ? BigInt(Number(selectedLoyaltyCard.cardId)) : 0n]
+  // )
+
+  const encodedFunctionCall: Hex = encodePacked(
+    ['bytes16', 'address', 'uint256', 'uint256'], 
+    [
+      `0xb3f57560000000000000000000000000`,
+      "0xbdEd0D2bf404bdcBa897a74E6657f1f12e5C6fb6",  // token.tokenAddress,
+      2502n, 
+      selectedLoyaltyCard ? BigInt(Number(selectedLoyaltyCard.cardId)) : 0n
+      // token.metadata? 2502n : 0n, 
+      // selectedLoyaltyCard ? BigInt(Number(selectedLoyaltyCard.cardId)) : 0n
+    ]
+  )
+
+  console.log("encodedFunctionCall: ", encodedFunctionCall)
+
+
   const claimLoyaltyToken = useContractWrite(
     {
-      address: parseEthAddress(progAddress),
-      abi: loyaltyProgramAbi,
-      functionName: "redeemLoyaltyPoints", 
+      address: parseEthAddress(selectedLoyaltyCard?.cardAddress),
+      abi: ERC6551AccountAbi,
+      functionName: "executeCall", 
       args: [
-        token.tokenAddress, 
-        Number(token.metadata?.attributes[1].value), 
-        selectedLoyaltyCard?.cardId
+        parseEthAddress(progAddress), 
+        "1000000000000000000",
+        encodedFunctionCall
       ],
       onError(error) {
         dispatch(notification({
-          id: "redeemLoyaltyPoints",
+          id: "claimLoyaltyToken",
           message: `Something went wrong. Loyalty gift was not claimed.`, 
           colour: "red",
           isVisible: true
         })) 
-        console.log('redeemLoyaltyPoints Error', error)
+        console.log('claimLoyaltyToken Error', error)
       }, 
       onSuccess(data) {
         console.log("DATA claimLoyaltyToken: ", data)
         setHashTransaction(data.hash)
-      },
+      }, 
     }
   )
 

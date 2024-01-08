@@ -13,7 +13,7 @@ export interface UserInputState  {
   }
 }
 
-export type EthAddress = `0x${string}`; 
+export type EthAddress = `0x${string}`; // or: Hex
 
 export type ScreenDimensions = {
   width: number,

@@ -70,7 +70,7 @@ export const ModalMain = ({
   ///////////////////////////////////////////////////  
 
   const getLoyaltyCardIds = async () => {
-    console.log("getLoyaltyCardIds called, address: ", address)
+    // console.log("getLoyaltyCardIds called, address: ", address)
 
     if (address != undefined) {
       const transferSingleData: Log[] = await publicClient.getContractEvents( { 
@@ -89,15 +89,15 @@ export const ModalMain = ({
           cardId: Number(item.ids[0]), 
           loyaltyProgramAddress: parseEthAddress(progAddress)
         })})
-        setLoyaltyCards(data)
+        setLoyaltyCards(data) 
       } 
     }
 
-    console.log("loyaltyCards: ", loyaltyCards)
+    // console.log("loyaltyCards: ", loyaltyCards)
   }
 
   const getLoyaltyCardData = async () => {
-    console.log("getLoyaltyCardAddresses called")
+    // console.log("getLoyaltyCardAddresses called")
 
     let loyaltyCard: LoyaltyCard
     let loyaltyCardsUpdated: LoyaltyCard[] = []
@@ -133,18 +133,18 @@ export const ModalMain = ({
 
   useEffect(() => {
 
-    if (!loyaltyCards && loyaltyCards == undefined ) { getLoyaltyCardIds() } // check when address has no cards what happens..  
+    if (!loyaltyCards ) { getLoyaltyCardIds() } // check when address has no cards what happens..  
     if (
       loyaltyCards && 
       loyaltyCards.findIndex(loyaltyCard => loyaltyCard.cardAddress) === -1 
       ) { 
         getLoyaltyCardData() 
       } 
-  }, [ , loyaltyCards])
+  }, [ , loyaltyCards, address])
 
-  useEffect(() => {
-    if (loyaltyCards) { setLoyaltyCards(undefined) } 
-  }, [, address])
+  // useEffect(() => {
+  //   if (loyaltyCards) { setLoyaltyCards(undefined) } 
+  // }, [, address, ])
 
   useEffect(() => {
     if (
@@ -158,10 +158,10 @@ export const ModalMain = ({
   /// Loading data selected loyalty Program /// 
   ///////////////////////////////////////////// 
 
-  console.log("loyaltyProgram UPDATES: ", loyaltyProgram)
+  // console.log("loyaltyProgram UPDATES: ", loyaltyProgram)
 
   const getLoyaltyProgramUri = async () => {
-    console.log("getLoyaltyProgramsUris called. ProgAddress:", progAddress)
+    // console.log("getLoyaltyProgramsUris called. ProgAddress:", progAddress)
 
     if (progAddress) {
 
@@ -181,7 +181,7 @@ export const ModalMain = ({
   }
 
   const getLoyaltyProgramOwner = async () => {
-    console.log("getLoyaltyProgramOwner called. ProgAddress:", progAddress)
+    // console.log("getLoyaltyProgramOwner called. ProgAddress:", progAddress)
 
     if (progAddress) {
 
@@ -202,7 +202,7 @@ export const ModalMain = ({
   }
 
   const getLoyaltyProgramMetaData = async () => {
-    console.log("getLoyaltyProgramMetaData called. ProgAddress:", progAddress )
+    // console.log("getLoyaltyProgramMetaData called. ProgAddress:", progAddress )
 
     if (loyaltyProgram) {
       try {
@@ -264,11 +264,11 @@ export const ModalMain = ({
 
   }, [ , address])
 
-  console.log(
-    "pre render console log", 
-    "selectedLoyaltyCard: ", selectedLoyaltyCard, 
-    "loyaltyCards: ", loyaltyCards
-  )
+  // console.log(
+  //   "pre render console log", 
+  //   "selectedLoyaltyCard: ", selectedLoyaltyCard, 
+  //   "loyaltyCards: ", loyaltyCards
+  // )
 
   return (
     <div className="relative w-full max-w-4xl h-screen z-1">
@@ -315,7 +315,7 @@ export const ModalMain = ({
                 </Button>
               </div>
             : 
-            loyaltyCards && loyaltyCards.length >= 1 && !selectedLoyaltyCard ? 
+            loyaltyCards && loyaltyCards.length >= 1  ? // selectedLoyaltyCard 
               <div className="grid grid-cols-1 h-full content-between mb-12">
                 <SelectLoyaltyCard loyaltyCards = {loyaltyCards}/> 
                 <Button onClick={() => setShowRequestCard(true)} appearance="blueEmpty">
@@ -325,22 +325,7 @@ export const ModalMain = ({
             :
             <div> Something went wrong, no loyalty card selected. </div> 
             }
-
-        {/* { !loyaltyCards ?
-         
-          :
-          null
-          } 
-          { 
-            loyaltyCards && loyaltyCards.length > 1 ? 
-            <Button onClick={() => {}} appearance="blueEmpty">
-              Switch cards or Request new one
-            </Button> 
-            : 
-            null
-          } */}
         
-
           </div>
         :
         <button 

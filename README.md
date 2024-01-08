@@ -25,9 +25,9 @@ VENDOR APP
   - [x]  Image of QR reading should fit whole modal + QR reading frame should be super imposed over this. 
   - [x]  Use QR create app on phone to create QR codes
   - [ ]  Implement correct triggers: 
-    - [ ]  When seeing address -> send new loyalty card. 
-      - [ ]  show green notification when successful
-      - [ ]  red if error returned.
+    - [x]  When seeing address -> send new loyalty card. 
+      - [x]  show green notification when successful
+      - [x]  red if error returned.
     - [ ]  When seeing card ID + program address -> send points.
       - [ ]  show green notification when successful
       - [ ]  red if error returned. 
@@ -36,10 +36,18 @@ VENDOR APP
       - [ ]  red if error returned.
 - [ ]  Develop ui elements 
   - [ ]  scaling has to take into account screens of width as low as 350px. 
-  - [ ]  scaling height has to be correct throguh out (see minting at vendor stats page for correct example)
+  - [ ]  scaling height has to be correct through out (see minting at vendor stats page for correct example)
+- [ ]  simplify layout by moving files from components to top folder
 
 CUSTOMER APP 
-- [ ]  Building customer app side 
+- [ ]   fix home - choose card screen 
+- [ ]   implement claim tokens
+  - [ ]   Call function via card - see viem abiEncode. 
+  - [ ]   Wait for transaction to clear (with new function I found?)
+- [ ]   implemen redeem token. 
+  - [ ]   Call function via card - see viem abiEncode. 
+  - [ ]   Wait for transaction to clear (with new function I found?) 
+- [ ]   simplify layout by moving files from components to top folder
 
 
 GENERAL 

@@ -50,7 +50,7 @@ const NavbarBottom = ( ) => {
               className={layoutIcons}
               aria-hidden="true"
             />
-            Gift & Redeem
+            Gifts
           </div>  
         </Link>
         <Link href={progAddress ? `/vendor/selectTokens?prog=${progAddress}` : '/vendor/selectTokens' } className={layoutLinks}> 

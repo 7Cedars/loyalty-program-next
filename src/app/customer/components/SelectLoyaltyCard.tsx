@@ -37,7 +37,7 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
                 onClick = {() => dispatch(selectLoyaltyCard(card))}
                 className="me-20 mt-6 w-60 p-3 h-fit justify-self-center border border-gray-300 rounded-lg grid grid-cols-1 gap-4"> 
                   <div className='text-center h-fit'> 
-                    {`Card ID: ${card.cardId}`} 
+                    {`Card ID: ${Number(card.cardId)}`} 
                   </div> 
 
                   <Image
