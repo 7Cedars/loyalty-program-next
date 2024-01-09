@@ -699,9 +699,9 @@ export const loyaltyProgramAbi: Abi = [
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "loyaltyCard",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "loyaltyCardAddress",
+        "type": "address"
       }
     ],
     "name": "redeemLoyaltyToken",
@@ -1059,6 +1059,17 @@ export const loyaltyProgramAbi: Abi = [
       "type": "error"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "loyaltyToken",
+          "type": "address"
+        }
+      ],
+      "name": "LoyaltyToken__TokenNotOwned",
+      "type": "error"
+    },
+    {
       "anonymous": false,
       "inputs": [
         {
@@ -1313,6 +1324,24 @@ export const loyaltyProgramAbi: Abi = [
         }
       ],
       "name": "mintLoyaltyTokens",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "loyaltyCard",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "redeemLoyaltyToken",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

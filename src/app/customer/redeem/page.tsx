@@ -139,6 +139,7 @@ export default function Page() {
               fromBlock: 1n,
               toBlock: 16330050n
             })
+            console.log("claimedTokensLogs: ", claimedTokensLogs)
 
             const claimedTokensData = parseTransferSingleLogs(claimedTokensLogs)
             console.log("claimedTokensData: ", claimedTokensData)
