@@ -3,14 +3,13 @@ import { ModalMain } from "@/app/vendor/components/ModalMain";
 import { useLoyaltyTokens } from "@/depricated/useLoyaltyTokens";
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./TokenSmall";
-import TokenBig from "./TokenBig";
 import { DeployedContractLog, EthAddress, LoyaltyToken } from "@/types";
 import { useEffect, useState, useRef } from "react";
-import { useContractRead } from "wagmi";
+import { useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
-import { Log } from "viem"
+import { ERC6551AccountAbi, loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
+import { Hex, Log, encodeFunctionData } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { getContractEventsProps } from "@/types"
 import { 
@@ -27,6 +26,9 @@ import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
 import { Button } from "@/app/ui/Button";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import { useAppSelector } from "@/redux/hooks";
+import RedeemToken from "./redeemToken";
+import { notification } from "@/redux/reducers/notificationReducer";
+import { useDispatch } from "react-redux";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -41,10 +43,12 @@ export default function Page() {
   const [activeLoyaltyTokens, setActiveLoyaltyTokens]  = useState<LoyaltyToken[] >([]) 
   const [inactiveLoyaltyTokens, setInactiveLoyaltyTokens] = useState<LoyaltyToken[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
+  const [ hashTransaction, setHashTransaction] = useState<any>()
   const { progAddress } = useUrlProgramAddress() 
   const {address} = useAccount() 
   // const {data, ethAddresses, isLoading, isError} = useLoyaltyTokens() 
   const publicClient = usePublicClient()
+  const dispatch = useDispatch() 
 
   console.log("UPDATE claimedTokens: ", claimedTokens)
 
@@ -132,10 +136,6 @@ export default function Page() {
               address: loyaltyToken.tokenAddress, 
               abi: loyaltyTokenAbi,
               eventName: 'TransferSingle', 
-              args: {
-                from: parseEthAddress(progAddress), 
-                to: selectedLoyaltyCard?.cardAddress
-              }, 
               fromBlock: 1n,
               toBlock: 16330050n
             })
@@ -175,6 +175,48 @@ export default function Page() {
       getClaimedLoyaltyTokens() 
     
   }, [ , loyaltyTokens])
+
+  const approveTokenTransfer = useContractWrite(
+    {
+      address: parseEthAddress(selectedLoyaltyCard?.cardAddress),
+      abi: ERC6551AccountAbi,
+      functionName: "executeCall", 
+      onError(error, context) {
+        dispatch(notification({
+          id: "claimLoyaltyToken",
+          message: `Something went wrong. Loyalty gift was not claimed.`, 
+          colour: "red",
+          isVisible: true
+        })) 
+        console.log('claimLoyaltyToken Error', error, context)
+      }, 
+      onSuccess(data) {
+        console.log("DATA claimLoyaltyToken: ", data)
+        setHashTransaction(data.hash)
+      }, 
+    }
+  )
+
+  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+    { 
+      confirmations: 1,
+      hash: hashTransaction 
+    })
+
+  const handleTokenSelect = (token: LoyaltyToken) => {
+    setSelectedToken({token: token, disabled: false})
+    
+    const encodedFunctionCall: Hex = encodeFunctionData({
+      abi: loyaltyTokenAbi, 
+      functionName: 'setApprovalForAll', 
+      args: [parseEthAddress(progAddress), true]
+    })
+      
+    approveTokenTransfer.write({
+      args: [token.tokenAddress, 0, encodedFunctionCall]
+    })
+    // token.tokenAddress
+  } 
   
   return (
      <div className=" w-full grid grid-cols-1 gap-1 overflow-auto">
@@ -182,25 +224,35 @@ export default function Page() {
       <div className="h-20 m-3"> 
        <TitleText title = "Select Loyalty Gift to Redeem" subtitle="View and select gifts to redeem at store." size={1} />
       </div>
+      {
+      isLoading? 
+        <div> 
+          Authenticating Transfer... 
+        </div>
+      : 
+      null  
+      }
 
-      { selectedToken ? 
+      { isSuccess ? 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
         <button 
           className="text-black font-bold p-3"
           type="submit"
-          onClick={() => setSelectedToken(undefined)} // should be true / false
+          onClick={() => setSelectedToken(undefined)} 
           >
           <ArrowLeftIcon
             className="h-7 w-7"
             aria-hidden="true"
           />
         </button>
-
-        <TokenBig token={selectedToken.token} disabled = {selectedToken.disabled} /> 
-      
+        { 
+          selectedToken ?  
+          <RedeemToken token={selectedToken?.token} /> 
+          : 
+          <div> Loading ... </div>
+        }
       </div>
       :
-      
       <>
 
         <div className="grid grid-cols-2  overflow-auto sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
@@ -210,7 +262,7 @@ export default function Page() {
           claimedTokens.map((token: LoyaltyToken) => 
               token.metadata ? 
               <div key = {token.tokenAddress} >
-                <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
+                <TokenSmall token = {token} disabled = {false} onClick={() => handleTokenSelect(token)}  /> 
               </div>
               : null 
             )
@@ -227,3 +279,7 @@ export default function Page() {
     
   );
 }
+function dispatch(arg0: any) {
+  throw new Error("Function not implemented.");
+}
+

@@ -16,7 +16,6 @@ import TransferCard from './TransferCard';
 export default function Page() {
   const [data, setData] = useState<QrData>(); 
   const {address} = useAccount();  
-  const video = document.getElementsByTagName('video');
   const dispatch = useDispatch();  
 
   console.log("DATA QR: ", data)
@@ -55,6 +54,7 @@ export default function Page() {
             onResult={(result, error) => {
               if (!!result) {
                 const qrData = parseQrData(result?.getText()) 
+                console.log("qrData parsed: ", qrData)
                 setData(qrData);
               }
 

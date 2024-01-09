@@ -462,8 +462,8 @@ export const parseQrData = (qrText: unknown): QrData => {
               loyaltyProgram: parseEthAddress(data[1].slice(3)), 
               loyaltyCardAddress: parseEthAddress(data[2].slice(3)), 
               loyaltyToken: parseEthAddress(data[3].slice(3)), 
-              loyaltyTokenId: parseNumber(data[4].slice(3)),
-              } 
+              loyaltyTokenId: Number(data[4].slice(3))
+              }
           } 
 
           if (data[0].includes("requestCard")) {
