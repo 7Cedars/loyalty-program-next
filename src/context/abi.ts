@@ -152,6 +152,11 @@ export const loyaltyProgramAbi: Abi = [
   },
   {
     "inputs": [],
+    "name": "LoyaltyProgram__LoyaltyTokenNotClaimable",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "LoyaltyProgram__LoyaltyTokenNotOnCard",
     "type": "error"
   },
@@ -371,7 +376,7 @@ export const loyaltyProgramAbi: Abi = [
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "address payable",
         "name": "loyaltyToken",
         "type": "address"
       }
@@ -565,7 +570,7 @@ export const loyaltyProgramAbi: Abi = [
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "address payable",
         "name": "loyaltyTokenAddress",
         "type": "address"
       },
@@ -1238,6 +1243,11 @@ export const loyaltyProgramAbi: Abi = [
           "internalType": "address",
           "name": "loyaltyCard",
           "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "loyaltyProgram",
+          "type": "address"
         }
       ],
       "name": "claimLoyaltyToken",
@@ -1452,6 +1462,10 @@ export const loyaltyProgramAbi: Abi = [
       ],
       "stateMutability": "view",
       "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
     }
   ]
 

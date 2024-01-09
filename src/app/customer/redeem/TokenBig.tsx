@@ -109,9 +109,9 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   }, [isSuccess])
 
   return (
-    <div className="grid grid-cols-1"> 
+    <div className="grid grid-cols-1 h-full overflow-auto"> 
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center "> 
+      <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center overflow-auto"> 
       { token.metadata ? 
         <>
         <div className="rounded-lg w-max"> 
@@ -134,12 +134,12 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
               {token.metadata.attributes[0].value}
             </div>
 
-            <div className="text-center text-sm"> 
+            <div className="text-center text-md"> 
               {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
             </div> 
           </div>
-          <div className="text-center text-lg"> 
-            {`${token.availableTokens} remaining tokens`}
+          <div className="text-center text-md"> 
+            {`Gift ID: ${token.tokenId }`}
           </div>
         </div>
         </>
@@ -172,12 +172,9 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
           </div> 
           : 
           <div className="grid grid-col-1 gap-0 w-full">
-            <div className="p-3 flex w-full"> 
-              <NumLine onClick = {(arg0) => mintLoyaltyTokens.write({args: [arg0]})} isLoading = {mintTransaction.isLoading} /> 
-            </div>
             <div className="p-3 flex "> 
-              <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >
-                Remove Loyalty Gift
+              <Button appearance = {"greenEmpty"} onClick={removeLoyaltyTokenClaimable.write} >
+                Redeem Gift
               </Button>
             </div>
           </div>

@@ -166,7 +166,7 @@ export default function Page() {
             address: loyaltyToken.tokenAddress, 
             abi: loyaltyTokenAbi,
             functionName: 'getAvailableTokens', 
-            args: [parseEthAddress(selectedLoyaltyProgram?.programAddress)] // needsto be OWNER of program! 
+            args: [parseEthAddress(selectedLoyaltyProgram?.programAddress)] 
           })
           console.log("getAvailableTokens: ", availableTokens )
           loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseAvailableTokens(availableTokens))})

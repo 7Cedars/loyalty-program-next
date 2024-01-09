@@ -3,7 +3,7 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction } from "wagmi";
+import { useContractWrite, useContractEvent, useWaitForTransaction, Context } from "wagmi";
 import { loyaltyProgramAbi, loyaltyTokenAbi, ERC6551AccountAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress } from "@/app/utils/parsers";
@@ -13,7 +13,7 @@ import { foundry } from "viem/chains";
 import { useEffect, useState, useRef } from "react";
 import { NumLine } from "@/app/ui/NumLine";
 import { useAppSelector } from "@/redux/hooks";
-import { encodeAbiParameters, encodePacked, Hex } from "viem";
+import { encodeAbiParameters, encodePacked, Hex, encodeFunctionData } from "viem";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -34,17 +34,16 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   console.log("selectedLoyaltyCard: ", selectedLoyaltyCard)
   // NB: look into waitForTransactionReceipt from viem (at actions). 
 
-  const encodedFunctionCall: Hex = encodePacked(
-    ['bytes16', 'address', 'uint256', 'uint256'], 
+  const encodedFunctionCall: Hex = encodeFunctionData({
+    abi: loyaltyProgramAbi, 
+    functionName: "redeemLoyaltyPoints", 
+    args: 
     [
-      `0xb3f57560000000000000000000000000`,
-      "0xbdEd0D2bf404bdcBa897a74E6657f1f12e5C6fb6",  // token.tokenAddress,
-      2502n, 
-      selectedLoyaltyCard ? BigInt(Number(selectedLoyaltyCard.cardId)) : 0n
-      // token.metadata? 2502n : 0n, 
-      // selectedLoyaltyCard ? BigInt(Number(selectedLoyaltyCard.cardId)) : 0n
+      token.tokenAddress,  
+      4502n, // token.metadata ? token.metadata.attributes[1].value : 0n, 
+      4n // selectedLoyaltyCard ? BigInt(Number(selectedLoyaltyCard.cardId)) : 0n
     ]
-  )
+})
 
   console.log("encodedFunctionCall: ", encodedFunctionCall)
 
@@ -56,17 +55,17 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
       functionName: "executeCall", 
       args: [
         parseEthAddress(progAddress), 
-        "1000000000000000000",
+        "0", // = 1 ETH
         encodedFunctionCall
       ],
-      onError(error) {
+      onError(error, context) {
         dispatch(notification({
           id: "claimLoyaltyToken",
           message: `Something went wrong. Loyalty gift was not claimed.`, 
           colour: "red",
           isVisible: true
         })) 
-        console.log('claimLoyaltyToken Error', error)
+        console.log('claimLoyaltyToken Error', error, context)
       }, 
       onSuccess(data) {
         console.log("DATA claimLoyaltyToken: ", data)
