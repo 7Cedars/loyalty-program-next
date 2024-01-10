@@ -21,6 +21,7 @@ VENDOR APP
   - [ ]  red if error returned. 
 - [ ]  Selection token page: 
   - [ ]  add minted number of tokens + remaining 
+  - [ ]  Add address of token + address issuer in description.
 - [ ]  Stats page: 
   - [ ]  Include at top view # tokens & # points 
 - [ ]  Develop QR reading page

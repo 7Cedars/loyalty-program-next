@@ -17,6 +17,7 @@ import { usePublicClient } from "wagmi";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { Hex, encodeFunctionData } from "viem";
 import { useAppSelector } from "@/redux/hooks";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 type SendPointsProps = {
   qrData: QrData | undefined;  
@@ -34,9 +35,10 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   const dispatch = useDispatch() 
   const publicClient = usePublicClient()
 
-  console.log("QRDATA: ", qrData)
-  console.log("token at redeem token: ", token)
-
+  console.log("QRDATA @redeem token: ", qrData)
+  console.log("token @redeem token: ", token)
+  console.log("callData @redeem token: ", callData)
+  console.log("selectedLoyaltyCard @redeem token: ", selectedLoyaltyCard) 
 
   const getLoyaltyTokenUris = async () => {
     console.log("getLoyaltyProgramsUris called")
@@ -68,15 +70,15 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   const getEncodedFunctionCall = () => {
     console.log("getEncodedFunctionCall called")
 
-    if (token) { 
+    if (qrData) { 
       const encodedFunctionCall: Hex = encodeFunctionData({
         abi: loyaltyProgramAbi, 
         functionName: "redeemLoyaltyToken", 
         args: 
         [
-          token?.tokenAddress, 
-          token?.tokenId, 
-          qrData?.loyaltyCardAddress
+          qrData.loyaltyToken, 
+          qrData.loyaltyTokenId, 
+          qrData.loyaltyCardAddress
         ],
       })
       setCallData(encodedFunctionCall)
@@ -96,53 +98,38 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
 
   },[qrData, token])
 
-  const redeemLoyaltyToken = useContractWrite(
+  console.log("simulated entry data into redeemLoyaltyToken: ", 
+    [
+      qrData?.loyaltyToken, 
+      qrData?.loyaltyTokenId, 
+      qrData?.loyaltyCardAddress
+    ]
+    )
+
+  const redeemLoyaltyToken = useContractWrite( 
     {
-      address: parseEthAddress(selectedLoyaltyCard?.cardAddress),
-      abi: ERC6551AccountAbi,
-      functionName: "executeCall", 
+      address: parseEthAddress(progAddress),
+      abi: loyaltyProgramAbi,
+      functionName: "redeemLoyaltyToken", 
       args: [
-        parseEthAddress(progAddress), 
-        "0", // = 1 ETH
-        callData
-      ],
-      onError(error, context) {
+        qrData?.loyaltyToken, 
+        qrData?.loyaltyTokenId, 
+        qrData?.loyaltyCardAddress
+      ], 
+      onError(error) {
         dispatch(notification({
-          id: "claimLoyaltyToken",
-          message: `Something went wrong. Loyalty gift was not claimed.`, 
+          id: "redeemLoyaltyToken",
+          message: `Error: Loyalty gift not redeemed. Do not give gift.`, 
           colour: "red",
           isVisible: true
-        })) 
-        console.log('claimLoyaltyToken Error', error, context)
+        }))
+        console.log('redeemLoyaltyToken Error', error)
       }, 
       onSuccess(data) {
-        console.log("DATA claimLoyaltyToken: ", data)
         setHashTransaction(data.hash)
-      }, 
+      },
     }
   )
-
-
-  // const redeemLoyaltyToken = useContractWrite(
-  //   {
-  //     address: parseEthAddress(progAddress),
-  //     abi: loyaltyProgramAbi,
-  //     functionName: "redeemLoyaltyToken", 
-  //     args: [token?.tokenAddress, token?.tokenId, qrData?.loyaltyCardAddress], 
-  //     onError(error) {
-  //       dispatch(notification({
-  //         id: "redeemLoyaltyToken",
-  //         message: `Error: Loyalty gift not redeemed. Do not give gift.`, 
-  //         colour: "red",
-  //         isVisible: true
-  //       }))
-  //       console.log('redeemLoyaltyToken Error', error)
-  //     }, 
-  //     onSuccess(data) {
-  //       setHashTransaction(data.hash)
-  //     },
-  //   }
-  // )
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
     { 
@@ -155,49 +142,65 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
 
       <TitleText title = "Redeem gift" subtitle="On redeem give loyalty gift to customer." size = {2} />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center border border-gray-300 rounded-lg"> 
-      { token && token.metadata ? 
-        <>
-        <div className="rounded-lg w-max"> 
-         
-          <Image
-              className="rounded-lg"
-              width={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
-              height={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
-              src={token.metadata.imageUri}
-              alt="Loyalty Token icon "
+      <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
+
+        <div className="w-full grid-span-2 gap-2"> 
+          <button 
+            className="text-black font-bold p-3"
+            type="submit"
+            onClick={() => {
+              setData(undefined) 
+              setHashTransaction(undefined)}
+            } 
+            >
+            <ArrowLeftIcon
+              className="h-7 w-7"
+              aria-hidden="true"
             />
+          </button>
         </div>
-        
-        <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
-          <div> 
-            <div className="text-center text-lg"> 
-              {`Token ID: ${token.tokenId}`}
+
+      { token && token.metadata ? 
+        <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center">
+          <div className="rounded-lg w-max"> 
+          
+            <Image
+                className="rounded-lg"
+                width={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
+                height={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
+                src={token.metadata.imageUri}
+                alt="Loyalty Token icon "
+              />
+          </div>
+          
+          <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
+            <div> 
+              <div className="text-center text-lg"> 
+                {`Token ID: ${token.tokenId}`}
+              </div>
+              <div className="text-center text-lg text-gray-900 text-bold px-1"> 
+                {token.metadata.description}
+              </div>
+              <div className="text-center text-sm text-gray-500 pb-4"> 
+                {token.metadata.attributes[0].value}
+              </div>
             </div>
-            <div className="text-center text-lg text-gray-900 text-bold px-1"> 
-              {token.metadata.description}
-            </div>
-            <div className="text-center text-sm text-gray-500 pb-4"> 
-              {token.metadata.attributes[0].value}
+            <div className="grid grid-cols-1 pt-4">
+              <div className="text-center text-lg"> 
+                {`Minted gifts: `}
+              </div>
+              <div className="text-center text-lg"> 
+                {`Remaining gifts: `}
+              </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 pt-4">
-            <div className="text-center text-lg"> 
-              {`Minted gifts: `}
-            </div>
-            <div className="text-center text-lg"> 
-              {`Remaining gifts: `}
-            </div>
-          </div>
         </div>
-        </>
         : 
         null 
         }
-      </div>
-      
-      { isLoading ? 
-        <div className="flex md:px-48 px-6"> 
+
+        { isLoading ? 
+        <div className="flex w-full p-2"> 
           <Button appearance = {"grayEmpty"} onClick={() => {}} >
               <Image
                 className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
@@ -210,13 +213,21 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
           </Button>
         </div> 
         :
-        <div className="flex w-full md:px-48 px-6"> 
+        <div className="flex w-full p-2"> 
           <Button appearance = {"greenEmpty"} onClick={redeemLoyaltyToken.write} >
               Redeem gift
           </Button>
         </div> 
         } 
-        {/* </div>  */}
-        <div className='pb-16'/>
+
+      </div>
+      
+      
+         {/* <div className="flex w-full md:px-48 px-6">
+        <Button onClick={() => {setData(undefined)}}>
+            Back to QR reader
+        </Button>
+      </div> */}
+      <div className='pb-16'/>
     </div>
   )}
