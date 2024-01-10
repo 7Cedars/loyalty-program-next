@@ -1,18 +1,14 @@
 "use client"; 
-import { ModalMain } from "@/app/vendor/ModalMain";
-import { useLoyaltyTokens } from "@/depricated/useLoyaltyTokens";
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./TokenSmall";
 import TokenBig from "./TokenBig";
-import { DeployedContractLog, EthAddress, LoyaltyToken } from "@/types";
+import {  EthAddress, LoyaltyToken } from "@/types";
 import { useEffect, useState, useRef } from "react";
-import { useContractRead } from "wagmi";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
 import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
-import { getContractEventsProps } from "@/types"
 import { 
   parseTokenContractLogs, 
   parseEthAddress, 
@@ -22,7 +18,6 @@ import {
   parseAvailableTokens 
 } from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
-import { Button } from "@/app/ui/Button";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -30,7 +25,6 @@ type setSelectedTokenProps = {
 }
 
 export default function Page() {
-
   const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
   const [activeLoyaltyTokens, setActiveLoyaltyTokens]  = useState<LoyaltyToken[] >([]) 
   const [inactiveLoyaltyTokens, setInactiveLoyaltyTokens] = useState<LoyaltyToken[] >([]) 
@@ -237,9 +231,7 @@ export default function Page() {
   return (
      <div className=" w-full grid grid-cols-1 gap-1">
 
-      <div className="h-20 m-3"> 
-       <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={1} />
-      </div>
+       <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={2} />
 
       { selectedToken ? 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">

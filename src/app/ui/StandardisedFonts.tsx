@@ -10,9 +10,9 @@ type NoteTextProps = {
 }
 
 const appearanceTitle = [
-  "text-sm py-1 px-12",
-  "text-lg py-1 px-16",
-  "text-2xl py-1 px-24"
+  "text-sm py-1",
+  "text-lg py-1",
+  "text-2xl py-1"
 ]
 
 const appearanceSubtitle = [

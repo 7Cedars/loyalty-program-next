@@ -5,7 +5,7 @@ import { Button } from "@/app/ui/Button";
 import { useState } from "react";
 import { Transaction } from "@/types";
 import { Log } from "viem";
-import { parseEthAddress, parseTransferSingleLogs, parseTransferBatchLogs } from "@/app/utils/parsers";
+import { parseEthAddress, parseTransferSingleLogs, parseTransferBatchLogs, parseBigInt } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { 
@@ -24,13 +24,54 @@ import { useAppSelector } from "@/redux/hooks";
 
 export default function Page() {
   const [modal, setModal] = useState<'points' | 'cards' | undefined>()  
+  const [loyaltyPoints, setLoyaltyPoints] = useState<Number>()
+  const [cardsMinted, setCardsMinted] = useState<Number>()
   const { progAddress } =  useUrlProgramAddress();
   const publicClient = usePublicClient(); 
   const { address } = useAccount() 
   const [transactions, setTransactions] = useState<Transaction[] | undefined >()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
 
-  
+  console.log("selectedLoyaltyProgram: ", selectedLoyaltyProgram)
+
+  const getLoyaltyProgramPoints = async () => {
+    console.log("getLoyaltyProgramPoints called")
+      if (selectedLoyaltyProgram) {
+      const loyaltyProgramPointsData = await publicClient.readContract({
+        address: parseEthAddress(selectedLoyaltyProgram.programAddress), 
+        abi: loyaltyProgramAbi,
+        functionName: 'balanceOf', 
+        args: [ selectedLoyaltyProgram.programOwner, 0 ]
+      });
+      
+      const loyaltyCardPoints = parseBigInt(loyaltyProgramPointsData)
+      setLoyaltyPoints(Number(loyaltyCardPoints))
+    }
+  }
+
+  const getLoyaltyProgramCardsMinted = async () => {
+    console.log("getLoyaltyProgramCardsMinted called")
+      if (selectedLoyaltyProgram) {
+      const loyaltyCardsData = await publicClient.readContract({
+        address: parseEthAddress(selectedLoyaltyProgram.programAddress), 
+        abi: loyaltyProgramAbi,
+        functionName: 'getNumberLoyaltyCardsMinted', 
+        args: []
+      });
+      
+      const loyaltyCards = parseBigInt(loyaltyCardsData)
+
+      if (transactions) {
+        const transferredCards = transactions.filter(transaction => 
+          transaction.ids[0] != 0n 
+        )
+        console.log("transferredCards: ", transferredCards)
+
+        setCardsMinted(Number(loyaltyCards) - transferredCards.length)
+      }
+    }
+  }
+
   const getTransactions = async () => {
     console.log("getTransactions called")
 
@@ -79,20 +120,26 @@ export default function Page() {
     console.log("transferData: ", transferData)
   }
 
+
+
   useEffect(() => {
+
     getTransactions()
-  }, [, modal])
+    getLoyaltyProgramPoints() 
+    getLoyaltyProgramCardsMinted()
+    
+  }, [ , modal, selectedLoyaltyProgram])
 
 
   return (
     <div className="grid grid-cols-1 h-full justify-items-center content-between">
 
-      <div className="grid grid-cols-1 justify-items-center  h-full overflow-auto ">
+      <div className="grid grid-cols-1 justify-items-center h-full overflow-auto ">
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
 
-        <div className="grid grid-cols-1 w-1/2 p-2 pt-6 text-center justify-items-center border-b border-blue-800"> 
-          <p> ... remaining points </p>
-          <p> ... remaining cards </p>
+        <div className="grid grid-cols-1 p-2 pt-3 text-center justify-items-center border-b border-blue-800"> 
+          <p> {`${loyaltyPoints}`} remaining points </p>
+          <p> {`${cardsMinted}`} remaining cards </p> 
         </div>
 
         { 
@@ -107,7 +154,7 @@ export default function Page() {
             </div>
         : 
           transactions ? 
-            <div className="grid grid-cols-1 overflow-auto m-1 mx-1 p-2 divide-y">  
+            <div className="grid grid-cols-1 overflow-auto w-full m-1 mx-1 p-2 divide-y">  
               {
               transactions.map((transaction: Transaction, i) => 
                 <div key = {i} className="p-2 ">
@@ -198,7 +245,7 @@ export default function Page() {
                       </div>
                       <div> 
                         {`Card ID: ${transaction.ids}`}
- [  ]                   </div>
+                 </div>
                     </div>
                   }
                 </div>
@@ -227,16 +274,16 @@ export default function Page() {
 
           :
 
-          <div className="grid grid-cols-1 gap-1 mb-12">
-            <div className="px-12 flex h-12">
-              <Button onClick={() => {setModal('points')} } appearance="blueFilled">
+          <div className="grid grid-cols-1 w-full justify-items-center">
+            <div className="flex w-full md:px-48 px-6">
+              <Button onClick={() => {setModal('points')} } appearance="blueEmpty">
                 <div className="justify-center items-center">
                   Mint Loyalty Points
                 </div>
               </Button>
             </div>
-            <div className="px-12 mb-12 flex h-12">
-              <Button onClick={() => {setModal('cards')} } appearance="blueFilled">
+            <div className="flex w-full md:px-48 px-6">
+              <Button onClick={() => {setModal('cards')} } appearance="blueEmpty">
                 <div className="justify-center items-center">
                   Mint Loyalty Cards
                 </div>
@@ -244,6 +291,7 @@ export default function Page() {
             </div>
           </div>
       }
+      <div className="pb-24" />
       
     </div> 
   )

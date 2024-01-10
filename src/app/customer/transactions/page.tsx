@@ -25,11 +25,12 @@ import { useAppSelector } from "@/redux/hooks";
 
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+  const {selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
   const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const { progAddress } =  useUrlProgramAddress();
   const publicClient = usePublicClient(); 
   const { address } = useAccount() 
-  const [transactions, setTransactions] = useState<Transaction[] | undefined >()
+  const [transactions, setTransactions] = useState<Transaction[]>()
 
   const getLoyaltyCardPoints = async () => {
     console.log("getLoyaltyCardPoints called")
@@ -46,20 +47,21 @@ export default function Page() {
     }
   }
 
-  const getTransactions = async () => {
-    console.log("getTransactions called")
+  const getTransactionsTo = async () => {
+    console.log("getTransactionsTo called")
 
     const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
       address: parseEthAddress(progAddress), 
       eventName: 'TransferSingle', 
       args: {
-        to: parseEthAddress(address)
+        to: selectedLoyaltyCard?.cardAddress
       },
       fromBlock: 1n,
       toBlock: 16330050n
     });
     const transferSingleData =  parseTransferSingleLogs(transferSingleLogs)
+    console.log("transferSingleData TO:" , transferSingleData)
 
     // here more data can be added later (claiming & redeeming tokens for instance)
     const transferData = [...transferSingleData] 
@@ -70,8 +72,33 @@ export default function Page() {
     console.log("transferData: ", transferData)
   }
 
+  // const getTransactionsFrom = async () => {
+  //   console.log("getTransactionsFrom called")
+
+  //   const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
+  //     abi: loyaltyProgramAbi, 
+  //     address: parseEthAddress(progAddress), 
+  //     eventName: 'TransferSingle', 
+  //     args: {
+  //       from: selectedLoyaltyCard?.cardAddress
+  //     },
+  //     fromBlock: 1n,
+  //     toBlock: 16330050n
+  //   });
+  //   const transferSingleData =  parseTransferSingleLogs(transferSingleLogs)
+  //   console.log("transferSingleData FROM:" , transferSingleData)
+    
+  //   const transferData = [...transferSingleData, transactions] 
+  //   transferData.sort((firstTransaction, secondTransaction) => 
+  //     Number(secondTransaction.blockNumber) - Number(firstTransaction.blockNumber));
+
+  //   setTransactions(transferData)
+  //   console.log("transferData: ", transferData)
+  // }
+
   useEffect(() => {
-    getTransactions()
+    getTransactionsTo()
+    // getTransactionsFrom()
     getLoyaltyCardPoints()
   }, [ ])
 
@@ -87,23 +114,20 @@ export default function Page() {
         </div>
 
         { transactions ? 
-            <div className="grid grid-cols-1 overflow-auto m-4 mx-12 p-8 divide-y">  
+            <div className="grid grid-cols-1 overflow-auto m-4 md:mx-40 mx-2 p-8 divide-y">  
               {
               transactions.map((transaction: Transaction, i) => 
                 <div key = {i} className="p-2 ">
                   {
-                   transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.from === address ? 
+                   transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.from === selectedLoyaltyProgram?.programOwner ? 
                     <div className="grid grid-cols-1">
                       <div className="flex justify-between">
                         <div className="font-bold">
-                          Transfer Points 
+                          Received Points 
                         </div> 
                         <div className="">
                           Blocknumber: {Number(transaction.blockNumber)}
                         </div> 
-                      </div>
-                      <div> 
-                        {`to loyalty card address: ${transaction.to}`}
                       </div>
                       <div> 
                         {`${transaction.values[0]} points`}

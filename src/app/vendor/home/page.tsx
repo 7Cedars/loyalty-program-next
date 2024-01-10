@@ -16,19 +16,16 @@ export default function Page()  {
 
   return (
     <div className="grid grid-cols-1 h-full content-between pt-2">
-
-      <div className="text-center p-3">
         <TitleText 
           title = {selectedLoyaltyProgram?.metadata ? selectedLoyaltyProgram?.metadata.attributes[0].value  : "Loyalty Card"} 
           subtitle="Scan to activate customer loyalty card" 
           size={2}
           /> 
-      </div>
       <div className="grid justify-center justify-items-center p-6">
-          <QRCode 
-            value={`${BASE_URI}?customer/landing/?prog:${selectedLoyaltyProgram?.programAddress}`}
-            style={{ height: "500px", width: "100%", objectFit: "cover"  }}
-            />
+        <QRCode 
+          value={`${BASE_URI}?customer/landing/?prog:${selectedLoyaltyProgram?.programAddress}`}
+          style={{ height: "500px", width: "100%", objectFit: "cover"  }}
+          />
       </div>
       <div className="flex md:px-48 px-6">
         <Button isFilled={true} onClick = {() => dispatch(resetLoyaltyProgram(true)) }> 

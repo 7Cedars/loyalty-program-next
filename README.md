@@ -19,6 +19,8 @@ VENDOR APP
   - [x]  Show loading circle when loading
   - [ ]  show green notification when successful
   - [ ]  red if error returned. 
+- [ ]  Selection token page: 
+  - [ ]  add minted number of tokens + remaining 
 - [ ]  Stats page: 
   - [ ]  Include at top view # tokens & # points 
 - [ ]  Develop QR reading page
@@ -37,8 +39,9 @@ VENDOR APP
   
 CUSTOMER APP 
 - [ ]   fix home 
-  - [ ]   choose card screen
-  - [ ]   fix layout 
+  - [ ]   choose card screen: add points 
+  - [x]   fix layout 
+  - [ ]   add address card at overview 
 - [ ]   implement claim tokens
   - [x]   Call function via card - see viem abiEncode. 
   - [x]   Wait for transaction to clear (with new function I found?)
@@ -52,6 +55,10 @@ CUSTOMER APP
   - [ ]   show green notification when successful
   - [ ]   show additional green notification when vendor accepted redeem. - then return to main screen. 
   - [ ]   red if error returned. 
+- [ ]   Complete Transaction overview 
+  - [ ]   read added points 
+  - [ ]   read claim tokens 
+  - [ ]   read redeem tokens 
 
 GENERAL 
 - [ ]  Test layout / ui / ux 
@@ -73,7 +80,7 @@ GENERAL
 - [ ]  
 
 ## Improvements to implement (in order of priority)
-- [ ]  
+- [ ]  have two number minted and 
 
 ## Additional notes 
   // NB: use of useContractEvent versus waitForTransaction (viem) versus useWaitForTransaction (wagmi) to check confirmaiton of transaction

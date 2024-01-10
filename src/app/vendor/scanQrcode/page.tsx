@@ -36,17 +36,17 @@ export default function Page() {
   }
 
   return (
-    <>
+    <div className='h-full'>
 
     { !data ?   
 
-    <div className="grid grid-cols-1 pt-12">
-      <TitleText title = "Scan customer QR code" subtitle='Send loyalty card, redeem gifts or transfer points' size={1} /> 
-      <div className="flex items-center justify-items-center pt-3">
+    <div className="grid grid-cols-1 h-full content-between">
+      <TitleText title = "Scan customer QR code" subtitle='Send loyalty card, redeem gifts or transfer points' size={2} /> 
+      <div className="grid grid-cols-1 pt-3 justify-items-center">
         {/* <div className='text-center text-2xl h-4/5 w-4/5 p-6 border border-gray-500 pb-12 rounded-lg'> */}
 
         
-      <div className='w-full p-4'> 
+        <div className='w-2/3  p-4'> 
           <QrReader 
             ViewFinder={ViewFinder}
             videoStyle={{ objectFit: 'cover' }}
@@ -57,15 +57,14 @@ export default function Page() {
                 console.log("qrData parsed: ", qrData)
                 setData(qrData);
               }
-
               if (!!error) {
                 console.info("No QR code detected.");
               }
             }}            
           />
-          </div>
-        {/* </div> */}
+        </div>
       </div>
+      <div className='pb-16'/>
   </div>
   : 
   data.type === "giftPoints" ? <SendPoints qrData = {data} setData = {setData}/> 
@@ -75,8 +74,8 @@ export default function Page() {
   data.type === "requestCard" ? <TransferCard qrData = {data} setData = {setData}/>
   : null
   }
-
-  </>
+  
+  </div>
 
   );
 }

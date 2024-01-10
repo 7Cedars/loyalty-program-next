@@ -78,28 +78,29 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
   }
 
   return (
-    <div className="grid grid-cols-1 justify-items-center h-full content-between">
+    <div className="flex flex-col justify-between justify-center pt-2 h-full">
 
-    <TitleText title = "Send Loyalty Points" subtitle="Send loyalty points to a customer." size = {2} />
+      <TitleText title = "Send Loyalty Points" subtitle="Send loyalty points to a customer." size = {2} />
 
-    {qrData?.loyaltyCardAddress? 
-    <div className="grid grid-cols-1 w-1/2 p-2 pt-6 text-center justify-items-center border-b border-blue-800"> 
-        <p>
-           Points requested by card: 
-        </p>
-        <p>
-          {qrData.loyaltyCardAddress.slice(0,9)}...{qrData.loyaltyCardAddress.slice(35,42)}
-        </p>
-    </div>
-    : null}
+      {qrData?.loyaltyCardAddress? 
+  
+      <div className="grid grid-cols-1 p-2 w-full text-center justify-items-center"> 
+          <p>
+            Points requested by card: 
+          </p>
+          <p className="w-1/2 border-b border-blue-500 pb-2">
+            {qrData.loyaltyCardAddress.slice(0,9)}...{qrData.loyaltyCardAddress.slice(35,42)}
+          </p>
+      </div>
+      : null}
 
-    <p className="text-2xl text-center p-3">
+      <p className="text-2xl text-center p-3">
         {`${numpadNumber} points`}
       </p>
-      <div className="max-w-xl"> 
+      <div className="grid grid-cols-1 justify-items-center"> 
         <NumPad onChange={(number: number) => handleChange(number) } /> 
-   
-        <div className="flex mt-3"> 
+    
+        <div className="w-72 mt-3 flex justify-center"> 
 
         { waitForTransaction.isLoading ? 
         
@@ -123,13 +124,12 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
         
         </div>
       </div>
-      <div className="p-3 px-12 pb-14 flex grow">
+      <div className="flex md:px-48 px-6">
         <Button onClick={() => {setData(undefined)}}>
-          <div className="flex justify-center items-center">
             Back to QR reader
-          </div>
         </Button>
       </div>
+      <div className="pb-16"/>
     </div>
     
   )

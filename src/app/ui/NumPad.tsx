@@ -27,7 +27,7 @@ export const NumPad = ({
   }
 
   return (
-    <div className="grid grid-cols-3"> 
+    <div className="grid grid-cols-3 w-72"> 
     {
       numbers.map(number => 
         <div key = {number} className="flex w-24 h-16">

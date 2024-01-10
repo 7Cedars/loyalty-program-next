@@ -1,6 +1,4 @@
-"use client"; 
-import { ModalMain } from "@/app/vendor/ModalMain";
-import { useLoyaltyTokens } from "@/depricated/useLoyaltyTokens";
+"use client";
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./TokenSmall";
 import { DeployedContractLog, EthAddress, LoyaltyToken } from "@/types";
@@ -239,7 +237,10 @@ export default function Page() {
         <button 
           className="text-black font-bold p-3"
           type="submit"
-          onClick={() => setSelectedToken(undefined)} 
+          onClick={() => {
+            setSelectedToken(undefined) 
+            setHashTransaction(undefined)}
+          } 
           >
           <ArrowLeftIcon
             className="h-7 w-7"

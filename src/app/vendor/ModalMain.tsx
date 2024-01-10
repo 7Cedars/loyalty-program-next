@@ -109,7 +109,7 @@ export const ModalMain = ({
           <NotificationDialog/> 
           
           { modalVisible && userLoggedIn != undefined ? 
-            <div className="flex flex-col mt-2 h-full scroll-auto bg-slate-50/[.70] backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10"> 
+            <div className="flex flex-col mt-2 h-full scroll-auto bg-slate-50/[.90] backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10"> 
             {/* /[.95] */}
               <div className="grow-0 flex justify-end"> 
                 <button 

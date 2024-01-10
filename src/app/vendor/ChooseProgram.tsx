@@ -80,7 +80,7 @@ export default function ChooseProgram()  {
             await fetch(parseUri(loyaltyProgram.uri))
             ).json()
 
-          loyaltyProgramsUpdated.push({...loyaltyProgram, metadata: parseMetadata(fetchedMetadata)})
+          loyaltyProgramsUpdated.push({...loyaltyProgram, metadata: parseMetadata(fetchedMetadata), programOwner: address})
         }
 
         setLoyaltyPrograms(loyaltyProgramsUpdated)
@@ -90,6 +90,7 @@ export default function ChooseProgram()  {
       }
     }
   }
+
 
   useEffect(() => {
 
