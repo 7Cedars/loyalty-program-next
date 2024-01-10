@@ -28,33 +28,51 @@ VENDOR APP
     - [x]  When seeing address -> send new loyalty card. 
       - [x]  show green notification when successful
       - [x]  red if error returned.
-    - [ ]  When seeing card ID + program address -> send points.
-      - [ ]  show green notification when successful
-      - [ ]  red if error returned. 
-    - [ ]  When seeing token ID + token address + loyalty prgram address -> redeem token.
+    - [x]  When seeing card ID + program address -> send points.
+      - [x]  show green notification when successful
+      - [x]  red if error returned. 
+    - [x]  When seeing token ID + token address + loyalty prgram address -> redeem token.
       - [ ] show green notification when successful
-      - [ ]  red if error returned.
-- [ ]  Develop ui elements 
-  - [ ]  scaling has to take into account screens of width as low as 350px. 
-  - [ ]  scaling height has to be correct through out (see minting at vendor stats page for correct example)
-- [ ]  simplify layout by moving files from components to top folder
-
+      - [ ] red if error returned.
+  
 CUSTOMER APP 
-- [ ]   fix home - choose card screen 
+- [ ]   fix home 
+  - [ ]   choose card screen
+  - [ ]   fix layout 
 - [ ]   implement claim tokens
-  - [ ]   Call function via card - see viem abiEncode. 
-  - [ ]   Wait for transaction to clear (with new function I found?)
+  - [x]   Call function via card - see viem abiEncode. 
+  - [x]   Wait for transaction to clear (with new function I found?)
+  - [ ]   show green notification when successful
+  - [ ]   red if error returned. 
 - [ ]   implemen redeem token. 
-  - [ ]   Call function via card - see viem abiEncode. 
-  - [ ]   Wait for transaction to clear (with new function I found?) 
-- [ ]   simplify layout by moving files from components to top folder
-
+  - [x]   Call function via card - see viem abiEncode. 
+  - [x]   Wait for transaction to clear (with new function I found?) 
+  - [ ]   Fix showing tokens to be redeemed (now when you redeem a NEW item appears..)
+  - [ ]   Show timer: "Qr code is valid for ... second" - after which approvalForAll is set to false.
+  - [ ]   show green notification when successful
+  - [ ]   show additional green notification when vendor accepted redeem. - then return to main screen. 
+  - [ ]   red if error returned. 
 
 GENERAL 
+- [ ]  Test layout / ui / ux 
+  - [ ]  Has to work from very wide (my full screen) to very narrow (350px) 
+  - [ ]  vertical scaling has to also be correct through out (see minting at vendor stats page for correct example)
+  - [ ]  fix any other ui/ux issues that pop up.
+- [ ]  Simplify folder structure by moving files from components to top folder oin both vendor and customer app 
+  - [ ]  create a custom hook: 'useLoyaltyTokens'. params = {LoyaltyTokens, status (loading, isSuccess, isError), refetching}.  -- build as much as possible on code that I have. 
+  - [ ]  replace all the parts where I load LoyaltyTokens with this custom hook. 
 - [ ]  Deploy on Vercel 
 - [ ]  Deploy on test net
   - [ ]  First on branched Sepolia network in Foundry.
   - [ ]  Then Sepolia.  
+  - [ ]  Then Arbitrum, Optimus, etc. 
+  - [ ]  
+
+## Bugs to fix (in order of priority)
+- [ ]  
+
+## Improvements to implement (in order of priority)
+- [ ]  
 
 ## Additional notes 
   // NB: use of useContractEvent versus waitForTransaction (viem) versus useWaitForTransaction (wagmi) to check confirmaiton of transaction
