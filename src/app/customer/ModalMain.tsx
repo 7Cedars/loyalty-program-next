@@ -17,8 +17,8 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { NotificationDialog } from "../../ui/notificationDialog";
-import { useUrlProgramAddress } from "../../hooks/useUrl";
+import { NotificationDialog } from "../ui/notificationDialog";
+import { useUrlProgramAddress } from "../hooks/useUrl";
 import { useState, useEffect } from "react";
 import { 
   EthAddress, 
@@ -240,6 +240,7 @@ export const ModalMain = ({
   useEffect(() => {
     if (address != userLoggedIn) {
       setUserLoggedIn(undefined)
+      setLoyaltyProgram(undefined)
       dispatch(resetLoyaltyCard(true))
     }
 
@@ -264,11 +265,11 @@ export const ModalMain = ({
 
   }, [ , address])
 
-  // console.log(
-  //   "pre render console log", 
-  //   "selectedLoyaltyCard: ", selectedLoyaltyCard, 
-  //   "loyaltyCards: ", loyaltyCards
-  // )
+  console.log(
+    "pre render console log", 
+    "selectedLoyaltyCard: ", selectedLoyaltyCard, 
+    "loyaltyCards: ", loyaltyCards
+  )
 
   return (
     <div className="relative w-full max-w-4xl h-screen z-1">
@@ -286,7 +287,7 @@ export const ModalMain = ({
         <NotificationDialog/> 
         
         { modalVisible && userLoggedIn != undefined ? 
-          <div className="flex flex-col mt-2 h-full scroll-auto bg-slate-50/[.95] backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10"> 
+          <div className="flex flex-col mt-2 h-full scroll-auto bg-slate-50/[.70] backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10"> 
             <div className="grow-0 flex justify-end"> 
               <button 
                   className="text-black font-bold pt-2 px-2"
@@ -310,22 +311,28 @@ export const ModalMain = ({
             showRequestCard ?
               <div className="grid grid-cols-1 h-full content-between mb-12">
                 <RequestCard /> 
-                <Button onClick={() => setShowRequestCard(false)} appearance="blueEmpty">
-                  Return to select card
-                </Button>
+                <div className="flex md:px-48 px-6">
+                  <Button onClick={() => setShowRequestCard(false)} appearance="blueEmpty">
+                    Return to select card
+                  </Button>
+                </div> 
+                <div className="h-16"/> 
               </div>
             : 
             loyaltyCards && loyaltyCards.length >= 1  ? // selectedLoyaltyCard 
               <div className="grid grid-cols-1 h-full content-between mb-12">
                 <SelectLoyaltyCard loyaltyCards = {loyaltyCards}/> 
-                <Button onClick={() => setShowRequestCard(true)} appearance="blueEmpty">
-                  Request new Card
-                </Button>
+                <div className="flex md:px-48 px-6">
+
+                  <Button onClick={() => setShowRequestCard(true)} appearance="blueEmpty">
+                    Request new Card
+                  </Button>
+                </div> 
+                <div className="h-16"/> 
               </div>
             :
             <div> Something went wrong, no loyalty card selected. </div> 
             }
-        
           </div>
         :
         <button 

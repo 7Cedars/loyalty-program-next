@@ -58,6 +58,7 @@ GENERAL
   - [ ]  Has to work from very wide (my full screen) to very narrow (350px) 
   - [ ]  vertical scaling has to also be correct through out (see minting at vendor stats page for correct example)
   - [ ]  fix any other ui/ux issues that pop up.
+  - [ ]  
 - [ ]  Simplify folder structure by moving files from components to top folder oin both vendor and customer app 
   - [ ]  create a custom hook: 'useLoyaltyTokens'. params = {LoyaltyTokens, status (loading, isSuccess, isError), refetching}.  -- build as much as possible on code that I have. 
   - [ ]  replace all the parts where I load LoyaltyTokens with this custom hook. 

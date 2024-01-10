@@ -4,7 +4,7 @@
 import '../globals.css'
 import NavbarTop from "./NavbarTop"; 
 import NavbarBottom from './NavbarBottom';
-import { ModalMain } from './components/ModalMain';
+import { ModalMain } from './ModalMain';
 
 export default function layout({
   children,

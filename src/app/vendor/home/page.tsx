@@ -30,11 +30,13 @@ export default function Page()  {
             style={{ height: "500px", width: "100%", objectFit: "cover"  }}
             />
       </div>
-      <div className="text-center p-3 pb-16">
+      <div className="flex md:px-48 px-6">
         <Button isFilled={true} onClick = {() => dispatch(resetLoyaltyProgram(true)) }> 
           Choose another Loyalty Program
         </Button>
       </div>
+
+      <div className="h-16"/> 
     </div>
     )
   }

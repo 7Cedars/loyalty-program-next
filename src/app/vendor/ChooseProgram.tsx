@@ -1,13 +1,13 @@
 import { useAccount } from 'wagmi'
 import { LoyaltyProgram } from "@/types";
-import { TitleText } from "../../ui/StandardisedFonts";
+import { TitleText } from "../ui/StandardisedFonts";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useUrlProgramAddress } from '../../hooks/useUrl';
+import { useUrlProgramAddress } from '../hooks/useUrl';
 import { usePublicClient } from 'wagmi';
 import { loyaltyProgramAbi } from '@/context/abi';
 import { Log } from 'viem';
-import { parseContractLogs, parseUri, parseMetadata } from '../../utils/parsers';
+import { parseContractLogs, parseUri, parseMetadata } from '../utils/parsers';
 import { useDispatch } from 'react-redux';
 import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer';
 

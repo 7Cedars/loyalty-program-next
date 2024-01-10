@@ -1,18 +1,12 @@
 
 "use client"; 
 
-// Will do clean up later. 
 import QRCode from "react-qr-code";
-import { Button } from "@/app/ui/Button";
-import { BASE_URI } from "@/context/constants";
 import { TitleText } from "@/app/ui/StandardisedFonts";
-import { useDispatch } from "react-redux";
-import { resetLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { useAppSelector } from "@/redux/hooks";
 import { useAccount } from "wagmi";
 
 export default function RequestCard()  {
-  const dispatch = useDispatch()
   const { address } = useAccount() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
 
@@ -32,6 +26,8 @@ export default function RequestCard()  {
             style={{ height: "400px", width: "100%", objectFit: "cover"  }}
             />
       </div>
+      
+      <div className="h-16"/> 
     </div>
     )
   }

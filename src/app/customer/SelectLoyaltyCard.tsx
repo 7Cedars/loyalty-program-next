@@ -2,15 +2,15 @@
 
 import { useAccount } from 'wagmi'
 import { LoyaltyCard, LoyaltyProgram } from "@/types";
-import { TitleText } from "../../ui/StandardisedFonts";
+import { TitleText } from "../ui/StandardisedFonts";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useUrlProgramAddress } from '../../hooks/useUrl';
+import { useUrlProgramAddress } from '../hooks/useUrl';
 import { usePublicClient } from 'wagmi';
 import { loyaltyProgramAbi } from '@/context/abi';
 import { Log } from 'viem';
-import { parseContractLogs, parseUri, parseMetadata, parseEthAddress, parseTransferSingleLogs } from '../../utils/parsers';
+import { parseContractLogs, parseUri, parseMetadata, parseEthAddress, parseTransferSingleLogs } from '../utils/parsers';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/redux/hooks';
 import { selectLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';

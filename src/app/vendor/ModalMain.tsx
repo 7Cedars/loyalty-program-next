@@ -18,17 +18,16 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { NotificationDialog } from "../../ui/notificationDialog";
+import { NotificationDialog } from "../ui/notificationDialog";
 import { useAccount } from "wagmi";
-import { useUrlProgramAddress } from "../../hooks/useUrl";
-import { useLoyaltyProgram } from "../../../depricated/useLoyaltyProgram";
+import { useUrlProgramAddress } from "../hooks/useUrl";
 import { useState, useEffect } from "react";
 import { EthAddress, LoyaltyProgram } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { resetLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
-import { parseEthAddress } from "../../utils/parsers";
+import { parseEthAddress } from "../utils/parsers";
 import ChooseProgram from "./ChooseProgram";
-import { useScreenDimensions } from "../../hooks/useScreenDimensions";
+import { useScreenDimensions } from "../hooks/useScreenDimensions";
 import Image from "next/image";
 
 type ModalProps = {
@@ -110,7 +109,7 @@ export const ModalMain = ({
           <NotificationDialog/> 
           
           { modalVisible && userLoggedIn != undefined ? 
-            <div className="flex flex-col mt-2 h-full scroll-auto bg-slate-50/[.95] backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10"> 
+            <div className="flex flex-col mt-2 h-full scroll-auto bg-slate-50/[.70] backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10"> 
             {/* /[.95] */}
               <div className="grow-0 flex justify-end"> 
                 <button 
