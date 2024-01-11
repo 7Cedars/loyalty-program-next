@@ -1,7 +1,7 @@
 "use client";
 
 import { useAccount } from 'wagmi'
-import { LoyaltyCard, LoyaltyProgram } from "@/types";
+import { EthAddress, LoyaltyCard, LoyaltyProgram } from "@/types";
 import { TitleText } from "../ui/StandardisedFonts";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -14,12 +14,50 @@ import { parseContractLogs, parseUri, parseMetadata, parseEthAddress, parseTrans
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/redux/hooks';
 import { selectLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
-
-// 0x8464135c8F25Da09e49BC8782676a84730C318bC
+import { parseBigInt } from '../utils/parsers';
 
 export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: LoyaltyCard[]}) {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
+  const [loyaltyCardPoints, setLoyaltyCardPoints ] = useState<{cardAddress: EthAddress | undefined, points: Number}[] | undefined >() 
+  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+  const { progAddress } =  useUrlProgramAddress();
+  const publicClient = usePublicClient(); 
+  const { address } = useAccount() 
   const dispatch = useDispatch() 
+
+  const getLoyaltyCardsPoints = async () => {
+    console.log("getLoyaltyCardsPoints called")
+
+    let loyaltyCard: LoyaltyCard
+    let loyaltyPointsUpdated: {cardAddress: EthAddress | undefined, points: Number}[] = []
+
+    if (loyaltyCards) { 
+
+      try {
+        for await (loyaltyCard of loyaltyCards) {
+
+          const loyaltyCardPointsData = await publicClient.readContract({
+              address: parseEthAddress(progAddress), 
+              abi: loyaltyProgramAbi,
+              functionName: 'getBalanceLoyaltyCard', 
+              args: [ loyaltyCard.cardId ]
+            });
+
+            console.log("loyaltyCardPointsData: ", loyaltyCardPointsData)
+
+            loyaltyPointsUpdated.push({cardAddress: loyaltyCard.cardAddress, points: Number(parseBigInt(loyaltyCardPointsData))})
+
+            if (loyaltyPointsUpdated) setLoyaltyCardPoints(loyaltyPointsUpdated)
+          }
+        } catch (error) {
+          console.log(error)
+      }
+    }
+  }
+
+  useEffect(() => {
+    getLoyaltyCardsPoints() 
+  }, [])
 
   // Choosing program. -- This is what I have to get working 100% 
   return (
@@ -35,9 +73,12 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
               <button 
                 key={String(card.cardId)}
                 onClick = {() => dispatch(selectLoyaltyCard(card))}
-                className="me-20 mt-6 w-60 p-3 h-fit justify-self-center border border-gray-300 rounded-lg grid grid-cols-1 gap-4"> 
+                className="me-20 mt-6 w-60 p-3 h-fit justify-self-center border border-gray-300 rounded-lg grid grid-cols-1 gap-1"> 
                   <div className='text-center h-fit'> 
-                    {`Card ID: ${Number(card.cardId)}`} 
+                    {`Card id: ${Number(card.cardId)}`} 
+                  </div> 
+                  <div className='text-center h-fit'> 
+                    {`Address: ${card.cardAddress?.slice(0,6)}...${card.cardAddress?.slice(36,42)}`} 
                   </div> 
 
                   <Image
@@ -49,9 +90,13 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
                     alt="DAO space icon"
                   />
 
-                  <div className='text-center'>   
-                    POINTS HERE 
-                  </div> 
+                  {loyaltyCardPoints && card.cardAddress? 
+                    <div className='text-center'>   
+                    {`${loyaltyCardPoints.find(cardPoints => cardPoints.cardAddress === card.cardAddress)?.points} points`} 
+                    </div> 
+                    : 
+                    null
+                  }
               </button>
             )
           })

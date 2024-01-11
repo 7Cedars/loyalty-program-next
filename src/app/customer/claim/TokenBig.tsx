@@ -40,13 +40,12 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
     args: 
     [
       token.tokenAddress,  
-      4502n, // token.metadata ? token.metadata.attributes[1].value : 0n, 
-      4n // selectedLoyaltyCard ? BigInt(Number(selectedLoyaltyCard.cardId)) : 0n
+      token.metadata ? token.metadata.attributes[1].value : 0n, 
+      selectedLoyaltyCard ? BigInt(Number(selectedLoyaltyCard.cardId)) : 0n
     ]
 })
 
   console.log("encodedFunctionCall: ", encodedFunctionCall)
-
 
   const claimLoyaltyToken = useContractWrite(
     {

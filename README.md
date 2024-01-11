@@ -42,7 +42,11 @@ CUSTOMER APP
 - [ ]   fix home 
   - [ ]   choose card screen: add points 
   - [x]   fix layout 
-  - [ ]   add address card at overview 
+  - [ ]   add address card at overview / choice cards 
+  - [x]   Needs to properly update when changing address
+- [ ]   Transfer LoyaltyCard
+  - [ ]   At the moment does not work when scanning QrCode. FIX 
+  - [ ]   Make sure a notification is shown at customer side when card is received + reload to show card. 
 - [ ]   implement claim tokens
   - [x]   Call function via card - see viem abiEncode. 
   - [x]   Wait for transaction to clear (with new function I found?)
@@ -51,24 +55,24 @@ CUSTOMER APP
 - [ ]   implemen redeem token. 
   - [x]   Call function via card - see viem abiEncode. 
   - [x]   Wait for transaction to clear (with new function I found?) 
-  - [ ]   Fix showing tokens to be redeemed (now when you redeem a NEW item appears..)
+  - [x]   Fix showing tokens to be redeemed (now when you redeem a NEW item appears..)
   - [ ]   Show timer: "Qr code is valid for ... second" - after which approvalForAll is set to false.
-  - [ ]   show green notification when successful
+  - [x]   show green notification when successful
   - [ ]   show additional green notification when vendor accepted redeem. - then return to main screen. 
-  - [ ]   red if error returned. 
-- [ ]   Complete Transaction overview 
-  - [ ]   read added points 
-  - [ ]   read claim tokens 
-  - [ ]   read redeem tokens 
+  - [ ]   show red notification if error returned. 
+- [ ]   Build hook useLatestCustomerTransaction 
+  - [ ]   read received points
+  - [ ]   read transferred points
+  - [ ]   read claimed tokens 
+  - [ ]   read redeemed tokens 
 
 GENERAL 
 - [ ]  Test layout / ui / ux 
-  - [ ]  Has to work from very wide (my full screen) to very narrow (350px) 
+  - [x]  Has to work from very wide (my full screen) to very narrow (350px) 
   - [ ]  vertical scaling has to also be correct through out (see minting at vendor stats page for correct example)
-  - [ ]  fix any other ui/ux issues that pop up.
-  - [ ]  
+  - [ ]  fix any other ui/ux issues that pop up. 
 - [ ]  Simplify folder structure by moving files from components to top folder oin both vendor and customer app 
-  - [ ]  create a custom hook: 'useLoyaltyTokens'. params = {LoyaltyTokens, status (loading, isSuccess, isError), refetching}.  -- build as much as possible on code that I have. 
+  - [x]  create a custom hook: 'useLoyaltyTokens'. params = {LoyaltyTokens, status (loading, isSuccess, isError), refetching}.  -- build as much as possible on code that I have. 
   - [ ]  replace all the parts where I load LoyaltyTokens with this custom hook. 
 - [ ]  Deploy on Vercel 
 - [ ]  Deploy on test net

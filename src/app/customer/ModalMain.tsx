@@ -93,11 +93,11 @@ export const ModalMain = ({
       } 
     }
 
-    // console.log("loyaltyCards: ", loyaltyCards)
+    console.log("loyaltyCards: ", loyaltyCards)
   }
 
   const getLoyaltyCardData = async () => {
-    // console.log("getLoyaltyCardAddresses called")
+    console.log("getLoyaltyCardAddresses called")
 
     let loyaltyCard: LoyaltyCard
     let loyaltyCardsUpdated: LoyaltyCard[] = []
@@ -132,7 +132,6 @@ export const ModalMain = ({
   }
 
   useEffect(() => {
-
     if (!loyaltyCards ) { getLoyaltyCardIds() } // check when address has no cards what happens..  
     if (
       loyaltyCards && 
@@ -140,11 +139,11 @@ export const ModalMain = ({
       ) { 
         getLoyaltyCardData() 
       } 
-  }, [ , loyaltyCards, address])
+  }, [ , loyaltyCards])
 
-  // useEffect(() => {
-  //   if (loyaltyCards) { setLoyaltyCards(undefined) } 
-  // }, [, address, ])
+  useEffect(() => {
+    if (loyaltyCards) { setLoyaltyCards(undefined) } 
+  }, [ address ])
 
   useEffect(() => {
     if (
@@ -161,7 +160,7 @@ export const ModalMain = ({
   // console.log("loyaltyProgram UPDATES: ", loyaltyProgram)
 
   const getLoyaltyProgramUri = async () => {
-    // console.log("getLoyaltyProgramsUris called. ProgAddress:", progAddress)
+    console.log("getLoyaltyProgramsUris called. ProgAddress:", progAddress)
 
     if (progAddress) {
 
