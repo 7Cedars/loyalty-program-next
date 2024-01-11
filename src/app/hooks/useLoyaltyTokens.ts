@@ -9,10 +9,14 @@ import {
   parseUri, 
   parseMetadata, 
   parseTokenContractLogs,
+  parseEthAddress,
+  parseAvailableTokens,
 } from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants"; // this should be possible to set at website.  
+import { useAppSelector } from "@/redux/hooks";
 
 export const useLoyaltyTokens = () => {
+  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [tokenIsLoading, setTokenIsLoading] = useState<boolean>(true)
   const [tokenIsError, setTokenIsError] = useState<boolean>(false)
   const [tokenIsSuccess, setTokenIsSuccess] = useState<boolean>(false)
@@ -102,6 +106,36 @@ export const useLoyaltyTokens = () => {
     }
   }
 
+  const getAvailableTokens = async () => {
+
+    console.log("getAvailableTokens called")
+
+    let loyaltyToken: LoyaltyToken
+    let loyaltyTokensUpdated: LoyaltyToken[] = []
+
+    if (loyaltyTokens) { 
+      try {
+        for await (loyaltyToken of loyaltyTokens) {
+          console.log("getAvailableTokens called. selectedLoyaltyProgram?.programOwner: ", selectedLoyaltyProgram?.programOwner)
+
+          const availableTokens: unknown = await publicClient.readContract({
+            address: loyaltyToken.tokenAddress, 
+            abi: loyaltyTokenAbi,
+            functionName: 'getAvailableTokens', 
+            args: [parseEthAddress(selectedLoyaltyProgram?.programAddress)] 
+          })
+          console.log("getAvailableTokens: ", availableTokens )
+          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseAvailableTokens(availableTokens))})
+        }
+
+        setLoyaltyTokens(loyaltyTokensUpdated)
+
+        } catch (error) {
+          console.log(error)
+      }
+    }
+  }
+
   if (!loyaltyTokens) { getLoyaltyTokenAddresses() }
 
   useEffect(() => {
@@ -118,9 +152,14 @@ export const useLoyaltyTokens = () => {
         getLoyaltyTokensMetaData() 
       }
     if (
+      loyaltyTokens && 
+      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens != undefined) === -1 
+      ) { getAvailableTokens() } 
+    if (
       loyaltyTokens &&
       loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.uri) !== -1  && 
-      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.metadata) !== -1 
+      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.metadata) !== -1 && 
+      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens != undefined) !== -1 
       ) { 
         setTokenIsSuccess(true)
         setTokenIsError(false)

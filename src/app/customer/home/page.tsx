@@ -7,45 +7,26 @@ import { TitleText } from "../../ui/StandardisedFonts";
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/redux/hooks';
 import { resetLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
-import { usePublicClient } from "wagmi";
-import { loyaltyProgramAbi } from "@/context/abi";
-import { useAccount } from "wagmi";
-import { useEffect, useState } from "react";
-import { parseTransferSingleLogs } from "@/app/utils/parsers";
-import { Log } from "viem";
+import { useEffect } from "react";
 import { notification } from "@/redux/reducers/notificationReducer";
-import { Transaction } from "@/types";
-
+import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 
 export default function Page()  {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
-  const [transferLog, setTransferLog] = useState<Transaction[]>() 
-  const publicClient = usePublicClient();
-  const dispatch = useDispatch() 
+  const dispatch = useDispatch()
+  const { pointsReceived } = useLatestCustomerTransaction() 
 
-  console.log("transferLog: ", transferLog)
-
-  publicClient.watchContractEvent({
-      address: selectedLoyaltyProgram?.programAddress,
-      abi: loyaltyProgramAbi,
-      eventName: 'TransferSingle', 
-      args: {to: selectedLoyaltyCard?.cardAddress}, 
-      pollingInterval: 5_000, 
-      onLogs: (logs: Log[]) => setTransferLog(parseTransferSingleLogs(logs)) 
-    })
-
-    useEffect(() => { 
-      if (transferLog ) {
-        dispatch(notification({
-          id: "transferPoints",
-          message: `Success. ${transferLog[0].values[0] } points received.`, 
-          colour: "green",
-          isVisible: true
-        }))
-      }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ transferLog ])
+  useEffect(() => {
+    if (pointsReceived) {
+      dispatch(notification({
+        id: "pointsReceived",
+        message: `${pointsReceived?.values[0] } points received.`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+  }, [pointsReceived])
 
   return (
     <div className="flex flex-col justify-between justify-center pt-2">

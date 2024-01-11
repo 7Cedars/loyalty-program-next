@@ -2,27 +2,23 @@
 
 import { useAccount } from 'wagmi'
 import { EthAddress, LoyaltyCard, LoyaltyProgram } from "@/types";
-import { TitleText } from "../ui/StandardisedFonts";
+import { TitleText } from "../../ui/StandardisedFonts";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { useUrlProgramAddress } from '../hooks/useUrl';
+import { useUrlProgramAddress } from '../../hooks/useUrl';
 import { usePublicClient } from 'wagmi';
 import { loyaltyProgramAbi } from '@/context/abi';
-import { Log } from 'viem';
-import { parseContractLogs, parseUri, parseMetadata, parseEthAddress, parseTransferSingleLogs } from '../utils/parsers';
+import {  parseEthAddress } from '../../utils/parsers';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/redux/hooks';
 import { selectLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
-import { parseBigInt } from '../utils/parsers';
+import { parseBigInt } from '../../utils/parsers';
 
 export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: LoyaltyCard[]}) {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
   const [loyaltyCardPoints, setLoyaltyCardPoints ] = useState<{cardAddress: EthAddress | undefined, points: Number}[] | undefined >() 
-  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { progAddress } =  useUrlProgramAddress();
   const publicClient = usePublicClient(); 
-  const { address } = useAccount() 
   const dispatch = useDispatch() 
 
   const getLoyaltyCardsPoints = async () => {

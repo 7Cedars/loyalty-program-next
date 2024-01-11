@@ -23,7 +23,7 @@ type setSelectedTokenProps = {
 
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  const { tokenIsLoading, tokenIsError, tokenIsSuccess, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
+  const { tokenIsSuccess, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [ claimedTokens, setClaimedTokens ] = useState<LoyaltyToken[] | undefined>() 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()

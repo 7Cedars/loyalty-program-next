@@ -82,8 +82,24 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   useEffect(() => { 
     if (isSuccess) {
       setIsDisabled(!isDisabled)
+      console.log("DATA claimLoyaltyToken: ", data)
+
+      dispatch(notification({
+        id: "claimLoyaltyToken",
+        message: `Token succesfully claimed.`, 
+        colour: "green",
+        isVisible: true
+      }))
     }
-  }, [isSuccess])
+    if (isError) {
+      dispatch(notification({
+        id: "claimLoyaltyToken",
+        message: `Something went wrong. Token not claimed.`, 
+        colour: "red",
+        isVisible: true
+      }))
+    }
+  }, [isSuccess, isError])
 
   return (
     <div className="grid grid-cols-1"> 

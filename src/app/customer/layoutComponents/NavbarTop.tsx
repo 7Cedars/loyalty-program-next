@@ -1,12 +1,12 @@
 "use client";
 
 import Link from 'next/link';
-import { useScreenDimensions } from '../hooks/useScreenDimensions';
+import { useScreenDimensions } from '../../hooks/useScreenDimensions';
 import { useAccount,  } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { useWeb3ModalState } from '@web3modal/wagmi/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
-import { useUrlProgramAddress } from '../hooks/useUrl';
+import { useUrlProgramAddress } from '../../hooks/useUrl';
 
 const NavbarTop = ( ) => {
   const dimensions = useScreenDimensions();

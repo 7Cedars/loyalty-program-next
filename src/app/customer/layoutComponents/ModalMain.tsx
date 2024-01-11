@@ -17,8 +17,8 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { NotificationDialog } from "../ui/notificationDialog";
-import { useUrlProgramAddress } from "../hooks/useUrl";
+import { NotificationDialog } from "../../ui/notificationDialog";
+import { useUrlProgramAddress } from "../../hooks/useUrl";
 import { useState, useEffect } from "react";
 import { 
   EthAddress, 
@@ -139,7 +139,7 @@ export const ModalMain = ({
       ) { 
         getLoyaltyCardData() 
       } 
-  }, [ , loyaltyCards])
+  }, [ , loyaltyCards, address])
 
   useEffect(() => {
     if (loyaltyCards) { setLoyaltyCards(undefined) } 

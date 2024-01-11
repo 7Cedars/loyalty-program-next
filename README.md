@@ -39,10 +39,10 @@ VENDOR APP
       - [ ] red if error returned.
   
 CUSTOMER APP 
-- [ ]   fix home 
+- [x]   fix home 
   - [ ]   choose card screen: add points 
   - [x]   fix layout 
-  - [ ]   add address card at overview / choice cards 
+  - [x]   add address card at overview / choice cards 
   - [x]   Needs to properly update when changing address
 - [ ]   Transfer LoyaltyCard
   - [ ]   At the moment does not work when scanning QrCode. FIX 
@@ -65,6 +65,9 @@ CUSTOMER APP
   - [ ]   read transferred points
   - [ ]   read claimed tokens 
   - [ ]   read redeemed tokens 
+- [ ]   Code clean up
+  - [ ]   Add points of cards to redux store - no need to keep on readin chain. 
+  - [ ]   
 
 GENERAL 
 - [ ]  Test layout / ui / ux 

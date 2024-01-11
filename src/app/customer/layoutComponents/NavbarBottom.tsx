@@ -8,10 +8,10 @@ import {
   QrCodeIcon,
   ChartBarSquareIcon
  } from '@heroicons/react/24/outline'
-import { useScreenDimensions } from '../hooks/useScreenDimensions';
+import { useScreenDimensions } from '../../hooks/useScreenDimensions';
 import { useAccount } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
-import { useUrlProgramAddress } from '../hooks/useUrl';
+import { useUrlProgramAddress } from '../../hooks/useUrl';
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
