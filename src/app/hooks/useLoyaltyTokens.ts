@@ -19,11 +19,12 @@ export const useLoyaltyTokens = () => {
   const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
   const publicClient = usePublicClient()
 
-  const reFetchTokens = () => {
+  const fetchTokens = () => {
     setTokenIsLoading(true); 
     setTokenIsError(false)
     setTokenIsSuccess(false)
     setLoyaltyTokens(undefined)
+    getLoyaltyTokenAddresses()
   }
 
   const getLoyaltyTokenAddresses = async () => {
@@ -101,8 +102,10 @@ export const useLoyaltyTokens = () => {
     }
   }
 
+  if (!loyaltyTokens) { getLoyaltyTokenAddresses() }
+
   useEffect(() => {
-    if (!loyaltyTokens) { getLoyaltyTokenAddresses() } // check when address has no deployed programs what happens..  
+    // check when address has no deployed programs what happens..  
     if (
       loyaltyTokens && 
       loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.uri) === -1 
@@ -125,5 +128,5 @@ export const useLoyaltyTokens = () => {
       }
   }, [ , loyaltyTokens, tokenIsLoading])
 
-  return {tokenIsLoading, tokenIsError, tokenIsSuccess, loyaltyTokens, reFetchTokens}
+  return {tokenIsLoading, tokenIsError, tokenIsSuccess, loyaltyTokens, fetchTokens}
 }

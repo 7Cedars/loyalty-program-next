@@ -1,28 +1,15 @@
 "use client";
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./TokenSmall";
-import { DeployedContractLog, EthAddress, LoyaltyToken } from "@/types";
-import { useEffect, useState, useRef } from "react";
-import { useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
+import { LoyaltyToken } from "@/types";
+import { useEffect, useState } from "react";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { ERC6551AccountAbi, loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
+import { ERC6551AccountAbi,  loyaltyTokenAbi } from "@/context/abi";
 import { Hex, Log, encodeFunctionData } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
-import { getContractEventsProps } from "@/types"
-import { 
-  parseContractLogs, 
-  parseEthAddress, 
-  parseLoyaltyContractLogs, 
-  parseUri, 
-  parseMetadata, 
-  parseAvailableTokens, 
-  parseTokenContractLogs,
-  parseTransferSingleLogs
-} from "@/app/utils/parsers";
-import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
-import { Button } from "@/app/ui/Button";
-import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
+import { parseEthAddress, parseTransferSingleLogs } from "@/app/utils/parsers";
 import { useAppSelector } from "@/redux/hooks";
 import RedeemToken from "./redeemToken";
 import { notification } from "@/redux/reducers/notificationReducer";
@@ -36,8 +23,7 @@ type setSelectedTokenProps = {
 
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  const { tokenIsLoading, tokenIsError, tokenIsSuccess, loyaltyTokens, reFetchTokens } = useLoyaltyTokens()
-  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const { tokenIsLoading, tokenIsError, tokenIsSuccess, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [ claimedTokens, setClaimedTokens ] = useState<LoyaltyToken[] | undefined>() 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()
@@ -46,13 +32,9 @@ export default function Page() {
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
 
-  console.log("UPDATE claimedTokens: ", claimedTokens)
-  console.log("UPDATE loyaltyTokens: ", loyaltyTokens)
-  console.log("UPDATE tokenIsLoading: ", tokenIsLoading)
-  console.log("UPDATE tokenIsSuccess: ", tokenIsSuccess)
-
   const getClaimedLoyaltyTokens = async () => {
     console.log("getClaimedLoyaltyTokens called")
+    console.log("loyaltyTokens: ", loyaltyTokens)
 
     let loyaltyToken: LoyaltyToken
     let claimedTokensTemp: LoyaltyToken[] = []
@@ -71,27 +53,53 @@ export default function Page() {
             console.log("claimedTokensLogs: ", claimedTokensLogs)
 
             const claimedTokensData = parseTransferSingleLogs(claimedTokensLogs)
-            console.log("claimedTokensData: ", claimedTokensData)
-            claimedTokensTemp.push(
-              ...claimedTokensData.map(
-                item => {
-                  return ({...loyaltyToken, tokenId: Number(item.ids[0])}) 
-                }
+            const filteredData = claimedTokensData.filter(claimedToken => 
+              claimedToken.from == selectedLoyaltyCard?.cardAddress ||  
+              claimedToken.to == selectedLoyaltyCard?.cardAddress
               )
-            )
+            console.log("filteredData: ", filteredData)
+
+            if (filteredData) {
+              claimedTokensTemp.push(...filteredData.map(
+                  item => {
+                    return ({...loyaltyToken, tokenId: Number(item.ids[0])})
+                  }
+                ))
+              }
           }
 
-          setClaimedTokens(claimedTokensTemp)
+          // data includes all tokens redeemed AND received. 
+          // here it is assumed that tokens that appear for an odd amount of times are owned by loyalty card
+          const tokenIdList: any[] | undefined = claimedTokensTemp?.map(claimedToken => claimedToken.tokenId); 
+          console.log("tokenIdList: ", tokenIdList)
+
+          if (tokenIdList) {
+            let isClaimed = tokenIdList?.reduce(function (value, value2) {
+              return (
+                  value[String(value2)] ? value[String(value2)] = false : (value[String(value2)] = true),
+                  value
+              );
+            }, {});
+            const claimedTokensFiltered = claimedTokensTemp?.filter(claimedToken => isClaimed[String(claimedToken.tokenId)])
+            
+            setClaimedTokens(claimedTokensFiltered)
+            console.log("claimedTokensFiltered: ", claimedTokensFiltered)
+          }
 
         } catch (error) {
           console.log(error)
       }
     }
+    
   }
 
   useEffect(() => {
       getClaimedLoyaltyTokens() 
-  }, [ , loyaltyTokens])
+  }, [ , loyaltyTokens, address, selectedToken])
+
+  useEffect(() => {
+    fetchTokens() 
+  }, [ ])
 
   const approveTokenTransfer = useContractWrite(
     {
@@ -180,7 +188,7 @@ export default function Page() {
           
           claimedTokens.map((token: LoyaltyToken) => 
               token.metadata ? 
-              <div key = {token.tokenAddress} >
+              <div key = {`${token.tokenAddress}:${token.tokenId}`} >
                 <TokenSmall token = {token} disabled = {false} onClick={() => handleTokenSelect(token)}  /> 
               </div>
               : null 
