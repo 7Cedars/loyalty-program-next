@@ -20,6 +20,9 @@ import { Log } from "viem";
 import { bigIntMax } from "@/app/utils/bigIntOperations";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import Image from "next/image";
+import { useAppSelector } from "@/redux/hooks";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 
 type RedeemTokenProps = {
   qrData: QrData | undefined;  
@@ -28,32 +31,36 @@ type RedeemTokenProps = {
 // use Setdata to reset qrdata when action is completed. 
 
 export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
+  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
   const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>() 
   const [ transferSingles, setTransferSingles ] = useState<Transaction[] | undefined>()
   const [ lastCardTransferred, setLastCardTransferred] = useState<BigInt | undefined>() 
   const [customerAddress, setCustomerAddress] = useState<EthAddress | undefined >() 
+  const { height, width } = useScreenDimensions()
   const dispatch = useDispatch() 
   const { address } = useAccount() 
   const publicClient = usePublicClient()
 
-  // const getTransferSingleData = async () => {
-  //   console.log("getTransferSingleData called")
+  console.log("transferSingles: ", transferSingles) 
 
-  //   const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
-  //     abi: loyaltyProgramAbi, 
-  //     address: parseEthAddress(progAddress), 
-  //     eventName: 'TransferSingle', 
-  //     args: {
-  //       from: parseEthAddress(address)
-  //     },
-  //     fromBlock: 1n,
-  //     toBlock: 16330050n
-  //   });
+  const getTransferSingleData = async () => {
+    console.log("getTransferSingleData called")
 
-  //   setTransferSingles(parseTransferSingleLogs(transferSingleLogs))
+    const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyProgramAbi, 
+      address: parseEthAddress(progAddress), 
+      eventName: 'TransferSingle', 
+      args: {
+        from: parseEthAddress(address)
+      },
+      fromBlock: 1n,
+      toBlock: 16330050n
+    });
+
+    setTransferSingles(parseTransferSingleLogs(transferSingleLogs))
   
-  // }
+  }
 
   const loyaltyCardsMinted = useContractRead(
     {
@@ -81,7 +88,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
       functionName: "safeTransferFrom", 
-      args: [address, customerAddress, 9n, 1n, ""], 
+      args: [address, customerAddress, Number(lastCardTransferred) + 1, 1n, ""], 
       onError(error) {
         dispatch(notification({
           id: "transferLoyaltyCard",
@@ -103,77 +110,124 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
       hash: hashTransaction 
     })
 
+  useEffect(() => { 
+    if (isSuccess) {
+      dispatch(notification({
+        id: "transferLoyaltyCard",
+        message: `Success! Card with Id ${Number(lastCardTransferred) + 1} transferred.`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+  }, [isSuccess])
+
   useEffect(() => {
 
-    if (transferSingles) {
+    if (transferSingles && transferSingles.length > 0) {
       const transferredLoyaltyCards = transferSingles.map(item => item.ids[0])
       setLastCardTransferred(bigIntMax(transferredLoyaltyCards))
+    } else {
+      setLastCardTransferred(0n)
     }
 
     setCustomerAddress(qrData?.customerAddress)
-  }, [qrData?.customerAddress, transferSingles])
+  }, [, qrData?.customerAddress, transferSingles])
+
+  useEffect(() => {
+    getTransferSingleData()
+  }, [])
+
+  console.log(
+    "Data prior to render:", 
+    {
+    customerAddress: customerAddress,
+    lastCardTransferred: lastCardTransferred, 
+    loyaltyCardsMinted: loyaltyCardsMinted, 
+    selectedLoyaltyProgram: selectedLoyaltyProgram
+  })
 
   return (
-    <div className="grid grid-cols-1 ">
+    <div className=" w-full grid grid-cols-1 gap-1">
 
-      <TitleText title = "Transfer Loyalty Card" subtitle="Transfer a single card to a customer." size = {2} />
+      <div className="h-20 m-1"> 
+        <TitleText title = "Transfer Loyalty Card" subtitle="Transfer a single card to a customer." size = {2} />
+      </div>
 
-      { loyaltyCardsMinted.isSuccess && lastCardTransferred ? 
-
-        <div className="text-center p-3 pt-12">
-          Approximately  
-          <b> {` ${ Number(parseBigInt(loyaltyCardsMinted.data)) - Number(lastCardTransferred) } `} </b>
-          Loyalty Cards remaining
+      { loyaltyCardsMinted.data && lastCardTransferred ? 
+        <div className="flex justify-center"> 
+          <p className="p-2 w-1/2 text-center border-b border-blue-800">
+            {`Approximately ${ Number(parseBigInt(loyaltyCardsMinted.data)) - Number(lastCardTransferred)} Loyalty Cards remaining`}
+          </p>
         </div>
-        : null 
+        :
+        null 
       }
 
       {customerAddress && lastCardTransferred ? 
 
-        <div className="p-3 mx-12 px-12 flex-col m-3" > 
-          <div className="flex justify-center items-center italic">
-            Loyalty Card requested by 
-          </div>
-          <div className="flex justify-center items-center">
-            {customerAddress}
-          </div> 
-        
-        { isLoading ? 
-          <div className="p-3 px-12 flex m-3"> 
-            <Button appearance = {"grayEmpty"} onClick={() => {}} >
-              <div className="flex justify-center items-center">
-                <Image
-                  className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
-                  width={30}
-                  height={30}
-                  src={"/loading.svg"}
-                  alt="Loading icon"
-                />
-                Waiting for confirmation (this can take a few minutes...)
-              </div>
-            </Button>
-          </div> 
-          :
-          <div className="p-3 px-12 flex">
-            <Button onClick={ transferCard.write } appearance="blueFilled">
-              <div className="flex justify-center items-center">
-                Transfer Loyalty Card
-              </div>
-            </Button>
-          </div>
-          }
-          <div className="p-3 px-12 flex">
-            <Button onClick={() => {setData(undefined)}}>
-              <div className="flex justify-center items-center">
-                Back to QR reader
-              </div>
-            </Button>
+        <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3" > 
+          <div className="w-full grid-span-2 gap-1"> 
+            <button 
+              className="text-black font-bold p-3"
+              type="submit"
+              onClick={() => {
+                setData(undefined) 
+                setHashTransaction(undefined)}
+              } 
+              >
+              <ArrowLeftIcon
+                className="h-7 w-7"
+                aria-hidden="true"
+              />
+            </button>
           </div>
 
-        </div> 
-      : 
-      null 
-    }
+          { selectedLoyaltyProgram && selectedLoyaltyProgram.metadata ? 
+          <div className=" grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center">
+            <div className="rounded-lg"> 
+              <Image
+                  className="rounded-lg h-full"
+                  width={width < 896 ? (width - 75) / 3  : 250}
+                  height={height / 3}
+                  src={selectedLoyaltyProgram.metadata.imageUri}
+                  alt="Loyalty Token icon "
+                />
+            </div>
+
+            <div className="grid grid-cols-1 content-between ">
+              {`Card requested by ${customerAddress.slice(0,6)}...${customerAddress.slice(36,42) }`}
+              
+              { isLoading ? 
+                <div className="p-3 flex"> 
+                  <Button appearance = {"grayEmpty"} onClick={() => {}} >
+                    <div className="flex justify-center items-center">
+                      <Image
+                        className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
+                        width={30}
+                        height={30}
+                        src={"/loading.svg"}
+                        alt="Loading icon"
+                      />
+                      Waiting for confirmation (this can take a few minutes...)
+                    </div>
+                  </Button>
+                </div> 
+                :
+                <div className="p-3 flex ">
+                  <Button onClick={ transferCard.write } appearance="blueEmpty">
+                      Transfer Loyalty Card
+                  </Button>
+                </div>
+                }
+              </div> 
+            </div> 
+          : 
+          null 
+        }
+        </div>
+        : 
+        null
+      }
     </div>
     )
   } 

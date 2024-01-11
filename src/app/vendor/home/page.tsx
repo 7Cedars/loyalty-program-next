@@ -9,6 +9,7 @@ import { TitleText } from "@/app/ui/StandardisedFonts";
 import { useDispatch } from "react-redux";
 import { resetLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { useAppSelector } from "@/redux/hooks";
+import { parseEthAddress } from "@/app/utils/parsers";
 
 export default function Page()  {
   const dispatch = useDispatch() 
@@ -23,7 +24,7 @@ export default function Page()  {
           /> 
       <div className="grid justify-center justify-items-center p-6">
         <QRCode 
-          value={`${BASE_URI}?customer/landing/?prog:${selectedLoyaltyProgram?.programAddress}`}
+          value={`${BASE_URI}/customer/home?prog=${parseEthAddress(selectedLoyaltyProgram?.programAddress)}`}
           style={{ height: "500px", width: "100%", objectFit: "cover"  }}
           />
       </div>

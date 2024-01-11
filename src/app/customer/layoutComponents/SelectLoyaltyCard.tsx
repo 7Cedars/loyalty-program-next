@@ -83,7 +83,7 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
                     height={420}
                     style = {{ objectFit: "cover" }} 
                     src={selectedLoyaltyProgram.metadata? selectedLoyaltyProgram.metadata.imageUri : `/vercel.svg`}
-                    alt="DAO space icon"
+                    alt="Loyalty Card Icon"
                   />
 
                   {loyaltyCardPoints && card.cardAddress? 

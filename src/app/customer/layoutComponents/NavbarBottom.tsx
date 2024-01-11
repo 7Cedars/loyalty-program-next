@@ -15,7 +15,7 @@ import { useUrlProgramAddress } from '../../hooks/useUrl';
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
-  const layoutLinks: string = 'py-1 px-6 text-gray-600 hover:text-gray-900 grid grid-cols-1'
+  const layoutLinks: string = 'py-1 px-6 text-gray-600 hover:text-blue-500 focus:text-blue-500 grid grid-cols-1'
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'
   const layoutIcons: string = 'h-7 w-7'
   const { address } = useAccount() 
@@ -26,7 +26,7 @@ const NavbarBottom = ( ) => {
     dimensions.width >= 896 ? 
     null
     :
-    <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-stone-50/75 text-sm border-t border-gray-400 ps-8 pe-8">
+    <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-stone-50/75 text-sm border-t border-gray-400 px-4">
       
         <Link href={progAddress ? `/customer/home?prog=${progAddress}` : '/customer/home'}  className={layoutLinks}> 
           <div className='col-span-1 grid text-xs justify-items-center'> 
@@ -64,7 +64,7 @@ const NavbarBottom = ( ) => {
             Transactions
           </div>  
         </Link>
-        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )}> 
+        <button onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )} className={layoutLinks} > 
           <div className={layoutIconBox}> 
             <ArrowRightOnRectangleIcon
               className={layoutIcons}

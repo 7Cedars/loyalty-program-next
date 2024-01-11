@@ -4,11 +4,45 @@
 import QRCode from "react-qr-code";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { useAppSelector } from "@/redux/hooks";
-import { useAccount } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
+import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { notification } from "@/redux/reducers/notificationReducer";
+import { loyaltyProgramAbi } from "@/context/abi";
+import { Log } from "viem";
+import { Transaction } from "@/types";
+import { parseTransferSingleLogs } from "@/app/utils/parsers";
 
 export default function RequestCard()  {
+  const publicClient = usePublicClient();
+  const [ cardReceived, setCardReceived ] = useState<Transaction[]>() 
   const { address } = useAccount() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const dispatch = useDispatch() 
+
+  console.log("cardReceived: ", cardReceived)
+
+  if (selectedLoyaltyProgram) {
+    publicClient.watchContractEvent({
+      abi: loyaltyProgramAbi,
+      eventName: 'TransferSingle', 
+      args: {from: selectedLoyaltyProgram.programOwner }, 
+      pollingInterval: 5_000, 
+      onLogs: (logs: Log[]) => setCardReceived(parseTransferSingleLogs(logs)) 
+    })
+  }
+
+  useEffect(() => { 
+    if (cardReceived) {
+      dispatch(notification({
+        id: "cardReceived",
+        message: `Success! Card with Id: ${cardReceived[0].ids[0]} received.`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+  }, [cardReceived])
 
   return (
     <div className="grid grid-cols-1 h-4/5 content-between pt-2">
