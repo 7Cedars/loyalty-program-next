@@ -86,8 +86,8 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
 
       dispatch(notification({
         id: "claimLoyaltyToken",
-        message: `Token succesfully claimed.`, 
-        colour: "green",
+        message: `Claiming token...`, 
+        colour: "yellow",
         isVisible: true
       }))
     }

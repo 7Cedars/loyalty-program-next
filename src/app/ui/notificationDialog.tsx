@@ -38,7 +38,7 @@ export const NotificationDialog = () => {
   return (
     notificationToShow?.isVisible === false ? null  
     : 
-    <div className= {`z-20 p-2 mx-8 m-2 grow-0 rounded-lg h-10 flex flex-row items-center ${colourSchemeDialog[colour]}`}> 
+    <div className= {`z-20 p-2 mx-8 m-2 grow-0 rounded-lg h-fit flex flex-row shadow-[0_6px_12px_-3px_rgba(0,0,0,0.5)] items-center ${colourSchemeDialog[colour]}`}> 
         <div className={`grow flex flex-row justify-center ${colourSchemeText[colour]}`}>  
           <div className="pe-1 text-center"> 
           { notificationToShow.message  }

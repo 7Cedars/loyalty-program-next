@@ -12,46 +12,56 @@ export const useLatestCustomerTransaction = () => {
   const publicClient = usePublicClient();
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
-  const [latestTransaction, setLatestTransaction] = useState<Transaction>() 
+  const [latestReceived, setLatestReceived] = useState<Transaction[]>() 
+  const [latestSent, setLatestSent] = useState<Transaction[]>() 
   const [pointsReceived, setPointsReceived] = useState<Transaction>() 
   const [pointsSent, setPointsSent] = useState<Transaction>() 
   const [tokenReceived, setTokenReceived] = useState<Transaction>() 
   const [tokenSent, setTokenSent] = useState<Transaction>() 
   
   publicClient.watchContractEvent({
-    address: selectedLoyaltyProgram?.programAddress,
     abi: loyaltyProgramAbi,
     eventName: 'TransferSingle', 
-    args: {to: selectedLoyaltyCard?.cardAddress, from: selectedLoyaltyCard?.cardAddress}, 
+    args: {to: selectedLoyaltyCard?.cardAddress}, 
     pollingInterval: 5_000, 
-    onLogs: (logs: Log[]) => setLatestTransaction(parseTransferSingleLogs(logs)[0]) 
+    onLogs: (logs: Log[]) => setLatestReceived(parseTransferSingleLogs(logs)) 
+  })
+  console.log("latestReceived: ", latestReceived)
+  console.log("latestSent: ", latestSent)
+  console.log("selectedLoyaltyProgram @latestTransaction: ", selectedLoyaltyProgram)
+  console.log("selectedLoyaltyCard @latestTransaction: ", selectedLoyaltyCard)
+
+  publicClient.watchContractEvent({
+    abi: loyaltyProgramAbi,
+    eventName: 'TransferSingle', 
+    args: {from: selectedLoyaltyCard?.cardAddress}, 
+    pollingInterval: 5_000, 
+    onLogs: (logs: Log[]) => setLatestSent(parseTransferSingleLogs(logs)) 
   })
 
   useEffect(() => {
-    if (
-      latestTransaction && 
-      latestTransaction.to === selectedLoyaltyCard?.cardAddress &&
-      latestTransaction.ids[0] === 0n  
-      ) setPointsReceived(latestTransaction)
-    if (
-      latestTransaction && 
-      latestTransaction.from === selectedLoyaltyCard?.cardAddress &&
-      latestTransaction.ids[0] === 0n  
-      ) setPointsSent(latestTransaction)
-    if (
-      latestTransaction && 
-      latestTransaction.to === selectedLoyaltyCard?.cardAddress &&
-      latestTransaction.ids[0] != 0n  
-      ) setTokenReceived(latestTransaction)
-    if (
-      latestTransaction && 
-      latestTransaction.from === selectedLoyaltyCard?.cardAddress &&
-      latestTransaction.ids[0] != 0n  
-      ) setTokenSent(latestTransaction)
-  }, [latestTransaction])
+    if ( latestReceived && selectedLoyaltyCard)
+    latestReceived.forEach(transaction => {
+        transaction.ids[0] === 0n ? setPointsReceived(transaction)
+        :
+        setTokenReceived(transaction)
+    })
+    
+  }, [latestReceived])
+
+  useEffect(() => {
+    if ( latestSent && selectedLoyaltyCard)
+    latestSent.forEach(transaction => {
+        transaction.ids[0] === 0n ? setPointsSent(transaction) 
+        : 
+        setTokenSent(transaction) 
+    })
+    
+  }, [latestSent])
 
   return { 
-    latestTransaction, 
+    latestReceived,
+    latestSent, 
     pointsReceived, 
     pointsSent, 
     tokenReceived, 

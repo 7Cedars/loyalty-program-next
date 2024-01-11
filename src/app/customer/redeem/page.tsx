@@ -15,6 +15,7 @@ import RedeemToken from "./redeemToken";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useDispatch } from "react-redux";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -31,10 +32,11 @@ export default function Page() {
   const {address} = useAccount() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
+  const { tokenReceived, tokenSent, latestSent } = useLatestCustomerTransaction() 
 
   const getClaimedLoyaltyTokens = async () => {
     console.log("getClaimedLoyaltyTokens called")
-    console.log("loyaltyTokens: ", loyaltyTokens)
+    console.log("latestSent @redeem token: ", latestSent)
 
     let loyaltyToken: LoyaltyToken
     let claimedTokensTemp: LoyaltyToken[] = []
@@ -107,12 +109,6 @@ export default function Page() {
       abi: ERC6551AccountAbi,
       functionName: "executeCall", 
       onError(error, context) {
-        dispatch(notification({
-          id: "approveTokenTransfer",
-          message: `Something went wrong. Loyalty gift transfer was not approved.`, 
-          colour: "red",
-          isVisible: true
-        })) 
         console.log('approveTokenTransfer Error', error, context)
       }, 
       onSuccess(data) {
@@ -122,11 +118,44 @@ export default function Page() {
     }
   )
 
-  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+  const { isError, isLoading, isSuccess } = useWaitForTransaction(
     { 
       confirmations: 1,
       hash: hashTransaction 
     })
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(notification({
+        id: "tokenTransfer",
+        message: `Token transfer authorised. Waiting for vendor to transfer...`, 
+        colour: "yellow",
+        isVisible: true
+      }))
+    }
+    if (isError) {
+      dispatch(notification({
+        id: "tokenTransfer",
+        message: `Something went wrong. Token not claimed.`, 
+        colour: "red",
+        isVisible: true
+      }))
+    }
+   
+  },[isError, isSuccess])
+
+  useEffect(() => {
+    if (tokenSent) {
+      dispatch(notification({
+        id: "tokenTransfer",
+        message: `Token id ${tokenSent.ids[0]} successfully redeemed.`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+  }, [tokenSent])
+
+
 
   const handleTokenSelect = (token: LoyaltyToken) => {
     setSelectedToken({token: token, disabled: false})

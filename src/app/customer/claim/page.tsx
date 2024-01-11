@@ -26,6 +26,9 @@ import { Button } from "@/app/ui/Button";
 import { useAppSelector } from "@/redux/hooks";
 import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
+import { useDispatch } from "react-redux";
+import { notification } from "@/redux/reducers/notificationReducer";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -40,9 +43,21 @@ export default function Page() {
   const [inactiveLoyaltyTokens, setInactiveLoyaltyTokens] = useState<LoyaltyToken[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const { progAddress } = useUrlProgramAddress() 
-
-  // const {data, ethAddresses, isLoading, isError} = useLoyaltyTokens() 
+  const { tokenReceived, latestReceived, pointsReceived } = useLatestCustomerTransaction() 
   const publicClient = usePublicClient()
+  const dispatch = useDispatch() 
+
+  useEffect(() => {
+    if (tokenReceived) {
+      dispatch(notification({
+        id: "claimLoyaltyToken",
+        message: `Success! Token Id ${tokenReceived.ids[0]} received.`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+   
+  }, [tokenReceived])
 
   const getLoyaltyCardPoints = async () => {
     console.log("getLoyaltyCardPoints called") 

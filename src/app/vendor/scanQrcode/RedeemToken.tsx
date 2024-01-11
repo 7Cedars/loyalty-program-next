@@ -117,12 +117,6 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
         qrData?.loyaltyCardAddress
       ], 
       onError(error) {
-        dispatch(notification({
-          id: "redeemLoyaltyToken",
-          message: `Error: Loyalty gift not redeemed. Do not give gift.`, 
-          colour: "red",
-          isVisible: true
-        }))
         console.log('redeemLoyaltyToken Error', error)
       }, 
       onSuccess(data) {
@@ -136,6 +130,27 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
       confirmations: 1,
       hash: hashTransaction 
     })
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(notification({
+        id: "redeemToken",
+        message: `Token successfully retreived: exchange for gift.`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+    if (isError) {
+      dispatch(notification({
+        id: "redeemToken",
+        message: `Error: Loyalty gift not redeemed. Do not give gift.`, 
+        colour: "red",
+        isVisible: true
+      }))
+    }
+    
+  },[isError, isSuccess])
+  
   
   return (
     <div className="grid grid-cols-1 h-full justify-items-center content-between p-3"> 
