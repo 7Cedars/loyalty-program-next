@@ -46,7 +46,7 @@ export default function Page() {
         {/* <div className='text-center text-2xl h-4/5 w-4/5 p-6 border border-gray-500 pb-12 rounded-lg'> */}
 
         
-        <div className='w-2/3  p-4'> 
+        <div className='w-4/5 p-1'> 
           <QrReader 
             ViewFinder={ViewFinder}
             videoStyle={{ objectFit: 'cover' }}

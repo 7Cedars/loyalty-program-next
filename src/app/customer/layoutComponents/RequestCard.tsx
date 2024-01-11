@@ -5,14 +5,15 @@ import QRCode from "react-qr-code";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { useAppSelector } from "@/redux/hooks";
 import { useAccount, usePublicClient } from "wagmi";
-import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { Log } from "viem";
 import { Transaction } from "@/types";
 import { parseTransferSingleLogs } from "@/app/utils/parsers";
+
+
 
 export default function RequestCard()  {
   const publicClient = usePublicClient();
@@ -42,6 +43,7 @@ export default function RequestCard()  {
         isVisible: true
       }))
     }
+    // setShowRequestCard(false)
   }, [cardReceived])
 
   return (
@@ -61,7 +63,7 @@ export default function RequestCard()  {
             />
       </div>
       
-      <div className="h-16"/> 
+      <div className="h-20"/> 
     </div>
     )
   }

@@ -153,17 +153,17 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
         <TitleText title = "Transfer Loyalty Card" subtitle="Transfer a single card to a customer." size = {2} />
       </div>
 
-      { loyaltyCardsMinted.data && lastCardTransferred ? 
+      { loyaltyCardsMinted.data ? 
         <div className="flex justify-center"> 
           <p className="p-2 w-1/2 text-center border-b border-blue-800">
-            {`Approximately ${ Number(parseBigInt(loyaltyCardsMinted.data)) - Number(lastCardTransferred)} Loyalty Cards remaining`}
+            {`Approximately ${ Number(parseBigInt(loyaltyCardsMinted?.data)) - Number(lastCardTransferred)} Loyalty Cards remaining`}
           </p>
         </div>
         :
         null 
       }
 
-      {customerAddress && lastCardTransferred ? 
+      {customerAddress ? 
 
         <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3" > 
           <div className="w-full grid-span-2 gap-1"> 

@@ -63,7 +63,7 @@ export const ModalMain = ({
   const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
   const [ loyaltyProgram, setLoyaltyProgram ] = useState<LoyaltyProgram>() 
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[]>() 
-  const [showRequestCard, setShowRequestCard] = useState<boolean>(false)
+  const [ showRequestCard, setShowRequestCard ] = useState<boolean>(false)
 
   /////////////////////////////////////////////////// 
   /// Loading data loyalty cards owned by address /// 
@@ -232,7 +232,7 @@ export const ModalMain = ({
       loyaltyProgram 
       ) { dispatch(selectLoyaltyProgram(loyaltyProgram))}
   
-  }, [, progAddress, loyaltyProgram])
+  }, [, progAddress, loyaltyProgram, showRequestCard])
 
   // console.log("loyaltyProgram : ", loyaltyProgram)
 
