@@ -13,17 +13,17 @@ Even though repository is public, For now, it is for personal use only.
 
 ## Todo   
 VENDOR APP 
-- [ ]  Implement minting loyaltyTokens 
+- [x]  Implement minting loyaltyTokens 
   - [x]  Write to contract
-  - [ ]  Listen for correct event. 
+  - [x]  Listen for correct event. 
   - [x]  Show loading circle when loading
-  - [ ]  show green notification when successful
-  - [ ]  red if error returned. 
+  - [x]  show green notification when successful
+  - [x]  red if error returned. 
 - [ ]  Selection token page: 
   - [ ]  add minted number of tokens + remaining 
   - [ ]  Add address of token + address issuer in description.
-- [ ]  Stats page: 
-  - [ ]  Include at top view # tokens & # points 
+- [x]  Stats page: 
+  - [x]  Include at top view # tokens & # points 
 - [ ]  Develop QR reading page
   - [x]  Image of QR reading should fit whole modal + QR reading frame should be super imposed over this. 
   - [x]  Use QR create app on phone to create QR codes
@@ -44,30 +44,29 @@ CUSTOMER APP
   - [x]   fix layout 
   - [x]   add address card at overview / choice cards 
   - [x]   Needs to properly update when changing address
-- [ ]   Transfer LoyaltyCard
-  - [ ]   At the moment does not work when scanning QrCode. FIX 
-  - [ ]   Make sure a notification is shown at customer side when card is received + reload to show card. 
-- [ ]   implement claim tokens
+- [x]   Transfer LoyaltyCard
+  - [x]   At the moment does not work when scanning QrCode. FIX 
+  - [x]   Make sure a notification is shown at customer side when card is received + reload to show card. 
+- [x]   implement claim tokens
   - [x]   Call function via card - see viem abiEncode. 
   - [x]   Wait for transaction to clear (with new function I found?)
-  - [ ]   show green notification when successful
-  - [ ]   red if error returned. 
-- [ ]   implemen redeem token. 
+  - [x]   show green notification when successful
+  - [x]   red if error returned. 
+- [x]   implemen redeem token. 
   - [x]   Call function via card - see viem abiEncode. 
   - [x]   Wait for transaction to clear (with new function I found?) 
   - [x]   Fix showing tokens to be redeemed (now when you redeem a NEW item appears..)
-  - [ ]   Show timer: "Qr code is valid for ... second" - after which approvalForAll is set to false.
+  -       Show timer: "Qr code is valid for ... second" - after which approvalForAll is set to false. // has to be implemented in contract 
   - [x]   show green notification when successful
-  - [ ]   show additional green notification when vendor accepted redeem. - then return to main screen. 
-  - [ ]   show red notification if error returned. 
-- [ ]   Build hook useLatestCustomerTransaction 
-  - [ ]   read received points
-  - [ ]   read transferred points
-  - [ ]   read claimed tokens 
-  - [ ]   read redeemed tokens 
-- [ ]   Code clean up
-  - [ ]   Add points of cards to redux store - no need to keep on readin chain. 
-  - [ ]   
+  - [x]   show additional green notification when vendor accepted redeem. - then return to main screen. 
+  - [x]   show red notification if error returned. 
+- [x]   Build hook useLatestCustomerTransaction 
+  - [x]   read received points
+  - [x]   read transferred points
+  - [x]   read claimed tokens 
+  - [x]   read redeemed tokens 
+- [ ]   Code clean up (small issue - can leave as is)
+  - [ ]   Add points of cards to redux store - no need to keep on readin chain.  
 
 GENERAL 
 - [ ]  Test layout / ui / ux 
