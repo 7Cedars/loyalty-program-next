@@ -34,7 +34,7 @@ export default function SelectToken( {token, disabled, onClick}: SelectedTokenPr
             </div> 
             { !disabled ? 
               <div className="text-center text-sm text-gray-500"> 
-                {`${Number(token.availableTokens)} gifts remaining`}
+                {`${token.availableTokens?.length} gifts remaining`}
               </div>
               :
               null

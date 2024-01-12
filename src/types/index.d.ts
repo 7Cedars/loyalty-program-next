@@ -71,7 +71,7 @@ export type LoyaltyToken = {
   tokenAddress: EthAddress; 
   uri?: string; 
   metadata?: TokenMetadata;
-  availableTokens?: Number;  
+  availableTokens?: BigInt[];  
   tokenId?: Number;  
 } 
 

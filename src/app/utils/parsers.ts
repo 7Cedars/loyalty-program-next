@@ -403,11 +403,16 @@ export const parseUri = (uri: unknown): string => {
   return uri as string;
 };
 
-export const parseAvailableTokens = (availableTokens: unknown): BigInt => {
-  if (!isBigInt(availableTokens)) {
-    throw new Error(`Incorrect token, not a BigInt: ${availableTokens}`);
+export const parseAvailableTokens = (availableTokens: unknown): BigInt[] => {
+  if (!isArray(availableTokens)) {
+    throw new Error(`Incorrect availableTokens, not an array: ${availableTokens}`);
   }
-  return availableTokens as BigInt
+  if (availableTokens.find(token => !isBigInt(token))) {
+    throw new Error(`Incorrect availableTokens, not all values are BigInts: ${availableTokens}`);
+  }
+  const availableTokensChecked = availableTokens.map((token: unknown) => token as BigInt)
+
+  return availableTokensChecked as BigInt[]
 };
 
 export const parseMetadata = (metadata: unknown): TokenMetadata => {

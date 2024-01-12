@@ -132,7 +132,7 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
             </div> 
           </div>
           <div className="text-center text-lg"> 
-            {`${token.availableTokens} remaining tokens`}
+            {`${token.availableTokens?.length} remaining tokens`}
           </div>
         </div>
         </>
@@ -157,7 +157,7 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
             </Button>
           </div> 
         :
-        token.availableTokens == 0 ? 
+        token.availableTokens?.length == 0 ? 
           <div className="p-3 flex "> 
             <Button appearance = {"grayEmpty"} isDisabled onClick={() => {}} >
                 No Loyalty Gifts available

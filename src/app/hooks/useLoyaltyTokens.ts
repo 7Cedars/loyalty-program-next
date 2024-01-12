@@ -125,7 +125,7 @@ export const useLoyaltyTokens = () => {
             args: [parseEthAddress(selectedLoyaltyProgram?.programAddress)] 
           })
           console.log("getAvailableTokens: ", availableTokens )
-          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseAvailableTokens(availableTokens))})
+          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: parseAvailableTokens(availableTokens)})
         }
 
         setLoyaltyTokens(loyaltyTokensUpdated)

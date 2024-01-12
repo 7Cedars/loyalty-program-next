@@ -8,7 +8,7 @@ type NumPadProps = {
   onChange: (arg0: number) => void;
 };
 
-const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '00'] 
+const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '00', '0'] 
 
 export const NumPad = ({
   onChange,
