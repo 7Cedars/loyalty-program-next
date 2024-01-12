@@ -76,6 +76,7 @@ GENERAL
 - [ ]  Simplify folder structure by moving files from components to top folder oin both vendor and customer app 
   - [x]  create a custom hook: 'useLoyaltyTokens'. params = {LoyaltyTokens, status (loading, isSuccess, isError), refetching}.  -- build as much as possible on code that I have. 
   - [ ]  replace all the parts where I load LoyaltyTokens with this custom hook. 
+- [ ]  Setup dynamic reading of ABi's - otherwise I will be constantly copy-pasting as I develop the contracts. 
 - [ ]  Deploy on Vercel 
 - [ ]  Deploy on test net
   - [ ]  First on branched Sepolia network in Foundry.

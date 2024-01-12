@@ -111,8 +111,8 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
          
           <Image
               className="rounded-lg"
-              width={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
-              height={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
+              width={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35  : 400}
+              height={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35 : 400}
               src={token.metadata.imageUri}
               alt="Loyalty Token icon "
             />

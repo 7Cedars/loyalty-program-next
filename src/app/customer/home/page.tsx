@@ -7,9 +7,7 @@ import { TitleText } from "../../ui/StandardisedFonts";
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/redux/hooks';
 import { resetLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
-import { usePublicClient } from "wagmi";
-import { loyaltyProgramAbi } from "@/context/abi";
-import { useAccount } from "wagmi";
+import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { useEffect } from "react";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
@@ -17,6 +15,7 @@ import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 export default function Page()  {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
+  const {height, width} = useScreenDimensions()
   const dispatch = useDispatch()
   const { pointsReceived } = useLatestCustomerTransaction() 
 
@@ -35,7 +34,7 @@ export default function Page()  {
     <div className="flex flex-col justify-between justify-center pt-2">
       <TitleText 
         title = "Request Loyalty Points"
-        subtitle="Let vendor scan this QR code to receive loyalty points" 
+        subtitle="Show this QR code to receive points" 
         size={2}
         /> 
          
@@ -48,11 +47,11 @@ export default function Page()  {
         </div>
       </div>
           
-      <div className="flex flex-col justify-between p-2 h-full">
+      <div className="flex flex-col justify-between p-1 h-full">
         <div className="grid justify-center justify-items-center">
             <QRCode 
               value={`type:giftPoints;lp:${selectedLoyaltyProgram?.programAddress};lc:${selectedLoyaltyCard?.cardAddress}`}
-              style={{ height: "400px", width: "100%", objectFit: "cover"  }}
+              style={{ height: Math.min(height, width) * .5, width: "100%", objectFit: "cover"  }}
               />
         </div>
       </div>
@@ -63,7 +62,7 @@ export default function Page()  {
         </Button>
       </div> 
 
-      <div className="h-16"/> 
+      <div className="h-14"/> 
 
     </div>  
     )
