@@ -70,24 +70,15 @@ export default function Page() {
               }
           }
 
-          // data includes all tokens redeemed AND received. 
-          // here it is assumed that tokens that appear for an odd amount of times are owned by loyalty card
-          const tokenIdList: any[] | undefined = claimedTokensTemp?.map(claimedToken => claimedToken.tokenId); 
-          console.log("tokenIdList: ", tokenIdList)
-
-          if (tokenIdList) {
-            let isClaimed = tokenIdList?.reduce(function (value, value2) {
-              return (
-                  value[String(value2)] ? value[String(value2)] = false : (value[String(value2)] = true),
-                  value
-              );
-            }, {});
-            const claimedTokensFiltered = claimedTokensTemp?.filter(claimedToken => isClaimed[String(claimedToken.tokenId)])
-            
-            setClaimedTokens(claimedTokensFiltered)
-            console.log("claimedTokensFiltered: ", claimedTokensFiltered)
-          }
-
+          const claimedTokensUnique: LoyaltyToken[] = [] 
+          claimedTokensTemp.forEach(
+            (loyaltyToken: LoyaltyToken) => !claimedTokensUnique.find(
+              (token: LoyaltyToken) => token.tokenId == loyaltyToken.tokenId
+              ) ? claimedTokensUnique.push(loyaltyToken) : null
+            )  
+          
+          setClaimedTokens(claimedTokensUnique)
+          
         } catch (error) {
           console.log(error)
       }
@@ -172,7 +163,7 @@ export default function Page() {
   } 
   
   return (
-     <div className=" w-full grid grid-cols-1 gap-1 overflow-auto">
+     <div className=" w-full h-full grid grid-cols-1 gap-1 overflow-auto">
 
       <div className="h-20 m-3"> 
        <TitleText title = "Select Loyalty Gift to Redeem" subtitle="View and select gifts to redeem at store." size={2} />

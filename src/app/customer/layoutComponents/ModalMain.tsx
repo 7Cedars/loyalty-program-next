@@ -271,7 +271,7 @@ export const ModalMain = ({
   )
 
   return (
-    <div className="relative w-full max-w-4xl h-screen z-1">
+    <div className="relative w-full h-screen max-w-4xl z-1">
 
       <div className="flex flex-col pt-14 h-full z-3">
         { selectedLoyaltyProgram?.metadata ? 
@@ -286,8 +286,8 @@ export const ModalMain = ({
         <NotificationDialog/> 
         
         { modalVisible && userLoggedIn != undefined ? 
-          <div className="flex flex-col mt-2 h-full scroll-auto bg-slate-50/[.90] backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10"> 
-            <div className="grow-0 flex justify-end"> 
+          <div className="grow mt-2 bg-slate-50/[.90] max-h-full scroll-auto backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10"> 
+            <div className="grow flex justify-end"> 
               <button 
                   className="text-black font-bold pt-2 px-2"
                   type="submit"
