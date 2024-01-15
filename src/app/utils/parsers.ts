@@ -9,7 +9,7 @@ import {
   LoyaltyProgram, 
   LoyaltyToken
 } from "@/types";
-import { Log, getAddress } from "viem";
+import { Hex, Log, getAddress } from "viem";
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -190,6 +190,20 @@ export const parseEthAddress = (address: unknown): EthAddress => {
 
   return returnAddress as EthAddress;
 };
+
+export const parseSignature = (signature: unknown): Hex => {
+  if (!isString(signature)) {
+    throw new Error(`Incorrect signature, not a string: ${signature}`);
+  }
+  if (/0x/.test(signature) == false) {
+    throw new Error(`Incorrect signature, 0x prefix missing: ${signature}`);
+  }
+
+  return signature as Hex;
+};
+
+ 
+
 
 export const parseContractLogs = (logs: Log[]): LoyaltyProgram[] => {
   if (!isArray(logs)) {
@@ -467,7 +481,8 @@ export const parseQrData = (qrText: unknown): QrData => {
               loyaltyProgram: parseEthAddress(data[1].slice(3)), 
               loyaltyCardAddress: parseEthAddress(data[2].slice(3)), 
               loyaltyToken: parseEthAddress(data[3].slice(3)), 
-              loyaltyTokenId: Number(data[4].slice(3))
+              loyaltyTokenId: Number(data[4].slice(3)), 
+              signature: parseSignature(data[5].slice(3))
               }
           } 
 

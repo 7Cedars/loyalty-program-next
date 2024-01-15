@@ -3,11 +3,11 @@ import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./TokenSmall";
 import { LoyaltyToken } from "@/types";
 import { useEffect, useState } from "react";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useContractWrite, useSignMessage, useWaitForTransaction } from "wagmi";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { ERC6551AccountAbi,  loyaltyTokenAbi } from "@/context/abi";
-import { Hex, Log, encodeFunctionData } from "viem"
+import { Hex, Log, encodeFunctionData, encodePacked, keccak256 } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { parseEthAddress, parseTransferSingleLogs } from "@/app/utils/parsers";
 import { useAppSelector } from "@/redux/hooks";
@@ -27,8 +27,10 @@ export default function Page() {
   const { tokenIsSuccess, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [ claimedTokens, setClaimedTokens ] = useState<LoyaltyToken[] | undefined>() 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
+  const [ signature, setSignature ] = useState<any>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { progAddress } = useUrlProgramAddress() 
+  const { signMessage, isSuccess, data: signMessageData, variables } = useSignMessage()
   const {address} = useAccount() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
@@ -75,7 +77,7 @@ export default function Page() {
             (loyaltyToken: LoyaltyToken) => !claimedTokensUnique.find(
               (token: LoyaltyToken) => token.tokenId == loyaltyToken.tokenId
               ) ? claimedTokensUnique.push(loyaltyToken) : null
-            )  
+            )
           
           setClaimedTokens(claimedTokensUnique)
           
@@ -94,47 +96,6 @@ export default function Page() {
     fetchTokens() 
   }, [ ])
 
-  const approveTokenTransfer = useContractWrite(
-    {
-      address: parseEthAddress(selectedLoyaltyCard?.cardAddress),
-      abi: ERC6551AccountAbi,
-      functionName: "executeCall", 
-      onError(error, context) {
-        console.log('approveTokenTransfer Error', error, context)
-      }, 
-      onSuccess(data) {
-        console.log("DATA approveTokenTransfer: ", data)
-        setHashTransaction(data.hash)
-      }, 
-    }
-  )
-
-  const { isError, isLoading, isSuccess } = useWaitForTransaction(
-    { 
-      confirmations: 1,
-      hash: hashTransaction 
-    })
-
-  useEffect(() => {
-    if (isSuccess) {
-      dispatch(notification({
-        id: "tokenTransfer",
-        message: `Token transfer authorised. Waiting for vendor to transfer...`, 
-        colour: "yellow",
-        isVisible: true
-      }))
-    }
-    if (isError) {
-      dispatch(notification({
-        id: "tokenTransfer",
-        message: `Something went wrong. Token not claimed.`, 
-        colour: "red",
-        isVisible: true
-      }))
-    }
-   
-  },[isError, isSuccess])
-
   useEffect(() => {
     if (tokenSent) {
       dispatch(notification({
@@ -146,38 +107,46 @@ export default function Page() {
     }
   }, [tokenSent])
 
-
-
   const handleTokenSelect = (token: LoyaltyToken) => {
     setSelectedToken({token: token, disabled: false})
-    
-    const encodedFunctionCall: Hex = encodeFunctionData({
-      abi: loyaltyTokenAbi, 
-      functionName: 'setApprovalForAll', 
-      args: [parseEthAddress(progAddress), true]
-    })
-      
-    approveTokenTransfer.write({
-      args: [token.tokenAddress, 0, encodedFunctionCall]
-    })
+
+    if (address && token && token.tokenId && selectedLoyaltyCard && selectedLoyaltyCard.cardAddress) {
+
+      const messageHash: Hex = keccak256(encodePacked(
+          ['address', 'uint256', 'address', 'address', 'uint256'],
+          [
+            token.tokenAddress, 
+            BigInt(Number(token.tokenId)), 
+            address, 
+            selectedLoyaltyCard.cardAddress, 
+            1n
+          ]
+        ))
+        signMessage({message: messageHash}) 
+      }
   } 
   
+  useEffect(() => {
+    if (isSuccess) setSignature(signMessageData)
+    if (!isSuccess) setSignature(undefined)
+  }, [, isSuccess])
+
   return (
-     <div className=" w-full h-full grid grid-cols-1 gap-1 overflow-auto">
+     <div className=" w-full h-full grid grid-cols-1 gap-1 content-start overflow-auto">
 
       <div className="h-20 m-3"> 
        <TitleText title = "Select Loyalty Gift to Redeem" subtitle="View and select gifts to redeem at store." size={2} />
       </div>
-      {
+      {/* {
       isLoading? 
         <div> 
           Authenticating Transfer... 
         </div>
       : 
       null  
-      }
+      } */}
 
-      { isSuccess ? 
+      { selectedToken && signature ? 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
         <button 
           className="text-black font-bold p-3"
@@ -194,7 +163,7 @@ export default function Page() {
         </button>
         { 
           selectedToken ?  
-          <RedeemToken token={selectedToken?.token} /> 
+          <RedeemToken token={selectedToken?.token} signature={signature} /> 
           : 
           <div> Loading ... </div>
         }

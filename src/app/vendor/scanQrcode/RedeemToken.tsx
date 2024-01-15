@@ -3,7 +3,7 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction } from "wagmi";
+import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount } from "wagmi";
 import { ERC6551AccountAbi, loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress, parseMetadata, parseUri } from "@/app/utils/parsers";
@@ -15,9 +15,10 @@ import { NumLine } from "@/app/ui/NumLine";
 import { QrData } from "@/types";
 import { usePublicClient } from "wagmi";
 import { TitleText } from "@/app/ui/StandardisedFonts";
-import { Hex, encodeFunctionData } from "viem";
+import { Hex, encodeFunctionData, toBytes } from "viem";
 import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 
 type SendPointsProps = {
   qrData: QrData | undefined;  
@@ -31,7 +32,9 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   const [ callData, setCallData] = useState<Hex>()
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  const [ hashMintTransaction, setHashMintTransaction] = useState<any>()
+  const { address } = useAccount()
+  // const { tokenIsSuccess, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
+
   const dispatch = useDispatch() 
   const publicClient = usePublicClient()
 
@@ -101,8 +104,11 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   console.log("simulated entry data into redeemLoyaltyToken: ", 
     [
       qrData?.loyaltyToken, 
+      address, 
       qrData?.loyaltyTokenId, 
-      qrData?.loyaltyCardAddress
+      qrData?.loyaltyCardAddress, 
+      1n, 
+      toBytes(qrData?.signature)
     ]
     )
 
@@ -110,11 +116,14 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
     {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
-      functionName: "redeemLoyaltyToken", 
+      functionName: "redeemLoyaltyTokenUsingSignedMessage", 
       args: [
         qrData?.loyaltyToken, 
+        address,
         qrData?.loyaltyTokenId, 
         qrData?.loyaltyCardAddress
+        // 1n
+        // toBytes(qrData?.signature)
       ], 
       onError(error) {
         console.log('redeemLoyaltyToken Error', error)
@@ -122,7 +131,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
       onSuccess(data) {
         setHashTransaction(data.hash)
       },
-    }
+    } 
   )
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction(

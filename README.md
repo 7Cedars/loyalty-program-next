@@ -22,6 +22,8 @@ VENDOR APP
 - [ ]  Selection token page: 
   - [ ]  add minted number of tokens + remaining 
   - [ ]  Add address of token + address issuer in description.
+- [ ]  Redeem token page: 
+  - [ ]  implement redeeming WITHOUT approval - using signed message instead. 
 - [x]  Stats page: 
   - [x]  Include at top view # tokens & # points 
 - [ ]  Develop QR reading page
@@ -48,6 +50,8 @@ CUSTOMER APP
   - [x]   At the moment does not work when scanning QrCode. FIX 
   - [x]   Make sure a notification is shown at customer side when card is received + reload to show card. 
 - [x]   implement claim tokens
+  - [ ]   provide choice with classic NFT gifts: claim at home (costs $$ that will e refunded) or claim at till. 
+  - [ ]   Possibly later: implment recognisiton of gifts that do not work with NFT and can only be redeemed directly at till. 
   - [x]   Call function via card - see viem abiEncode. 
   - [x]   Wait for transaction to clear (with new function I found?)
   - [x]   show green notification when successful

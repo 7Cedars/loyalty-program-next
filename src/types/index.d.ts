@@ -82,6 +82,7 @@ export type QrData = {
   loyaltyToken?: EthAddress; 
   loyaltyTokenId?: number; 
   customerAddress?: EthAddress;
+  signature?: Hex; 
 } 
 
 export type Transaction = {
