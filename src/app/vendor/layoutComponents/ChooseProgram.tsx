@@ -18,10 +18,10 @@ export default function ChooseProgram()  {
   const { putProgAddressInUrl } = useUrlProgramAddress()
   const [ loyaltyPrograms, setLoyaltyPrograms ] = useState<LoyaltyProgram[]>() 
 
-  console.log("loyaltyPrograms: ", loyaltyPrograms)
+  // console.log("loyaltyPrograms: ", loyaltyPrograms)
 
   const getLoyaltyProgramAddresses = async () => {
-    console.log("getLoyaltyProgramAddresses called")
+    // console.log("getLoyaltyProgramAddresses called")
 
     const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
@@ -34,11 +34,11 @@ export default function ChooseProgram()  {
     const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
     setLoyaltyPrograms(loyaltyProgramAddresses)
 
-    console.log("loyaltyProgramAddresses: ", loyaltyProgramAddresses)
+    // console.log("loyaltyProgramAddresses: ", loyaltyProgramAddresses)
   }
 
   const getLoyaltyProgramsUris = async () => {
-    console.log("getLoyaltyProgramsUris called")
+    // console.log("getLoyaltyProgramsUris called")
 
     let loyaltyProgram: LoyaltyProgram
     let loyaltyProgramsUpdated: LoyaltyProgram[] = []
@@ -55,6 +55,8 @@ export default function ChooseProgram()  {
             args: [0]
           })
 
+          // console.log("URI: ", uri)
+
           loyaltyProgramsUpdated.push({...loyaltyProgram, uri: parseUri(uri)})
         }
 
@@ -67,7 +69,7 @@ export default function ChooseProgram()  {
   }
 
   const getLoyaltyProgramsMetaData = async () => {
-    console.log("getLoyaltyProgramsMetaData called")
+    // console.log("getLoyaltyProgramsMetaData called")
 
     let loyaltyProgram: LoyaltyProgram
     let loyaltyProgramsUpdated: LoyaltyProgram[] = []

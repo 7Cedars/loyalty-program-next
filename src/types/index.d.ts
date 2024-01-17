@@ -69,10 +69,11 @@ export type LoyaltyCard = {
 // for now type for program and token are the same - but might change in the future 
 export type LoyaltyToken = {
   tokenAddress: EthAddress; 
-  uri?: string; 
-  metadata?: TokenMetadata;
-  availableTokens?: BigInt[];  
-  tokenId?: Number;  
+  issuer?: EthAddress; 
+  tokenId?: number | "error";  
+  uri?: string | "error";
+  metadata?: TokenMetadata | "error";
+  availableTokens?: Number| "error";  
 } 
 
 export type QrData = {

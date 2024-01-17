@@ -16,7 +16,7 @@ export default function SelectToken( {token, disabled, onClick}: SelectedTokenPr
   return (
      
       <button className={appearance} onClick={onClick}> 
-      {token.metadata ? 
+      {token.metadata && token.metadata != "error" ? 
         <>
           <Image
               className="rounded-t-lg"

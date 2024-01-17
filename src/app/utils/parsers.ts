@@ -9,11 +9,21 @@ import {
   LoyaltyProgram, 
   LoyaltyToken
 } from "@/types";
+import { Url } from "url";
 import { Hex, Log, getAddress } from "viem";
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
 };
+
+const isValidUrl = (urlString: string) => {
+  try { 
+    return Boolean(new URL(urlString)); 
+  }
+  catch(e){ 
+    return false; 
+  }
+}
 
 const isNumber = (number: unknown): number is number => {
   return typeof number === 'number' || number instanceof Number;
@@ -23,9 +33,9 @@ const isBigInt = (number: unknown): number is BigInt => {
   return typeof number === 'bigint';
 };
 
-const isArray = (array: unknown): array is Array<string> => {
+const isArray = (array: unknown): array is Array<unknown> => {
   // array.find(item => !isString(item)) 
-  return typeof array === 'string' || array instanceof Array;
+  return array instanceof Array;
 };
 
 const parseName = (name: unknown): string => {
@@ -92,6 +102,20 @@ export const parseBigInt = (number: unknown): BigInt => {
   return number as BigInt;
 };
 
+const parseTokenised = (tokenised: unknown): BigInt[] => {
+  if (!isArray(tokenised)) {
+    throw new Error(`Incorrect data, not an array: ${tokenised}`);
+  }
+
+  tokenised.forEach(token => {
+    if (!isBigInt(token)) {
+      throw new Error(`Incorrect item at tokenised, not a bigint: ${token} at  ${tokenised}`);
+    }
+  })
+
+  return tokenised as BigInt[];
+};
+
 const parseArgsAddRemoveLoyaltyToken = (args: unknown): EthAddress => {
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');
@@ -105,15 +129,19 @@ const parseArgsAddRemoveLoyaltyToken = (args: unknown): EthAddress => {
   throw new Error(`Incorrect args format: ${args}`);
 }
 
-const parseArgsLoyaltyToken = (args: unknown): EthAddress => {
+const parseArgsLoyaltyGift = (args: unknown): {issuer: EthAddress, tokenised: BigInt[]} => {
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');
   }
 
   if (
-    'issuer' in args 
+    'issuer' in args && 
+    'tokenised' in args
     ) { 
-    return ( parseEthAddress(args.issuer) )
+    return ({
+      issuer: parseEthAddress(args.issuer), 
+      tokenised: parseTokenised(args.tokenised)
+    })
   }
   throw new Error(`Incorrect args format: ${args}`);
 }
@@ -239,23 +267,38 @@ export const parseTokenContractLogs = (logs: Log[]): LoyaltyToken[] => {
   }
 
   try { 
-    const parsedLogs = logs.map((log: unknown) => {
+
+    let parsedLogs: LoyaltyToken[] = [] 
+    
+    logs.forEach((log: unknown) => {
       if ( !log || typeof log !== 'object' ) {
         throw new Error('Incorrect or missing data at log');
       }
 
       if (
         'address' in log &&
-        'blockHash' in log
-        ) { return ( {tokenAddress: parseEthAddress(log.address)} )
+        'blockHash' in log && 
+        'args' in log
+        ) { 
+          const tokenIds = parseArgsLoyaltyGift(log.args).tokenised 
+          console.log("tokenIds @parseTokenContractLogs" , tokenIds)
+          for (let i = 0; i < tokenIds.length; i++) {
+            let token: LoyaltyToken = {
+              tokenAddress: parseEthAddress(log.address), 
+              issuer: parseArgsLoyaltyGift(log.args).issuer, 
+              tokenId: i
+            }
+            parsedLogs.push(token)
+            console.log("parsedLogs @parseTokenContractLogs" , parsedLogs)
+          }
         }
-        throw new Error('Incorrect data at LoyaltyProgram logs: some fields are missing or incorrect');
+        throw new Error('1 Incorrect data at Token (gift) Contract logs: some fields are missing or incorrect');
     })
 
-    return parsedLogs as Array<LoyaltyToken> 
+    return parsedLogs as LoyaltyToken[] 
 
   } catch {
-    throw new Error('Incorrect data at LoyaltyProgram logs. Parser caught error');
+    throw new Error('2 Incorrect data at Token (gift) Contract logs. Parser caught error');
   }
 
 };
@@ -411,6 +454,10 @@ export const parseAttributes = (attributes: unknown): Array<Attribute>  => {
 export const parseUri = (uri: unknown): string => {
   if (!isString(uri)) {
     throw new Error(`Incorrect uri, not a string: ${uri}`);
+  }
+  
+  if (!isValidUrl(uri)) {
+    throw new Error(`Incorrect uri, not a uri: ${uri}`);
   }
   // here can additional checks later. 
 

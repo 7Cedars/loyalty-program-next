@@ -12,64 +12,44 @@ Even though repository is public, For now, it is for personal use only.
 - Design of solidity frontend is on my Figma. 
 
 ## Todo   
-VENDOR APP 
-- [x]  Implement minting loyaltyTokens 
-  - [x]  Write to contract
-  - [x]  Listen for correct event. 
-  - [x]  Show loading circle when loading
-  - [x]  show green notification when successful
-  - [x]  red if error returned. 
+VENDOR APP - Implement REFACTORING! 
+- [x]  Home page
+  - [x]  Refactor selection programs 
+- [ ]  Gift & redeem page / QR reading page 
+  - [ ]  At sending new card: 
+    - [ ]  refactor where needed 
+  - [ ]  At Claim gift: 
+    - [ ]  implement claiming gift WITHOUT approval - using signed message instead.
+  - [ ]  At redeem token: 
+    - [ ]  implement redeeming WITHOUT approval - using signed message instead. 
 - [ ]  Selection token page: 
-  - [ ]  add minted number of tokens + remaining 
+  - [ ]  Refactor where needed
+  - [ ]  BUG: When tokens cannot be loaded it goes into a loop. Fix! 
+  - [ ]  add minted number of tokens + remaining - refactor. 
   - [ ]  Add address of token + address issuer in description.
-- [ ]  Redeem token page: 
-  - [ ]  implement redeeming WITHOUT approval - using signed message instead. 
-- [x]  Stats page: 
-  - [x]  Include at top view # tokens & # points 
+- [ ]  Stats page: 
+  - [ ]  Refactor where needed
 - [ ]  Develop QR reading page
-  - [x]  Image of QR reading should fit whole modal + QR reading frame should be super imposed over this. 
-  - [x]  Use QR create app on phone to create QR codes
-  - [ ]  Implement correct triggers: 
-    - [x]  When seeing address -> send new loyalty card. 
-      - [x]  show green notification when successful
-      - [x]  red if error returned.
-    - [x]  When seeing card ID + program address -> send points.
-      - [x]  show green notification when successful
-      - [x]  red if error returned. 
-    - [x]  When seeing token ID + token address + loyalty prgram address -> redeem token.
-      - [ ] show green notification when successful
-      - [ ] red if error returned.
-  
-CUSTOMER APP 
-- [x]   fix home 
+ 
+ 
+CUSTOMER APP - Implement REFACTORING! 
+- [ ]   at home page 
+  - [ ]   Refactor where needed
   - [ ]   choose card screen: add points 
-  - [x]   fix layout 
-  - [x]   add address card at overview / choice cards 
-  - [x]   Needs to properly update when changing address
-- [x]   Transfer LoyaltyCard
-  - [x]   At the moment does not work when scanning QrCode. FIX 
-  - [x]   Make sure a notification is shown at customer side when card is received + reload to show card. 
-- [x]   implement claim tokens
-  - [ ]   provide choice with classic NFT gifts: claim at home (costs $$ that will e refunded) or claim at till. 
-  - [ ]   Possibly later: implment recognisiton of gifts that do not work with NFT and can only be redeemed directly at till. 
-  - [x]   Call function via card - see viem abiEncode. 
-  - [x]   Wait for transaction to clear (with new function I found?)
-  - [x]   show green notification when successful
-  - [x]   red if error returned. 
-- [x]   implemen redeem token. 
-  - [x]   Call function via card - see viem abiEncode. 
-  - [x]   Wait for transaction to clear (with new function I found?) 
-  - [x]   Fix showing tokens to be redeemed (now when you redeem a NEW item appears..)
-  -       Show timer: "Qr code is valid for ... second" - after which approvalForAll is set to false. // has to be implemented in contract 
-  - [x]   show green notification when successful
-  - [x]   show additional green notification when vendor accepted redeem. - then return to main screen. 
-  - [x]   show red notification if error returned. 
-- [x]   Build hook useLatestCustomerTransaction 
-  - [x]   read received points
-  - [x]   read transferred points
-  - [x]   read claimed tokens 
-  - [x]   read redeemed tokens 
+- [ ]   at claim tokens -> Claim gifts
+  - [ ]   refactor where needed according to contracts
+  - [ ]   ... 
+- [ ]   at redeem token. (or: "Your Loyalty Card"?) - as it gives overview of points + tokens you have on your loyalty card?  
+  - [ ]   Refactor where needed
+  - [ ]   ... 
+  - [ ]   At points overview here as well. (copy from claim gifts)
+- [ ]   at Transactions 
+  - [ ]   read received points
+  - [ ]   read transferred points
+  - [ ]   read claimed tokens 
+  - [ ]   read redeemed tokens 
 - [ ]   Code clean up (small issue - can leave as is)
+  - [ ]   Check if naming and links in top and bottom navbar work correctly
   - [ ]   Add points of cards to redux store - no need to keep on readin chain.  
 
 GENERAL 
