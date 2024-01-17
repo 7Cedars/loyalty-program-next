@@ -41,15 +41,15 @@ export type Notification = {
 }
 
 export type Attribute = {  
-  trait_type: string; 
+  trait_type: string | number ;  
   value: string;
 }
 
 export type TokenMetadata = {
   name: string; 
-  description: string; 
-  imageUri: string;
-  attributes: Attribute[]
+  description?: string; 
+  imageUri?: string;
+  attributes?: Attribute[]
 }
 
 export type LoyaltyProgram = {

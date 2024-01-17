@@ -13,6 +13,8 @@ export default function SelectToken( {token, disabled, onClick}: SelectedTokenPr
   // console.log("data loyaltyTokens: ", token)
   let appearance = `h-64 w-44 m-2 grid grid-cols-1 border rounded-lg border-gray-200 ${ disabled ? 'opacity-50' : null} `
 
+  console.log("token @SelectToken: ", token)
+
   return (
      
       <button className={appearance} onClick={onClick}> 

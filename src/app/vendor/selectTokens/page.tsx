@@ -15,7 +15,7 @@ import {
   parseLoyaltyContractLogs, 
   parseUri, 
   parseMetadata, 
-  parseAvailableTokens 
+  parseBigInt
 } from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
 
@@ -26,8 +26,8 @@ type setSelectedTokenProps = {
 
 export default function Page() {
   const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
-  const [activeLoyaltyTokens, setActiveLoyaltyTokens]  = useState<LoyaltyToken[] >([]) 
-  const [inactiveLoyaltyTokens, setInactiveLoyaltyTokens] = useState<LoyaltyToken[] >([]) 
+  const [activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
+  const [inactiveLoyaltyGifts, setInactiveLoyaltyGifts] = useState<LoyaltyToken[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const { progAddress } = useUrlProgramAddress() 
   const {address} = useAccount() 
@@ -41,7 +41,7 @@ export default function Page() {
 
     const loggedAddresses: Log[] = await publicClient.getContractEvents({
       abi: loyaltyGiftAbi, 
-      eventName: 'DiscoverableLoyaltyToken', 
+      eventName: 'DiscoverableLoyaltyGift', 
       // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, 
       fromBlock: 1n,
       toBlock: 16330050n
@@ -94,12 +94,15 @@ export default function Page() {
     if (loyaltyTokens) { 
       for await (loyaltyToken of loyaltyTokens) {
         try {
+          if (loyaltyToken.uri) {
+            const fetchedMetadata: unknown = await(
+              await fetch(loyaltyToken.uri)
+              ).json()
 
-          const fetchedMetadata: unknown = await(
-            await fetch(parseUri(loyaltyToken.uri))
-            ).json()
+              console.log("fetchedMetadata @getLoyaltyTokensMetaData", fetchedMetadata) 
 
             loyaltyTokensUpdated.push({...loyaltyToken, metadata: parseMetadata(fetchedMetadata)})
+          }
         } catch (error) {
           console.log(error)
           loyaltyTokensUpdated.push({...loyaltyToken, metadata: "error"})
@@ -109,33 +112,33 @@ export default function Page() {
     } 
   }   
 
-  // const getAvailableTokens = async () => {
+  const getAvailableTokens = async () => {
 
-  //   console.log("getAvailableTokens called")
+    console.log("getAvailableTokens called")
 
-  //   let loyaltyToken: LoyaltyToken
-  //   let loyaltyTokensUpdated: LoyaltyToken[] = []
+    let loyaltyToken: LoyaltyToken
+    let loyaltyTokensUpdated: LoyaltyToken[] = []
 
-  //   if (loyaltyTokens) { 
-  //       for await (loyaltyToken of loyaltyTokens) {
-  //         try {
+    if (loyaltyTokens) { 
+        for await (loyaltyToken of loyaltyTokens) {
+          try {
 
-  //           const availableTokens: unknown = await publicClient.readContract({
-  //             address: loyaltyToken.tokenAddress, 
-  //             abi: loyaltyGiftAbi,
-  //             functionName: 'getAvailableTokens', 
-  //             args: [parseEthAddress(progAddress)]
-  //           })
+            const availableTokens: unknown = await publicClient.readContract({
+              address: loyaltyToken.tokenAddress, 
+              abi: loyaltyGiftAbi,
+              functionName: 'balanceOf', 
+              args: [parseEthAddress(progAddress), loyaltyToken.tokenId]
+            })
 
-  //         loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseAvailableTokens(availableTokens))})
-  //       } catch (error) {
-  //         console.log(error)
-  //         loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: "error"})
-  //       }
-  //       setLoyaltyTokens(loyaltyTokensUpdated)
-  //     } 
-  //   }
-  // }
+          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseBigInt(availableTokens))})
+        } catch (error) {
+          console.log(error)
+          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: "error"})
+        }
+        setLoyaltyTokens(loyaltyTokensUpdated)
+      } 
+    }
+  }
 
   useEffect(() => {
 
@@ -150,10 +153,10 @@ export default function Page() {
       ) { 
         getLoyaltyTokensMetaData() 
       } 
-    // if (
-    //   loyaltyTokens && 
-    //   loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens != undefined) === -1 
-    //   ) { getAvailableTokens() } 
+    if (
+      loyaltyTokens && 
+      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens != undefined) === -1 
+      ) { getAvailableTokens() } 
   }, [ , loyaltyTokens])
 
   // useEffect(() => {
@@ -162,39 +165,40 @@ export default function Page() {
   
   console.log("loyaltyTokens: ", loyaltyTokens)
 
-  // const getTokenSelection = async () => {
+  const getTokenSelection = async () => {
 
-  //   const addedTokens: Log[] = await publicClient.getContractEvents( { 
-  //     abi: loyaltyProgramAbi, 
-  //     address: parseEthAddress(progAddress), 
-  //     eventName: 'AddedLoyaltyTokenContract', 
-  //     fromBlock: 1n,
-  //     toBlock: 16330050n
-  //   }); 
-  //   const addedTokensEvents: EthAddress[] = parseLoyaltyContractLogs(addedTokens)
+    const addedGifts: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyProgramAbi, 
+      address: parseEthAddress(progAddress), 
+      eventName: 'AddedLoyaltyGift', 
+      fromBlock: 1n,
+      toBlock: 16330050n
+    }); 
+    // const addedGiftsEvents: EthAddress[] = parseLoyaltyContractLogs(addedGifts)
 
-  //   const removedTokens: Log[] = await publicClient.getContractEvents( { 
-  //     abi: loyaltyProgramAbi, 
-  //     address: parseEthAddress(progAddress), 
-  //     eventName: 'RemovedLoyaltyTokenClaimable', 
-  //     fromBlock: 1n,
-  //     toBlock: 16330050n
-  //   }); 
-  //   const removedTokensEvents: EthAddress[] = parseLoyaltyContractLogs(removedTokens)
+    const removedGifts: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyProgramAbi, 
+      address: parseEthAddress(progAddress), 
+      eventName: 'RemovedLoyaltyGiftClaimable', 
+      fromBlock: 1n,
+      toBlock: 16330050n
+    }); 
+    // const removedGiftsEvents: EthAddress[] = parseLoyaltyContractLogs(removedGifts)
 
-  //   console.log(
-  //     "addedTokensEvents: ", addedTokensEvents, 
-  //     "removedTokensEvents: ", removedTokensEvents
-  //   )
+    console.log(
+      "removedGifts: ", removedGifts, 
+      "addedGifts: ", addedGifts
+    )
+  }
 
   //   if (loyaltyTokens) {
 
   //     const countTokensAddedEvents = loyaltyTokens.map(loyaltyToken => 
-  //       addedTokensEvents.filter(eventAddress => eventAddress === loyaltyToken.tokenAddress).length
+  //       addedGiftsEvents.filter(eventAddress => eventAddress === loyaltyToken.tokenAddress).length
   //     )
   //     console.log("countTokensAddedEvents:" , countTokensAddedEvents)
   //     const countTokensRemovedEvents = loyaltyTokens.map(loyaltyToken => 
-  //       removedTokensEvents.filter(eventAddress => eventAddress === loyaltyToken.tokenAddress).length
+  //       removedGiftsEvents.filter(eventAddress => eventAddress === loyaltyToken.tokenAddress).length
   //     )
   //     console.log("countTokensRemovedEvents:" , countTokensRemovedEvents)
 
@@ -214,17 +218,21 @@ export default function Page() {
   //         }
   //       });
 
-  //       setActiveLoyaltyTokens(activeTokens)
-  //       setInactiveLoyaltyTokens(inactiveTokens)
+  //       setActiveLoyaltyGifts(activeTokens)
+  //       setInactiveLoyaltyGifts(inactiveTokens)
 
   //   }
   // } 
 
-  // useEffect(() => {
+  // console.log({
+  //   ActiveLoyaltyGifts: activeLoyaltyGifts, 
+  //   InactiveLoyaltyGifts: inactiveLoyaltyGifts
+  // })
 
-  //   getTokenSelection() 
+  useEffect(() => {
+    if ( loyaltyTokens && loyaltyTokens.length === 5 ) { getTokenSelection() }     
 
-  // }, [ , selectedToken, loyaltyTokens]) 
+  }, [selectedToken, loyaltyTokens]) 
 
 
 
@@ -260,11 +268,11 @@ export default function Page() {
             <TitleText title = "Selected Gifts" size={0} />
           </div>
 
-          { activeLoyaltyTokens ?
+          { activeLoyaltyGifts ?
           
-          activeLoyaltyTokens.map((token: LoyaltyToken) => 
+          activeLoyaltyGifts.map((token: LoyaltyToken) => 
               token.metadata ? 
-              <div key = {token.tokenAddress} >
+              <div key = {`${token.tokenAddress}:${token.tokenId}`} >
                 <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
               </div>
               : null 
@@ -281,10 +289,10 @@ export default function Page() {
             <TitleText title = "Available Gift Programs" size={0} />
           </div>
           
-          { inactiveLoyaltyTokens ? 
-            inactiveLoyaltyTokens.map((token: LoyaltyToken) => 
+          { inactiveLoyaltyGifts ? 
+            inactiveLoyaltyGifts.map((token: LoyaltyToken) => 
               token.metadata ? 
-              <div key = {token.tokenAddress} >
+              <div key = {`${token.tokenAddress}:${token.tokenId}`} >
                 <TokenSmall token = {token} disabled = {true}  onClick={() => setSelectedToken({token: token, disabled: true})} /> 
               </div>
               : null 

@@ -10,6 +10,7 @@ import {
   LoyaltyToken
 } from "@/types";
 import { Url } from "url";
+import { isBooleanObject } from "util/types";
 import { Hex, Log, getAddress } from "viem";
 
 const isString = (text: unknown): text is string => {
@@ -66,13 +67,14 @@ const parseTraitType = (description: unknown): string => {
 };
 
 
-const parseTraitValue = (traitValue: unknown): string => {
+const parseTraitValue = (traitValue: unknown): string | number => {
   if (!isString(traitValue) && !isNumber(traitValue)) {
-    throw new Error(`Incorrect trait value, not a string or number: ${traitValue}`);
+    throw new Error(`Incorrect trait value, not a string or number or boolean: ${traitValue}`);
   }
   // here can additional checks later. 
-
-  return traitValue as string;
+  if (isString(traitValue)) return traitValue as string;
+  return traitValue as number;
+  
 };
 
 const parseHash = (hash: unknown): string => {
@@ -116,15 +118,19 @@ const parseTokenised = (tokenised: unknown): BigInt[] => {
   return tokenised as BigInt[];
 };
 
-const parseArgsAddRemoveLoyaltyToken = (args: unknown): EthAddress => {
+const parseArgsAddRemoveLoyaltyToken = (args: unknown): {giftAddress: EthAddress, giftId: number}  => {
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');
   }
 
   if (
-    'loyaltyToken' in args 
+    'loyaltyToken' in args &&
+    'loyaltyTokenId' in args 
     ) { 
-    return ( parseEthAddress(args.loyaltyToken) )
+    return ({ 
+      giftAddress: parseEthAddress(args.loyaltyToken),
+      giftId: parseNumber(args.loyaltyTokenId)  
+    })
   }
   throw new Error(`Incorrect args format: ${args}`);
 }
@@ -301,7 +307,7 @@ export const parseTokenContractLogs = (logs: Log[]): LoyaltyToken[] => {
 };
 
 
-export const parseLoyaltyContractLogs = (logs: Log[]): EthAddress[] => {
+export const parseLoyaltyContractLogs = (logs: Log[]): {giftAddress: EthAddress[], giftId: number} => {
   if (!isArray(logs)) {
     throw new Error(`Incorrect logs, not an array: ${logs}`);
   }
@@ -318,7 +324,7 @@ export const parseLoyaltyContractLogs = (logs: Log[]): EthAddress[] => {
         throw new Error('Incorrect data at LoyaltyProgram logs: some fields are missing or incorrect');
     })
 
-    return parsedLogs as Array<EthAddress> 
+    return parsedLogs as Array<{giftAddress: EthAddress[], giftId: number}> 
 
   } catch {
     throw new Error('Incorrect data at LoyaltyProgram logs. Parser caught error');
@@ -418,7 +424,7 @@ export const parseTransferBatchLogs = (logs: Log[]): Transaction[] => {
 
 
 
-export const parseAttributes = (attributes: unknown): Array<Attribute>  => {
+export const parseAttributes = (attributes: unknown): Attribute[]  => {
   if (!isArray(attributes)) {
     throw new Error(`Incorrect attributes, not an array: ${attributes}`);
   }
@@ -440,7 +446,7 @@ export const parseAttributes = (attributes: unknown): Array<Attribute>  => {
         throw new Error('Incorrect data at prgram Metadata: some fields are missing or incorrect');
     })
 
-    return parsedAttributes as Array<Attribute> 
+    return parsedAttributes as Attribute[] 
 
   } catch {
     throw new Error('Incorrect data at program Metadata: Parser caught error');
@@ -461,19 +467,10 @@ export const parseUri = (uri: unknown): string => {
   return uri as string;
 };
 
-export const parseAvailableTokens = (availableTokens: unknown): BigInt[] => {
-  if (!isArray(availableTokens)) {
-    throw new Error(`Incorrect availableTokens, not an array: ${availableTokens}`);
-  }
-  if (availableTokens.find(token => !isBigInt(token))) {
-    throw new Error(`Incorrect availableTokens, not all values are BigInts: ${availableTokens}`);
-  }
-  const availableTokensChecked = availableTokens.map((token: unknown) => token as BigInt)
-
-  return availableTokensChecked as BigInt[]
-};
-
 export const parseMetadata = (metadata: unknown): TokenMetadata => {
+
+  console.log("metadata @parseMetadata: ", metadata)
+
   if ( !metadata || typeof metadata !== 'object' ) {
     throw new Error('Incorrect or missing data');
   }
@@ -481,17 +478,15 @@ export const parseMetadata = (metadata: unknown): TokenMetadata => {
   if ( 
     'title' in metadata && 
     'description' in metadata &&     
-    'attributes' in metadata && 
-    'image' in metadata 
+    'image' in metadata &&
+    'attributes' in metadata 
     ) { 
         return ({
           name: parseName(metadata.title),
           description: parseDescription(metadata.description),
-          attributes: parseAttributes(metadata.attributes),
           imageUri: parseUri(metadata.image),
+          attributes: parseAttributes(metadata.attributes)
         })
-
-        
        }
       
        throw new Error('Incorrect data at program Metadata: some fields are missing or incorrect');
