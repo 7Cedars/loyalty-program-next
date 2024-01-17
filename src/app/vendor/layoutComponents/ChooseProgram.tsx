@@ -18,7 +18,7 @@ export default function ChooseProgram()  {
   const { putProgAddressInUrl } = useUrlProgramAddress()
   const [ loyaltyPrograms, setLoyaltyPrograms ] = useState<LoyaltyProgram[]>() 
 
-  // console.log("loyaltyPrograms: ", loyaltyPrograms)
+  console.log("loyaltyPrograms: ", loyaltyPrograms)
 
   const getLoyaltyProgramAddresses = async () => {
     // console.log("getLoyaltyProgramAddresses called")
@@ -31,10 +31,12 @@ export default function ChooseProgram()  {
         toBlock: 16330050n
     });
 
+    console.log("loggedAdresses @choosePrograms: ", loggedAdresses)
+
     const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
     setLoyaltyPrograms(loyaltyProgramAddresses)
 
-    // console.log("loyaltyProgramAddresses: ", loyaltyProgramAddresses)
+    console.log("loyaltyProgramAddresses: ", loyaltyProgramAddresses)
   }
 
   const getLoyaltyProgramsUris = async () => {
@@ -55,9 +57,9 @@ export default function ChooseProgram()  {
             args: [0]
           })
 
-          // console.log("URI: ", uri)
+          console.log("URI @getLoyaltyProgramsUris: ", uri)
 
-          loyaltyProgramsUpdated.push({...loyaltyProgram, uri: parseUri(uri)})
+          loyaltyProgramsUpdated.push({...loyaltyProgram, uri: `${parseUri(uri)}`})
         }
 
         setLoyaltyPrograms(loyaltyProgramsUpdated)

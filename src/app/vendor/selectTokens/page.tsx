@@ -34,6 +34,8 @@ export default function Page() {
   // const {data, ethAddresses, isLoading, isError} = useLoyaltyTokens() 
   const publicClient = usePublicClient()
 
+  console.log("loyaltyTokens: ", loyaltyTokens)
+
   const getLoyaltyTokenAddresses = async () => {
     console.log("getLoyaltyTokenAddresses called")
 
@@ -69,14 +71,16 @@ export default function Page() {
             args: [loyaltyToken.tokenId]
           })
           console.log("URI @getLoyaltyProgramsUris: ", uri)
+          const genericUri = parseUri(uri); 
+          const specificUri = genericUri.replace("{id}", `000000000000000000000000000000000000000000000000000000000000000${loyaltyToken.tokenId}.json`)
 
-          loyaltyTokensUpdated.push({...loyaltyToken, uri: parseUri(uri)})
+          loyaltyTokensUpdated.push({...loyaltyToken, uri: specificUri})
         
         } catch (error) {
           console.log(error)
           loyaltyTokensUpdated.push({...loyaltyToken, uri: "error"})
         }
-      setLoyaltyTokens(loyaltyTokensUpdated)
+      setLoyaltyTokens(loyaltyTokensUpdated.flat())
       }
     }
   }
@@ -140,12 +144,12 @@ export default function Page() {
       loyaltyTokens && 
       loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.uri) === -1 
       ) { getLoyaltyTokensUris() } 
-    // if (
-    //   loyaltyTokens && 
-    //   loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.metadata) === -1 
-    //   ) { 
-    //     getLoyaltyTokensMetaData() 
-    //   } 
+    if (
+      loyaltyTokens && 
+      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.metadata) === -1 
+      ) { 
+        getLoyaltyTokensMetaData() 
+      } 
     // if (
     //   loyaltyTokens && 
     //   loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens != undefined) === -1 

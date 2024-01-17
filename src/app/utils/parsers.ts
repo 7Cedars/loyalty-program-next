@@ -49,7 +49,7 @@ const parseName = (name: unknown): string => {
 
 const parseDescription = (description: unknown): string => {
   if (!isString(description)) {
-    throw new Error(`Incorrect uri, not a string: ${description}`);
+    throw new Error(`Incorrect description, not a string: ${description}`);
   }
   // here can additional checks later. 
 
@@ -58,7 +58,7 @@ const parseDescription = (description: unknown): string => {
 
 const parseTraitType = (description: unknown): string => {
   if (!isString(description)) {
-    throw new Error(`Incorrect uri, not a string: ${description}`);
+    throw new Error(`Incorrect trait type, not a string: ${description}`);
   }
   // here can additional checks later. 
 
@@ -268,9 +268,7 @@ export const parseTokenContractLogs = (logs: Log[]): LoyaltyToken[] => {
 
   try { 
 
-    let parsedLogs: LoyaltyToken[] = [] 
-    
-    logs.forEach((log: unknown) => {
+    const parsedLogs = logs.map((log: unknown) => {
       if ( !log || typeof log !== 'object' ) {
         throw new Error('Incorrect or missing data at log');
       }
@@ -282,20 +280,19 @@ export const parseTokenContractLogs = (logs: Log[]): LoyaltyToken[] => {
         ) { 
           const tokenIds = parseArgsLoyaltyGift(log.args).tokenised 
           console.log("tokenIds @parseTokenContractLogs" , tokenIds)
-          for (let i = 0; i < tokenIds.length; i++) {
-            let token: LoyaltyToken = {
-              tokenAddress: parseEthAddress(log.address), 
-              issuer: parseArgsLoyaltyGift(log.args).issuer, 
-              tokenId: i
-            }
-            parsedLogs.push(token)
-            console.log("parsedLogs @parseTokenContractLogs" , parsedLogs)
-          }
+          const temp = tokenIds.map((tokenId, i) => ({
+            tokenAddress: parseEthAddress(log.address), 
+            issuer: parseArgsLoyaltyGift(log.args).issuer, 
+            tokenId: i, 
+            tokenised: tokenId
+          }))
+          return temp
         }
         throw new Error('1 Incorrect data at Token (gift) Contract logs: some fields are missing or incorrect');
     })
+    console.log("parsedLogs2 @parseTokenContractLogs" , parsedLogs)
 
-    return parsedLogs as LoyaltyToken[] 
+    return parsedLogs.flat() as LoyaltyToken[] 
 
   } catch {
     throw new Error('2 Incorrect data at Token (gift) Contract logs. Parser caught error');
@@ -482,13 +479,13 @@ export const parseMetadata = (metadata: unknown): TokenMetadata => {
   }
 
   if ( 
-    'name'  in metadata  &&
+    'title' in metadata && 
     'description' in metadata &&     
     'attributes' in metadata && 
     'image' in metadata 
-      ) { 
+    ) { 
         return ({
-          name: parseName(metadata.name),
+          name: parseName(metadata.title),
           description: parseDescription(metadata.description),
           attributes: parseAttributes(metadata.attributes),
           imageUri: parseUri(metadata.image),
