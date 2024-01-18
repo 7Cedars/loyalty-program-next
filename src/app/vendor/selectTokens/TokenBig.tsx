@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
 import { useContractWrite, useContractEvent, useWaitForTransaction } from "wagmi";
-import { loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
+import { loyaltyProgramAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
@@ -26,20 +26,20 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
 
-  const addLoyaltyToken = useContractWrite(
+  const addLoyaltyGift = useContractWrite(
     {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
-      functionName: "addLoyaltyTokenContract", 
-      args: [token.tokenAddress], 
+      functionName: "addLoyaltyGift", 
+      args: [token.tokenAddress, token.tokenId], 
       onError(error) {
         dispatch(notification({
-          id: "addLoyaltyTokenContract",
+          id: "addLoyaltyGift",
           message: `Something went wrong. Loyalty gift has not been added.`, 
           colour: "red",
           isVisible: true
         }))
-        console.log('addLoyaltyToken Error', error)
+        console.log('addLoyaltyGift Error', error)
       }, 
       onSuccess(data) {
         setHashTransaction(data.hash)
@@ -47,20 +47,20 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     }
   )
 
-  const removeLoyaltyTokenClaimable = useContractWrite(
+  const removeLoyaltyGiftClaimable = useContractWrite(
     {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
-      functionName: "removeLoyaltyTokenClaimable", 
-      args: [token.tokenAddress], 
+      functionName: "removeLoyaltyGiftClaimable", 
+      args: [token.tokenAddress, token.tokenId], 
       onError(error) {
         dispatch(notification({
-          id: "removeLoyaltyTokenClaimable",
+          id: "removeLoyaltyGiftClaimable",
           message: `Something went wrong. Loyalty gift has not been removed.`, 
           colour: "red",
           isVisible: true
         }))
-        console.log('removeLoyaltyToken Error', error)
+        console.log('removeLoyaltyGiftClaimable Error', error)
       }, 
       onSuccess(data) {
         setHashTransaction(data.hash)
@@ -125,22 +125,31 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
             />
         </div>
         
-        <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
+        <div className="grid grid-cols-1 pt-2 content-between w-4/5 h-full">
           <div> 
             <div className="text-center text-lg text-gray-900 text-bold px-1"> 
+              {token.metadata.name}
+            </div>
+            <div className="text-center text-md text-gray-500 pb-4"> 
               {token.metadata.description}
             </div>
-            <div className="text-center text-sm text-gray-500 pb-4"> 
-              {token.metadata.attributes[0].value}
-            </div>
-
-            <div className="text-center text-sm"> 
+            <div className="text-center text-md"> 
               {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
             </div> 
+            <div className="text-center text-md pb-4"> 
+              {`Additional requirements: ${token.metadata.attributes[2].value}`}
+            </div> 
           </div>
-          <div className="text-center text-lg"> 
-            {`${token.availableTokens} remaining tokens`}
-          </div>
+          {token.tokenised ? 
+            <div className="text-center text-lg"> 
+              {`${token.availableTokens} remaining vouchers.`}
+            </div>
+            :
+            <div className="text-center text-lg"> 
+              {`Unlimited supply, gift is redeemed immediately at the till.`}
+            </div>
+          }
+
         </div>
         </>
         : 
@@ -166,20 +175,23 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
         :
         isDisabled ? 
           <div className="p-3 flex "> 
-            <Button appearance = {"greenEmpty"} onClick={addLoyaltyToken.write} >
+            <Button appearance = {"greenEmpty"} onClick={addLoyaltyGift.write} >
                 Select Loyalty Gift
             </Button>
           </div> 
           : 
           <div className="grid grid-col-1 gap-0 w-full">
-            <div className="p-3 flex w-full"> 
-              <NumLine onClick = {(arg0) => mintLoyaltyTokens.write({
-                args: [token.tokenAddress, arg0]}
-                )} 
-                isLoading = {mintTransaction.isLoading} /> 
-            </div>
+            { token.tokenised ? 
+              <div className="p-3 flex w-full"> 
+                <NumLine onClick = {(arg0) => mintLoyaltyTokens.write({
+                  args: [token.tokenAddress, [token.tokenId], [arg0]]}
+                  )} 
+                  isLoading = {mintTransaction.isLoading} /> 
+              </div>
+              : null
+            }
             <div className="p-3 flex "> 
-              <Button appearance = {"redEmpty"} onClick={removeLoyaltyTokenClaimable.write} >
+              <Button appearance = {"redEmpty"} onClick={removeLoyaltyGiftClaimable.write} >
                 Remove Loyalty Gift
               </Button>
             </div>

@@ -70,11 +70,11 @@ export type LoyaltyCard = {
 export type LoyaltyToken = {
   tokenAddress: EthAddress; 
   issuer?: EthAddress; 
-  tokenId?: number | "error"; 
-  tokenised?: BigInt | "error";
-  uri?: string | "error";
-  metadata?: TokenMetadata | "error";
-  availableTokens?: Number| "error";  
+  tokenId?: number 
+  tokenised?: BigInt 
+  uri?: string ;
+  metadata?: TokenMetadata ;
+  availableTokens?: Number;  
 } 
 
 export type QrData = {

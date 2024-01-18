@@ -32,7 +32,7 @@ import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { resetLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import RequestCard from "./RequestCard";
 import SelectLoyaltyCard from "./SelectLoyaltyCard";
-import { loyaltyProgramAbi, loyaltyTokenAbi } from "@/context/abi";
+import { loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
 import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { getContractEventsProps } from "@/types"
@@ -234,7 +234,7 @@ export const ModalMain = ({
   
   }, [, progAddress, loyaltyProgram, showRequestCard])
 
-  // console.log("loyaltyProgram : ", loyaltyProgram)
+  console.log("loyaltyProgram data: ", loyaltyProgram)
 
   useEffect(() => {
     if (address != userLoggedIn) {

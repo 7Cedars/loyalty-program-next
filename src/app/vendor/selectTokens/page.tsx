@@ -78,7 +78,6 @@ export default function Page() {
         
         } catch (error) {
           console.log(error)
-          loyaltyTokensUpdated.push({...loyaltyToken, uri: "error"})
         }
       setLoyaltyTokens(loyaltyTokensUpdated.flat())
       }
@@ -105,7 +104,6 @@ export default function Page() {
           }
         } catch (error) {
           console.log(error)
-          loyaltyTokensUpdated.push({...loyaltyToken, metadata: "error"})
         }
       }
       setLoyaltyTokens(loyaltyTokensUpdated)
@@ -133,7 +131,6 @@ export default function Page() {
           loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseBigInt(availableTokens))})
         } catch (error) {
           console.log(error)
-          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: "error"})
         }
         setLoyaltyTokens(loyaltyTokensUpdated)
       } 
@@ -161,7 +158,7 @@ export default function Page() {
 
 
   const getTokenSelection = async () => {
-    
+
     const addedGifts: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
       address: parseEthAddress(progAddress), 
@@ -240,8 +237,8 @@ export default function Page() {
       
       <>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
-          <div className="col-span-2 sm:col-span-3 md:col-span-4"> 
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
+          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
             <TitleText title = "Selected Gifts" size={0} />
           </div>
 
@@ -255,15 +252,15 @@ export default function Page() {
               : null 
             )
           : 
-          <div className="col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-            <NoteText message=" Selected tokens will appear here."/>
+          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+            <NoteText message="Selected gifts will appear here."/>
           </div>
           }
         </div> 
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
-          <div className="col-span-2 sm:col-span-3 md:col-span-4"> 
-            <TitleText title = "Available Gift Programs" size={0} />
+        <div className="grid grid-cols-1  xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
+          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
+            <TitleText title = "Available Gifts" size={0} />
           </div>
           
           { inactiveLoyaltyGifts ? 
@@ -275,8 +272,8 @@ export default function Page() {
               : null 
             )
             : 
-            <div className="col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-              <NoteText message="Other available tokens will appear here."/>
+            <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+              <NoteText message="Other available gifts will appear here."/>
             </div>
           }
         </div>
