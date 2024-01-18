@@ -72,6 +72,7 @@ export default function Page() {
 
 
   const getTokenSelection = async () => {
+    let activeGifts: LoyaltyToken[]; 
 
     const addedGifts: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
@@ -91,22 +92,24 @@ export default function Page() {
     }); 
     const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
 
-    if (loyaltyTokens) {
-      let activeGifts: LoyaltyToken[] = [] 
-
-      loyaltyTokens.forEach((loyaltyToken, i) => { 
+    if (loyaltyTokens && removedGiftsEvents && addedGiftsEvents) {      
+      loyaltyTokens.forEach(loyaltyToken => { 
         
         const addedEvenCount = addedGiftsEvents.filter(
-          event => event.giftAddress == loyaltyToken.tokenAddress &&  event.giftId == loyaltyToken.tokenId
+          event => event.giftAddress == loyaltyToken.tokenAddress && event.giftId == loyaltyToken.tokenId
           ).length 
         const removedEvenCount = removedGiftsEvents.filter(
-          event => event.giftAddress == loyaltyToken.tokenAddress &&  event.giftId == loyaltyToken.tokenId
+          event => event.giftAddress == loyaltyToken.tokenAddress && event.giftId == loyaltyToken.tokenId
           ).length
-
+          
+        if (!activeGifts) activeGifts = []
         if (addedEvenCount > removedEvenCount) activeGifts.push(loyaltyToken) 
+        console.log("activeGifts: ", activeGifts)
+        setActiveLoyaltyGifts(activeGifts)
+        
       })
 
-      setActiveLoyaltyGifts(activeGifts)
+      
     }
   }
 
@@ -118,10 +121,15 @@ export default function Page() {
   }, [ ] ) 
 
   useEffect(() => {
-    if (!tokenIsLoading.current) getTokenSelection() 
-  }, [ tokenIsLoading.current, loyaltyTokens ]) 
+    if (tokenIsSuccess) getTokenSelection() 
+  }, [ tokenIsSuccess ]) 
 
-  // console.log("data loyaltyTokens: ", data, " isLoading at LoyaltyToken: ", isLoading )
+  // useEffect(() => {
+  //   if ( loyaltyTokens  ) { getTokenSelection() }     
+  // }, [selectedToken, loyaltyTokens]) 
+
+
+  console.log("tokenIsSuccess loyaltyTokens: ", tokenIsSuccess, " loyaltyTokens at LoyaltyToken: ", loyaltyTokens )
 
   return (
      <div className=" w-full grid grid-cols-1 gap-1">
