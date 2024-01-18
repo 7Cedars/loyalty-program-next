@@ -47,9 +47,9 @@ export type Attribute = {
 
 export type TokenMetadata = {
   name: string; 
-  description?: string; 
-  imageUri?: string;
-  attributes?: Attribute[]
+  description: string; 
+  imageUri: string;
+  attributes: Attribute[]
 }
 
 export type LoyaltyProgram = {

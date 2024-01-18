@@ -12,7 +12,7 @@ import { usePublicClient, useAccount } from 'wagmi'
 import { 
   parseTokenContractLogs, 
   parseEthAddress, 
-  parseLoyaltyContractLogs, 
+  parseLoyaltyGiftLogs, 
   parseUri, 
   parseMetadata, 
   parseBigInt
@@ -159,14 +159,9 @@ export default function Page() {
       ) { getAvailableTokens() } 
   }, [ , loyaltyTokens])
 
-  // useEffect(() => {
-  //   getAvailableTokens()
-  // }, [ ] ) 
-  
-  console.log("loyaltyTokens: ", loyaltyTokens)
 
   const getTokenSelection = async () => {
-
+    
     const addedGifts: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
       address: parseEthAddress(progAddress), 
@@ -174,7 +169,7 @@ export default function Page() {
       fromBlock: 1n,
       toBlock: 16330050n
     }); 
-    // const addedGiftsEvents: EthAddress[] = parseLoyaltyContractLogs(addedGifts)
+    const addedGiftsEvents = parseLoyaltyGiftLogs(addedGifts)
 
     const removedGifts: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
@@ -183,60 +178,42 @@ export default function Page() {
       fromBlock: 1n,
       toBlock: 16330050n
     }); 
-    // const removedGiftsEvents: EthAddress[] = parseLoyaltyContractLogs(removedGifts)
+    const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
 
-    console.log(
-      "removedGifts: ", removedGifts, 
-      "addedGifts: ", addedGifts
-    )
+    if (loyaltyTokens) {
+      let activeGifts: LoyaltyToken[] = [] 
+      let inactiveGifts: LoyaltyToken[] = [] 
+
+      loyaltyTokens.forEach((loyaltyToken, i) => { 
+        
+        const addedEvenCount = addedGiftsEvents.filter(
+          event => event.giftAddress == loyaltyToken.tokenAddress &&  event.giftId == loyaltyToken.tokenId
+          ).length 
+        const removedEvenCount = removedGiftsEvents.filter(
+          event => event.giftAddress == loyaltyToken.tokenAddress &&  event.giftId == loyaltyToken.tokenId
+          ).length
+
+        if (addedEvenCount > removedEvenCount) { 
+          activeGifts.push(loyaltyToken)
+        } else {
+          inactiveGifts.push(loyaltyToken)
+        }
+      })
+
+      setActiveLoyaltyGifts(activeGifts)
+      setInactiveLoyaltyGifts(inactiveGifts)
+    }
   }
 
-  //   if (loyaltyTokens) {
-
-  //     const countTokensAddedEvents = loyaltyTokens.map(loyaltyToken => 
-  //       addedGiftsEvents.filter(eventAddress => eventAddress === loyaltyToken.tokenAddress).length
-  //     )
-  //     console.log("countTokensAddedEvents:" , countTokensAddedEvents)
-  //     const countTokensRemovedEvents = loyaltyTokens.map(loyaltyToken => 
-  //       removedGiftsEvents.filter(eventAddress => eventAddress === loyaltyToken.tokenAddress).length
-  //     )
-  //     console.log("countTokensRemovedEvents:" , countTokensRemovedEvents)
-
-  //     let activeTokens: LoyaltyToken[] = [] 
-  //     let inactiveTokens: LoyaltyToken[] = [] 
-
-  //     loyaltyTokens.forEach((token, i) => { 
-        
-  //         const check = countTokensAddedEvents[i] - countTokensRemovedEvents[i]
-  //         const selectedLoyaltyToken = loyaltyTokens.find(token => token.tokenAddress === loyaltyTokens[i].tokenAddress )
-
-  //         if (check > 0 && selectedLoyaltyToken) { 
-  //           activeTokens.push(selectedLoyaltyToken)
-  //         } 
-  //         if (check <= 0 && selectedLoyaltyToken) { 
-  //           inactiveTokens.push(selectedLoyaltyToken)
-  //         }
-  //       });
-
-  //       setActiveLoyaltyGifts(activeTokens)
-  //       setInactiveLoyaltyGifts(inactiveTokens)
-
-  //   }
-  // } 
-
-  // console.log({
-  //   ActiveLoyaltyGifts: activeLoyaltyGifts, 
-  //   InactiveLoyaltyGifts: inactiveLoyaltyGifts
-  // })
+  console.log({
+    ActiveLoyaltyGifts: activeLoyaltyGifts, 
+    InactiveLoyaltyGifts: inactiveLoyaltyGifts
+  })
 
   useEffect(() => {
-    if ( loyaltyTokens && loyaltyTokens.length === 5 ) { getTokenSelection() }     
+    if ( loyaltyTokens  ) { getTokenSelection() }     
 
   }, [selectedToken, loyaltyTokens]) 
-
-
-
-  // console.log("data loyaltyTokens: ", data, " isLoading at LoyaltyToken: ", isLoading )
 
   return (
      <div className=" w-full grid grid-cols-1 gap-1">

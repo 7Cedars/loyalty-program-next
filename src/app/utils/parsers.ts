@@ -124,12 +124,12 @@ const parseArgsAddRemoveLoyaltyToken = (args: unknown): {giftAddress: EthAddress
   }
 
   if (
-    'loyaltyToken' in args &&
-    'loyaltyTokenId' in args 
+    'loyaltyGift' in args &&
+    'loyaltyGiftId' in args 
     ) { 
     return ({ 
-      giftAddress: parseEthAddress(args.loyaltyToken),
-      giftId: parseNumber(args.loyaltyTokenId)  
+      giftAddress: parseEthAddress(args.loyaltyGift),
+      giftId: Number(parseBigInt(args.loyaltyGiftId))  
     })
   }
   throw new Error(`Incorrect args format: ${args}`);
@@ -294,20 +294,19 @@ export const parseTokenContractLogs = (logs: Log[]): LoyaltyToken[] => {
           }))
           return temp
         }
-        throw new Error('1 Incorrect data at Token (gift) Contract logs: some fields are missing or incorrect');
+        throw new Error('Incorrect data at Token (gift) Contract logs: some fields are missing or incorrect');
     })
-    console.log("parsedLogs2 @parseTokenContractLogs" , parsedLogs)
 
     return parsedLogs.flat() as LoyaltyToken[] 
 
   } catch {
-    throw new Error('2 Incorrect data at Token (gift) Contract logs. Parser caught error');
+    throw new Error('Incorrect data at Token (gift) Contract logs. Parser caught error');
   }
 
 };
 
 
-export const parseLoyaltyContractLogs = (logs: Log[]): {giftAddress: EthAddress[], giftId: number} => {
+export const parseLoyaltyGiftLogs = (logs: Log[]): {giftAddress: EthAddress, giftId: number}[] => {
   if (!isArray(logs)) {
     throw new Error(`Incorrect logs, not an array: ${logs}`);
   }
@@ -319,15 +318,18 @@ export const parseLoyaltyContractLogs = (logs: Log[]): {giftAddress: EthAddress[
       }
 
       if ( 'args' in log ) {
-        return ( parseArgsAddRemoveLoyaltyToken(log.args) ) 
+        console.log("parseArgsAddRemoveLoyaltyToken(log.args): ",log.args)
+        return parseArgsAddRemoveLoyaltyToken(log.args)
       } 
-        throw new Error('Incorrect data at LoyaltyProgram logs: some fields are missing or incorrect');
+        throw new Error('Incorrect data at LoyaltyGift logs: some fields are missing or incorrect');
     })
 
-    return parsedLogs as Array<{giftAddress: EthAddress[], giftId: number}> 
+    console.log("parsedLogs: ", parsedLogs)
+
+    return parsedLogs as {giftAddress: EthAddress, giftId: number}[]
 
   } catch {
-    throw new Error('Incorrect data at LoyaltyProgram logs. Parser caught error');
+    throw new Error('Incorrect data at LoyaltyGift logs. Parser caught error');
   }
 };
 
