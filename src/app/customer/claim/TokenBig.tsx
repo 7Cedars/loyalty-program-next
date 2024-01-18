@@ -3,17 +3,19 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction, Context } from "wagmi";
-import { loyaltyProgramAbi, loyaltyTokenAbi, ERC6551AccountAbi } from "@/context/abi";
+import { useContractWrite, useContractEvent, useWaitForTransaction, Context, useAccount, useSignMessage, useContractRead } from "wagmi";
+import { loyaltyProgramAbi, loyaltyGiftAbi, ERC6551AccountAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { parseEthAddress } from "@/app/utils/parsers";
+import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { foundry } from "viem/chains";
 import { useEffect, useState, useRef } from "react";
 import { NumLine } from "@/app/ui/NumLine";
 import { useAppSelector } from "@/redux/hooks";
-import { encodeAbiParameters, encodePacked, Hex, encodeFunctionData } from "viem";
+import { encodeAbiParameters, encodePacked, Hex, encodeFunctionData, keccak256 } from "viem";
+import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
+
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -27,79 +29,87 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const [ selectedGift, setSelectedGift ] = useState<LoyaltyToken>() 
   const dispatch = useDispatch() 
+  const address = useAccount() 
+  const { signMessage, isSuccess, data: signMessageData, variables } = useSignMessage()
+  const [ signature, setSignature ] = useState<any>() 
 
   
   console.log("token.tokenAddress: ",  token.tokenAddress)
   console.log("selectedLoyaltyCard: ", selectedLoyaltyCard)
   // NB: look into waitForTransactionReceipt from viem (at actions). 
 
-  const encodedFunctionCall: Hex = encodeFunctionData({
-    abi: loyaltyProgramAbi, 
-    functionName: "redeemLoyaltyPoints", 
-    args: 
-    [
-      token.tokenAddress,  
-      token.metadata ? token.metadata.attributes[1].value : 0n, 
-      selectedLoyaltyCard ? BigInt(Number(selectedLoyaltyCard.cardId)) : 0n
-    ]
-})
 
-  console.log("encodedFunctionCall: ", encodedFunctionCall)
 
-  const claimLoyaltyToken = useContractWrite(
+  const nonceLoyaltyCard = useContractRead(
     {
-      address: parseEthAddress(selectedLoyaltyCard?.cardAddress),
-      abi: ERC6551AccountAbi,
-      functionName: "executeCall", 
-      args: [
-        parseEthAddress(progAddress), 
-        "0", // = 1 ETH
-        encodedFunctionCall
-      ],
-      onError(error, context) {
-        dispatch(notification({
-          id: "claimLoyaltyToken",
-          message: `Something went wrong. Loyalty gift was not claimed.`, 
-          colour: "red",
-          isVisible: true
-        })) 
-        console.log('claimLoyaltyToken Error', error, context)
-      }, 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+      abi: loyaltyProgramAbi,
+      functionName: "getNonceLoyaltyCard", 
+      args: [selectedLoyaltyCard?.cardAddress],
       onSuccess(data) {
-        console.log("DATA claimLoyaltyToken: ", data)
-        setHashTransaction(data.hash)
+        console.log("DATA getNonceLoyaltyCard: ", data)
       }, 
     }
   )
 
-  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
-    { 
-      confirmations: 1,
-      hash: hashTransaction 
-    })
+  const handleSelectGift = () => {
 
-  useEffect(() => { 
-    if (isSuccess) {
-      setIsDisabled(!isDisabled)
-      console.log("DATA claimLoyaltyToken: ", data)
+    if (address && token && token.tokenId && selectedLoyaltyCard && selectedLoyaltyCard.cardAddress) {
 
-      dispatch(notification({
-        id: "claimLoyaltyToken",
-        message: `Claiming token...`, 
-        colour: "yellow",
-        isVisible: true
-      }))
-    }
-    if (isError) {
-      dispatch(notification({
-        id: "claimLoyaltyToken",
-        message: `Something went wrong. Token not claimed.`, 
-        colour: "red",
-        isVisible: true
-      }))
-    }
-  }, [isSuccess, isError])
+      const messageHash: Hex = keccak256(encodePacked(
+          ['address', 'uint256', 'address', 'address', 'uint256', 'uint256', 'uint256'],
+          [
+            token.tokenAddress, 
+            BigInt(Number(token.tokenId)), 
+            selectedLoyaltyCard.cardAddress, 
+            parseEthAddress(address), 
+            BigInt(Number(token.metadata?.attributes[1].value)), 
+            1n,
+            BigInt(Number(nonceLoyaltyCard))
+          ]
+        ))
+        signMessage({message: messageHash}) 
+      }
+  } 
+
+  useEffect(() => {
+    if (isSuccess) setSignature(signMessageData)
+    if (!isSuccess) setSignature(undefined)
+  }, [, isSuccess])
+
+
+
+
+  // const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+  //   { 
+  //     confirmations: 1,
+  //     hash: hashTransaction 
+  //   })
+
+  // useEffect(() => { 
+  //   if (isSuccess) {
+  //     setIsDisabled(!isDisabled)
+  //     console.log("DATA claimLoyaltyToken: ", data)
+
+  //     dispatch(notification({
+  //       id: "claimLoyaltyToken",
+  //       message: `Claiming token...`, 
+  //       colour: "yellow",
+  //       isVisible: true
+  //     }))
+  //   }
+  //   if (isError) {
+  //     dispatch(notification({
+  //       id: "claimLoyaltyToken",
+  //       message: `Something went wrong. Token not claimed.`, 
+  //       colour: "red",
+  //       isVisible: true
+  //     }))
+  //   }
+  // }, [isSuccess, isError])
 
   return (
     <div className="grid grid-cols-1"> 
@@ -132,7 +142,7 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
             </div> 
           </div>
           <div className="text-center text-lg"> 
-            {`${token.availableTokens?.length} remaining tokens`}
+            {/* {`${token.availableTokens?.length} remaining tokens`} */}
           </div>
         </div>
         </>
@@ -141,7 +151,7 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
         }
       </div>
 
-      { isLoading ? 
+      {/* { isLoading ? 
           <div className="p-3 flex "> 
             <Button appearance = {"grayEmpty"} onClick={() => {}} >
               <div className="flex justify-center items-center">
@@ -170,13 +180,20 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
                 Not enough points to claim this gift
             </Button>
           </div> 
-        :
+        : */}
           <div className="p-3 flex "> 
-            <Button appearance = {"greenEmpty"} onClick={claimLoyaltyToken.write} >
-              Claim Loyalty Gift
+            <Button appearance = {"greenEmpty"} onClick={() => handleSelectGift()} >
+              Claim Gift
             </Button>
           </div> 
-        } 
+        {/* }  */}
       </div>      
   );
 }
+
+
+  // NEED TO REQUEST NONCE... 
+  // const encodedFunctionCall: Hex = encodeFunctionData({
+  //   abi: loyaltyProgramAbi, 
+  //   functionName: "getNonceLoyaltyCard"
+  // })
