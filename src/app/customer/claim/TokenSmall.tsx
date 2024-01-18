@@ -11,12 +11,12 @@ type SelectedTokenProps = {
 export default function SelectToken( {token, disabled, onClick}: SelectedTokenProps ) {
 
   // console.log("data loyaltyTokens: ", token)
-  let appearance = `h-64 w-44 m-2 grid grid-cols-1 border rounded-lg border-gray-200 ${ disabled ? 'opacity-50' : null} `
+  let appearance = `h-72 w-44 m-2 grid grid-cols-1 border rounded-lg border-gray-200 ${ disabled ? 'opacity-50' : null} `
 
   return (
      
       <button className={appearance} onClick={onClick}> 
-      {token.metadata ? 
+       {token.metadata ? 
         <>
           <Image
               className="rounded-t-lg"
@@ -32,9 +32,9 @@ export default function SelectToken( {token, disabled, onClick}: SelectedTokenPr
             <div className="text-center text-sm text-gray-500 mt-1"> 
               {`${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
             </div> 
-            { !disabled ? 
+            { token.tokenised ? 
               <div className="text-center text-sm text-gray-500"> 
-                {`${token.availableTokens?.length} gifts remaining`}
+                {`${Number(token.availableTokens)} vouchers remaining`}
               </div>
               :
               null
