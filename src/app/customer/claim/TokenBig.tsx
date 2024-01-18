@@ -15,6 +15,8 @@ import { NumLine } from "@/app/ui/NumLine";
 import { useAppSelector } from "@/redux/hooks";
 import { encodeAbiParameters, encodePacked, Hex, encodeFunctionData, keccak256 } from "viem";
 import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
+import QRCode from "react-qr-code";
+import { TitleText } from "@/app/ui/StandardisedFonts";
 
 
 type SelectedTokenProps = {
@@ -32,18 +34,18 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ selectedGift, setSelectedGift ] = useState<LoyaltyToken>() 
   const dispatch = useDispatch() 
-  const address = useAccount() 
-  const { signMessage, isSuccess, data: signMessageData, variables } = useSignMessage()
+  const {address} = useAccount() 
+  const { signMessage, isSuccess, data: signMessageData, variables, isError, error } = useSignMessage()
   const [ signature, setSignature ] = useState<any>() 
 
   
   console.log("token.tokenAddress: ",  token.tokenAddress)
   console.log("selectedLoyaltyCard: ", selectedLoyaltyCard)
+  console.log("signature: ", signature)
   // NB: look into waitForTransactionReceipt from viem (at actions). 
+  if (isError) console.log("ERROR: ", error )
 
-
-
-  const nonceLoyaltyCard = useContractRead(
+  const {data: nonceData} = useContractRead(
     {
       address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
@@ -56,31 +58,39 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   )
 
   const handleSelectGift = () => {
+    console.log("handleSelectGift called: ", {
+      address: address, 
+      token: token, 
+      selectedLoyaltyCard: selectedLoyaltyCard
+    })
 
-    if (address && token && token.tokenId && selectedLoyaltyCard && selectedLoyaltyCard.cardAddress) {
+    if (address && token && selectedLoyaltyCard) {
+      console.log("handleSelectGift: PASSED DATA CHECK. NONCE: ", nonceData)
 
       const messageHash: Hex = keccak256(encodePacked(
           ['address', 'uint256', 'address', 'address', 'uint256', 'uint256', 'uint256'],
           [
             token.tokenAddress, 
             BigInt(Number(token.tokenId)), 
-            selectedLoyaltyCard.cardAddress, 
+            parseEthAddress(selectedLoyaltyCard.cardAddress), 
             parseEthAddress(address), 
             BigInt(Number(token.metadata?.attributes[1].value)), 
             1n,
-            BigInt(Number(nonceLoyaltyCard))
+            BigInt(Number(nonceData))
           ]
         ))
+        console.log("messageHash: ", messageHash)
         signMessage({message: messageHash}) 
-      }
+        console.log("signMessageData: ", signMessageData)
+      } else {
+      console.log("handleSelectGift: DID NOT PASS DATA CHECK")
   } 
+  }
 
   useEffect(() => {
     if (isSuccess) setSignature(signMessageData)
     if (!isSuccess) setSignature(undefined)
-  }, [, isSuccess])
-
-
+  }, [, isSuccess, signMessageData])
 
 
   // const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
@@ -114,8 +124,8 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   return (
     <div className="grid grid-cols-1"> 
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center "> 
-      { token.metadata ? 
+      <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full justify-items-center "> 
+      { token.metadata && !signature ? 
         <>
         <div className="rounded-lg w-max"> 
          
@@ -131,10 +141,10 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
         <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
           <div> 
             <div className="text-center text-lg text-gray-900 text-bold px-1"> 
-              {token.metadata.description}
+              {token.metadata.name}
             </div>
             <div className="text-center text-sm text-gray-500 pb-4"> 
-              {token.metadata.attributes[0].value}
+              {token.metadata.description}
             </div>
 
             <div className="text-center text-sm"> 
@@ -147,46 +157,25 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
         </div>
         </>
         : 
+        token.metadata && signature ?
+          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
+            <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
+            <div> 
+              <QRCode 
+                value={`type:claimgift;lp:${selectedLoyaltyProgram?.programAddress};ga:${token.tokenAddress};li:${token.tokenId};lc:${selectedLoyaltyCard?.cardAddress};ca:${address};lp:${token.metadata.attributes[1].value};sg:${signature}`}
+                style={{ height: "400px", width: "100%", objectFit: "cover"  }}
+                />
+            </div>
+          </div>
+        : 
         null 
         }
       </div>
-
-      {/* { isLoading ? 
-          <div className="p-3 flex "> 
-            <Button appearance = {"grayEmpty"} onClick={() => {}} >
-              <div className="flex justify-center items-center">
-                <Image
-                  className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
-                  width={30}
-                  height={30}
-                  src={"/loading.svg"}
-                  alt="Loading icon"
-                />
-                Waiting for confirmation (this can take a few minutes...)
-              </div>
-            </Button>
-          </div> 
-        :
-        token.availableTokens?.length == 0 ? 
-          <div className="p-3 flex "> 
-            <Button appearance = {"grayEmpty"} isDisabled onClick={() => {}} >
-                No Loyalty Gifts available
-            </Button>
-          </div> 
-        :
-        token.metadata && loyaltyPoints && Number(token.metadata.attributes[1].value) > loyaltyPoints ? 
-          <div className="p-3 flex "> 
-            <Button appearance = {"grayEmpty"} isDisabled onClick={() => {}} >
-                Not enough points to claim this gift
-            </Button>
-          </div> 
-        : */}
-          <div className="p-3 flex "> 
-            <Button appearance = {"greenEmpty"} onClick={() => handleSelectGift()} >
-              Claim Gift
-            </Button>
-          </div> 
-        {/* }  */}
+        <div className="p-3 flex "> 
+          <Button appearance = {"greenEmpty"} onClick={() => handleSelectGift()} >
+            Claim Gift
+          </Button>
+        </div> 
       </div>      
   );
 }

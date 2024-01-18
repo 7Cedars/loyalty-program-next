@@ -516,6 +516,19 @@ export const parseQrData = (qrText: unknown): QrData => {
               } 
           }
 
+          if (data[0].includes("claimGift")) {
+            return {
+              type: "claimGift",  
+              loyaltyProgram: parseEthAddress(data[1].slice(3)), 
+              loyaltyToken: parseEthAddress(data[2].slice(3)), 
+              loyaltyTokenId: Number(data[3].slice(3)), 
+              loyaltyCardAddress: parseEthAddress(data[4].slice(3)), 
+              customerAddress: parseEthAddress(data[5].slice(3)), 
+              loyaltyPoints: Number(data[6].slice(3)), 
+              signature: parseSignature(data[7].slice(3))
+              }
+          } 
+
           if (data[0].includes("redeemToken")) {
             return {
               type: "redeemToken",  

@@ -34,7 +34,7 @@ export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   
-  const { tokenIsSuccess, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
+  const { tokenIsSuccess, loyaltyTokens, tokenIsLoading, fetchTokens } = useLoyaltyTokens()
   const [ activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
@@ -111,63 +111,6 @@ export default function Page() {
   }
 
   console.log("ActiveLoyaltyGifts: ", activeLoyaltyGifts)
-  // const getTokenSelection = async () => {
-
-  //   const addedTokens: Log[] = await publicClient.getContractEvents( { 
-  //     abi: loyaltyProgramAbi, 
-  //     address: parseEthAddress(progAddress), 
-  //     eventName: 'AddedLoyaltyTokenContract', 
-  //     fromBlock: 1n,
-  //     toBlock: 16330050n
-  //   }); 
-  //   const addedTokensEvents: EthAddress[] = parseLoyaltyContractLogs(addedTokens)
-
-  //   const removedTokens: Log[] = await publicClient.getContractEvents( { 
-  //     abi: loyaltyProgramAbi, 
-  //     address: parseEthAddress(progAddress), 
-  //     eventName: 'RemovedLoyaltyTokenClaimable', 
-  //     fromBlock: 1n,
-  //     toBlock: 16330050n
-  //   }); 
-  //   const removedTokensEvents: EthAddress[] = parseLoyaltyContractLogs(removedTokens)
-
-  //   console.log(
-  //     "addedTokensEvents: ", addedTokensEvents, 
-  //     "removedTokensEvents: ", removedTokensEvents
-  //   )
-
-  //   if (loyaltyTokens) {
-
-  //     const countTokensAddedEvents = loyaltyTokens.map(loyaltyToken => 
-  //       addedTokensEvents.filter(eventAddress => eventAddress === loyaltyToken.tokenAddress).length
-  //     )
-  //     console.log("countTokensAddedEvents:" , countTokensAddedEvents)
-  //     const countTokensRemovedEvents = loyaltyTokens.map(loyaltyToken => 
-  //       removedTokensEvents.filter(eventAddress => eventAddress === loyaltyToken.tokenAddress).length
-  //     )
-  //     console.log("countTokensRemovedEvents:" , countTokensRemovedEvents)
-
-  //     let activeTokens: LoyaltyToken[] = [] 
-  //     let inactiveTokens: LoyaltyToken[] = [] 
-
-  //     loyaltyTokens.forEach((token, i) => { 
-        
-  //         const check = countTokensAddedEvents[i] - countTokensRemovedEvents[i]
-  //         const selectedLoyaltyToken = loyaltyTokens.find(token => token.tokenAddress === loyaltyTokens[i].tokenAddress )
-
-  //         if (check > 0 && selectedLoyaltyToken) { 
-  //           activeTokens.push(selectedLoyaltyToken)
-  //         } 
-  //         if (check <= 0 && selectedLoyaltyToken) { 
-  //           inactiveTokens.push(selectedLoyaltyToken)
-  //         }
-  //       });
-
-  //       setActiveLoyaltyTokens(activeTokens)
-  //       setInactiveLoyaltyTokens(inactiveTokens)
-
-  //   }
-  // } 
 
   useEffect(() => {
     fetchTokens()
@@ -175,8 +118,8 @@ export default function Page() {
   }, [ ] ) 
 
   useEffect(() => {
-    getTokenSelection() 
-  }, [ selectedToken, loyaltyTokens]) 
+    if (!tokenIsLoading.current) getTokenSelection() 
+  }, [ tokenIsLoading.current, loyaltyTokens ]) 
 
   // console.log("data loyaltyTokens: ", data, " isLoading at LoyaltyToken: ", isLoading )
 
@@ -194,9 +137,9 @@ export default function Page() {
       </div>
 
       { selectedToken ? 
-      <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
+      <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-1">
         <button 
-          className="text-black font-bold p-3"
+          className="text-black font-bold p-2"
           type="submit"
           onClick={() => setSelectedToken(undefined)} // should be true / false
           >

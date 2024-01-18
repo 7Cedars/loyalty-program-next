@@ -154,7 +154,7 @@ export default function Page() {
           onClick={() => {
             setSelectedToken(undefined) 
             setHashTransaction(undefined)}
-          } 
+          }  
           >
           <ArrowLeftIcon
             className="h-7 w-7"

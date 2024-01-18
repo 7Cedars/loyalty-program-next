@@ -1,7 +1,7 @@
 // Custom hook loading all available Loyalty token included in a whitelist.. 
 
 import { LoyaltyToken } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { loyaltyGiftAbi } from "@/context/abi";
 import { Log } from "viem"
 import { usePublicClient } from 'wagmi'
@@ -17,14 +17,14 @@ import { useAppSelector } from "@/redux/hooks";
 
 export const useLoyaltyTokens = () => {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const [tokenIsLoading, setTokenIsLoading] = useState<boolean>(true)
+  const tokenIsLoading = useRef<boolean>(true)
   const [tokenIsError, setTokenIsError] = useState<boolean>(false)
   const [tokenIsSuccess, setTokenIsSuccess] = useState<boolean>(false)
   const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
   const publicClient = usePublicClient()
 
   const fetchTokens = () => {
-    setTokenIsLoading(true); 
+    tokenIsLoading.current = true; 
     setTokenIsError(false)
     setTokenIsSuccess(false)
     setLoyaltyTokens(undefined)
@@ -201,7 +201,7 @@ export const useLoyaltyTokens = () => {
   //         console.log(error)
   //         setTokenIsSuccess(false)
   //         setTokenIsError(true)
-  //         setTokenIsLoading(false)
+  //         tokenIsLoading.current = false
   //     }
   //   }
   // }
@@ -263,9 +263,9 @@ export const useLoyaltyTokens = () => {
       ) { 
         setTokenIsSuccess(true)
         setTokenIsError(false)
-        setTokenIsLoading(false)
+        tokenIsLoading.current = false
       }
-  }, [ , loyaltyTokens, tokenIsLoading])
+  }, [ loyaltyTokens, tokenIsLoading])
 
   return {tokenIsLoading, tokenIsError, tokenIsSuccess, loyaltyTokens, fetchTokens}
 }

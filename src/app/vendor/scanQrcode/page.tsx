@@ -12,6 +12,7 @@ import { parseQrData } from '@/app/utils/parsers';
 import RedeemToken from './RedeemToken';
 import SendPoints from './SendPoints';
 import TransferCard from './TransferCard';
+import ClaimGift from './ClaimGift';
 
 export default function Page() {
   const [data, setData] = useState<QrData>(); 
@@ -68,6 +69,8 @@ export default function Page() {
   </div>
   : 
   data.type === "giftPoints" ? <SendPoints qrData = {data} setData = {setData}/> 
+  : 
+  data.type === "claimGift" ? <ClaimGift qrData = {data} setData = {setData}/> 
   : 
   data.type === "redeemToken" ? <RedeemToken qrData = {data} setData = {setData}/> 
   :

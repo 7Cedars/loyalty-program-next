@@ -78,12 +78,13 @@ export type LoyaltyToken = {
 } 
 
 export type QrData = {
-  type: "giftPoints" | "redeemToken" | "requestCard"; 
+  type: "giftPoints" | "redeemToken" | "requestCard" | "claimGift"; 
   loyaltyProgram: EthAddress; 
   loyaltyCardAddress?: EthAddress; 
   loyaltyToken?: EthAddress; 
   loyaltyTokenId?: number; 
   customerAddress?: EthAddress;
+  loyaltyPoints?: number; 
   signature?: Hex; 
 } 
 

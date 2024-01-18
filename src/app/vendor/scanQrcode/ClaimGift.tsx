@@ -25,7 +25,7 @@ type SendPointsProps = {
   setData: Dispatch<SetStateAction<QrData | undefined>>; 
 }
 
-export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
+export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const dimensions = useScreenDimensions();
   const { progAddress } =  useUrlProgramAddress();
   const [ token, setToken ] = useState<LoyaltyToken>()
@@ -164,7 +164,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   return (
     <div className="grid grid-cols-1 h-full justify-items-center content-between p-3"> 
 
-      <TitleText title = "Redeem gift" subtitle="On redeem give loyalty gift to customer." size = {2} />
+      <TitleText title = "Claim gift" subtitle="....." size = {2} />
 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
 
