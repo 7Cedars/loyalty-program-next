@@ -33,14 +33,15 @@ export const useLoyaltyTokens = () => {
   const [data, setData] = useState<LoyaltyToken[] | undefined>() 
   const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
 
-  console.log("statusAt useLoyaltyTokens: ", {
-    statusAtTokenAddress: statusAtTokenAddress.current,
-    statusAtUri: statusAtUri.current, 
-    statusAtMetadata: statusAtMetadata.current,
-    statusAtAvailableTokens: statusAtAvailableTokens.current
-  })
-  console.log("status useLoyaltyTokens: ", status)
-  console.log("data: ", data)
+  // CONSOLE LOGGING // 
+  // console.log("statusAt useLoyaltyTokens: ", {
+  //   statusAtTokenAddress: statusAtTokenAddress.current,
+  //   statusAtUri: statusAtUri.current, 
+  //   statusAtMetadata: statusAtMetadata.current,
+  //   statusAtAvailableTokens: statusAtAvailableTokens.current
+  // })
+  // console.log("status useLoyaltyTokens: ", status)
+  // console.log("data: ", data)
   
   const fetchTokens = () => {
     setStatus("isLoading")

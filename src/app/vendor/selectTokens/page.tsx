@@ -18,6 +18,7 @@ import {
   parseBigInt
 } from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
+import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -25,137 +26,14 @@ type setSelectedTokenProps = {
 }
 
 export default function Page() {
-  const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
+  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
   const [inactiveLoyaltyGifts, setInactiveLoyaltyGifts] = useState<LoyaltyToken[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const { progAddress } = useUrlProgramAddress() 
-  const {address} = useAccount() 
-  // const {data, ethAddresses, isLoading, isError} = useLoyaltyTokens() 
   const publicClient = usePublicClient()
 
-  console.log("loyaltyTokens: ", loyaltyTokens)
-
-  const getLoyaltyTokenAddresses = async () => {
-    console.log("getLoyaltyTokenAddresses called")
-
-    const loggedAddresses: Log[] = await publicClient.getContractEvents({
-      abi: loyaltyGiftAbi, 
-      eventName: 'DiscoverableLoyaltyGift', 
-      // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, 
-      fromBlock: 1n,
-      toBlock: 16330050n
-    });
-    console.log("loggedAddresses logs @getLoyaltyTokenAddresses: ", loggedAddresses)
-
-    const loyaltyTokenAddresses = parseTokenContractLogs(loggedAddresses)
-    setLoyaltyTokens(loyaltyTokenAddresses)
-
-    console.log("loyaltyTokenAddresses @getLoyaltyTokenAddresses: ", loyaltyTokenAddresses)
-  }
-
-  const getLoyaltyTokensUris = async () => {
-    console.log("getLoyaltyProgramsUris called")
-
-    let loyaltyToken: LoyaltyToken
-    let loyaltyTokensUpdated: LoyaltyToken[] = []
-
-    if (loyaltyTokens) { 
-
-      for await (loyaltyToken of loyaltyTokens) {
-        try {
-          const uri: unknown = await publicClient.readContract({ 
-            address: loyaltyToken.tokenAddress, 
-            abi: loyaltyGiftAbi,
-            functionName: 'uri',
-            args: [loyaltyToken.tokenId]
-          })
-          console.log("URI @getLoyaltyProgramsUris: ", uri)
-          const genericUri = parseUri(uri); 
-          const specificUri = genericUri.replace("{id}", `000000000000000000000000000000000000000000000000000000000000000${loyaltyToken.tokenId}.json`)
-
-          loyaltyTokensUpdated.push({...loyaltyToken, uri: specificUri})
-        
-        } catch (error) {
-          console.log(error)
-        }
-      setLoyaltyTokens(loyaltyTokensUpdated.flat())
-      }
-    }
-  }
-
-  const getLoyaltyTokensMetaData = async () => {
-    console.log("getLoyaltyProgramsMetaData called")
-
-    let loyaltyToken: LoyaltyToken
-    let loyaltyTokensUpdated: LoyaltyToken[] = []
-
-    if (loyaltyTokens) { 
-      for await (loyaltyToken of loyaltyTokens) {
-        try {
-          if (loyaltyToken.uri) {
-            const fetchedMetadata: unknown = await(
-              await fetch(loyaltyToken.uri)
-              ).json()
-
-              console.log("fetchedMetadata @getLoyaltyTokensMetaData", fetchedMetadata) 
-
-            loyaltyTokensUpdated.push({...loyaltyToken, metadata: parseMetadata(fetchedMetadata)})
-          }
-        } catch (error) {
-          console.log(error)
-        }
-      }
-      setLoyaltyTokens(loyaltyTokensUpdated)
-    } 
-  }   
-
-  const getAvailableTokens = async () => {
-
-    console.log("getAvailableTokens called")
-
-    let loyaltyToken: LoyaltyToken
-    let loyaltyTokensUpdated: LoyaltyToken[] = []
-
-    if (loyaltyTokens) { 
-        for await (loyaltyToken of loyaltyTokens) {
-          try {
-
-            const availableTokens: unknown = await publicClient.readContract({
-              address: loyaltyToken.tokenAddress, 
-              abi: loyaltyGiftAbi,
-              functionName: 'balanceOf', 
-              args: [parseEthAddress(progAddress), loyaltyToken.tokenId]
-            })
-
-          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseBigInt(availableTokens))})
-        } catch (error) {
-          console.log(error)
-        }
-        setLoyaltyTokens(loyaltyTokensUpdated)
-      } 
-    }
-  }
-
-  useEffect(() => {
-
-    if (!loyaltyTokens) { getLoyaltyTokenAddresses() } // check when address has no deployed programs what happens..  
-    if (
-      loyaltyTokens && 
-      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.uri) === -1 
-      ) { getLoyaltyTokensUris() } 
-    if (
-      loyaltyTokens && 
-      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.metadata) === -1 
-      ) { 
-        getLoyaltyTokensMetaData() 
-      } 
-    if (
-      loyaltyTokens && 
-      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens != undefined) === -1 
-      ) { getAvailableTokens() } 
-  }, [ , loyaltyTokens])
-
+  console.log("loyaltyTokens @selectTokens: ", loyaltyTokens)
 
   const getTokenSelection = async () => {
 
