@@ -44,8 +44,9 @@ export const useLoyaltyTokens = () => {
   // console.log("data: ", data)
   
   const fetchTokens = () => {
-    setStatus("isLoading")
+    setStatus("isIdle")
     setData(undefined)
+    setLoyaltyTokens(undefined)
     getLoyaltyTokenAddresses()
   }
 

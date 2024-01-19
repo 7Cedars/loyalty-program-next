@@ -155,14 +155,21 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
             {/* {`${token.availableTokens?.length} remaining tokens`} */}
           </div>
         </div>
+        
+        <div className="p-3 flex "> 
+          <Button appearance = {"greenEmpty"} onClick={() => handleSelectGift()} >
+            Claim Gift
+          </Button>
+        </div> 
+          
         </>
         : 
         token.metadata && signature ?
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
-            <div> 
+            <div className="m-3"> 
               <QRCode 
-                value={`type:claimgift;lp:${selectedLoyaltyProgram?.programAddress};ga:${token.tokenAddress};li:${token.tokenId};lc:${selectedLoyaltyCard?.cardAddress};ca:${address};lp:${token.metadata.attributes[1].value};sg:${signature}`}
+                value={`type:claimgift;ga:${token.tokenAddress};li:${token.tokenId};lc:${selectedLoyaltyCard?.cardAddress};ca:${address};lp:${token.metadata.attributes[1].value};sg:${signature}`}
                 style={{ height: "400px", width: "100%", objectFit: "cover"  }}
                 />
             </div>
@@ -170,13 +177,8 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
         : 
         null 
         }
-      </div>
-        <div className="p-3 flex "> 
-          <Button appearance = {"greenEmpty"} onClick={() => handleSelectGift()} >
-            Claim Gift
-          </Button>
-        </div> 
-      </div>      
+        </div>
+    </div>
   );
 }
 

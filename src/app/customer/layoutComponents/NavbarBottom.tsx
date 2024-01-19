@@ -6,7 +6,8 @@ import {
   GiftIcon, 
   SquaresPlusIcon,
   QrCodeIcon,
-  ChartBarSquareIcon
+  ChartBarSquareIcon, 
+  CreditCardIcon
  } from '@heroicons/react/24/outline'
 import { useScreenDimensions } from '../../hooks/useScreenDimensions';
 import { useAccount } from 'wagmi';
@@ -39,20 +40,20 @@ const NavbarBottom = ( ) => {
         </Link>
         <Link href={progAddress ? `/customer/claim?prog=${progAddress}` : '/customer/home' } className={layoutLinks}> 
           <div className={layoutIconBox}> 
-            <SquaresPlusIcon
+            <GiftIcon
               className={layoutIcons}
               aria-hidden="true"
             />
             Claim
           </div> 
         </Link>
-        <Link href={progAddress ? `/customer/redeem?prog=${progAddress}` : '/customer/home' }  className={layoutLinks}> 
+        <Link href={progAddress ? `/customer/card?prog=${progAddress}` : '/customer/home' }  className={layoutLinks}> 
           <div className={layoutIconBox}> 
-            <GiftIcon
+            <CreditCardIcon
               className={layoutIcons}
               aria-hidden="true"
             />
-            Redeem 
+            Card 
           </div> 
         </Link>
         <Link href={progAddress ? `/customer/transactions?prog=${progAddress}` : '/customer/home'} className={layoutLinks}> 

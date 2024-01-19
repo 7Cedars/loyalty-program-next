@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { useContractWrite, useSignMessage, useWaitForTransaction } from "wagmi";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { ERC6551AccountAbi,  loyaltyTokenAbi } from "@/context/abi";
+import { ERC6551AccountAbi,  loyaltyGiftAbi } from "@/context/abi";
 import { Hex, Log, encodeFunctionData, encodePacked, keccak256 } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { parseEthAddress, parseTransferSingleLogs } from "@/app/utils/parsers";
@@ -24,7 +24,7 @@ type setSelectedTokenProps = {
 
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  const { tokenIsSuccess, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
+  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [ claimedTokens, setClaimedTokens ] = useState<LoyaltyToken[] | undefined>() 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const [ signature, setSignature ] = useState<any>() 
@@ -43,13 +43,13 @@ export default function Page() {
     let loyaltyToken: LoyaltyToken
     let claimedTokensTemp: LoyaltyToken[] = []
 
-    if (tokenIsSuccess && loyaltyTokens) { 
+    if (status == "isSuccess" && loyaltyTokens) { 
       try {
         for await (loyaltyToken of loyaltyTokens) {
 
             const claimedTokensLogs: Log[] = await publicClient.getContractEvents({
               address: loyaltyToken.tokenAddress, 
-              abi: loyaltyTokenAbi,
+              abi: loyaltyGiftAbi,
               eventName: 'TransferSingle', 
               fromBlock: 1n,
               toBlock: 16330050n
@@ -85,7 +85,6 @@ export default function Page() {
           console.log(error)
       }
     }
-    
   }
 
   useEffect(() => {
@@ -135,7 +134,7 @@ export default function Page() {
      <div className=" w-full h-full grid grid-cols-1 gap-1 content-start overflow-auto">
 
       <div className="h-20 m-3"> 
-       <TitleText title = "Select Loyalty Gift to Redeem" subtitle="View and select gifts to redeem at store." size={2} />
+       <TitleText title = "Your Card" subtitle="View points and redeem vouchers on your card." size={2} />
       </div>
       {/* {
       isLoading? 

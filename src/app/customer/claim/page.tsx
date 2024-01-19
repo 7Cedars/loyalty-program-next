@@ -64,12 +64,13 @@ export default function Page() {
         functionName: 'getBalanceLoyaltyCard', 
         args: [ selectedLoyaltyCard?.cardAddress ]
       });
+
+      console.log("loyaltyCardPointsData: ", loyaltyCardPointsData)
       
       const loyaltyCardPoints = parseBigInt(loyaltyCardPointsData)
       setLoyaltyPoints(Number(loyaltyCardPoints))
     }
   }
-
 
   const getTokenSelection = async () => {
     let activeGifts: LoyaltyToken[]; 
@@ -108,12 +109,8 @@ export default function Page() {
         setActiveLoyaltyGifts(activeGifts)
         
       })
-
-      
     }
   }
-
-  console.log("ActiveLoyaltyGifts: ", activeLoyaltyGifts)
 
   useEffect(() => {
     fetchTokens()
@@ -124,16 +121,11 @@ export default function Page() {
     if (status == "isSuccess") getTokenSelection() 
   }, [ status ]) 
 
-  // useEffect(() => {
-  //   if ( loyaltyTokens  ) { getTokenSelection() }     
-  // }, [selectedToken, loyaltyTokens]) 
-
-
   return (
      <div className=" w-full grid grid-cols-1 gap-1">
 
       <div className="h-20 m-1"> 
-       <TitleText title = "Claim Loyalty Gifts" subtitle="View and redeem loyalty points for gifts." size={2} />
+       <TitleText title = "Claim Gifts" subtitle="Claim gifts with your loyalty points." size={2} />
       </div>
 
       <div className="flex justify-center"> 
