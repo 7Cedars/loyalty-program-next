@@ -169,7 +169,7 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
             <div className="m-3"> 
               <QRCode 
-                value={`type:claimgift;ga:${token.tokenAddress};li:${token.tokenId};lc:${selectedLoyaltyCard?.cardAddress};ca:${address};lp:${token.metadata.attributes[1].value};sg:${signature}`}
+                value={`type:claimGift;ta:${token.tokenAddress};ti:${token.tokenId};lc:${selectedLoyaltyCard?.cardAddress};ca:${address};lp:${token.metadata.attributes[1].value};sg:${signature}`}
                 style={{ height: "400px", width: "100%", objectFit: "cover"  }}
                 />
             </div>

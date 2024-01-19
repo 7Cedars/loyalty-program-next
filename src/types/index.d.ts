@@ -79,7 +79,7 @@ export type LoyaltyToken = {
 
 export type QrData = {
   type: "giftPoints" | "redeemToken" | "requestCard" | "claimGift"; 
-  loyaltyProgram: EthAddress; 
+  loyaltyProgram?: EthAddress; 
   loyaltyCardAddress?: EthAddress; 
   loyaltyToken?: EthAddress; 
   loyaltyTokenId?: number; 

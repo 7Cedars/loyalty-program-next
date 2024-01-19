@@ -3,7 +3,7 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount } from "wagmi";
+import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount, useContractRead } from "wagmi";
 import { ERC6551AccountAbi, loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress, parseMetadata, parseUri } from "@/app/utils/parsers";
@@ -42,7 +42,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   console.log("token @redeem token: ", token)
   console.log("callData @redeem token: ", callData)
   console.log("selectedLoyaltyCard @redeem token: ", selectedLoyaltyCard) 
-
+  
   const getLoyaltyTokenUris = async () => {
     console.log("getLoyaltyProgramsUris called")
 
@@ -50,11 +50,14 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
       address: parseEthAddress(qrData?.loyaltyToken), 
       abi: loyaltyGiftAbi,
       functionName: 'uri',
-      args: [0]
+      args: [qrData?.loyaltyTokenId]
     })
 
+    console.log("uri @ClaimGift: ", uri)
+    const uriToken = parseUri(uri).concat(`.json`) 
+
     if (qrData?.loyaltyToken) {
-      setToken({tokenAddress: qrData.loyaltyToken, uri: parseUri(uri), tokenId: qrData.loyaltyTokenId})
+      setToken({tokenAddress: qrData.loyaltyToken, uri: uriToken, tokenId: qrData.loyaltyTokenId})
     }
   }
 
@@ -112,18 +115,18 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     ]
     )
 
-  const redeemLoyaltyToken = useContractWrite( 
+  const claimLoyaltyGift = useContractWrite( 
     {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
-      functionName: "redeemLoyaltyTokenUsingSignedMessage", 
+      functionName: "claimLoyaltyGift", 
       args: [
         qrData?.loyaltyToken, 
-        address,
         qrData?.loyaltyTokenId, 
-        qrData?.loyaltyCardAddress
-        // 1n
-        // toBytes(qrData?.signature)
+        qrData?.loyaltyCardAddress,
+        address,
+        qrData?.loyaltyPoints,
+        toBytes(qrData?.signature)
       ], 
       onError(error) {
         console.log('redeemLoyaltyToken Error', error)
@@ -238,8 +241,8 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
         </div> 
         :
         <div className="flex w-full p-2"> 
-          <Button appearance = {"greenEmpty"} onClick={redeemLoyaltyToken.write} >
-              Redeem gift
+          <Button appearance = {"greenEmpty"} onClick={claimLoyaltyGift.write} >
+              Claim gift
           </Button>
         </div> 
         } 
