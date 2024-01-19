@@ -34,7 +34,7 @@ export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   
-  const { tokenIsSuccess, loyaltyTokens, tokenIsLoading, fetchTokens } = useLoyaltyTokens()
+  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [ activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
@@ -121,15 +121,13 @@ export default function Page() {
   }, [ ] ) 
 
   useEffect(() => {
-    if (tokenIsSuccess) getTokenSelection() 
-  }, [ tokenIsSuccess ]) 
+    if (status == "isSuccess") getTokenSelection() 
+  }, [ status ]) 
 
   // useEffect(() => {
   //   if ( loyaltyTokens  ) { getTokenSelection() }     
   // }, [selectedToken, loyaltyTokens]) 
 
-
-  console.log("tokenIsSuccess loyaltyTokens: ", tokenIsSuccess, " loyaltyTokens at LoyaltyToken: ", loyaltyTokens )
 
   return (
      <div className=" w-full grid grid-cols-1 gap-1">

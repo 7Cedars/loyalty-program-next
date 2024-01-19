@@ -1,4 +1,6 @@
 // Custom hook loading all available Loyalty token included in a whitelist.. 
+// Note that the structure of this hook is a good standard way of creating hooks with
+// multiple (sequenced) async calls. 
 
 import { LoyaltyToken } from "@/types";
 import { useEffect, useRef, useState } from "react";
@@ -16,24 +18,38 @@ import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants"; // this s
 import { useAppSelector } from "@/redux/hooks";
 import { useUrlProgramAddress } from "./useUrl";
 
+type Status = "isIdle" | "isLoading" | "isError" | "isSuccess" 
+
 export const useLoyaltyTokens = () => {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const tokenIsLoading = useRef<boolean>(true)
   const { progAddress } = useUrlProgramAddress() 
-  const [tokenIsError, setTokenIsError] = useState<boolean>(false)
-  const [tokenIsSuccess, setTokenIsSuccess] = useState<boolean>(false)
-  const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
   const publicClient = usePublicClient()
 
+  const [ status, setStatus ] = useState<Status>("isIdle")
+  const statusAtTokenAddress = useRef<Status>("isIdle") 
+  const statusAtUri = useRef<Status>("isIdle") 
+  const statusAtMetadata = useRef<Status>("isIdle") 
+  const statusAtAvailableTokens = useRef<Status>("isIdle") 
+  const [data, setData] = useState<LoyaltyToken[] | undefined>() 
+  const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
+
+  console.log("statusAt useLoyaltyTokens: ", {
+    statusAtTokenAddress: statusAtTokenAddress.current,
+    statusAtUri: statusAtUri.current, 
+    statusAtMetadata: statusAtMetadata.current,
+    statusAtAvailableTokens: statusAtAvailableTokens.current
+  })
+  console.log("status useLoyaltyTokens: ", status)
+  console.log("data: ", data)
+  
   const fetchTokens = () => {
-    tokenIsLoading.current = true; 
-    setTokenIsError(false)
-    setTokenIsSuccess(false)
-    setLoyaltyTokens(undefined)
+    setStatus("isLoading")
+    setData(undefined)
     getLoyaltyTokenAddresses()
   }
+
   const getLoyaltyTokenAddresses = async () => {
-    console.log("getLoyaltyTokenAddresses called")
+    statusAtTokenAddress.current = "isLoading"
 
     const loggedAddresses: Log[] = await publicClient.getContractEvents({
       abi: loyaltyGiftAbi, 
@@ -42,136 +58,122 @@ export const useLoyaltyTokens = () => {
       fromBlock: 1n,
       toBlock: 16330050n
     });
-    console.log("loggedAddresses logs @getLoyaltyTokenAddresses: ", loggedAddresses)
-
+    
     const loyaltyTokenAddresses = parseTokenContractLogs(loggedAddresses)
-    setLoyaltyTokens(loyaltyTokenAddresses)
-
-    console.log("loyaltyTokenAddresses @getLoyaltyTokenAddresses: ", loyaltyTokenAddresses)
+    if (loyaltyTokenAddresses) statusAtTokenAddress.current = "isSuccess"
+    setData(loyaltyTokenAddresses)
   }
 
   const getLoyaltyTokensUris = async () => {
-    console.log("getLoyaltyProgramsUris called")
+    let item: LoyaltyToken
+    let loyaltyTokensUris: LoyaltyToken[] = []
 
-    let loyaltyToken: LoyaltyToken
-    let loyaltyTokensUpdated: LoyaltyToken[] = []
+    if (data) { 
 
-    if (loyaltyTokens) { 
-
-      for await (loyaltyToken of loyaltyTokens) {
+      for await (item of data) {
         try {
           const uri: unknown = await publicClient.readContract({ 
-            address: loyaltyToken.tokenAddress, 
+            address: item.tokenAddress, 
             abi: loyaltyGiftAbi,
             functionName: 'uri',
-            args: [loyaltyToken.tokenId]
+            args: [item.tokenId]
           })
-          console.log("URI @getLoyaltyProgramsUris: ", uri)
           const genericUri = parseUri(uri); 
-          const specificUri = genericUri.replace("{id}", `000000000000000000000000000000000000000000000000000000000000000${loyaltyToken.tokenId}.json`)
+          const specificUri = genericUri.replace("{id}", `000000000000000000000000000000000000000000000000000000000000000${item.tokenId}.json`)
 
-          loyaltyTokensUpdated.push({...loyaltyToken, uri: specificUri})
+          loyaltyTokensUris.push({...item, uri: specificUri})
         
         } catch (error) {
           console.log(error)
         }
-      setLoyaltyTokens(loyaltyTokensUpdated.flat())
       }
+      setData(loyaltyTokensUris)
+      if (loyaltyTokensUris) statusAtUri.current = "isSuccess"
     }
   }
 
   const getLoyaltyTokensMetaData = async () => {
-    console.log("getLoyaltyProgramsMetaData called")
+    let item: LoyaltyToken
+    let loyaltyTokensMetadata: LoyaltyToken[] = []
 
-    let loyaltyToken: LoyaltyToken
-    let loyaltyTokensUpdated: LoyaltyToken[] = []
-
-    if (loyaltyTokens) { 
-      for await (loyaltyToken of loyaltyTokens) {
+    if (data) { 
+      for await (item of data) {
         try {
-          if (loyaltyToken.uri) {
+          if (item.uri) {
             const fetchedMetadata: unknown = await(
-              await fetch(loyaltyToken.uri)
+              await fetch(item.uri)
               ).json()
-
-              console.log("fetchedMetadata @getLoyaltyTokensMetaData", fetchedMetadata) 
-
-            loyaltyTokensUpdated.push({...loyaltyToken, metadata: parseMetadata(fetchedMetadata)})
+              loyaltyTokensMetadata.push({...item, metadata: parseMetadata(fetchedMetadata)})
           }
         } catch (error) {
           console.log(error)
         }
       }
-      setLoyaltyTokens(loyaltyTokensUpdated)
+      setData(loyaltyTokensMetadata)
+      if (loyaltyTokensMetadata.length == data.length) statusAtMetadata.current = "isSuccess"
     } 
   }   
 
   const getAvailableTokens = async () => {
+    let item: LoyaltyToken
+    let loyaltyTokensAvailableTokens: LoyaltyToken[] = []
 
-    console.log("getAvailableTokens called")
-
-    let loyaltyToken: LoyaltyToken
-    let loyaltyTokensUpdated: LoyaltyToken[] = []
-
-    if (loyaltyTokens && selectedLoyaltyProgram && selectedLoyaltyProgram.programAddress) { 
-        for await (loyaltyToken of loyaltyTokens) {
+    if (data && selectedLoyaltyProgram && selectedLoyaltyProgram.programAddress) { 
+        for await (item of data) {
           try {
 
             const availableTokens: unknown = await publicClient.readContract({
-              address: loyaltyToken.tokenAddress, 
+              address: item.tokenAddress, 
               abi: loyaltyGiftAbi,
               functionName: 'balanceOf', 
-              args: [parseEthAddress(progAddress), loyaltyToken.tokenId]
+              args: [parseEthAddress(progAddress), item.tokenId]
             })
 
-            console.log("availableTokens RAW: ", availableTokens)
-
-          loyaltyTokensUpdated.push({...loyaltyToken, availableTokens: Number(parseBigInt(availableTokens))})
+            loyaltyTokensAvailableTokens.push({...item, availableTokens: Number(parseBigInt(availableTokens))})
         } catch (error) {
           console.log(error)
         }
-        setLoyaltyTokens(loyaltyTokensUpdated)
       } 
+      setData(loyaltyTokensAvailableTokens)
+      if (loyaltyTokensAvailableTokens.length == data.length) statusAtAvailableTokens.current = "isSuccess"
     }
   }
 
-  if (!loyaltyTokens) { getLoyaltyTokenAddresses() }
-
-  if (loyaltyTokens)
-  console.log({
-    test:  loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.uri) !== -1,
-    test2: loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.metadata) !== -1,
-    test3: loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens) !== -1 
-})
+  if (!data) { getLoyaltyTokenAddresses() }
+  useEffect(() => {
+    if ( data && statusAtTokenAddress.current == "isSuccess" && statusAtUri.current == "isIdle" ) { 
+      statusAtUri.current = "isLoading"
+      getLoyaltyTokensUris() 
+    } 
+    if ( data && statusAtUri.current == "isSuccess" && statusAtMetadata.current == "isIdle" ) { 
+      statusAtMetadata.current = "isLoading"
+      getLoyaltyTokensMetaData() 
+    }
+    if ( data && statusAtMetadata.current == "isSuccess" && statusAtAvailableTokens.current == "isIdle") { 
+      statusAtAvailableTokens.current = "isLoading"
+      getAvailableTokens() 
+    } 
+  }, [ data  ])
 
   useEffect(() => {
-    // check when address has no deployed programs what happens..  
     if (
-      loyaltyTokens && 
-      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.uri) === -1 
-      ) { getLoyaltyTokensUris() } 
-    if (
-      loyaltyTokens && 
-      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.uri) !== -1  &&  
-      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.metadata) === -1 
-      ) { 
-        getLoyaltyTokensMetaData() 
+      statusAtTokenAddress.current == "isSuccess" && 
+      statusAtUri.current == "isSuccess" && 
+      statusAtMetadata.current == "isSuccess" && 
+      statusAtAvailableTokens.current == "isSuccess" 
+      ) {
+        setStatus("isSuccess")
+        setLoyaltyTokens(data)
       }
     if (
-      loyaltyTokens && 
-      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens) !== -1 
-      ) { getAvailableTokens() } 
-    if (
-      loyaltyTokens &&
-      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.uri) !== -1  && 
-      loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.metadata) !== -1 
-      // loyaltyTokens.findIndex(loyaltyToken => loyaltyToken.availableTokens) !== -1 
-      ) { 
-        setTokenIsSuccess(true)
-        setTokenIsError(false)
-        tokenIsLoading.current = false
+      statusAtTokenAddress.current == "isLoading" ||
+      statusAtUri.current == "isLoading" || 
+      statusAtMetadata.current == "isLoading" || 
+      statusAtAvailableTokens.current == "isLoading" 
+      ) {
+        setStatus("isLoading")
       }
-  }, [ loyaltyTokens, tokenIsLoading])
+  }, [ data ])
 
-  return {tokenIsLoading, tokenIsError, tokenIsSuccess, loyaltyTokens, fetchTokens}
+  return {status, loyaltyTokens, fetchTokens}
 }
