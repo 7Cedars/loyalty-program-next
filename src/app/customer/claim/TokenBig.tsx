@@ -35,7 +35,7 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   const [ selectedGift, setSelectedGift ] = useState<LoyaltyToken>() 
   const dispatch = useDispatch() 
   const {address} = useAccount() 
-  const { signMessage, isSuccess, data: signMessageData, variables, isError, error } = useSignMessage()
+  const { signMessage, isSuccess, status, data: signMessageData, variables, isError, error } = useSignMessage()
   const [ signature, setSignature ] = useState<any>() 
 
   
@@ -67,15 +67,14 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
     if (address && token && selectedLoyaltyCard) {
       console.log("handleSelectGift: PASSED DATA CHECK. NONCE: ", nonceData)
 
-      const messageHash: Hex = keccak256(encodePacked(
-          ['address', 'uint256', 'address', 'address', 'uint256', 'uint256', 'uint256'],
+      const messageHash = keccak256(encodePacked(
+          ['address', 'uint256', 'address', 'address', 'uint256', 'uint256'],
           [
             token.tokenAddress, 
             BigInt(Number(token.tokenId)), 
             parseEthAddress(selectedLoyaltyCard.cardAddress), 
             parseEthAddress(address), 
             BigInt(Number(token.metadata?.attributes[1].value)), 
-            1n,
             BigInt(Number(nonceData))
           ]
         ))
@@ -88,7 +87,7 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   }
 
   useEffect(() => {
-    if (isSuccess) setSignature(signMessageData)
+    if (status == "success") setSignature(signMessageData)
     if (!isSuccess) setSignature(undefined)
   }, [, isSuccess, signMessageData])
 
@@ -140,18 +139,19 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
         
         <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
           <div> 
-            <div className="text-center text-lg text-gray-900 text-bold px-1"> 
-              {token.metadata.name}
-            </div>
-            <div className="text-center text-sm text-gray-500 pb-4"> 
-              {token.metadata.description}
-            </div>
+          <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
 
             <div className="text-center text-sm"> 
               {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
             </div> 
           </div>
           <div className="text-center text-lg"> 
+            <div className="text-center text-lg"> 
+              {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
+            </div>
+            <div className="text-center text-lg"> 
+               {`Remaining gifts: TBI`}
+            </div>
             {/* {`${token.availableTokens?.length} remaining tokens`} */}
           </div>
         </div>

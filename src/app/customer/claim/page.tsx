@@ -105,7 +105,6 @@ export default function Page() {
           
         if (!activeGifts) activeGifts = []
         if (addedEvenCount > removedEvenCount) activeGifts.push(loyaltyToken) 
-        console.log("activeGifts: ", activeGifts)
         setActiveLoyaltyGifts(activeGifts)
         
       })

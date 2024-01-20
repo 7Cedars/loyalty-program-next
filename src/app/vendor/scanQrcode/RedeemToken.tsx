@@ -53,7 +53,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
       args: [0]
     })
 
-    if (qrData?.loyaltyToken) {
+    if (qrData?.loyaltyToken && qrData?.loyaltyTokenId) {
       setToken({tokenAddress: qrData.loyaltyToken, uri: parseUri(uri), tokenId: qrData.loyaltyTokenId})
     }
   }

@@ -10,8 +10,8 @@ type NoteTextProps = {
 }
 
 const appearanceTitle = [
-  "text-sm py-1",
-  "text-lg py-1",
+  "text-sm py-0",
+  "text-lg py-0",
   "text-2xl py-1"
 ]
 
@@ -34,11 +34,11 @@ export const TitleText = ({
 }: TitleTextProps) => {
 
   return (
-    <div className="grid grid-cols-1 gap-1">
+    <div className="grid grid-cols-1 pb-2">
       <div className={`text-center font-bold ${appearanceTitle[size]}`}>
         {title}
       </div>
-      <div className={`text-center text-gray-800 ${appearanceSubtitle[size]}`}>
+      <div className={`text-center text-gray-500 ${appearanceSubtitle[size]}`}>
         {subtitle}
       </div>
     </div>

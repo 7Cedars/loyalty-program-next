@@ -3,19 +3,16 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount, useContractRead } from "wagmi";
+import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount, useContractRead, useContractReads } from "wagmi";
 import { ERC6551AccountAbi, loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress, parseMetadata, parseUri } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
-import { foundry } from "viem/chains";
 import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
-import { NumLine } from "@/app/ui/NumLine";
 import { QrData } from "@/types";
-import { usePublicClient } from "wagmi";
 import { TitleText } from "@/app/ui/StandardisedFonts";
-import { Hex, encodeFunctionData, toBytes } from "viem";
+import { Hex, encodeFunctionData, toBytes, toHex } from "viem";
 import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
@@ -27,93 +24,39 @@ type SendPointsProps = {
 
 export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const dimensions = useScreenDimensions();
+  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
+  const [token, setToken] = useState<LoyaltyToken>()
   const { progAddress } =  useUrlProgramAddress();
-  const [ token, setToken ] = useState<LoyaltyToken>()
-  const [ callData, setCallData] = useState<Hex>()
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { address } = useAccount()
-  // const { tokenIsSuccess, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
-
   const dispatch = useDispatch() 
-  const publicClient = usePublicClient()
 
-  console.log("QRDATA @redeem token: ", qrData)
-  console.log("token @redeem token: ", token)
-  console.log("callData @redeem token: ", callData)
+  console.log("QRDATA @claim gift: ", qrData)
+  console.log("loyaltyTokens @claim gift: ", loyaltyTokens)
   console.log("selectedLoyaltyCard @redeem token: ", selectedLoyaltyCard) 
-  
-  const getLoyaltyTokenUris = async () => {
-    console.log("getLoyaltyProgramsUris called")
 
-    const uri: unknown = await publicClient.readContract({
-      address: parseEthAddress(qrData?.loyaltyToken), 
-      abi: loyaltyGiftAbi,
-      functionName: 'uri',
-      args: [qrData?.loyaltyTokenId]
-    })
-
-    console.log("uri @ClaimGift: ", uri)
-    const uriToken = parseUri(uri).concat(`.json`) 
-
-    if (qrData?.loyaltyToken) {
-      setToken({tokenAddress: qrData.loyaltyToken, uri: uriToken, tokenId: qrData.loyaltyTokenId})
-    }
-  }
-
-  const getLoyaltyTokenMetaData = async () => {
-    console.log("getLoyaltyProgramsMetaData called")
-
-    if (token) { 
-          const fetchedMetadata: unknown = await(
-            await fetch(parseUri(token.uri))
-            ).json()
-
-            setToken({...token, metadata: parseMetadata(fetchedMetadata)})
-    }
-  }   
-
-  const getEncodedFunctionCall = () => {
-    console.log("getEncodedFunctionCall called")
-
-    if (qrData) { 
-      const encodedFunctionCall: Hex = encodeFunctionData({
-        abi: loyaltyProgramAbi, 
-        functionName: "redeemLoyaltyToken", 
-        args: 
-        [
-          qrData.loyaltyToken, 
-          qrData.loyaltyTokenId, 
-          qrData.loyaltyCardAddress
-        ],
-      })
-      setCallData(encodedFunctionCall)
-    }
-  }   
-
-  useEffect(() => {
-    if (!token && qrData) {
-      getLoyaltyTokenUris()
-    }
-    if (token && qrData && !token.metadata) {
-      getLoyaltyTokenMetaData()
-    }
-    if (token && qrData && token.metadata) {
-      getEncodedFunctionCall()
-    }
-
-  },[qrData, token])
-
-  console.log("simulated entry data into redeemLoyaltyToken: ", 
+  console.log("simulated entry data into claimLoyaltyGift: ", 
     [
       qrData?.loyaltyToken, 
-      address, 
       qrData?.loyaltyTokenId, 
-      qrData?.loyaltyCardAddress, 
-      1n, 
-      toBytes(qrData?.signature)
+      qrData?.loyaltyCardAddress,
+      qrData?.customerAddress,
+      qrData?.loyaltyPoints,
+      qrData?.signature
     ]
-    )
+  )
+
+  useEffect(() => {
+    if (loyaltyTokens && loyaltyTokens.length > 1 && qrData && qrData.loyaltyToken && qrData.loyaltyTokenId) {
+            
+          fetchTokens({
+            tokenAddress: parseEthAddress(qrData?.loyaltyToken), 
+            tokenId: qrData?.loyaltyTokenId
+          })
+    }
+    if (loyaltyTokens) setToken(loyaltyTokens[0])
+  }, [, loyaltyTokens, qrData])
 
   const claimLoyaltyGift = useContractWrite( 
     {
@@ -124,12 +67,12 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
         qrData?.loyaltyToken, 
         qrData?.loyaltyTokenId, 
         qrData?.loyaltyCardAddress,
-        address,
-        qrData?.loyaltyPoints,
-        toBytes(qrData?.signature)
+        qrData?.customerAddress,
+        qrData?.loyaltyPoints, 
+        qrData?.signature
       ], 
       onError(error) {
-        console.log('redeemLoyaltyToken Error', error)
+        console.log('claimLoyaltyGift Error', error)
       }, 
       onSuccess(data) {
         setHashTransaction(data.hash)
@@ -202,22 +145,20 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
           
           <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
             <div> 
-              <div className="text-center text-lg"> 
-                {`Token ID: ${token.tokenId}`}
-              </div>
-              <div className="text-center text-lg text-gray-900 text-bold px-1"> 
-                {token.metadata.description}
-              </div>
-              <div className="text-center text-sm text-gray-500 pb-4"> 
-                {token.metadata.attributes[0].value}
+              <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
+              <div className="text-center text-md text-gray-900 pb-2"> 
+                {`Cost: ${token.metadata.attributes[1].value}`}
               </div>
             </div>
             <div className="grid grid-cols-1 pt-4">
               <div className="text-center text-lg"> 
-                {`Minted gifts: `}
+                {`Gift #${qrData?.loyaltyTokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
               </div>
               <div className="text-center text-lg"> 
-                {`Remaining gifts: `}
+                {`Minted gifts: TBI`}
+              </div>
+              <div className="text-center text-lg"> 
+                {`Remaining gifts: TBI`}
               </div>
             </div>
           </div>

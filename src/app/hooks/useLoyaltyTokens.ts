@@ -2,7 +2,7 @@
 // Note that the structure of this hook is a good standard way of creating hooks with
 // multiple (sequenced) async calls. 
 
-import { LoyaltyToken } from "@/types";
+import { EthAddress, LoyaltyToken } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { loyaltyGiftAbi } from "@/context/abi";
 import { Log } from "viem"
@@ -34,36 +34,54 @@ export const useLoyaltyTokens = () => {
   const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
 
   // CONSOLE LOGGING // 
-  // console.log("statusAt useLoyaltyTokens: ", {
-  //   statusAtTokenAddress: statusAtTokenAddress.current,
-  //   statusAtUri: statusAtUri.current, 
-  //   statusAtMetadata: statusAtMetadata.current,
-  //   statusAtAvailableTokens: statusAtAvailableTokens.current
-  // })
-  // console.log("status useLoyaltyTokens: ", status)
-  // console.log("data: ", data)
+  console.log("statusAt useLoyaltyTokens: ", {
+    statusAtTokenAddress: statusAtTokenAddress.current,
+    statusAtUri: statusAtUri.current, 
+    statusAtMetadata: statusAtMetadata.current,
+    statusAtAvailableTokens: statusAtAvailableTokens.current
+  })
+  console.log("status useLoyaltyTokens: ", status)
+  console.log("data: ", data)
   
-  const fetchTokens = () => {
+  const fetchTokens = (token?: LoyaltyToken ) => {
     setStatus("isIdle")
     setData(undefined)
     setLoyaltyTokens(undefined)
-    getLoyaltyTokenAddresses()
+    getLoyaltyTokenAddresses(token ? token : undefined)
   }
 
-  const getLoyaltyTokenAddresses = async () => {
+  const getLoyaltyTokenAddresses = async (token?: LoyaltyToken ) => {
+    console.log("getLoyaltyTokenAddresses called with token: ", token) 
     statusAtTokenAddress.current = "isLoading"
 
-    const loggedAddresses: Log[] = await publicClient.getContractEvents({
-      abi: loyaltyGiftAbi, 
-      eventName: 'DiscoverableLoyaltyGift', 
-      // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, 
-      fromBlock: 1n,
-      toBlock: 16330050n
-    });
-    
-    const loyaltyTokenAddresses = parseTokenContractLogs(loggedAddresses)
-    if (loyaltyTokenAddresses) statusAtTokenAddress.current = "isSuccess"
-    setData(loyaltyTokenAddresses)
+    if (!token) {
+      const loggedAddresses: Log[] = await publicClient.getContractEvents({
+        abi: loyaltyGiftAbi, 
+        eventName: 'DiscoverableLoyaltyGift', 
+        // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, 
+        fromBlock: 1n,
+        toBlock: 16330050n
+      });
+      
+      const loyaltyTokens = parseTokenContractLogs(loggedAddresses)
+      if (loyaltyTokens) statusAtTokenAddress.current = "isSuccess"
+      setData(loyaltyTokens)
+    } 
+    if (token) {
+      const loggedAddresses: Log[] = await publicClient.getContractEvents({
+        abi: loyaltyGiftAbi, 
+        address:  token.tokenAddress, 
+        eventName: 'DiscoverableLoyaltyGift', 
+        // args: {issuer: token.tokenAddress}, 
+        fromBlock: 1n,
+        toBlock: 16330050n
+      });
+      
+      let loyaltyTokens = parseTokenContractLogs(loggedAddresses)
+      loyaltyTokens = [loyaltyTokens[token.tokenId]]
+      if (loyaltyTokens) statusAtTokenAddress.current = "isSuccess"
+      setData(loyaltyTokens)
+    } 
   }
 
   const getLoyaltyTokensUris = async () => {
