@@ -3,16 +3,16 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount, useContractRead, useContractReads } from "wagmi";
+import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount, useContractRead, useContractReads, usePublicClient } from "wagmi";
 import { ERC6551AccountAbi, loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { parseEthAddress, parseMetadata, parseUri } from "@/app/utils/parsers";
+import { parseBigInt, parseEthAddress, parseMetadata, parseUri } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
 import { QrData } from "@/types";
 import { TitleText } from "@/app/ui/StandardisedFonts";
-import { Hex, encodeFunctionData, toBytes, toHex } from "viem";
+import { Hex, encodeFunctionData, encodePacked, keccak256, toBytes, toHex } from "viem";
 import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
@@ -30,6 +30,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { address } = useAccount()
+  const publicClient = usePublicClient()
   const dispatch = useDispatch() 
 
   console.log("QRDATA @claim gift: ", qrData)
@@ -47,28 +48,74 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     ]
   )
 
+  const {data: nonceData} = useContractRead(
+    {
+      address: parseEthAddress(progAddress),
+      abi: loyaltyProgramAbi,
+      functionName: "getNonceLoyaltyCard", 
+      args: [qrData?.loyaltyCardAddress],
+      onSuccess(data) {
+        console.log("DATA getNonceLoyaltyCard: ", data)
+      }, 
+    }
+  )
+
   useEffect(() => {
-    if (loyaltyTokens && loyaltyTokens.length > 1 && qrData && qrData.loyaltyToken && qrData.loyaltyTokenId) {
+    if (qrData && qrData.loyaltyToken && qrData.loyaltyTokenId) {
             
-          fetchTokens({
+          fetchTokens([{
             tokenAddress: parseEthAddress(qrData?.loyaltyToken), 
             tokenId: qrData?.loyaltyTokenId
-          })
+          }])
     }
-    if (loyaltyTokens) setToken(loyaltyTokens[0])
-  }, [, loyaltyTokens, qrData])
+    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
+  }, [, qrData])
 
+  const verifyQrCode = async () => {
+    console.log("verifyQrCode called") 
+
+    if (
+      qrData && 
+      qrData.loyaltyToken && 
+      qrData.loyaltyTokenId && 
+      qrData.loyaltyCardAddress && 
+      qrData.customerAddress &&
+      qrData.loyaltyPoints && 
+      qrData.signature
+      ) {
+
+      const messageHash = keccak256(encodePacked(
+        ['address', 'uint256', 'address', 'address', 'uint256', 'uint256'], 
+        [
+          qrData.loyaltyToken, 
+          BigInt(Number(qrData.loyaltyTokenId)), 
+          qrData.loyaltyCardAddress,
+          qrData.customerAddress,
+          BigInt(Number(qrData.loyaltyPoints)),
+          BigInt(Number(parseBigInt(nonceData)))
+        ]
+      ))
+
+      const valid = await publicClient.verifyMessage({
+        address: qrData.customerAddress,
+        message: messageHash,
+        signature: qrData.signature
+      })
+      console.log("verifyQrCode is valid?: ", valid )
+    }
+  }
+  
   const claimLoyaltyGift = useContractWrite( 
     {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
       functionName: "claimLoyaltyGift", 
       args: [
-        qrData?.loyaltyToken, 
-        qrData?.loyaltyTokenId, 
+        qrData?.loyaltyToken,
+        BigInt(Number(qrData?.loyaltyTokenId)), 
         qrData?.loyaltyCardAddress,
         qrData?.customerAddress,
-        qrData?.loyaltyPoints, 
+        BigInt(Number(qrData?.loyaltyPoints)), 
         qrData?.signature
       ], 
       onError(error) {
@@ -105,6 +152,10 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     }
     
   },[isError, isSuccess])
+
+  useEffect(() => {
+    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
+  }, [status, loyaltyTokens])
   
   
   return (
@@ -130,7 +181,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
           </button>
         </div>
 
-      { token && token.metadata ? 
+      { token &&  token?.metadata ? 
         <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center">
           <div className="rounded-lg w-max"> 
           
@@ -185,7 +236,13 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
           <Button appearance = {"greenEmpty"} onClick={claimLoyaltyGift.write} >
               Claim gift
           </Button>
+          <Button appearance = {"blueEmpty"} onClick={() => verifyQrCode()} >
+              Verify signer
+          </Button>
         </div> 
+
+
+
         } 
 
       </div>

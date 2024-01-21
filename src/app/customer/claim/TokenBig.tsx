@@ -3,7 +3,7 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction, Context, useAccount, useSignMessage, useContractRead } from "wagmi";
+import { useContractWrite, useContractEvent, useWaitForTransaction, Context, useAccount, useSignMessage, useContractRead, usePublicClient } from "wagmi";
 import { loyaltyProgramAbi, loyaltyGiftAbi, ERC6551AccountAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
@@ -29,6 +29,7 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   const dimensions = useScreenDimensions();
   const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>()
+  const publicClient = usePublicClient()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
@@ -58,11 +59,14 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   )
 
   const handleSelectGift = () => {
-    console.log("handleSelectGift called: ", {
-      address: address, 
-      token: token, 
-      selectedLoyaltyCard: selectedLoyaltyCard
-    })
+    console.log("handleSelectGift called: ", [
+      token.tokenAddress, 
+      BigInt(Number(token.tokenId)), 
+      parseEthAddress(selectedLoyaltyCard?.cardAddress), 
+      parseEthAddress(address), 
+      BigInt(Number(token.metadata?.attributes[1].value)), 
+      BigInt(Number(nonceData))
+    ])
 
     if (address && token && selectedLoyaltyCard) {
       console.log("handleSelectGift: PASSED DATA CHECK. NONCE: ", nonceData)
@@ -83,11 +87,44 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
         console.log("signMessageData: ", signMessageData)
       } else {
       console.log("handleSelectGift: DID NOT PASS DATA CHECK")
-  } 
+    } 
   }
 
+  const verifyQrCode = async () => {
+    console.log("verifyQrCode called") 
+
+    if (address && token && selectedLoyaltyCard) {
+
+      const messageHash = keccak256(encodePacked(
+        ['address', 'uint256', 'address', 'address', 'uint256', 'uint256'],
+        [
+          token.tokenAddress, 
+          BigInt(Number(token.tokenId)), 
+          parseEthAddress(selectedLoyaltyCard.cardAddress), 
+          address, 
+          BigInt(Number(token.metadata?.attributes[1].value)), 
+          BigInt(Number(nonceData))
+        ]
+      ))
+
+      const valid = await publicClient.verifyMessage({
+        address: address,
+        message: messageHash,
+        signature
+      })
+      console.log("verifyQrCode is valid?: ", valid )
+    }
+    
+    
+
+  } 
+
+
   useEffect(() => {
-    if (status == "success") setSignature(signMessageData)
+    if (status == "success") { 
+      setSignature(signMessageData)
+
+    }
     if (!isSuccess) setSignature(undefined)
   }, [, isSuccess, signMessageData])
 
@@ -173,6 +210,9 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
                 style={{ height: "400px", width: "100%", objectFit: "cover"  }}
                 />
             </div>
+            <Button appearance = {"greenEmpty"} onClick={() => verifyQrCode()} >
+              Verify QrCode 
+            </Button>
           </div>
         : 
         null 

@@ -70,8 +70,8 @@ export type LoyaltyCard = {
 export type LoyaltyToken = {
   tokenAddress: EthAddress; 
   tokenId: number 
-  issuer?: EthAddress; 
   tokenised?: BigInt 
+  issuer?: EthAddress; 
   uri?: string ;
   metadata?: TokenMetadata ;
   availableTokens?: Number;  

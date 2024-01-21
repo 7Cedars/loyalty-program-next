@@ -86,7 +86,8 @@ export default function Page() {
   })
 
   useEffect(() => {
-    if ( loyaltyTokens  ) { getTokenSelection() }     
+    if (!loyaltyTokens) fetchTokens()
+    if (loyaltyTokens) getTokenSelection() 
 
   }, [selectedToken, loyaltyTokens]) 
 
@@ -120,7 +121,7 @@ export default function Page() {
             <TitleText title = "Selected Gifts" size={0} />
           </div>
 
-          { activeLoyaltyGifts ?
+          { activeLoyaltyGifts && status == "isSuccess" ?
           
           activeLoyaltyGifts.map((token: LoyaltyToken) => 
               token.metadata ? 
@@ -141,7 +142,7 @@ export default function Page() {
             <TitleText title = "Available Gifts" size={0} />
           </div>
           
-          { inactiveLoyaltyGifts ? 
+          { inactiveLoyaltyGifts && status == "isSuccess" ? 
             inactiveLoyaltyGifts.map((token: LoyaltyToken) => 
               token.metadata ? 
               <div key = {`${token.tokenAddress}:${token.tokenId}`} >
