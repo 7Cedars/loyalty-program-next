@@ -1,9 +1,11 @@
 "use client"; 
+
+// See for eip-712 example https://medium.com/coinmonks/eip-712-example-d5877a1600bd 
 import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount, useContractRead, useContractReads, usePublicClient } from "wagmi";
+import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount, useContractRead, useContractReads, usePublicClient, useSignMessage, useSignTypedData } from "wagmi";
 import { ERC6551AccountAbi, loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseBigInt, parseEthAddress, parseMetadata, parseUri } from "@/app/utils/parsers";
@@ -12,23 +14,88 @@ import { notification } from "@/redux/reducers/notificationReducer";
 import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
 import { QrData } from "@/types";
 import { TitleText } from "@/app/ui/StandardisedFonts";
-import { Hex, encodeFunctionData, encodePacked, keccak256, toBytes, toHex } from "viem";
+import { Hex, custom, encodeFunctionData, encodePacked, keccak256, toBytes, toHex } from "viem";
 import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { createWalletClient, http } from 'viem'
+// import { toAccount } from 'viem/accounts'
+import { foundry } from 'viem/chains'
+// import { getAddress, signMessage, signTransaction } from './sign-utils' 
 
 type SendPointsProps = {
   qrData: QrData | undefined;  
   setData: Dispatch<SetStateAction<QrData | undefined>>; 
 }
 
+/// begin setup for encoding typed data /// 
+const domain = {
+  name: 'Loyalty Program',
+  version: '1',
+  chainId: 31337,
+  verifyingContract: '0x8464135c8F25Da09e49BC8782676a84730C318bC'
+} as const
+ 
+// The named list of all type definitions
+const types = {
+  // Person: [
+  //   { name: 'name', type: 'string' },
+  //   { name: 'wallet', type: 'address' },
+  // ],
+  // Mail: [
+  //   { name: 'from', type: 'Person' },
+  //   { name: 'to', type: 'Person' },
+  //   { name: 'contents', type: 'string' },
+  // ],
+  RequestGift: [
+    { name: 'from', type: 'address' },
+    { name: 'to', type: 'address' },
+    { name: 'contents', type: 'string' },
+  ],
+} as const
+ 
+const message = {
+  from: "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+  to:  "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+  contents: "One Free Coffee for 2500 Loyalty Points",
+} as const
+
+// const message = {
+//   from: {
+//     name: "Cow",
+//     wallet: "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
+//   },
+//   to: {
+//     name: "Bob",
+//     wallet: "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
+//   },
+//   contents: "One Free Coffee for 2500 Loyalty Points",
+// } as const
+/// end setup for encoding typed data /// 
+
 export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const dimensions = useScreenDimensions();
   const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [token, setToken] = useState<LoyaltyToken>()
   const { progAddress } =  useUrlProgramAddress();
+  const [ signature, setSignature ] = useState<Hex>()
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+  // const [ messageHash, setMessageHash ] = useState<Hex>() 
+  const { data, isError, isLoading, isSuccess, signTypedData } =
+  useSignTypedData({
+    domain,
+    message,
+    primaryType: 'RequestGift',
+    types,
+  })
+  // const {signMessage} = useSignMessage({
+  //   message: messageHash, 
+  //   onSuccess(data) {
+  //     console.log('Success', data)
+  //     setSignature(data)
+  //   },
+  // }) 
   const { address } = useAccount()
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
@@ -47,6 +114,8 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
       qrData?.signature
     ]
   )
+  console.log("signature: ", data)
+  // console.log("messageHash: ", messageHash)
 
   const {data: nonceData} = useContractRead(
     {
@@ -71,39 +140,85 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
   }, [, qrData])
 
-  const verifyQrCode = async () => {
-    console.log("verifyQrCode called") 
+  // const client = createWalletClient({
+  //   account: '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
+  //   chain: foundry,
+  //   transport: http()
+  // })
+  
+  // useEffect(() => {
+    
+  //   if (!messageHash) {
+      
+  //     const messageHash = keccak256(encodePacked(
+  //       ['string', 'address'], 
+  //       [
+  //         'test message',
+  //         '0x90F79bf6EB2c4f870365E785982E1f101E93b906'
+  //       ]
+  //     ))
 
-    if (
-      qrData && 
-      qrData.loyaltyToken && 
-      qrData.loyaltyTokenId && 
-      qrData.loyaltyCardAddress && 
-      qrData.customerAddress &&
-      qrData.loyaltyPoints && 
-      qrData.signature
-      ) {
+  //     // const messageHashTwo = keccak256("\x19Ethereum Signed Message:\n" + len(messageHashOne) + messageHashOne)
+  //     setMessageHash(messageHash)
+  //   }
+  // }, [messageHash])
 
-      const messageHash = keccak256(encodePacked(
-        ['address', 'uint256', 'address', 'address', 'uint256', 'uint256'], 
-        [
-          qrData.loyaltyToken, 
-          BigInt(Number(qrData.loyaltyTokenId)), 
-          qrData.loyaltyCardAddress,
-          qrData.customerAddress,
-          BigInt(Number(qrData.loyaltyPoints)),
-          BigInt(Number(parseBigInt(nonceData)))
-        ]
-      ))
+  // const handleCreateSignature = async() => {
 
-      const valid = await publicClient.verifyMessage({
-        address: qrData.customerAddress,
-        message: messageHash,
-        signature: qrData.signature
-      })
-      console.log("verifyQrCode is valid?: ", valid )
-    }
-  }
+  //   // const messageHash = encodePacked(
+  //   //   ['string', 'address'], 
+  //   //   [
+  //   //     'test message',
+  //   //     '0x90F79bf6EB2c4f870365E785982E1f101E93b906'
+  //   //   ]
+  //   // )
+  //   signMessage({message: messageHash})
+  //   // if (address) {
+  //   //   const signature = await walletClient.signMessage({
+  //   //   account, message: {raw: messageHash}, 
+  //   // })
+  //   setSignature(signature)
+  //   }
+
+  // const verifyQrCode = async () => {
+  //   console.log("verifyQrCode called") 
+
+  //   if (
+  //     qrData && 
+  //     qrData.loyaltyToken && 
+  //     qrData.loyaltyTokenId && 
+  //     qrData.loyaltyCardAddress && 
+  //     qrData.customerAddress &&
+  //     qrData.loyaltyPoints && 
+  //     qrData.signature
+  //     ) {
+
+  //     const messageHash = keccak256(encodePacked(
+  //         ['string', 'address'], 
+  //       [
+  //         'test message',
+  //         '0x90F79bf6EB2c4f870365E785982E1f101E93b906'
+  //       ]
+
+  //     //   ['address', 'uint256', 'address', 'address', 'uint256', 'uint256'], 
+  //     //   [
+  //     //     qrData.loyaltyToken, 
+  //     //     BigInt(Number(qrData.loyaltyTokenId)), 
+  //     //     qrData.loyaltyCardAddress,
+  //     //     qrData.customerAddress,
+  //     //     BigInt(Number(qrData.loyaltyPoints)),
+  //     //     BigInt(Number(parseBigInt(nonceData)))
+  //     //   ]
+  //     ))
+
+  //     const valid = await publicClient.verifyMessage({
+  //       address: qrData.customerAddress,
+  //       message: messageHash,
+  //       signature: qrData.signature
+  //     })
+  //     console.log("verifyQrCode is valid?: ", valid )
+  //   }
+  // }
   
   const claimLoyaltyGift = useContractWrite( 
     {
@@ -111,12 +226,13 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
       abi: loyaltyProgramAbi,
       functionName: "claimLoyaltyGift", 
       args: [
-        qrData?.loyaltyToken,
-        BigInt(Number(qrData?.loyaltyTokenId)), 
-        qrData?.loyaltyCardAddress,
-        qrData?.customerAddress,
-        BigInt(Number(qrData?.loyaltyPoints)), 
-        qrData?.signature
+        data
+        // qrData?.loyaltyToken,
+        // BigInt(Number(qrData?.loyaltyTokenId)), 
+        // qrData?.loyaltyCardAddress,
+        // qrData?.customerAddress,
+        // BigInt(Number(qrData?.loyaltyPoints)), 
+        // qrData?.signature
       ], 
       onError(error) {
         console.log('claimLoyaltyGift Error', error)
@@ -127,11 +243,11 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     } 
   )
 
-  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
-    { 
-      confirmations: 1,
-      hash: hashTransaction 
-    })
+  // const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+  //   { 
+  //     confirmations: 1,
+  //     hash: hashTransaction 
+  //   })
 
   useEffect(() => {
     if (isSuccess) {
@@ -236,8 +352,8 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
           <Button appearance = {"greenEmpty"} onClick={claimLoyaltyGift.write} >
               Claim gift
           </Button>
-          <Button appearance = {"blueEmpty"} onClick={() => verifyQrCode()} >
-              Verify signer
+          <Button appearance = {"blueEmpty"} onClick={() => signTypedData()} >
+              Create signature
           </Button>
         </div> 
 
@@ -256,3 +372,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
       <div className='pb-16'/>
     </div>
   )}
+
+function len(messageHashOne: string) {
+  throw new Error("Function not implemented.");
+}

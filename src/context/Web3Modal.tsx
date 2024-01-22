@@ -38,7 +38,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   ],
 )
 
-const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
+export const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 
 const config = createConfig({
   autoConnect: false,  
