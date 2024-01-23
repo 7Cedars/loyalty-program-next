@@ -8,7 +8,7 @@ import { Button } from "@/app/ui/Button";
 import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount, useContractRead, useContractReads, usePublicClient, useSignMessage, useSignTypedData } from "wagmi";
 import { ERC6551AccountAbi, loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { parseBigInt, parseEthAddress, parseMetadata, parseUri } from "@/app/utils/parsers";
+import { parseBigInt, parseEthAddress, parseMetadata, parseNumber, parseUri } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
@@ -28,82 +28,18 @@ type SendPointsProps = {
   setData: Dispatch<SetStateAction<QrData | undefined>>; 
 }
 
-/// begin setup for encoding typed data /// 
-const domain = {
-  name: 'Loyalty Program',
-  version: '1',
-  chainId: 31337,
-  verifyingContract: '0x8464135c8F25Da09e49BC8782676a84730C318bC'
-} as const
- 
-// The named list of all type definitions
-const types = {
-  // Person: [
-  //   { name: 'name', type: 'string' },
-  //   { name: 'wallet', type: 'address' },
-  // ],
-  // Mail: [
-  //   { name: 'from', type: 'Person' },
-  //   { name: 'to', type: 'Person' },
-  //   { name: 'contents', type: 'string' },
-  // ],
-  RequestGift: [
-    { name: 'from', type: 'address' },
-    { name: 'to', type: 'address' },
-    { name: 'contents', type: 'string' },
-  ],
-} as const
- 
-const message = {
-  from: "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
-  to:  "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
-  contents: "One Free Coffee for 2500 Loyalty Points",
-} as const
-
-// const message = {
-//   from: {
-//     name: "Cow",
-//     wallet: "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826",
-//   },
-//   to: {
-//     name: "Bob",
-//     wallet: "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB",
-//   },
-//   contents: "One Free Coffee for 2500 Loyalty Points",
-// } as const
-/// end setup for encoding typed data /// 
-
 export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const dimensions = useScreenDimensions();
   const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [token, setToken] = useState<LoyaltyToken>()
   const { progAddress } =  useUrlProgramAddress();
-  const [ signature, setSignature ] = useState<Hex>()
   const [ hashTransaction, setHashTransaction] = useState<any>()
-  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  // const [ messageHash, setMessageHash ] = useState<Hex>() 
-  const { data, isError, isLoading, isSuccess, signTypedData } =
-  useSignTypedData({
-    domain,
-    message,
-    primaryType: 'RequestGift',
-    types,
-  })
-  // const {signMessage} = useSignMessage({
-  //   message: messageHash, 
-  //   onSuccess(data) {
-  //     console.log('Success', data)
-  //     setSignature(data)
-  //   },
-  // }) 
   const { address } = useAccount()
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
 
   console.log("QRDATA @claim gift: ", qrData)
   console.log("loyaltyTokens @claim gift: ", loyaltyTokens)
-  console.log("selectedLoyaltyCard @redeem token: ", selectedLoyaltyCard) 
-
   console.log("simulated entry data into claimLoyaltyGift: ", 
     [
       qrData?.loyaltyToken, 
@@ -114,125 +50,36 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
       qrData?.signature
     ]
   )
-  console.log("signature: ", data)
-  // console.log("messageHash: ", messageHash)
-
-  const {data: nonceData} = useContractRead(
-    {
-      address: parseEthAddress(progAddress),
-      abi: loyaltyProgramAbi,
-      functionName: "getNonceLoyaltyCard", 
-      args: [qrData?.loyaltyCardAddress],
-      onSuccess(data) {
-        console.log("DATA getNonceLoyaltyCard: ", data)
-      }, 
-    }
-  )
-
+  
   useEffect(() => {
-    if (qrData && qrData.loyaltyToken && qrData.loyaltyTokenId) {
+    if (!loyaltyTokens && qrData) {
             
           fetchTokens([{
             tokenAddress: parseEthAddress(qrData?.loyaltyToken), 
-            tokenId: qrData?.loyaltyTokenId
+            tokenId: parseNumber(qrData?.loyaltyTokenId) 
           }])
     }
     if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
   }, [, qrData])
 
-  // const client = createWalletClient({
-  //   account: '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
-  //   chain: foundry,
-  //   transport: http()
-  // })
-  
-  // useEffect(() => {
-    
-  //   if (!messageHash) {
-      
-  //     const messageHash = keccak256(encodePacked(
-  //       ['string', 'address'], 
-  //       [
-  //         'test message',
-  //         '0x90F79bf6EB2c4f870365E785982E1f101E93b906'
-  //       ]
-  //     ))
+  useEffect(() => {
+    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
+  }, [status, loyaltyTokens])
 
-  //     // const messageHashTwo = keccak256("\x19Ethereum Signed Message:\n" + len(messageHashOne) + messageHashOne)
-  //     setMessageHash(messageHash)
-  //   }
-  // }, [messageHash])
-
-  // const handleCreateSignature = async() => {
-
-  //   // const messageHash = encodePacked(
-  //   //   ['string', 'address'], 
-  //   //   [
-  //   //     'test message',
-  //   //     '0x90F79bf6EB2c4f870365E785982E1f101E93b906'
-  //   //   ]
-  //   // )
-  //   signMessage({message: messageHash})
-  //   // if (address) {
-  //   //   const signature = await walletClient.signMessage({
-  //   //   account, message: {raw: messageHash}, 
-  //   // })
-  //   setSignature(signature)
-  //   }
-
-  // const verifyQrCode = async () => {
-  //   console.log("verifyQrCode called") 
-
-  //   if (
-  //     qrData && 
-  //     qrData.loyaltyToken && 
-  //     qrData.loyaltyTokenId && 
-  //     qrData.loyaltyCardAddress && 
-  //     qrData.customerAddress &&
-  //     qrData.loyaltyPoints && 
-  //     qrData.signature
-  //     ) {
-
-  //     const messageHash = keccak256(encodePacked(
-  //         ['string', 'address'], 
-  //       [
-  //         'test message',
-  //         '0x90F79bf6EB2c4f870365E785982E1f101E93b906'
-  //       ]
-
-  //     //   ['address', 'uint256', 'address', 'address', 'uint256', 'uint256'], 
-  //     //   [
-  //     //     qrData.loyaltyToken, 
-  //     //     BigInt(Number(qrData.loyaltyTokenId)), 
-  //     //     qrData.loyaltyCardAddress,
-  //     //     qrData.customerAddress,
-  //     //     BigInt(Number(qrData.loyaltyPoints)),
-  //     //     BigInt(Number(parseBigInt(nonceData)))
-  //     //   ]
-  //     ))
-
-  //     const valid = await publicClient.verifyMessage({
-  //       address: qrData.customerAddress,
-  //       message: messageHash,
-  //       signature: qrData.signature
-  //     })
-  //     console.log("verifyQrCode is valid?: ", valid )
-  //   }
-  // }
-  
   const claimLoyaltyGift = useContractWrite( 
     {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
       functionName: "claimLoyaltyGift", 
       args: [
-        data
-        // qrData?.loyaltyToken,
-        // BigInt(Number(qrData?.loyaltyTokenId)), 
-        // qrData?.loyaltyCardAddress,
-        // qrData?.customerAddress,
-        // BigInt(Number(qrData?.loyaltyPoints)), 
-        // qrData?.signature
+        `${token?.metadata?.name}`, 
+        `${token?.metadata?.attributes[1].value} points`,
+        qrData?.loyaltyToken,
+        BigInt(Number(qrData?.loyaltyTokenId)), 
+        qrData?.loyaltyCardAddress,
+        qrData?.customerAddress,
+        token?.metadata?.attributes[1].value, 
+        qrData?.signature
       ], 
       onError(error) {
         console.log('claimLoyaltyGift Error', error)
@@ -243,11 +90,11 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     } 
   )
 
-  // const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
-  //   { 
-  //     confirmations: 1,
-  //     hash: hashTransaction 
-  //   })
+  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+    { 
+      confirmations: 1,
+      hash: hashTransaction 
+    })
 
   useEffect(() => {
     if (isSuccess) {
@@ -269,15 +116,11 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     
   },[isError, isSuccess])
 
-  useEffect(() => {
-    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
-  }, [status, loyaltyTokens])
-  
-  
+
   return (
     <div className="grid grid-cols-1 h-full justify-items-center content-between p-3"> 
 
-      <TitleText title = "Claim gift" subtitle="....." size = {2} />
+      <TitleText title = "Redeem gift" subtitle="Exchange loyalty points for a gift or voucher" size = {2} />
 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
 
@@ -306,7 +149,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
                 width={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
                 height={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
                 src={token.metadata.imageUri}
-                alt="Loyalty Token icon "
+                alt="Loyalty Token icon"
               />
           </div>
           
@@ -314,7 +157,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
             <div> 
               <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
               <div className="text-center text-md text-gray-900 pb-2"> 
-                {`Cost: ${token.metadata.attributes[1].value}`}
+                {`Cost: ${token.metadata.attributes[1].value} loyalty points`}
               </div>
             </div>
             <div className="grid grid-cols-1 pt-4">
@@ -350,25 +193,11 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
         :
         <div className="flex w-full p-2"> 
           <Button appearance = {"greenEmpty"} onClick={claimLoyaltyGift.write} >
-              Claim gift
-          </Button>
-          <Button appearance = {"blueEmpty"} onClick={() => signTypedData()} >
-              Create signature
+              Redeem gift
           </Button>
         </div> 
-
-
-
         } 
-
       </div>
-      
-      
-         {/* <div className="flex w-full md:px-48 px-6">
-        <Button onClick={() => {setData(undefined)}}>
-            Back to QR reader
-        </Button>
-      </div> */}
       <div className='pb-16'/>
     </div>
   )}

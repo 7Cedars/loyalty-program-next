@@ -3,10 +3,10 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction, Context, useAccount, useSignMessage, useContractRead, usePublicClient } from "wagmi";
+import { useContractWrite, useContractEvent, useWaitForTransaction, Context, useAccount, useSignMessage, useContractRead, usePublicClient, useSignTypedData } from "wagmi";
 import { loyaltyProgramAbi, loyaltyGiftAbi, ERC6551AccountAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
+import { parseBigInt, parseEthAddress, parseHash, parseNumber } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { foundry } from "viem/chains";
@@ -30,132 +30,104 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const publicClient = usePublicClient()
+  const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ selectedGift, setSelectedGift ] = useState<LoyaltyToken>() 
   const dispatch = useDispatch() 
-  const {address} = useAccount() 
-  const { signMessage, isSuccess, status, data: signMessageData, variables, isError, error } = useSignMessage()
-  const [ signature, setSignature ] = useState<any>() 
+  const {address} = useAccount()
 
-  
-  console.log("token.tokenAddress: ",  token.tokenAddress)
-  console.log("selectedLoyaltyCard: ", selectedLoyaltyCard)
-  console.log("signature: ", signature)
-  // NB: look into waitForTransactionReceipt from viem (at actions). 
-  if (isError) console.log("ERROR: ", error )
-
-  const {data: nonceData} = useContractRead(
-    {
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-      abi: loyaltyProgramAbi,
-      functionName: "getNonceLoyaltyCard", 
-      args: [selectedLoyaltyCard?.cardAddress],
-      onSuccess(data) {
-        console.log("DATA getNonceLoyaltyCard: ", data)
-      }, 
-    }
-  )
-
-  const handleSelectGift = () => {
-    console.log("handleSelectGift called: ", [
-      token.tokenAddress, 
-      BigInt(Number(token.tokenId)), 
-      parseEthAddress(selectedLoyaltyCard?.cardAddress), 
-      parseEthAddress(address), 
-      BigInt(Number(token.metadata?.attributes[1].value)), 
-      BigInt(Number(nonceData))
-    ])
-
-    if (address && token && selectedLoyaltyCard) {
-      console.log("handleSelectGift: PASSED DATA CHECK. NONCE: ", nonceData)
-
-      const messageHash = keccak256(encodePacked(
-          ['address', 'uint256', 'address', 'address', 'uint256', 'uint256'],
-          [
-            token.tokenAddress, 
-            BigInt(Number(token.tokenId)), 
-            parseEthAddress(selectedLoyaltyCard.cardAddress), 
-            parseEthAddress(address), 
-            BigInt(Number(token.metadata?.attributes[1].value)), 
-            BigInt(Number(nonceData))
-          ]
-        ))
-        console.log("messageHash: ", messageHash)
-        signMessage({message: messageHash}) 
-        console.log("signMessageData: ", signMessageData)
-      } else {
-      console.log("handleSelectGift: DID NOT PASS DATA CHECK")
-    } 
-  }
-
-  const verifyQrCode = async () => {
-    console.log("verifyQrCode called") 
-
-    if (address && token && selectedLoyaltyCard) {
-
-      const messageHash = keccak256(encodePacked(
-        ['address', 'uint256', 'address', 'address', 'uint256', 'uint256'],
-        [
-          token.tokenAddress, 
-          BigInt(Number(token.tokenId)), 
-          parseEthAddress(selectedLoyaltyCard.cardAddress), 
-          address, 
-          BigInt(Number(token.metadata?.attributes[1].value)), 
-          BigInt(Number(nonceData))
-        ]
-      ))
-
-      const valid = await publicClient.verifyMessage({
-        address: address,
-        message: messageHash,
-        signature
-      })
-      console.log("verifyQrCode is valid?: ", valid )
-    }
-    
-    
-
-  } 
-
+  console.log("selectedLoyaltyCard?.cardAddress: ", selectedLoyaltyCard?.cardAddress)
+  console.log("parseEthAddress(progAddress): ", parseEthAddress(progAddress))
+  console.log("nonceData: ", nonceData)
 
   useEffect(() => {
-    if (status == "success") { 
-      setSignature(signMessageData)
 
+    const getNonceLoyaltyCard = async () => {
+      try {
+        const rawNonceData: unknown = await publicClient.readContract({ 
+          address: parseEthAddress(progAddress), 
+          abi: loyaltyProgramAbi,
+          functionName: 'getNonceLoyaltyCard',
+          args: [selectedLoyaltyCard?.cardAddress]
+        })
+        console.log("rawNonceData: ", rawNonceData)
+        const nonceData = parseBigInt(rawNonceData); 
+        setNonceData(nonceData)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+
+    if(!nonceData) { getNonceLoyaltyCard() } 
+
+  }, [nonceData] ) 
+
+  /// begin setup for encoding typed data /// 
+  const domain = {
+    name: 'Loyalty Program',
+    version: '1',
+    chainId: 31337,
+    verifyingContract: parseEthAddress(progAddress)
+  } as const
+  
+  // The named list of all type definitions
+  const types = {
+    RequestGift: [
+      { name: 'from', type: 'address' },
+      { name: 'to', type: 'address' },
+      { name: 'gift', type: 'string' },
+      { name: 'cost', type: 'string' },
+      { name: 'nonce', type: 'uint256' },
+    ],
+  } as const
+  
+  // // The message that will be hashed and signed
+  const message = {
+    from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
+    to:  parseEthAddress(progAddress),
+    gift: `${token?.metadata?.name}`,
+    cost: `${token?.metadata?.attributes[1].value} points`,
+    nonce: nonceData ? parseBigInt(nonceData) : 0n,
+  } as const
+
+  const { data: signature, isError, isLoading, isSuccess, signTypedData } =
+  useSignTypedData({
+    domain,
+    message,
+    primaryType: 'RequestGift',
+    types,
+  })
+
+  useEffect(() => { 
+    if (isLoading) {
+      dispatch(notification({
+        id: "claimLoyaltyToken",
+        message: `Waiting for authentication..`, 
+        colour: "yellow",
+        isVisible: true
+      }))
     }
-    if (!isSuccess) setSignature(undefined)
-  }, [, isSuccess, signMessageData])
+    if (isSuccess) {
+      setIsDisabled(!isDisabled)
 
-
-  // const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
-  //   { 
-  //     confirmations: 1,
-  //     hash: hashTransaction 
-  //   })
-
-  // useEffect(() => { 
-  //   if (isSuccess) {
-  //     setIsDisabled(!isDisabled)
-  //     console.log("DATA claimLoyaltyToken: ", data)
-
-  //     dispatch(notification({
-  //       id: "claimLoyaltyToken",
-  //       message: `Claiming token...`, 
-  //       colour: "yellow",
-  //       isVisible: true
-  //     }))
-  //   }
-  //   if (isError) {
-  //     dispatch(notification({
-  //       id: "claimLoyaltyToken",
-  //       message: `Something went wrong. Token not claimed.`, 
-  //       colour: "red",
-  //       isVisible: true
-  //     }))
-  //   }
-  // }, [isSuccess, isError])
+      dispatch(notification({
+        id: "claimLoyaltyToken",
+        message: `Qrcode succesfully authenticated`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+    if (isError) {
+      dispatch(notification({
+        id: "claimLoyaltyToken",
+        message: `Something went wrong. Qrcode not created.`, 
+        colour: "red",
+        isVisible: true
+      }))
+    }
+  }, [isSuccess, isError, isLoading])
 
   return (
     <div className="grid grid-cols-1"> 
@@ -182,11 +154,11 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
               {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
             </div> 
           </div>
-          <div className="text-center text-lg"> 
-            <div className="text-center text-lg"> 
+          <div className="text-center text-md"> 
+            <div className="text-center text-md"> 
               {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
             </div>
-            <div className="text-center text-lg"> 
+            <div className="text-center text-md"> 
                {`Remaining gifts: TBI`}
             </div>
             {/* {`${token.availableTokens?.length} remaining tokens`} */}
@@ -194,7 +166,7 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
         </div>
         
         <div className="p-3 flex "> 
-          <Button appearance = {"greenEmpty"} onClick={() => handleSelectGift()} >
+          <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
             Claim Gift
           </Button>
         </div> 
@@ -206,13 +178,10 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
             <div className="m-3"> 
               <QRCode 
-                value={`type:claimGift;ta:${token.tokenAddress};ti:${token.tokenId};lc:${selectedLoyaltyCard?.cardAddress};ca:${address};lp:${token.metadata.attributes[1].value};sg:${signature}`}
+                value={`type:claimGift;${token.tokenAddress};${token.tokenId};${selectedLoyaltyCard?.cardAddress};${address};${token.metadata.attributes[1].value};${signature}`}
                 style={{ height: "400px", width: "100%", objectFit: "cover"  }}
                 />
             </div>
-            <Button appearance = {"greenEmpty"} onClick={() => verifyQrCode()} >
-              Verify QrCode 
-            </Button>
           </div>
         : 
         null 

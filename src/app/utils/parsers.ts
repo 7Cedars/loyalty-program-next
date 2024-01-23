@@ -77,7 +77,7 @@ const parseTraitValue = (traitValue: unknown): string | number => {
   
 };
 
-const parseHash = (hash: unknown): string => {
+export const parseHash = (hash: unknown): string => {
   if (!isString(hash)) {
     throw new Error(`Incorrect hash, not a string: ${hash}`);
   }
@@ -86,7 +86,7 @@ const parseHash = (hash: unknown): string => {
   return hash as string;
 };
 
-const parseNumber = (number: unknown): number => {
+export const parseNumber = (number: unknown): number => {
   if (!isNumber(number)) {
     throw new Error(`Incorrect number, not a number: ${number}`);
   }
@@ -95,13 +95,13 @@ const parseNumber = (number: unknown): number => {
   return number as number;
 };
 
-export const parseBigInt = (number: unknown): BigInt => {
-  if (!isBigInt(number)) {
-    throw new Error(`Incorrect number, not a number: ${number}`);
+export const parseBigInt = (number: unknown): bigint => {
+  if (!isBigInt(number) || isNumber(number) ) {
+    throw new Error(`Incorrect number, not a bigInt or number: ${number}`);
   }
   // here can additional checks later. 
 
-  return number as BigInt;
+  return number as bigint;
 };
 
 const parseTokenised = (tokenised: unknown): BigInt[] => {
@@ -521,12 +521,12 @@ export const parseQrData = (qrText: unknown): QrData => {
 
             return {
               type: "claimGift",  
-              loyaltyToken: parseEthAddress(data[1].slice(3)), 
-              loyaltyTokenId: Number(data[2].slice(3)), 
-              loyaltyCardAddress: parseEthAddress(data[3].slice(3)), 
-              customerAddress: parseEthAddress(data[4].slice(3)), 
-              loyaltyPoints: Number(data[5].slice(3)), 
-              signature: parseSignature(data[6].slice(3))
+              loyaltyToken: parseEthAddress(data[1]), 
+              loyaltyTokenId: Number(data[2]), 
+              loyaltyCardAddress: parseEthAddress(data[3]), 
+              customerAddress: parseEthAddress(data[4]), 
+              loyaltyPoints: Number(data[5]), 
+              signature: parseSignature(data[6])
               }
           } 
 
