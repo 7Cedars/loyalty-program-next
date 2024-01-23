@@ -124,7 +124,7 @@ export default function Page() {
      <div className=" w-full grid grid-cols-1 gap-1">
 
       <div className="h-20 m-1"> 
-       <TitleText title = "Claim Gifts" subtitle="Claim gifts with your loyalty points." size={2} />
+       <TitleText title = "Claim Gifts" subtitle="Claim gifts and vouchers with your loyalty points." size={2} />
       </div>
 
       <div className="flex justify-center"> 

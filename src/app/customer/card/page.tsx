@@ -6,10 +6,10 @@ import { useEffect, useState } from "react";
 import { useContractWrite, useSignMessage, useWaitForTransaction } from "wagmi";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { ERC6551AccountAbi,  loyaltyGiftAbi } from "@/context/abi";
+import { ERC6551AccountAbi,  loyaltyGiftAbi, loyaltyProgramAbi } from "@/context/abi";
 import { Hex, Log, encodeFunctionData, encodePacked, keccak256 } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
-import { parseEthAddress, parseTransferSingleLogs } from "@/app/utils/parsers";
+import { parseBigInt, parseEthAddress, parseTransferSingleLogs } from "@/app/utils/parsers";
 import { useAppSelector } from "@/redux/hooks";
 import RedeemToken from "./redeemToken";
 import { notification } from "@/redux/reducers/notificationReducer";
@@ -27,6 +27,7 @@ export default function Page() {
   const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [ claimedTokens, setClaimedTokens ] = useState<LoyaltyToken[] | undefined>() 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
+  const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const [ signature, setSignature ] = useState<any>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { progAddress } = useUrlProgramAddress() 
@@ -36,6 +37,28 @@ export default function Page() {
   const dispatch = useDispatch() 
   const { tokenReceived, tokenSent, latestSent } = useLatestCustomerTransaction() 
 
+  const getLoyaltyCardPoints = async () => {
+    console.log("getLoyaltyCardPoints called") 
+      if (selectedLoyaltyCard) {
+      const loyaltyCardPointsData = await publicClient.readContract({
+        address: parseEthAddress(progAddress), 
+        abi: loyaltyProgramAbi,
+        functionName: 'getBalanceLoyaltyCard', 
+        args: [ selectedLoyaltyCard?.cardAddress ]
+      });
+
+      console.log("loyaltyCardPointsData: ", loyaltyCardPointsData)
+      
+      const loyaltyCardPoints = parseBigInt(loyaltyCardPointsData)
+      setLoyaltyPoints(Number(loyaltyCardPoints))
+    }
+  }
+  
+  useEffect(() => {
+    if (!loyaltyPoints) getLoyaltyCardPoints()
+  }, [ , loyaltyPoints ])
+
+  
   const getClaimedLoyaltyTokens = async () => {
     console.log("getClaimedLoyaltyTokens called")
     console.log("latestSent @redeem token: ", latestSent)
@@ -133,17 +156,24 @@ export default function Page() {
   return (
      <div className=" w-full h-full grid grid-cols-1 gap-1 content-start overflow-auto">
 
-      <div className="h-20 m-3"> 
-       <TitleText title = "Your Card" subtitle="View points and redeem vouchers on your card." size={2} />
+      <div className="h-fit m-3 break-words"> 
+       <TitleText title = "Your Card" subtitle={`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.loyaltyProgramAddress}`} size={2} />
+       {/* subtitle="View your points and redeem vouchers" */}
       </div>
-      {/* {
-      isLoading? 
-        <div> 
-          Authenticating Transfer... 
-        </div>
-      : 
-      null  
-      } */}
+      <div className="grid grid-cols-1 justify-items-center"> 
+        {/* <div className="pt-2">
+          <TitleText title = "Card" subtitle={`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.loyaltyProgramAddress}`} size={1} />
+        </div> */}
+        {/* <p className="pt-0 w-full text-lg text-center">
+          {`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.loyaltyProgramAddress}`}
+        </p> */}
+        <p className="pt-0 w-full text-2xl text-center text-bold">
+          {`${loyaltyPoints}`}
+        </p>
+        <p className="pb-2 w-1/2 text-center border-b border-blue-800 text-lg">
+          {`Loyalty Points`}
+        </p>
+      </div>
 
       { selectedToken && signature ? 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
@@ -169,10 +199,13 @@ export default function Page() {
       </div>
       :
       <>
+        <div className="grid grid-cols-1 mt-4"> 
+          <TitleText title = "Vouchers" size={1} />
+        </div>
+        <div className="grid grid-cols-2  overflow-auto sm:grid-cols-3 md:grid-cols-4 p-4 pt-0 justify-items-center content-start">
+          
 
-        <div className="grid grid-cols-2  overflow-auto sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
-
-          { claimedTokens ?
+          { claimedTokens && claimedTokens.length > 0 ?
           
           claimedTokens.map((token: LoyaltyToken) => 
               token.metadata ? 
@@ -183,7 +216,7 @@ export default function Page() {
             )
           : 
           <div className="col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-            <NoteText message=" Claimed gifts will appear here."/>
+            <NoteText message="Vouchers will appear here."/>
           </div>
           }
         </div> 

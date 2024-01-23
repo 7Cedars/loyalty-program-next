@@ -132,48 +132,59 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
   return (
     <div className="grid grid-cols-1"> 
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full justify-items-center "> 
+      
       { token.metadata && !signature ? 
         <>
-        <div className="rounded-lg w-max"> 
-         
-          <Image
-              className="rounded-lg"
-              width={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35  : 400}
-              height={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35 : 400}
-              src={token.metadata.imageUri}
-              alt="Loyalty Token icon "
-            />
-        </div>
-        
-        <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
-          <div> 
-          <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
-
-            <div className="text-center text-sm"> 
-              {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
-            </div> 
-          </div>
-          <div className="text-center text-md"> 
-            <div className="text-center text-md"> 
-              {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
-            </div>
-            <div className="text-center text-md"> 
-               {`Remaining gifts: TBI`}
-            </div>
-            {/* {`${token.availableTokens?.length} remaining tokens`} */}
-          </div>
-        </div>
-        
-        <div className="p-3 flex "> 
-          <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
-            Claim Gift
-          </Button>
-        </div> 
+        <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full justify-items-center "> 
+          <div className="rounded-lg w-max"> 
           
+            <Image
+                className="rounded-lg"
+                width={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35  : 400}
+                height={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35 : 400}
+                src={token.metadata.imageUri}
+                alt="Loyalty Token icon "
+              />
+          </div>
+          
+          <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
+            <div> 
+            <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
+
+              <div className="text-center text-sm"> 
+                {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
+              </div> 
+            </div>
+            <div className="text-center text-md"> 
+              <div className="text-center text-md"> 
+                {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
+              </div>
+              {token.tokenised == 1n ? 
+                <div className="text-center text-md"> 
+                  {`Remaining vouchers: ${token.availableTokens}`}
+                </div>
+                :
+                null
+              }
+            </div>
+          </div>
+        </div>
+        <div className="p-3 flex w-full"> 
+          {token.tokenised == 1n ? 
+            <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
+              Claim Voucher
+            </Button>
+            :
+            <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
+              Claim Gift
+            </Button>
+          }
+          </div>
         </>
-        : 
-        token.metadata && signature ?
+        : null
+        }
+        
+        { token.metadata && signature ?
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
             <div className="m-3"> 
@@ -186,10 +197,12 @@ export default function TokenBig( {token, loyaltyPoints, disabled}: SelectedToke
         : 
         null 
         }
-        </div>
+        
     </div>
   );
 }
+
+
 
 
   // NEED TO REQUEST NONCE... 

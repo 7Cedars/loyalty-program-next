@@ -39,9 +39,8 @@ export default function Page() {
         address: parseEthAddress(progAddress), 
         abi: loyaltyProgramAbi,
         functionName: 'getBalanceLoyaltyCard', 
-        args: [ selectedLoyaltyCard?.cardId ]
+        args: [ selectedLoyaltyCard?.cardAddress ]
       });
-      
       const loyaltyCardPoints = parseBigInt(loyaltyCardPointsData)
       setLoyaltyPoints(Number(loyaltyCardPoints))
     }
@@ -72,33 +71,33 @@ export default function Page() {
     console.log("transferData: ", transferData)
   }
 
-  // const getTransactionsFrom = async () => {
-  //   console.log("getTransactionsFrom called")
+  const getTransactionsFrom = async () => {
+    console.log("getTransactionsFrom called")
 
-  //   const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
-  //     abi: loyaltyProgramAbi, 
-  //     address: parseEthAddress(progAddress), 
-  //     eventName: 'TransferSingle', 
-  //     args: {
-  //       from: selectedLoyaltyCard?.cardAddress
-  //     },
-  //     fromBlock: 1n,
-  //     toBlock: 16330050n
-  //   });
-  //   const transferSingleData =  parseTransferSingleLogs(transferSingleLogs)
-  //   console.log("transferSingleData FROM:" , transferSingleData)
+    const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyProgramAbi, 
+      address: parseEthAddress(progAddress), 
+      eventName: 'TransferSingle', 
+      args: {
+        from: selectedLoyaltyCard?.cardAddress
+      },
+      fromBlock: 1n,
+      toBlock: 16330050n
+    });
+    const transferSingleData =  parseTransferSingleLogs(transferSingleLogs)
+    console.log("transferSingleData FROM:" , transferSingleData)
     
-  //   const transferData = [...transferSingleData, transactions] 
-  //   transferData.sort((firstTransaction, secondTransaction) => 
-  //     Number(secondTransaction.blockNumber) - Number(firstTransaction.blockNumber));
+    const transferData = [...transferSingleData, transactions] 
+    // transferData.sort((firstTransaction, secondTransaction) => 
+    //   Number(secondTransaction.blockNumber) - Number(firstTransaction.blockNumber));
 
-  //   setTransactions(transferData)
-  //   console.log("transferData: ", transferData)
-  // }
+    // setTransactions(transferData)
+    console.log("transferData: ", transferData)
+  }
 
   useEffect(() => {
     getTransactionsTo()
-    // getTransactionsFrom()
+    getTransactionsFrom()
     getLoyaltyCardPoints()
   }, [ ])
 

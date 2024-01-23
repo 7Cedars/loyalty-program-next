@@ -72,13 +72,7 @@ export default function Page() {
             />
           </div>
         </div>
-        <div className='flex justify-items-center p-1'>
-          {/*  WIP  */}
-          <Button appearance='blueEmpty' onClick={() => setData(undefined) } > 
-            Reset scanner
-          </Button>
-        </div>
-        <div className='pb-16'/>
+        <div className='pb-24'/>
       </div>
     }
     </div>
