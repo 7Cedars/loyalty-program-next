@@ -78,7 +78,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
     if (isSuccess) {
       dispatch(notification({
         id: "redeemToken",
-        message: `Voucher successfully retreived: exchange for gift.`, 
+        message: `Voucher successfully retrieved: exchange for gift.`, 
         colour: "green",
         isVisible: true
       }))
@@ -135,6 +135,13 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
             <div> 
               <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
             </div>
+            {isSuccess?  
+              <p className="text-center text-xlfont-bold p-4">
+                {token.metadata?.attributes[5].value}
+              </p>
+            :
+            null
+            }
             <div className="grid grid-cols-1 pt-4">
               <div className="text-center text-md"> 
                 {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}

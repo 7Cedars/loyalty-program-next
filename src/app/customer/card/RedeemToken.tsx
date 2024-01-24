@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { notification } from "@/redux/reducers/notificationReducer";
+import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -29,6 +30,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
   const {address} = useAccount()
+  const {  pointsSent, tokenSent } = useLatestCustomerTransaction() 
 
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
@@ -50,68 +52,80 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
     if(!nonceData) { getNonceLoyaltyCard() } 
   }, [nonceData] ) 
 
-/// begin setup for encoding typed data /// 
-const domain = {
-  name: 'Loyalty Program',
-  version: '1',
-  chainId: 31337,
-  verifyingContract: parseEthAddress(progAddress)
-} as const
+  /// begin setup for encoding typed data /// 
+  const domain = {
+    name: 'Loyalty Program',
+    version: '1',
+    chainId: 31337,
+    verifyingContract: parseEthAddress(progAddress)
+  } as const
 
-// The named list of all type definitions
-const types = {
-  RedeemVoucher: [
-    { name: 'from', type: 'address' },
-    { name: 'to', type: 'address' },
-    { name: 'voucher', type: 'string' },
-    { name: 'nonce', type: 'uint256' },
-  ],
-} as const
+  // The named list of all type definitions
+  const types = {
+    RedeemVoucher: [
+      { name: 'from', type: 'address' },
+      { name: 'to', type: 'address' },
+      { name: 'voucher', type: 'string' },
+      { name: 'nonce', type: 'uint256' },
+    ],
+  } as const
 
-// // The message that will be hashed and signed
-const message = {
-  from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
-  to:  parseEthAddress(progAddress),
-  voucher: `${token?.metadata?.name}`,
-  nonce: nonceData ? parseBigInt(nonceData) : 0n,
-} as const
+  // // The message that will be hashed and signed
+  const message = {
+    from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
+    to:  parseEthAddress(progAddress),
+    voucher: `${token?.metadata?.name}`,
+    nonce: nonceData ? parseBigInt(nonceData) : 0n,
+  } as const
 
-const { data: signature, isError, isLoading, isSuccess, signTypedData } =
-useSignTypedData({
-  domain,
-  message,
-  primaryType: 'RedeemVoucher',
-  types,
-})
+  const { data: signature, isError, isLoading, isSuccess, reset: resetSignature, signTypedData } =
+  useSignTypedData({
+    domain,
+    message,
+    primaryType: 'RedeemVoucher',
+    types,
+  })
 
-useEffect(() => { 
-  if (isLoading) {
-    dispatch(notification({
-      id: "qrCodeAuthentication",
-      message: `Waiting for authentication..`, 
-      colour: "yellow",
-      isVisible: true
-    }))
-  }
-  if (isSuccess) {
-    setIsDisabled(!isDisabled)
+  useEffect(() => { 
+    if (isLoading) {
+      dispatch(notification({
+        id: "qrCodeAuthentication",
+        message: `Waiting for authentication..`, 
+        colour: "yellow",
+        isVisible: true
+      }))
+    }
+    if (isSuccess) {
+      setIsDisabled(!isDisabled)
 
-    dispatch(notification({
-      id: "qrCodeAuthentication",
-      message: `Qrcode succesfully authenticated`, 
-      colour: "green",
-      isVisible: true
-    }))
-  }
-  if (isError) {
-    dispatch(notification({
-      id: "qrCodeAuthentication",
-      message: `Something went wrong. Qrcode not created.`, 
-      colour: "red",
-      isVisible: true
-    }))
-  }
-}, [isSuccess, isError, isLoading])
+      dispatch(notification({
+        id: "qrCodeAuthentication",
+        message: `Qrcode succesfully authenticated`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+    if (isError) {
+      dispatch(notification({
+        id: "qrCodeAuthentication",
+        message: `Something went wrong. Qrcode not created.`, 
+        colour: "red",
+        isVisible: true
+      }))
+    }
+  }, [isSuccess, isError, isLoading])
+
+  useEffect(() => {
+    if (tokenSent) {
+      resetSignature() 
+      dispatch(notification({
+        id: "redeemToken",
+        message: `Your voucher has been succesfully received.`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+  }, [tokenSent])
 
 
   return (
@@ -135,6 +149,13 @@ useEffect(() => {
             <div> 
               <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
             </div>
+            {tokenSent ? 
+              <p className="text-center text-xl font-bold p-8">
+                {token.metadata?.attributes[6].value}
+              </p>
+            :
+            null
+            }
             <div className="text-center text-md"> 
               <div className="text-center text-md"> 
                 {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}

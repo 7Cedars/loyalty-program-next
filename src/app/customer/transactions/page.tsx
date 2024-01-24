@@ -2,8 +2,8 @@
 
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { Button } from "@/app/ui/Button";
-import { useState } from "react";
-import { Transaction } from "@/types";
+import { useRef, useState } from "react";
+import { Transaction, Status } from "@/types";
 import { Log } from "viem";
 import { 
   parseEthAddress, 
@@ -11,7 +11,7 @@ import {
   parseTransferBatchLogs, 
   parseBigInt
 } from "@/app/utils/parsers";
-import { loyaltyProgramAbi } from "@/context/abi";
+import { loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { 
   useAccount, 
@@ -22,32 +22,35 @@ import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
 import { useAppSelector } from "@/redux/hooks";
 
+type OverviewTransactionProps = {
+  transactionsPointsTo: Transaction[]; 
+  transactionsPointsFrom: Transaction[]; 
+  transactionsTokensTo: Transaction[]; 
+  transactionsTokensFrom: Transaction[]; 
+}
+
+type OverviewStatusProps = {
+  transactionsPointsTo: Status; 
+  transactionsPointsFrom: Status; 
+  transactionsTokensTo: Status; 
+  transactionsTokensFrom: Status; 
+}
 
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const {selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
-  const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const { progAddress } =  useUrlProgramAddress();
   const publicClient = usePublicClient(); 
-  const { address } = useAccount() 
-  const [transactions, setTransactions] = useState<Transaction[]>()
 
-  const getLoyaltyCardPoints = async () => {
-    console.log("getLoyaltyCardPoints called")
-      if (selectedLoyaltyCard) {
-      const loyaltyCardPointsData = await publicClient.readContract({
-        address: parseEthAddress(progAddress), 
-        abi: loyaltyProgramAbi,
-        functionName: 'getBalanceLoyaltyCard', 
-        args: [ selectedLoyaltyCard?.cardAddress ]
-      });
-      const loyaltyCardPoints = parseBigInt(loyaltyCardPointsData)
-      setLoyaltyPoints(Number(loyaltyCardPoints))
-    }
-  }
+  const [ transactions, setTransactions ] = useState<Transaction[]>([]) 
+  const [transactionsPointsTo, setTransactionsPointsTo] = useState<Transaction[]>([]) 
+  const [transactionsPointsFrom, setTransactionsPointsFrom] = useState<Transaction[]>([])  
+  const [transactionsTokensTo, setTransactionsTokensTo] = useState<Transaction[]>([]) 
+  const [transactionsTokensFrom, setTransactionsTokensFrom] = useState<Transaction[]>([])  
+
+  console.log("transactions: ", transactions)
 
   const getTransactionsTo = async () => {
-    console.log("getTransactionsTo called")
 
     const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
@@ -59,20 +62,11 @@ export default function Page() {
       fromBlock: 1n,
       toBlock: 16330050n
     });
-    const transferSingleData =  parseTransferSingleLogs(transferSingleLogs)
-    console.log("transferSingleData TO:" , transferSingleData)
-
-    // here more data can be added later (claiming & redeeming tokens for instance)
-    const transferData = [...transferSingleData] 
-    transferData.sort((firstTransaction, secondTransaction) => 
-      Number(secondTransaction.blockNumber) - Number(firstTransaction.blockNumber));
-
-    setTransactions(transferData)
-    console.log("transferData: ", transferData)
+    const transactions =  parseTransferSingleLogs(transferSingleLogs)
+    setTransactionsPointsTo([...transactions])
   }
 
   const getTransactionsFrom = async () => {
-    console.log("getTransactionsFrom called")
 
     const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
@@ -84,33 +78,72 @@ export default function Page() {
       fromBlock: 1n,
       toBlock: 16330050n
     });
-    const transferSingleData =  parseTransferSingleLogs(transferSingleLogs)
-    console.log("transferSingleData FROM:" , transferSingleData)
-    
-    const transferData = [...transferSingleData, transactions] 
-    // transferData.sort((firstTransaction, secondTransaction) => 
-    //   Number(secondTransaction.blockNumber) - Number(firstTransaction.blockNumber));
-
-    // setTransactions(transferData)
-    console.log("transferData: ", transferData)
+    const transactions =  parseTransferSingleLogs(transferSingleLogs)
+    setTransactionsPointsFrom([...transactions])
   }
 
+  const getTokensTo = async () => {
+   
+    const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyGiftAbi, 
+      eventName: 'TransferSingle', 
+      args: {
+        to: selectedLoyaltyCard?.cardAddress
+      },
+      fromBlock: 1n,
+      toBlock: 16330050n
+    });
+    const transactions =  parseTransferSingleLogs(transferSingleLogs)
+    setTransactionsTokensTo([...transactions])
+  }
+  
+  const getTokensFrom = async () => {
+
+    const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyGiftAbi, 
+      eventName: 'TransferSingle', 
+      args: {
+        from: selectedLoyaltyCard?.cardAddress
+      },
+      fromBlock: 1n,
+      toBlock: 16330050n
+    });
+    const transactions =  parseTransferSingleLogs(transferSingleLogs)
+    setTransactionsTokensFrom(transactions)
+  }
+  
   useEffect(() => {
     getTransactionsTo()
     getTransactionsFrom()
-    getLoyaltyCardPoints()
+    getTokensTo()
+    getTokensFrom()
   }, [ ])
+
+  useEffect(() => {
+    if (
+      transactionsPointsTo && 
+      transactionsPointsFrom && 
+      transactionsTokensTo && 
+      transactionsTokensFrom) {
+        const allTransactions = [...transactionsPointsTo, ...transactionsPointsFrom, ...transactionsTokensTo, ...transactionsTokensFrom]
+
+        allTransactions.sort((firstTransaction, secondTransaction) => 
+          Number(secondTransaction.blockNumber) - Number(firstTransaction.blockNumber)
+        );
+        setTransactions(allTransactions)
+
+      }
+  }, [
+    transactionsPointsTo, 
+    transactionsPointsFrom, 
+    transactionsTokensTo, 
+    transactionsTokensFrom
+  ])
 
   return (
     <div className="grid grid-cols-1 h-full content-between">
       <div className="grid grid-cols-1 h-full overflow-auto px-2 justify-items-center">
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
-
-        {/* <div className="flex justify-center"> 
-          <p className="p-2 w-1/2 text-center border-b border-blue-800">
-            {`${loyaltyPoints} loyalty points remaining`}
-          </p>
-        </div> */}
 
         { transactions ? 
             <div className="grid grid-cols-1 w-full md:w-4/5 overflow-auto m-4 mx-2 p-8 divide-y">  
@@ -122,7 +155,7 @@ export default function Page() {
                     <div className="grid grid-cols-1">
                       <div className="flex justify-between">
                         <div className="font-bold">
-                          Received Points 
+                          Points Received  
                         </div> 
                         <div className="">
                           Blocknumber: {Number(transaction.blockNumber)}
@@ -130,6 +163,51 @@ export default function Page() {
                       </div>
                       <div> 
                         {`${transaction.values[0]} points`}
+                      </div>
+                    </div>
+                  :
+                  transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.to === selectedLoyaltyProgram?.programOwner ? 
+                    <div className="grid grid-cols-1">
+                      <div className="flex justify-between">
+                        <div className="font-bold">
+                          Gift Claimed
+                        </div> 
+                        <div className="">
+                          Blocknumber: {Number(transaction.blockNumber)}
+                        </div> 
+                      </div>
+                      <div> 
+                        {`${transaction.values[0]} points`}
+                      </div>
+                    </div>
+                  :
+                  transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.from === selectedLoyaltyProgram?.programAddress ? 
+                    <div className="grid grid-cols-1">
+                      <div className="flex justify-between">
+                        <div className="font-bold">
+                          Voucher Received
+                        </div> 
+                        <div className="">
+                          Blocknumber: {Number(transaction.blockNumber)}
+                        </div> 
+                      </div>
+                      <div> 
+                        {`Voucher Id: ${transaction.values[0]}`}
+                      </div>
+                    </div>
+                  :
+                  transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.to === selectedLoyaltyProgram?.programAddress ? 
+                    <div className="grid grid-cols-1">
+                      <div className="flex justify-between">
+                        <div className="font-bold">
+                          Voucher Redeemed
+                        </div> 
+                        <div className="">
+                          Blocknumber: {Number(transaction.blockNumber)}
+                        </div> 
+                      </div>
+                      <div> 
+                        {`Voucher Id: ${transaction.values[0]}`}
                       </div>
                     </div>
                   :

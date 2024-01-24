@@ -27,19 +27,18 @@ VENDOR APP - Implement REFACTORING!
     - [x]  refactor where needed 
   - [x]  At Claim gift: 
     - [x]  implement claiming gift WITHOUT approval - using signed message instead.
-    - [ ]  Add statement of what needs to be done by vendor
+    - [x]  Add statement of what needs to be done by vendor
   - [x]  At redeem token: 
     - [x]  implement redeeming WITHOUT approval - using signed message instead. 
-    - [ ]  Add statement of what needs to be done by vendor
+    - [x]  Add statement of what needs to be done by vendor
 - [ ]  Selection token page: 
   - [x]  Refactor where needed
   - [ ]  BUG: When tokens cannot be loaded it goes into a loop. Fix! 
-  - [ ]  add minted number of tokens + remaining - refactor. 
-  - [ ]  Add address of token + address issuer in description.
+  - [ ]  Add address of token + address issuer in description. / later 
 - [ ]  Stats page: 
   - [ ]  Refactor where needed
   - [ ]  Check if all possible actions / transactions are actually shown. (I think I am quite far as it is.)
-  - [ ]  Fix minting coins and cards. At least one of them is broken now. 
+  - [x]  Fix minting coins and cards. Mint Cards -- it was an outof gass error :D 
 
 - [x]  Develop QR reading page
  

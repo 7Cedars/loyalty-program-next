@@ -92,7 +92,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     if (isSuccess) {
       dispatch(notification({
         id: "claimGift",
-        message: `Points received: exchange for gift.`, 
+        message: `Points received.`, 
         colour: "green",
         isVisible: true
       }))
@@ -100,7 +100,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     if (isError) {
       dispatch(notification({
         id: "claimGift",
-        message: `Error: No points received. Do not give gift.`, 
+        message: `Error: No points received.`, 
         colour: "red",
         isVisible: true
       }))
@@ -152,15 +152,17 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
                 {`Cost: ${token.metadata.attributes[1].value} loyalty points`}
               </div>
             </div>
+            {isSuccess?  
+            <p className="text-center text-xl font-bold p-8">
+              {token.metadata?.attributes[3].value}
+            </p>
+            :
+            null
+            }
+            
             <div className="grid grid-cols-1 pt-4">
               <div className="text-center text-lg"> 
                 {`Gift #${qrData?.loyaltyTokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
-              </div>
-              <div className="text-center text-lg"> 
-                {`Minted gifts: TBI`}
-              </div>
-              <div className="text-center text-lg"> 
-                {`Remaining gifts: TBI`}
               </div>
             </div>
           </div>

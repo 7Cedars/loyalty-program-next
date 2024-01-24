@@ -100,4 +100,6 @@ export type Transaction = {
 }
 
 export type TransactionArgs = UnionOmit<Transaction, 'blockNumber' | 'logIndex'>;
+
+export type Status = "isIdle" | "isLoading" | "isError" | "isSuccess" 
  

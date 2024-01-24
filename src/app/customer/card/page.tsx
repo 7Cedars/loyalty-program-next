@@ -162,9 +162,9 @@ export default function Page() {
 
           { claimedTokens && claimedTokens.length > 0 ?
           
-          claimedTokens.map((token: LoyaltyToken) => 
+          claimedTokens.map((token: LoyaltyToken, i) => 
               token.metadata ? 
-              <div key = {`${token.tokenAddress}:${token.tokenId}`} >
+              <div key = {i} >
                 <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
               </div>
               : null 

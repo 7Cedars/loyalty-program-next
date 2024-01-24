@@ -132,12 +132,11 @@ export default function Page() {
 
 
   return (
-    <div className="grid grid-cols-1 h-full justify-items-center content-between">
+    <div className="grid grid-cols-1 h-full w-full justify-items-center content-between">
 
-      <div className="grid grid-cols-1 justify-items-center h-full overflow-auto ">
+      <div className="grid grid-cols-1 justify-items-center w-full h-full overflow-auto ">
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
-
-        <div className="grid grid-cols-1 p-2 pt-3 text-center justify-items-center border-b border-blue-800"> 
+        <div className="grid grid-cols-1 p-2 pt-3 w-1/2 text-center justify-items-center border-b border-blue-800"> 
           <p> {`${loyaltyPoints}`} remaining points </p>
           <p> {`${cardsMinted}`} remaining cards </p> 
         </div>
@@ -154,7 +153,7 @@ export default function Page() {
             </div>
         : 
           transactions ? 
-            <div className="grid grid-cols-1 overflow-auto w-full m-1 mx-1 p-2 divide-y">  
+            <div className="grid grid-cols-1 overflow-auto w-full md:w-4/5 m-1 mx-3 p-6 divide-y">  
               {
               transactions.map((transaction: Transaction, i) => 
                 <div key = {i} className="p-2 ">

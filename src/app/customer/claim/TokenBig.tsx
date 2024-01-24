@@ -28,7 +28,6 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const {  pointsSent } = useLatestCustomerTransaction() 
-  const [ successMessage, setSuccessMessage ] = useState<string>() 
   const dispatch = useDispatch() 
   const {address} = useAccount()
 
@@ -125,7 +124,6 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   useEffect(() => {
     if (pointsSent) {
-      // setSuccessMessage(token.metadata?.attributes[4].value)
       resetSignature() 
       dispatch(notification({
         id: "qrCodeAuthentication",
@@ -135,11 +133,6 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
       }))
     }
   }, [pointsSent])
-
-  useEffect(() => {
-    setSuccessMessage(undefined)
-    resetSignature() 
-  }, [, token])
 
   return (
     <div className="grid grid-cols-1"> 
@@ -168,11 +161,9 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
               </div> 
             </div>
             {pointsSent ? 
-            // <div > 
-              <p className="text-center text-xl">
+              <p className="text-center text-xl font-bold p-8">
                 {token.metadata?.attributes[4].value}
               </p>
-            // </div>
             :
             null
             }
