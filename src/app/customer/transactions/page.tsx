@@ -103,17 +103,17 @@ export default function Page() {
 
   return (
     <div className="grid grid-cols-1 h-full content-between">
-      <div className="grid grid-cols-1 h-full overflow-auto px-2">
+      <div className="grid grid-cols-1 h-full overflow-auto px-2 justify-items-center">
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
 
-        <div className="flex justify-center"> 
+        {/* <div className="flex justify-center"> 
           <p className="p-2 w-1/2 text-center border-b border-blue-800">
             {`${loyaltyPoints} loyalty points remaining`}
           </p>
-        </div>
+        </div> */}
 
         { transactions ? 
-            <div className="grid grid-cols-1 overflow-auto m-4 md:mx-40 mx-2 p-8 divide-y">  
+            <div className="grid grid-cols-1 w-full md:w-4/5 overflow-auto m-4 mx-2 p-8 divide-y">  
               {
               transactions.map((transaction: Transaction, i) => 
                 <div key = {i} className="p-2 ">

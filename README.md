@@ -49,11 +49,11 @@ CUSTOMER APP - Implement REFACTORING!
 - [x]   at claim tokens -> Claim gifts
   - [x]   refactor where needed according to contracts
   - [x]   implmented signing message - eip 712 
-  - [ ]   sign implement signing for gift - not voucher. 
-  - [ ]   Listen for succesfull transfer: Add success notification + have app return to token page + message whant they should receive. 
+  - [x]   sign implement signing for gift - not voucher. 
+  - [x]   Listen for succesfull transfer: Add success notification + have app return to token page + message whant they should receive. 
 - [ ]   at redeem token. (or: "Your Loyalty Card"?) - as it gives overview of points + tokens you have on your loyalty card?  
-  - [ ]   Refactor where needed
-  - [ ]   implmented signing message - eip 712 
+  - [x]   Refactor where needed
+  - [x]   implmented signing message - eip 712 
   - [x]   refactor as 'your card'
   - [x]   At points overview here as well. (copy from claim gifts)
   - [ ]   Listen for succesfull redeem: Add success notification + have app return to my card page. (where points - vouchers should have been updated!)
@@ -63,7 +63,7 @@ CUSTOMER APP - Implement REFACTORING!
   - [ ]   read claimed tokens 
   - [ ]   read redeemed tokens 
 - [ ]   Code clean up (small issue - can leave as is)
-  - [ ]   Check if naming and links in top and bottom navbar work correctly
+  - [x]   Check if naming and links in top and bottom navbar work correctly
   - [ ]   Add points of cards to redux store - no need to keep on readin chain.  
 
 GENERAL 

@@ -8,6 +8,7 @@ import {
   GiftIcon, 
   SquaresPlusIcon,
   QrCodeIcon,
+  HomeIcon, 
   ChartBarSquareIcon
  } from '@heroicons/react/24/outline'
 import { useScreenDimensions } from '../../hooks/useScreenDimensions';
@@ -37,7 +38,7 @@ const NavbarBottom = ( ) => {
       
         <Link href={progAddress ? `/vendor/home?prog=${progAddress}` : '/vendor/home'}  className={layoutLinks}> 
           <div className='col-span-1 grid text-xs justify-items-center'> 
-            <QrCodeIcon
+            <HomeIcon
               className={layoutIcons}
               aria-hidden="true"
             />
@@ -46,11 +47,11 @@ const NavbarBottom = ( ) => {
         </Link>
         <Link href={progAddress ? `/vendor/scanQrcode?prog=${progAddress}` : '/vendor/scanQrcode'} className={layoutLinks}> 
           <div className={layoutIconBox}> 
-            <GiftIcon
+            <QrCodeIcon
               className={layoutIcons}
               aria-hidden="true"
             />
-            Gifts
+            Scan
           </div>  
         </Link>
         <Link href={progAddress ? `/vendor/selectTokens?prog=${progAddress}` : '/vendor/selectTokens' } className={layoutLinks}> 

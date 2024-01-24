@@ -32,23 +32,11 @@ export default function Page() {
   const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [ activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
 
-  const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
+  const [ selectedToken, setSelectedToken ] = useState<setSelectedTokenProps | undefined>() 
   const { progAddress } = useUrlProgramAddress() 
-  const { tokenReceived, latestReceived, pointsReceived } = useLatestCustomerTransaction() 
+  const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
-
-  useEffect(() => {
-    if (tokenReceived) {
-      dispatch(notification({
-        id: "claimLoyaltyToken",
-        message: `Success! Token Id ${tokenReceived.ids[0]} received.`, 
-        colour: "green",
-        isVisible: true
-      }))
-    }
-   
-  }, [tokenReceived])
 
   const getLoyaltyCardPoints = async () => {
     console.log("getLoyaltyCardPoints called") 
@@ -114,6 +102,17 @@ export default function Page() {
   useEffect(() => {
     if (status == "isSuccess" || selectedToken == undefined ) getTokenSelection() 
   }, [, status, selectedToken ]) 
+
+  useEffect(() => {
+    if (tokenReceived) {
+      dispatch(notification({
+        id: "claimLoyaltyToken",
+        message: `Success! You received a new voucher. You can see it in the Your Card tab.`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+  }, [tokenReceived])
 
   return (
      <div className=" w-full grid grid-cols-1 gap-1">

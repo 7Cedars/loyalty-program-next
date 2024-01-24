@@ -13,6 +13,7 @@ import { useEffect, useState, useRef } from "react";
 import { useAppSelector } from "@/redux/hooks";
 import QRCode from "react-qr-code";
 import { TitleText } from "@/app/ui/StandardisedFonts";
+import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -26,6 +27,8 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+  const {  pointsSent } = useLatestCustomerTransaction() 
+  const [ successMessage, setSuccessMessage ] = useState<string>() 
   const dispatch = useDispatch() 
   const {address} = useAccount()
 
@@ -83,7 +86,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const
 
-  const { data: signature, isError, isLoading, isSuccess, signTypedData } =
+  const { data: signature, isError, isLoading, isSuccess, reset: resetSignature, signTypedData } =
   useSignTypedData({
     domain,
     message,
@@ -120,6 +123,24 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     }
   }, [isSuccess, isError, isLoading])
 
+  useEffect(() => {
+    if (pointsSent) {
+      // setSuccessMessage(token.metadata?.attributes[4].value)
+      resetSignature() 
+      dispatch(notification({
+        id: "qrCodeAuthentication",
+        message: `Your loyalty points have been succesfully received.`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+  }, [pointsSent])
+
+  useEffect(() => {
+    setSuccessMessage(undefined)
+    resetSignature() 
+  }, [, token])
+
   return (
     <div className="grid grid-cols-1"> 
 
@@ -146,6 +167,15 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
                 {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
               </div> 
             </div>
+            {pointsSent ? 
+            // <div > 
+              <p className="text-center text-xl">
+                {token.metadata?.attributes[4].value}
+              </p>
+            // </div>
+            :
+            null
+            }
             <div className="text-center text-md"> 
               <div className="text-center text-md"> 
                 {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
@@ -161,14 +191,18 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
           </div>
         </div>
         <div className="p-3 flex w-full"> 
-          {token.tokenised == 1n ? 
-            <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
-              Claim Voucher
-            </Button>
-            :
-            <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
-              Claim Gift
-            </Button>
+          {/* { pointsSent ? */}
+
+            { token.tokenised == 1n ? 
+
+              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()}  >
+                Claim Voucher
+              </Button>
+              :
+              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
+                Claim Gift
+              </Button>
+           
           }
           </div>
         </>
