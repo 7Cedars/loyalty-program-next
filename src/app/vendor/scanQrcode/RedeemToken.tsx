@@ -3,20 +3,15 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount } from "wagmi";
-import { ERC6551AccountAbi, loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { loyaltyProgramAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { parseEthAddress, parseMetadata, parseUri } from "@/app/utils/parsers";
+import { parseEthAddress, parseNumber } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
-import { foundry } from "viem/chains";
-import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
-import { NumLine } from "@/app/ui/NumLine";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { QrData } from "@/types";
-import { usePublicClient } from "wagmi";
 import { TitleText } from "@/app/ui/StandardisedFonts";
-import { Hex, encodeFunctionData, toBytes } from "viem";
-import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 
@@ -29,101 +24,40 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   const dimensions = useScreenDimensions();
   const { progAddress } =  useUrlProgramAddress();
   const [ token, setToken ] = useState<LoyaltyToken>()
-  const [ callData, setCallData] = useState<Hex>()
   const [ hashTransaction, setHashTransaction] = useState<any>()
-  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  const { address } = useAccount()
-  // const { tokenIsSuccess, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
-
+  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const dispatch = useDispatch() 
-  const publicClient = usePublicClient()
 
   console.log("QRDATA @redeem token: ", qrData)
   console.log("token @redeem token: ", token)
-  console.log("callData @redeem token: ", callData)
-  console.log("selectedLoyaltyCard @redeem token: ", selectedLoyaltyCard) 
-
-  const getLoyaltyTokenUris = async () => {
-    console.log("getLoyaltyProgramsUris called")
-
-    const uri: unknown = await publicClient.readContract({
-      address: parseEthAddress(qrData?.loyaltyToken), 
-      abi: loyaltyGiftAbi,
-      functionName: 'uri',
-      args: [0]
-    })
-
-    if (qrData?.loyaltyToken && qrData?.loyaltyTokenId) {
-      setToken({tokenAddress: qrData.loyaltyToken, uri: parseUri(uri), tokenId: qrData.loyaltyTokenId})
-    }
-  }
-
-  const getLoyaltyTokenMetaData = async () => {
-    console.log("getLoyaltyProgramsMetaData called")
-
-    if (token) { 
-          const fetchedMetadata: unknown = await(
-            await fetch(parseUri(token.uri))
-            ).json()
-
-            setToken({...token, metadata: parseMetadata(fetchedMetadata)})
-    }
-  }   
-
-  const getEncodedFunctionCall = () => {
-    console.log("getEncodedFunctionCall called")
-
-    if (qrData) { 
-      const encodedFunctionCall: Hex = encodeFunctionData({
-        abi: loyaltyProgramAbi, 
-        functionName: "redeemLoyaltyToken", 
-        args: 
-        [
-          qrData.loyaltyToken, 
-          qrData.loyaltyTokenId, 
-          qrData.loyaltyCardAddress
-        ],
-      })
-      setCallData(encodedFunctionCall)
-    }
-  }   
 
   useEffect(() => {
-    if (!token && qrData) {
-      getLoyaltyTokenUris()
+    if (!loyaltyTokens && qrData) {
+            
+          fetchTokens([{
+            tokenAddress: parseEthAddress(qrData?.loyaltyToken), 
+            tokenId: parseNumber(qrData?.loyaltyTokenId) 
+          }])
     }
-    if (token && qrData && !token.metadata) {
-      getLoyaltyTokenMetaData()
-    }
-    if (token && qrData && token.metadata) {
-      getEncodedFunctionCall()
-    }
+    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
+  }, [, qrData])
 
-  },[qrData, token])
-
-  console.log("simulated entry data into redeemLoyaltyToken: ", 
-    [
-      qrData?.loyaltyToken, 
-      address, 
-      qrData?.loyaltyTokenId, 
-      qrData?.loyaltyCardAddress, 
-      1n, 
-      toBytes(qrData?.signature)
-    ]
-    )
+  useEffect(() => {
+    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
+  }, [status, loyaltyTokens])
 
   const redeemLoyaltyToken = useContractWrite( 
     {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
-      functionName: "redeemLoyaltyTokenUsingSignedMessage", 
+      functionName: "redeemLoyaltyToken", 
       args: [
-        qrData?.loyaltyToken, 
-        address,
-        qrData?.loyaltyTokenId, 
-        qrData?.loyaltyCardAddress
-        // 1n
-        // toBytes(qrData?.signature)
+        `${token?.metadata?.name}`,
+        qrData?.loyaltyToken,
+        BigInt(Number(qrData?.loyaltyTokenId)), 
+        qrData?.loyaltyCardAddress,
+        qrData?.customerAddress,
+        qrData?.signature
       ], 
       onError(error) {
         console.log('redeemLoyaltyToken Error', error)
@@ -144,7 +78,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
     if (isSuccess) {
       dispatch(notification({
         id: "redeemToken",
-        message: `Token successfully retreived: exchange for gift.`, 
+        message: `Voucher successfully retreived: exchange for gift.`, 
         colour: "green",
         isVisible: true
       }))
@@ -152,7 +86,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
     if (isError) {
       dispatch(notification({
         id: "redeemToken",
-        message: `Error: Loyalty gift not redeemed. Do not give gift.`, 
+        message: `Error: Loyalty Voucher not redeemed. Do not give gift.`, 
         colour: "red",
         isVisible: true
       }))
@@ -164,7 +98,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   return (
     <div className="grid grid-cols-1 h-full justify-items-center content-between p-3"> 
 
-      <TitleText title = "Redeem gift" subtitle="On redeem give loyalty gift to customer." size = {2} />
+      <TitleText title = "Redeem Voucher" subtitle="Exchange voucher for gift to customer." size = {2} />
 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
 
@@ -199,22 +133,14 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
           
           <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
             <div> 
-              <div className="text-center text-lg"> 
-                {`Token ID: ${token.tokenId}`}
-              </div>
-              <div className="text-center text-lg text-gray-900 text-bold px-1"> 
-                {token.metadata.description}
-              </div>
-              <div className="text-center text-sm text-gray-500 pb-4"> 
-                {token.metadata.attributes[0].value}
-              </div>
+              <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
             </div>
             <div className="grid grid-cols-1 pt-4">
-              <div className="text-center text-lg"> 
-                {`Minted gifts: `}
+              <div className="text-center text-md"> 
+                {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
               </div>
-              <div className="text-center text-lg"> 
-                {`Remaining gifts: `}
+              <div className="text-center text-md"> 
+                {`Remaining vouchers: ${token.availableTokens}`}
               </div>
             </div>
           </div>
@@ -239,7 +165,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
         :
         <div className="flex w-full p-2"> 
           <Button appearance = {"greenEmpty"} onClick={redeemLoyaltyToken.write} >
-              Redeem gift
+              Redeem voucher
           </Button>
         </div> 
         } 

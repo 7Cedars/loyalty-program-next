@@ -2,24 +2,19 @@
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./TokenSmall";
 import TokenBig from "./TokenBig";
-import { DeployedContractLog, EthAddress, LoyaltyToken } from "@/types";
-import { useEffect, useState, useRef } from "react";
-import { useContractRead, useContractEvent } from "wagmi";
+import { LoyaltyToken } from "@/types";
+import { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
+import { loyaltyProgramAbi } from "@/context/abi";
 import { Log } from "viem"
-import { usePublicClient, useAccount } from 'wagmi'
-import { getContractEventsProps } from "@/types"
+import { usePublicClient } from 'wagmi'
 import { 
   parseEthAddress, 
   parseBigInt,
   parseLoyaltyGiftLogs
 } from "@/app/utils/parsers";
-import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
-import { Button } from "@/app/ui/Button";
 import { useAppSelector } from "@/redux/hooks";
-import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { useDispatch } from "react-redux";
@@ -146,7 +141,7 @@ export default function Page() {
           />
         </button>
 
-        <TokenBig token={selectedToken.token} loyaltyPoints = {loyaltyPoints} disabled = {selectedToken.disabled} /> 
+        <TokenBig token={selectedToken.token} disabled = {selectedToken.disabled} /> 
       
       </div>
       :

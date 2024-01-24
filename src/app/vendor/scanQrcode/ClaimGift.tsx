@@ -5,23 +5,17 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction, useAccount, useContractRead, useContractReads, usePublicClient, useSignMessage, useSignTypedData } from "wagmi";
-import { ERC6551AccountAbi, loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
+import { useContractWrite, useWaitForTransaction, useAccount, usePublicClient } from "wagmi";
+import { loyaltyProgramAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { parseBigInt, parseEthAddress, parseMetadata, parseNumber, parseUri } from "@/app/utils/parsers";
+import { parseEthAddress, parseNumber } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
 import { QrData } from "@/types";
 import { TitleText } from "@/app/ui/StandardisedFonts";
-import { Hex, custom, encodeFunctionData, encodePacked, keccak256, toBytes, toHex } from "viem";
-import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
-import { createWalletClient, http } from 'viem'
-// import { toAccount } from 'viem/accounts'
-import { foundry } from 'viem/chains'
-// import { getAddress, signMessage, signTransaction } from './sign-utils' 
 
 type SendPointsProps = {
   qrData: QrData | undefined;  
@@ -34,22 +28,20 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const [token, setToken] = useState<LoyaltyToken>()
   const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>()
-  const { address } = useAccount()
-  const publicClient = usePublicClient()
   const dispatch = useDispatch() 
 
-  console.log("QRDATA @claim gift: ", qrData)
-  console.log("loyaltyTokens @claim gift: ", loyaltyTokens)
-  console.log("simulated entry data into claimLoyaltyGift: ", 
-    [
-      qrData?.loyaltyToken, 
-      qrData?.loyaltyTokenId, 
-      qrData?.loyaltyCardAddress,
-      qrData?.customerAddress,
-      qrData?.loyaltyPoints,
-      qrData?.signature
-    ]
-  )
+  // console.log("QRDATA @claim gift: ", qrData)
+  // console.log("loyaltyTokens @claim gift: ", loyaltyTokens)
+  // console.log("simulated entry data into claimLoyaltyGift: ", 
+  //   [
+  //     qrData?.loyaltyToken, 
+  //     qrData?.loyaltyTokenId, 
+  //     qrData?.loyaltyCardAddress,
+  //     qrData?.customerAddress,
+  //     qrData?.loyaltyPoints,
+  //     qrData?.signature
+  //   ]
+  // )
   
   useEffect(() => {
     if (!loyaltyTokens && qrData) {
@@ -99,16 +91,16 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   useEffect(() => {
     if (isSuccess) {
       dispatch(notification({
-        id: "redeemToken",
-        message: `Token successfully retreived: exchange for gift.`, 
+        id: "claimGift",
+        message: `Points received: exchange for gift.`, 
         colour: "green",
         isVisible: true
       }))
     }
     if (isError) {
       dispatch(notification({
-        id: "redeemToken",
-        message: `Error: Loyalty gift not redeemed. Do not give gift.`, 
+        id: "claimGift",
+        message: `Error: No points received. Do not give gift.`, 
         colour: "red",
         isVisible: true
       }))

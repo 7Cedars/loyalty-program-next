@@ -1,7 +1,6 @@
 "use client"; 
 import { QrReader } from 'react-qr-reader';
-import { useEffect, useState } from "react";
-import { useSearchParams, ReadonlyURLSearchParams } from 'next/navigation';
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { useAccount } from 'wagmi';
@@ -9,11 +8,11 @@ import { TitleText } from '@/app/ui/StandardisedFonts';
 import { ViewFinder } from '@/app/ui/ViewFinder';
 import { QrData } from '@/types';
 import { parseQrData } from '@/app/utils/parsers';
-import RedeemToken from './RedeemToken';
+
 import SendPoints from './SendPoints';
-import TransferCard from './TransferCard';
 import ClaimGift from './ClaimGift';
-import { Button } from '@/app/ui/Button';
+import RedeemToken from './RedeemToken';
+import TransferCard from './TransferCard';
 
 export default function Page() {
   const [data, setData] = useState<QrData>(); 

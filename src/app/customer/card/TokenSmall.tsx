@@ -16,7 +16,7 @@ export default function SelectToken( {token, disabled, onClick}: SelectedTokenPr
   return (
      
       <button className={appearance} onClick={onClick}> 
-      {token.metadata && token.metadata != "error" ? 
+      {token.metadata ? 
         <>
           <Image
               className="rounded-t-lg"
@@ -29,9 +29,9 @@ export default function SelectToken( {token, disabled, onClick}: SelectedTokenPr
             <div className="text-center text-sm"> 
               {token.metadata.description}
             </div>
-            <div className="text-center text-sm text-gray-500"> 
-              {`Gift ID: ${Number(token.tokenId)}`}
-            </div>
+            {/* <div className="text-center text-sm text-gray-500"> 
+              {`Gift Id: ${Number(token.tokenId)}`}
+            </div> */}
           </div> 
         </>
           : 

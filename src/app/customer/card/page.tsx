@@ -11,7 +11,7 @@ import { Hex, Log, encodeFunctionData, encodePacked, keccak256 } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { parseBigInt, parseEthAddress, parseTransferSingleLogs } from "@/app/utils/parsers";
 import { useAppSelector } from "@/redux/hooks";
-import RedeemToken from "./redeemToken";
+import RedeemToken from "./RedeemToken";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useDispatch } from "react-redux";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
@@ -77,14 +77,12 @@ export default function Page() {
               fromBlock: 1n,
               toBlock: 16330050n
             })
-            console.log("claimedTokensLogs: ", claimedTokensLogs)
 
             const claimedTokensData = parseTransferSingleLogs(claimedTokensLogs)
             const filteredData = claimedTokensData.filter(claimedToken => 
               claimedToken.from == selectedLoyaltyCard?.cardAddress ||  
               claimedToken.to == selectedLoyaltyCard?.cardAddress
               )
-            console.log("filteredData: ", filteredData)
 
             if (filteredData) {
               claimedTokensTemp.push(...filteredData.map(
@@ -129,44 +127,13 @@ export default function Page() {
     }
   }, [tokenSent])
 
-  const handleTokenSelect = (token: LoyaltyToken) => {
-    setSelectedToken({token: token, disabled: false})
-
-    if (address && token && token.tokenId && selectedLoyaltyCard && selectedLoyaltyCard.cardAddress) {
-
-      const messageHash: Hex = keccak256(encodePacked(
-          ['address', 'uint256', 'address', 'address', 'uint256'],
-          [
-            token.tokenAddress, 
-            BigInt(Number(token.tokenId)), 
-            address, 
-            selectedLoyaltyCard.cardAddress, 
-            1n
-          ]
-        ))
-        signMessage({message: messageHash}) 
-      }
-  } 
-  
-  useEffect(() => {
-    if (isSuccess) setSignature(signMessageData)
-    if (!isSuccess) setSignature(undefined)
-  }, [, isSuccess])
-
   return (
      <div className=" w-full h-full grid grid-cols-1 gap-1 content-start overflow-auto">
 
       <div className="h-fit m-3 break-words"> 
-       <TitleText title = "Your Card" subtitle={`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.loyaltyProgramAddress}`} size={2} />
-       {/* subtitle="View your points and redeem vouchers" */}
+        <TitleText title = "Your Card" subtitle={`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.loyaltyProgramAddress}`} size={2} />
       </div>
       <div className="grid grid-cols-1 justify-items-center"> 
-        {/* <div className="pt-2">
-          <TitleText title = "Card" subtitle={`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.loyaltyProgramAddress}`} size={1} />
-        </div> */}
-        {/* <p className="pt-0 w-full text-lg text-center">
-          {`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.loyaltyProgramAddress}`}
-        </p> */}
         <p className="pt-0 w-full text-2xl text-center text-bold">
           {`${loyaltyPoints}`}
         </p>
@@ -175,7 +142,7 @@ export default function Page() {
         </p>
       </div>
 
-      { selectedToken && signature ? 
+      { selectedToken ? 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
         <button 
           className="text-black font-bold p-3"
@@ -192,7 +159,7 @@ export default function Page() {
         </button>
         { 
           selectedToken ?  
-          <RedeemToken token={selectedToken?.token} signature={signature} /> 
+          <RedeemToken token={selectedToken?.token} disabled={false}  /> 
           : 
           <div> Loading ... </div>
         }
@@ -210,7 +177,7 @@ export default function Page() {
           claimedTokens.map((token: LoyaltyToken) => 
               token.metadata ? 
               <div key = {`${token.tokenAddress}:${token.tokenId}`} >
-                <TokenSmall token = {token} disabled = {false} onClick={() => handleTokenSelect(token)}  /> 
+                <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
               </div>
               : null 
             )

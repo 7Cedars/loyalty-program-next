@@ -13,38 +13,52 @@ Even though repository is public, For now, it is for personal use only.
 
 ## Todo   
 VENDOR APP - Implement REFACTORING! 
+- [ ] Start designing / thinking through landing page. (/vendor) 
+  - [ ] What info to include
+  - [ ] Layout / UI. 
+  - [ ] Have a easy deploy program in here. 
+  - [ ] and easy link to actual app if they alreay have one.  
 - [x]  Home page
-  - [x]  Refactor selection programs 
+  - [x]  Refactor selection programs  
+  - [ ]  If only one program is deployed, should go straigh to it - skip choice page (see customer app for this logic.)
 - [ ]  Gift & redeem page / QR reading page 
-  - [ ]  At sending new card: 
-    - [ ]  refactor where needed 
-  - [ ]  At Claim gift: 
-    - [ ]  implement claiming gift WITHOUT approval - using signed message instead.
+  - [ ]  Fix Bug that when no valid QR code is read - it craches. Needs to have notification + continue reading. 
+  - [x]  At sending new card: 
+    - [x]  refactor where needed 
+  - [x]  At Claim gift: 
+    - [x]  implement claiming gift WITHOUT approval - using signed message instead.
   - [ ]  At redeem token: 
     - [ ]  implement redeeming WITHOUT approval - using signed message instead. 
 - [ ]  Selection token page: 
-  - [ ]  Refactor where needed
+  - [x]  Refactor where needed
   - [ ]  BUG: When tokens cannot be loaded it goes into a loop. Fix! 
   - [ ]  add minted number of tokens + remaining - refactor. 
   - [ ]  Add address of token + address issuer in description.
 - [ ]  Stats page: 
   - [ ]  Refactor where needed
-- [ ]  Develop QR reading page
+  - [ ]  Check if all possible actions / transactions are actually shown. (I think I am quite far as it is.)
+  - [ ]  Fix minting coins and cards. At least one of them is broken now. 
+
+- [x]  Develop QR reading page
  
  
 CUSTOMER APP - Implement REFACTORING! 
-- [ ]   at home page 
-  - [ ]   Refactor where needed
-  - [ ]   choose card screen: add points 
-- [ ]   at claim tokens -> Claim gifts
-  - [ ]   refactor where needed according to contracts
-  - [ ]   ... 
+- [x]   at home page 
+  - [x]   Refactor where needed
+  - [x]   choose card screen: add points 
+- [x]   at claim tokens -> Claim gifts
+  - [x]   refactor where needed according to contracts
+  - [x]   implmented signing message - eip 712 
+  - [ ]   sign implement signing for gift - not voucher. 
+  - [ ]   Listen for succesfull transfer: Add success notification + have app return to token page + message whant they should receive. 
 - [ ]   at redeem token. (or: "Your Loyalty Card"?) - as it gives overview of points + tokens you have on your loyalty card?  
   - [ ]   Refactor where needed
-  - [ ]   ... 
-  - [ ]   At points overview here as well. (copy from claim gifts)
+  - [ ]   implmented signing message - eip 712 
+  - [x]   refactor as 'your card'
+  - [x]   At points overview here as well. (copy from claim gifts)
+  - [ ]   Listen for succesfull redeem: Add success notification + have app return to my card page. (where points - vouchers should have been updated!)
 - [ ]   at Transactions 
-  - [ ]   read received points
+  - [x]   read received points
   - [ ]   read transferred points
   - [ ]   read claimed tokens 
   - [ ]   read redeemed tokens 
@@ -60,6 +74,9 @@ GENERAL
 - [ ]  Simplify folder structure by moving files from components to top folder oin both vendor and customer app 
   - [x]  create a custom hook: 'useLoyaltyTokens'. params = {LoyaltyTokens, status (loading, isSuccess, isError), refetching}.  -- build as much as possible on code that I have. 
   - [ ]  replace all the parts where I load LoyaltyTokens with this custom hook. 
+- [ ]  Fix naming in code 
+  - [ ]  Gift, Voucher, Token... Get a clear logic, and implement consistently throughout. 
+  - [ ]  ... 
 - [ ]  Setup dynamic reading of ABi's - otherwise I will be constantly copy-pasting as I develop the contracts. 
 - [ ]  Deploy on Vercel 
 - [ ]  Deploy on test net
