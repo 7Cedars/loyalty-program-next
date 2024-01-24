@@ -112,8 +112,8 @@ export default function Page() {
   }, [ ] ) 
 
   useEffect(() => {
-    if (status == "isSuccess") getTokenSelection() 
-  }, [ status ]) 
+    if (status == "isSuccess" || selectedToken == undefined ) getTokenSelection() 
+  }, [, status, selectedToken ]) 
 
   return (
      <div className=" w-full grid grid-cols-1 gap-1">

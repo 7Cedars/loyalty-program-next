@@ -370,12 +370,14 @@ export const parseTransferSingleLogs = (logs: Log[]): Transaction[] => {
       }
 
       if ( 
+        'address' in log && 
         'args' in log && 
         'logIndex' in log && 
         'blockNumber' in log
         ) {
         // console.log('lala' , log.args )
         return ({
+          address: parseEthAddress(log.address),
           blockNumber: parseBigInt(log.blockNumber),
           logIndex: parseNumber(log.logIndex),
           ...parseArgsTransferSingle(log.args) 

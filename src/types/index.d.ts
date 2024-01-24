@@ -89,6 +89,7 @@ export type QrData = {
 } 
 
 export type Transaction = {
+  address: EthAddress;
   blockNumber: BigInt;
   logIndex: number; 
   operator: EthAddress; 

@@ -3,11 +3,10 @@ import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./TokenSmall";
 import { LoyaltyToken } from "@/types";
 import { useEffect, useState } from "react";
-import { useContractWrite, useSignMessage, useWaitForTransaction } from "wagmi";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { ERC6551AccountAbi,  loyaltyGiftAbi, loyaltyProgramAbi } from "@/context/abi";
-import { Hex, Log, encodeFunctionData, encodePacked, keccak256 } from "viem"
+import { loyaltyGiftAbi, loyaltyProgramAbi } from "@/context/abi";
+import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { parseBigInt, parseEthAddress, parseTransferSingleLogs } from "@/app/utils/parsers";
 import { useAppSelector } from "@/redux/hooks";
@@ -28,10 +27,8 @@ export default function Page() {
   const [ claimedTokens, setClaimedTokens ] = useState<LoyaltyToken[] | undefined>() 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
-  const [ signature, setSignature ] = useState<any>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { progAddress } = useUrlProgramAddress() 
-  const { signMessage, isSuccess, data: signMessageData, variables } = useSignMessage()
   const {address} = useAccount() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
@@ -58,56 +55,47 @@ export default function Page() {
     if (!loyaltyPoints) getLoyaltyCardPoints()
   }, [ , loyaltyPoints ])
 
-  
   const getClaimedLoyaltyTokens = async () => {
     console.log("getClaimedLoyaltyTokens called")
     console.log("latestSent @redeem token: ", latestSent)
 
-    let loyaltyToken: LoyaltyToken
-    let claimedTokensTemp: LoyaltyToken[] = []
+    const claimedTokensLogs: Log[] = await publicClient.getContractEvents({
+      // address: loyaltyToken.tokenAddress, 
+      abi: loyaltyGiftAbi,
+      eventName: 'TransferSingle', 
+      fromBlock: 1n,
+      toBlock: 16330050n
+    })
+    const claimedTokensData = parseTransferSingleLogs(claimedTokensLogs)
+    // console.log("claimedTokensLogs: ", claimedTokensLogs)
 
-    if (status == "isSuccess" && loyaltyTokens) { 
-      try {
-        for await (loyaltyToken of loyaltyTokens) {
+    const transactionTo = claimedTokensData.filter(claimedToken => 
+      claimedToken.to == selectedLoyaltyCard?.cardAddress
+    )
+    const transactionFrom = claimedTokensData.filter(claimedToken => 
+      claimedToken.from == selectedLoyaltyCard?.cardAddress 
+    )
 
-            const claimedTokensLogs: Log[] = await publicClient.getContractEvents({
-              address: loyaltyToken.tokenAddress, 
-              abi: loyaltyGiftAbi,
-              eventName: 'TransferSingle', 
-              fromBlock: 1n,
-              toBlock: 16330050n
-            })
+    if (loyaltyTokens) {
+      let claimedTokensTemp: LoyaltyToken[] = [] 
 
-            const claimedTokensData = parseTransferSingleLogs(claimedTokensLogs)
-            const filteredData = claimedTokensData.filter(claimedToken => 
-              claimedToken.from == selectedLoyaltyCard?.cardAddress ||  
-              claimedToken.to == selectedLoyaltyCard?.cardAddress
-              )
+      loyaltyTokens.forEach(loyaltyToken => { 
+        
+        const addedToken = transactionTo.filter(
+          event => event.address == loyaltyToken.tokenAddress && Number(event.ids[0]) == loyaltyToken.tokenId
+          ).length 
+        const removedToken = transactionFrom.filter(
+          event => event.address == loyaltyToken.tokenAddress && Number(event.ids[0]) == loyaltyToken.tokenId
+          ).length
 
-            if (filteredData) {
-              claimedTokensTemp.push(...filteredData.map(
-                  item => {
-                    return ({...loyaltyToken, tokenId: Number(item.ids[0])})
-                  }
-                ))
-              }
-          }
-
-          const claimedTokensUnique: LoyaltyToken[] = [] 
-          claimedTokensTemp.forEach(
-            (loyaltyToken: LoyaltyToken) => !claimedTokensUnique.find(
-              (token: LoyaltyToken) => token.tokenId == loyaltyToken.tokenId
-              ) ? claimedTokensUnique.push(loyaltyToken) : null
-            )
-          
-          setClaimedTokens(claimedTokensUnique)
-          
-        } catch (error) {
-          console.log(error)
-      }
-    }
+        for (let i = 0; i < (addedToken - removedToken); i++) {
+          claimedTokensTemp.push(loyaltyToken)
+        }
+      })
+      setClaimedTokens(claimedTokensTemp)
+    }  
   }
-
+    
   useEffect(() => {
       getClaimedLoyaltyTokens() 
   }, [ , loyaltyTokens, address, selectedToken])

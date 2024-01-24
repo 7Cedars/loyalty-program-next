@@ -61,14 +61,14 @@ export default function Page() {
 
       loyaltyTokens.forEach((loyaltyToken, i) => { 
         
-        const addedEvenCount = addedGiftsEvents.filter(
+        const addedEventCount = addedGiftsEvents.filter(
           event => event.giftAddress == loyaltyToken.tokenAddress &&  event.giftId == loyaltyToken.tokenId
           ).length 
-        const removedEvenCount = removedGiftsEvents.filter(
+        const removedEventCount = removedGiftsEvents.filter(
           event => event.giftAddress == loyaltyToken.tokenAddress &&  event.giftId == loyaltyToken.tokenId
           ).length
 
-        if (addedEvenCount > removedEvenCount) { 
+        if (addedEventCount > removedEventCount) { 
           activeGifts.push(loyaltyToken)
         } else {
           inactiveGifts.push(loyaltyToken)
