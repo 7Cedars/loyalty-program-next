@@ -20,15 +20,17 @@ VENDOR APP - Implement REFACTORING!
   - [ ] and easy link to actual app if they alreay have one.  
 - [x]  Home page
   - [x]  Refactor selection programs  
-  - [ ]  If only one program is deployed, should go straigh to it - skip choice page (see customer app for this logic.)
+  - [x]  If only one program is deployed, should go straigh to it - skip choice page (see customer app for this logic.)
 - [ ]  Gift & redeem page / QR reading page 
   - [ ]  Fix Bug that when no valid QR code is read - it craches. Needs to have notification + continue reading. 
   - [x]  At sending new card: 
     - [x]  refactor where needed 
   - [x]  At Claim gift: 
     - [x]  implement claiming gift WITHOUT approval - using signed message instead.
-  - [ ]  At redeem token: 
-    - [ ]  implement redeeming WITHOUT approval - using signed message instead. 
+    - [ ]  Add statement of what needs to be done by vendor
+  - [x]  At redeem token: 
+    - [x]  implement redeeming WITHOUT approval - using signed message instead. 
+    - [ ]  Add statement of what needs to be done by vendor
 - [ ]  Selection token page: 
   - [x]  Refactor where needed
   - [ ]  BUG: When tokens cannot be loaded it goes into a loop. Fix! 

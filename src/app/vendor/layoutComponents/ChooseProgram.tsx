@@ -20,6 +20,8 @@ export default function ChooseProgram()  {
 
   console.log("loyaltyPrograms: ", loyaltyPrograms)
 
+  // Note that the loading of async data still has to be optimised. See useLoyaltyTokens for example how to set this up. 
+  // For now, the following works. So not high priority. 
   const getLoyaltyProgramAddresses = async () => {
     // console.log("getLoyaltyProgramAddresses called")
 
@@ -95,7 +97,6 @@ export default function ChooseProgram()  {
     }
   }
 
-
   useEffect(() => {
 
     // check when address has no deployed programs what happens. Answer: It goes into a unforgiving loop... 
@@ -110,12 +111,21 @@ export default function ChooseProgram()  {
       loyaltyPrograms.length != 0 &&
       loyaltyPrograms.findIndex(loyaltyProgram => loyaltyProgram.metadata) === -1 
       ) { getLoyaltyProgramsMetaData() } 
-
   }, [ , loyaltyPrograms])
 
   useEffect(() => {
     if (loyaltyPrograms) { setLoyaltyPrograms(undefined) } // check when address has no deployed programs what happens..  
   }, [, address])
+
+  useEffect(() => {
+    if (
+      loyaltyPrograms && 
+      loyaltyPrograms.length == 1 && 
+      loyaltyPrograms.findIndex(loyaltyProgram => loyaltyProgram.metadata) !== -1
+      ) 
+        handleProgramSelection(loyaltyPrograms[0])
+  }, [loyaltyPrograms])
+ 
 
   const handleProgramSelection = (loyaltyProgram: LoyaltyProgram) => {
     putProgAddressInUrl(loyaltyProgram.programAddress)
