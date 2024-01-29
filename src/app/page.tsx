@@ -1,5 +1,9 @@
 "use client"
 
+import { useScreenDimensions } from "./hooks/useScreenDimensions"
+import { Carousel } from "./ui/Carousel"
+import { TitleText } from "./ui/StandardisedFonts";
+
 // This should become the landing page of my app. See here: https://unbounce.com/landing-page-examples/best-landing-page-examples/
 // Doordash example is nice, as is the very first one: Calm. 
 
@@ -36,21 +40,36 @@
  */ 
 
 
-
-
-import Link from 'next/link'
-
-
 export default function Home() {
+
+  const { height, width } = useScreenDimensions(); 
+
+  console.log("height: ", height)
+
+
+
   return (
-    <main className="flex min-h-screen w-full flex-col items-center justify-between p-24">
-        <div className='flex flex-col divide-y divide-gray-600  w-full justify-center'> 
-          <div className='p-2 text-center text-gray-600 hover:text-gray-900'> 
-            <Link href='/customer/home'>Go to customer website </Link>
+    <main className="grid grid-cols-1 w-full h-fit overflow-y-auto shadow-2xl bg-slate-100 justify-items-center p-4">
+        <div className={`h-[80vh] w-11/12 sm:w-4/5 bg-slate-300 shadow-2xl rounded-t-lg `}>
+          Page 1  
+        </div>
+        <div className='h-[80vh] w-11/12 sm:w-4/5 bg-slate-700 shadow-2xl'>
+          Page 2 
+        </div>
+        <div className='h-[80vh] w-11/12 sm:w-4/5 bg-slate-300 shadow-2xl'>
+          Page 3 
+        </div>
+        <div className='h-[80vh] w-11/12 sm:w-4/5 bg-slate-700 shadow-2xl'>
+          Page 4  
+        </div>
+        <div className='h-[80vh] w-11/12 sm:w-4/5 bg-slate-300 shadow-2xl'>
+          Page 5 
+          <div className="p-12"> 
+            <Carousel /> 
           </div>
-          <div className='p-2 text-center text-gray-600 hover:text-gray-900'>
-            <Link href='/vendor/home'>Go to vendor website </Link>
-          </div>
+        </div>
+        <div className='h-[40vh] w-11/12 sm:w-4/5 bg-slate-700 shadow-2xl rounded-b-lg'>
+          Page 6 
         </div>
     </main>
   )
