@@ -35,13 +35,10 @@ VENDOR APP - Implement REFACTORING!
   - [x]  Refactor where needed
   - [ ]  BUG: When tokens cannot be loaded it goes into a loop. Fix! 
   - [ ]  Add address of token + address issuer in description. / later 
-- [ ]  Stats page: 
-  - [ ]  Refactor where needed
-  - [ ]  Check if all possible actions / transactions are actually shown. (I think I am quite far as it is.)
+- [x]  Stats page: 
+  - [x]  Refactor where needed
+  - [x]  Check if all possible actions / transactions are actually shown. (I think I am quite far as it is.)
   - [x]  Fix minting coins and cards. Mint Cards -- it was an outof gass error :D 
-
-- [x]  Develop QR reading page
- 
  
 CUSTOMER APP - Implement REFACTORING! 
 - [x]   at home page 
@@ -52,33 +49,34 @@ CUSTOMER APP - Implement REFACTORING!
   - [x]   implmented signing message - eip 712 
   - [x]   sign implement signing for gift - not voucher. 
   - [x]   Listen for succesfull transfer: Add success notification + have app return to token page + message whant they should receive. 
-- [ ]   at redeem token. (or: "Your Loyalty Card"?) - as it gives overview of points + tokens you have on your loyalty card?  
+- [x]   at redeem token. (or: "Your Loyalty Card"?) - as it gives overview of points + tokens you have on your loyalty card?  
   - [x]   Refactor where needed
   - [x]   implmented signing message - eip 712 
   - [x]   refactor as 'your card'
   - [x]   At points overview here as well. (copy from claim gifts)
-  - [ ]   Listen for succesfull redeem: Add success notification + have app return to my card page. (where points - vouchers should have been updated!)
-- [ ]   at Transactions 
+  - [x]   Listen for succesfull redeem: Add success notification + have app return to my card page. (where points - vouchers should have been updated!)
+- [x]   at Transactions 
   - [x]   read received points
-  - [ ]   read transferred points
-  - [ ]   read claimed tokens 
-  - [ ]   read redeemed tokens 
+  - [x]   read transferred points
+  - [x]   read claimed tokens 
+  - [x]   read redeemed tokens 
 - [ ]   Code clean up (small issue - can leave as is)
   - [x]   Check if naming and links in top and bottom navbar work correctly
-  - [ ]   Add points of cards to redux store - no need to keep on readin chain.  
+  - [ ]   Add points of cards to redux store - no need to keep on readin chain. -- Not sure about this. 
 
 GENERAL 
 - [ ]  Test layout / ui / ux 
   - [x]  Has to work from very wide (my full screen) to very narrow (350px) 
   - [ ]  vertical scaling has to also be correct through out (see minting at vendor stats page for correct example)
   - [ ]  fix any other ui/ux issues that pop up. 
-- [ ]  Simplify folder structure by moving files from components to top folder oin both vendor and customer app 
+- [x]  Simplify folder structure by moving files from components to top folder oin both vendor and customer app 
   - [x]  create a custom hook: 'useLoyaltyTokens'. params = {LoyaltyTokens, status (loading, isSuccess, isError), refetching}.  -- build as much as possible on code that I have. 
-  - [ ]  replace all the parts where I load LoyaltyTokens with this custom hook. 
+  - [x]  replace all the parts where I load LoyaltyTokens with this custom hook. 
 - [ ]  Fix naming in code 
   - [ ]  Gift, Voucher, Token... Get a clear logic, and implement consistently throughout. 
   - [ ]  ... 
-- [ ]  Setup dynamic reading of ABi's - otherwise I will be constantly copy-pasting as I develop the contracts. 
+- [x]  Setup dynamic reading of ABi's - otherwise I will be constantly copy-pasting as I develop the contracts. 
+- [ ]  Find out on what networks TBAs are deployed. -- those are the ones I want to focus at. 
 - [ ]  Deploy on Vercel 
 - [ ]  Deploy on test net
   - [ ]  First on branched Sepolia network in Foundry.
