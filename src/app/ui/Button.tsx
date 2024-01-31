@@ -2,7 +2,7 @@
 // Taken from react-graph-gallery github repo.  
 
 type ButtonProps = {
-  isDisabled?: boolean;
+  disabled?: boolean;
   isFilled?: boolean;
   children: any;
   onClick: () => void;
@@ -13,7 +13,7 @@ export const Button = ({
   children,
   onClick,
   appearance = "blueEmpty",
-  isDisabled = false
+  disabled = false
 }: ButtonProps) => {
 
   const appearanceButton = {
@@ -28,7 +28,7 @@ export const Button = ({
   }
 
   return (
-    <button className={appearanceButton[appearance]} onClick={onClick} disabled= {isDisabled} >
+    <button className={appearanceButton[appearance]} onClick={onClick} disabled= {disabled} >
       {children}
     </button>
   );

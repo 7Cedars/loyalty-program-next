@@ -62,9 +62,10 @@ export default function Home() {
         <div className='h-[80vh] w-11/12 sm:w-4/5 bg-slate-700 shadow-2xl'>
           Page 4  
         </div>
-        <div className='h-[80vh] w-11/12 sm:w-4/5 bg-slate-300 shadow-2xl'>
-          Page 5 
-          <div className="p-12"> 
+        <div className='h-[80vh] w-11/12 sm:w-4/5 bg-slate-300 shadow-2xl p-2 grid grid-cols-1 content-center'>
+          <TitleText title="Why not try out one of these examples?" subtitle="Each of these can be deployed in under a minute." size = {2}/>  
+          <div className="px-2 sm:px-20"> 
+            
             <Carousel /> 
           </div>
         </div>

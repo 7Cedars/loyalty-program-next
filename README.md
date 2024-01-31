@@ -14,10 +14,14 @@ Even though repository is public, For now, it is for personal use only.
 ## Todo   
 VENDOR APP - Implement REFACTORING! 
 - [ ] Start designing / thinking through landing page. (/vendor) 
-  - [ ] What info to include
-  - [ ] Layout / UI. 
+  - [x] What info to include
+  - [x]  Layout / UI. 
   - [ ] Have a easy deploy program in here. 
   - [ ] and easy link to actual app if they alreay have one.  
+  - [ ] Create seperate json file with necessary info
+  - [ ] Create tialwind css carousel with transitions 
+  - [ ] Have two styles of titleText: light and dark. - both sleet. 
+  - [ ] Have sleet version of button? 
 - [x]  Home page
   - [x]  Refactor selection programs  
   - [x]  If only one program is deployed, should go straigh to it - skip choice page (see customer app for this logic.)

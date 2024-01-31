@@ -1,0 +1,41 @@
+{
+  "items": [
+    {
+      "index": 1, 
+      "title": "A Corner Coffeeshop example",
+      "description": "This example mimics a small coffee shop. This example mimics a small coffee shop. This example mimics a small coffee shop.",
+      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/Qmf2sd4rFFwGjhyBM7wweCbzGTEEVQLAsigKnm5SAfgC7Y"
+    },
+    {
+      "index": 2, 
+      "title": "Example B",
+      "description": "This is currently a random example. This is currently a random example. This is currently a random example. This is currently a random example. This is currently a random example.",
+      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmRxnq9JBF3ERVmdchhozQgm1BpUfNqkiJeWcxhjoBLN1r"
+    },
+    {
+      "index": 3,
+      "title": "Example C",
+      "description": "This is currently a second random example. This is currently a random example. This is currently a random example. This is currently a random example. This is currently a random example",
+      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmVL9XH2fmibVpfUatEj1pLiwVXDhpGJtSbytJK5Ng8TE2"
+    }, 
+    {
+      "index": 4, 
+      "title": "A Corner Coffeeshop example",
+      "description": "This example mimics a small coffee shop. This example mimics a small coffee shop. This example mimics a small coffee shop.",
+      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/Qmf2sd4rFFwGjhyBM7wweCbzGTEEVQLAsigKnm5SAfgC7Y"
+    },
+    {
+      "index": 5, 
+      "title": "Example B",
+      "description": "This is currently a random example. This is currently a random example. This is currently a random example. This is currently a random example. This is currently a random example.",
+      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmRxnq9JBF3ERVmdchhozQgm1BpUfNqkiJeWcxhjoBLN1r"
+    },
+    {
+      "index": 6,
+      "title": "Example C",
+      "description": "This is currently a second random example. This is currently a random example. This is currently a random example. This is currently a random example. This is currently a random example",
+      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmVL9XH2fmibVpfUatEj1pLiwVXDhpGJtSbytJK5Ng8TE2"
+    }
+    
+  ]
+}
