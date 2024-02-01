@@ -5,11 +5,11 @@
 // implement first in landing page - then rest of app. 
 
 import { useState, useRef, useEffect } from 'react';
-import data from "../../../public/exampleLoyaltyPrograms.json"; // not that this is a very basic json file data format - can be used in many other cases as well. 
+import data from "../../public/exampleLoyaltyPrograms.json"; // not that this is a very basic json file data format - can be used in many other cases as well. 
 import Image from 'next/image';
-import { TitleText } from './StandardisedFonts';
+import { TitleText } from './ui/StandardisedFonts';
 import { LoyaltyProgram } from '@/types';
-import { Button } from './Button';
+import { Button } from './ui/Button';
 
 export const Carousel = () => {
   const [ selectIndex, setSelectedIndex ] = useState<number | undefined>(1);

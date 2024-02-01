@@ -1,19 +1,5 @@
 "use client";
 
-  // Here I can implement enforcement of login and valid accound and customer loyalty cards
-  // - at each page check for login and valid card. 
-  // - if not: send update to dedicated redux reducer
-  // - in this page I can then 
-  // - (when no proper login: )
-  //   - update notification reducer 
-  //   - NOT show children 
-  // - (when no valid card)
-  //   - update notification reducer 
-  //   - show component for choosing card. 
-  // This way: all this complexity is kept away from each page... 
-
-  // later implement transitioning. WIP 
-
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -23,7 +9,6 @@ import { useState, useEffect } from "react";
 import { 
   EthAddress, 
   LoyaltyProgram, 
-  LoyaltyToken,
   LoyaltyCard 
 } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
@@ -32,10 +17,9 @@ import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { resetLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import RequestCard from "./RequestCard";
 import SelectLoyaltyCard from "./SelectLoyaltyCard";
-import { loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
+import { loyaltyProgramAbi } from "@/context/abi";
 import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
-import { getContractEventsProps } from "@/types"
 import { 
   parseEthAddress, 
   parseUri, 
@@ -289,7 +273,7 @@ export const ModalMain = ({
     <div className="relative grow w-full h-full max-w-4xl z-1">
 
       <div className="flex flex-col pt-14 h-full z-3">
-        {/* { selectedLoyaltyProgram?.metadata ? 
+        { selectedLoyaltyProgram?.metadata ? 
           <Image
           className="absolute inset-0 z-0"
           fill 
@@ -297,7 +281,7 @@ export const ModalMain = ({
           src={selectedLoyaltyProgram.metadata.imageUri} 
           alt="Loyalty Card Token"
           />
-        : null }         */}
+        : null }        
         <NotificationDialog/> 
         
         { modalVisible && userLoggedIn != undefined ? 
