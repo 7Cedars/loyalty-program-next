@@ -289,7 +289,7 @@ export const ModalMain = ({
     <div className="relative grow w-full h-full max-w-4xl z-1">
 
       <div className="flex flex-col pt-14 h-full z-3">
-        { selectedLoyaltyProgram?.metadata ? 
+        {/* { selectedLoyaltyProgram?.metadata ? 
           <Image
           className="absolute inset-0 z-0"
           fill 
@@ -297,12 +297,12 @@ export const ModalMain = ({
           src={selectedLoyaltyProgram.metadata.imageUri} 
           alt="Loyalty Card Token"
           />
-        : null }        
+        : null }         */}
         <NotificationDialog/> 
         
         { modalVisible && userLoggedIn != undefined ? 
-          <div className={`grow mt-2 bg-slate-50/[.90] h-full scroll-auto backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10 ${visibility[0]}`}> 
-            <div className="grow flex justify-end"> 
+          <div className={`grow mt-2 bg-slate-50/[.90] h-full overflow-y-scroll backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10 ${visibility[0]}`}> 
+            <div className="grow flex justify-end overflow-y-scroll"> 
               <button 
                   className="text-black font-bold pt-2 px-2"
                   type="submit"
