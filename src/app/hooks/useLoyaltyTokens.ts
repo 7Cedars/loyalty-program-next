@@ -58,8 +58,8 @@ export const useLoyaltyTokens = () => {
 
       const logs: Log[] = await publicClient.getContractEvents({
         abi: loyaltyGiftAbi, 
-        eventName: 'DiscoverableLoyaltyGift', 
-        // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, 
+        eventName: 'LoyaltyGiftDeployed', 
+        // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, // This should be an editable list inside the front end. improvement for later. 
         fromBlock: 1n,
         toBlock: 16330050n
       });

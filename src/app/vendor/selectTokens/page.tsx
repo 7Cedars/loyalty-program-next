@@ -2,21 +2,14 @@
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./TokenSmall";
 import TokenBig from "./TokenBig";
-import {  EthAddress, LoyaltyToken } from "@/types";
-import { useEffect, useState, useRef } from "react";
+import { LoyaltyToken } from "@/types";
+import { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
+import { loyaltyProgramAbi } from "@/context/abi";
 import { Log } from "viem"
-import { usePublicClient, useAccount } from 'wagmi'
-import { 
-  parseTokenContractLogs, 
-  parseEthAddress, 
-  parseLoyaltyGiftLogs, 
-  parseUri, 
-  parseMetadata, 
-  parseBigInt
-} from "@/app/utils/parsers";
+import { usePublicClient } from 'wagmi'
+import { parseEthAddress, parseLoyaltyGiftLogs} from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 

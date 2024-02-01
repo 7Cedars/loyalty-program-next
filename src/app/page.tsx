@@ -6,8 +6,11 @@ import { Carousel } from "./ui/Carousel"
 import { TitleText } from "./ui/StandardisedFonts";
 import Image from "next/image";
 
+
 // This should become the landing page of my app. See here: https://unbounce.com/landing-page-examples/best-landing-page-examples/
 // Doordash example is nice, as is the very first one: Calm. 
+// NB: for viem function to deploy contract, see :https://viem.sh/docs/contract/deployContract 
+
 
 export default function Home() {
 

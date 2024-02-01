@@ -54,7 +54,7 @@ export const ModalMain = ({
 }: ModalProps) => {
 
   const dispatch = useAppDispatch()
-  const { modalVisible } = useAppSelector(state => state.userInput) 
+  const { modalVisible } = useAppSelector(state => state.userInput)
   const { address }  = useAccount()
   const publicClient = usePublicClient(); 
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
@@ -64,6 +64,14 @@ export const ModalMain = ({
   const [ loyaltyProgram, setLoyaltyProgram ] = useState<LoyaltyProgram>() 
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[]>() 
   const [ showRequestCard, setShowRequestCard ] = useState<boolean>(false)
+  const [ toggleViz, setToggleViz ] = useState<number>(1)
+  const visibility = [
+    "opacity-100",
+    "opacity-0"
+  ]
+
+  console.log("toggleViz: ", toggleViz)
+  console.log("modalVisible", modalVisible)
 
   /////////////////////////////////////////////////// 
   /// Loading data loyalty cards owned by address /// 
@@ -264,6 +272,13 @@ export const ModalMain = ({
 
   }, [ , address])
 
+  useEffect(() => {
+    
+    if (modalVisible == true)  { setToggleViz(0) } 
+    else { setToggleViz(1) }  
+
+  }, [modalVisible])
+
   console.log(
     "pre render console log", 
     "selectedLoyaltyCard: ", selectedLoyaltyCard, 
@@ -271,7 +286,7 @@ export const ModalMain = ({
   )
 
   return (
-    <div className="relative w-full h-screen max-w-4xl z-1">
+    <div className="relative grow w-full h-full max-w-4xl z-1">
 
       <div className="flex flex-col pt-14 h-full z-3">
         { selectedLoyaltyProgram?.metadata ? 
@@ -286,7 +301,7 @@ export const ModalMain = ({
         <NotificationDialog/> 
         
         { modalVisible && userLoggedIn != undefined ? 
-          <div className="grow mt-2 bg-slate-50/[.90] max-h-full scroll-auto backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10"> 
+          <div className={`grow mt-2 bg-slate-50/[.90] h-full scroll-auto backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10 ${visibility[0]}`}> 
             <div className="grow flex justify-end"> 
               <button 
                   className="text-black font-bold pt-2 px-2"

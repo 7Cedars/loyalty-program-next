@@ -103,11 +103,11 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
                 src={"/loading.svg"}
                 alt="Loading icon"
               />
-              Waiting for confirmation (this can take a few minutes...)
+              Waiting for confirmation..
             </div>
           </Button>
           : 
-          <Button appearance = {"blueFilled"} isDisabled={!mintCards.write} onClick={() => mintCards.write?.()}>
+          <Button appearance = {"blueFilled"} disabled={!mintCards.write} onClick={() => mintCards.write?.()}>
             Mint Cards
           </Button>
         }
