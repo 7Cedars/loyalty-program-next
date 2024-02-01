@@ -24,10 +24,10 @@ export const Carousel = () => {
           
               <div
                 key={item.index}
-                className="carousel-item text-center snap-start ml-4 flex flex-col w-full">
+                className="carousel-item text-center snap-start ml-4 flex flex-col self-center w-full">
                   <>
                     <button 
-                      className="w-48 z-0 enabled:opacity-50 transition ease-in-out delay-150"
+                      className="w-48 z-0 enabled:opacity-50 enabled:w-44 transition-all ease-in-out delay-250"
                       onClick={() => setSelectedIndex(item.index)}
                       disabled={ item.index==selectIndex }
                     >
@@ -61,7 +61,7 @@ export const Carousel = () => {
           }
     </div>
 
-    <div className='text-center m-3 '>
+    <div className='text-center m-3 text-slate-700'>
 
       {selectIndex && data ? 
         data.items[selectIndex - 1].description

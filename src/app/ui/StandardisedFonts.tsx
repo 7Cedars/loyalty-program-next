@@ -2,6 +2,7 @@ type TitleTextProps = {
   title: string; 
   subtitle?: string;
   size?: 0 | 1 | 2;
+  colourMode?: 0 | 1; // 0 = dark 1 = light 
 }
 
 type NoteTextProps = {
@@ -27,18 +28,24 @@ const appearanceNote = [
   "text-lg"
 ]
 
+const colourTitle = [
+  "text-slate-700",
+  "text-slate-300"
+]
+
 export const TitleText = ({
   title, 
   subtitle, 
   size = 1,
+  colourMode = 0
 }: TitleTextProps) => {
 
   return (
     <div className="grid grid-cols-1 pb-2">
-      <div className={`text-center font-bold ${appearanceTitle[size]}`}>
+      <div className={`text-center font-bold ${colourTitle[colourMode]} ${appearanceTitle[size]}`}>
         {title}
       </div>
-      <div className={`text-center text-gray-500 ${appearanceSubtitle[size]}`}>
+      <div className={`text-center text-slate-400 ${appearanceSubtitle[size]}`}>
         {subtitle}
       </div>
     </div>
