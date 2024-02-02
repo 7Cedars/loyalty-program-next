@@ -225,6 +225,17 @@ export const parseEthAddress = (address: unknown): EthAddress => {
   return returnAddress as EthAddress;
 };
 
+export const parseHex = (hex: unknown): Hex => {
+  if (!isString(hex)) {
+    throw new Error(`Incorrect address, not a string: ${hex}`);
+  }
+  if (/0x/.test(hex) == false) {
+    throw new Error(`Incorrect address, 0x prefix missing: ${hex}`);
+  }
+
+  return hex as Hex;
+};
+
 export const parseSignature = (signature: unknown): Hex => {
   if (!isString(signature)) {
     throw new Error(`Incorrect signature, not a string: ${signature}`);

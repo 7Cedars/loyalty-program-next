@@ -4,6 +4,7 @@ import { QrCodeIcon } from "@heroicons/react/24/outline";
 import { useScreenDimensions } from "./hooks/useScreenDimensions"
 import { Carousel } from "./Carousel"
 import { TitleText } from "./ui/StandardisedFonts";
+import { foundry, sepolia, baseSepolia } from 'viem/chains'
 import Image from "next/image";
 import { useAccount } from "wagmi";
 import { deployContract } from "viem/contract";
@@ -11,38 +12,47 @@ import { loyaltyProgramAbi } from "@/context/abi";
 import { loyaltyProgramBytecode } from "@/context/bytecode";
 import { GetWalletClientResult, getWalletClient } from "@wagmi/core";
 import { useEffect, useRef, useState } from "react";
-import { Address, Hex } from "viem";
+import { Address, Hex, createPublicClient, createWalletClient, custom, http, WalletClient } from "viem";
 import { EthAddress } from "@/types";
 import { Button } from "./ui/Button";
+import 'viem/window'
+import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { Web3Modal } from "@/context/Web3Modal";
+import { useWalletClient } from "wagmi";
+import { parseEthAddress } from "./utils/parsers";
+
 // This should become the landing page of my app. See here: https://unbounce.com/landing-page-examples/best-landing-page-examples/
 // Doordash example is nice, as is the very first one: Calm. 
 // NB: for viem function to deploy contract, see :https://viem.sh/docs/contract/deployContract 
-
-type DeployProps = { 
-  uri: string; 
-  erc65511Registry: EthAddress;
-  erc65511Implementation: EthAddress; 
-}
+// See example here: https://stackblitz.com/github/wevm/viem/tree/main/examples/contracts_deploying-contracts?file=index.tsx
 
 export default function Home() {
   const {address} = useAccount(); 
-  const walletClient = useRef<GetWalletClientResult>(); 
   const [transactionHash, setTransactionHash] = useState<Hex>(); 
+  const { open, close } = useWeb3Modal()
+  const { data: walletClient, status } = useWalletClient();
+  const [deployRequest, setDeployRequest] = useState<string>();
 
-  const getWallet = async () => {
-    const walletClientResult = await getWalletClient()
-    if (walletClientResult) walletClient.current = walletClientResult
+  console.log("loyaltyProgramBytecode: ", loyaltyProgramBytecode.valueOf() )
+
+  const handleDeployRequest = async (uri: string) => {
+    open() 
+    setDeployRequest(uri)
   }
 
-  const deployLoyaltyProgram = async (uri: string) => {
-    if (walletClient.current) {
-      const hash = await walletClient.current.deployContract({
+  const deployLoyaltyProgram = async () => {
+
+    const registry: EthAddress = parseEthAddress("0x782abFB5B5412a0F89D3202a2883744f9B21B732") 
+    const implmentation: EthAddress = parseEthAddress("0x70997970c51812dc3a010c7d01b50e0d17dc79c8") 
+
+    if (walletClient) {
+      const hash = await walletClient.deployContract({
         abi: loyaltyProgramAbi,
         account: address,
         args: [
-          uri, 
-          "0x782abFB5B5412a0F89D3202a2883744f9B21B732", // registry 
-          "0x70997970c51812dc3a010c7d01b50e0d17dc79c8" // deployArgs.erc65511Implementation
+          deployRequest,
+          registry, // registry 
+          implmentation // deployArgs.erc65511Implementation
         ],
         bytecode: loyaltyProgramBytecode,
       })
@@ -51,9 +61,8 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (!walletClient.current) getWallet() 
-  }, [])
-
+    if (walletClient && deployRequest) deployLoyaltyProgram() 
+  }, [walletClient, deployRequest])
 
 
   return (
@@ -149,8 +158,8 @@ export default function Home() {
               className="w-full h-2/3"
             />
             <div className="h-16 flex mx-3"> 
-              <Button appearance="grayEmpty" onClick={() => {}}>
-                <a href="#deploy-program">Get Started</a>
+              <Button appearance="grayEmpty" onClick={() => {handleDeployRequest("https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/Qmf2sd4rFFwGjhyBM7wweCbzGTEEVQLAsigKnm5SAfgC7Y")}}>
+                <a href="#deploy-program">Deploy Program (test)</a> 
               </Button>
               
             </div>

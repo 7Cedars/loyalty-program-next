@@ -8,6 +8,7 @@ import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { useWeb3ModalTheme } from '@web3modal/wagmi/react';
+import { createWalletClient, http } from 'viem';
 
 // const selectedChains = [baseSepolia] // other options: , arbitrum, arbitrumGoerli, optimism, optimismSepolia,
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY ? process.env.NEXT_PUBLIC_API_KEY : "none"
