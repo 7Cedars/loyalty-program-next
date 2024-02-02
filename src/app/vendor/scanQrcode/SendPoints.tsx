@@ -32,7 +32,12 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
       functionName: 'safeTransferFrom',
-      args: [ address, qrData?.loyaltyCardAddress, 0, numpadNumber, ""], 
+      args: [ 
+        parseEthAddress("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"), 
+        parseEthAddress("0xA3f480C5b6d55303e0c830c236D62d8A056c3Ffd"), 
+        0,
+        500, 
+        ""], // [ address, qrData?.loyaltyCardAddress, 0, numpadNumber, ""] 
       onError(error) {
         dispatch(notification({
           id: "transferPoints",
@@ -117,7 +122,7 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
             </div>
           </Button>
           : 
-          <Button appearance = {"blueFilled"} isDisabled={!transferPoints.write} onClick={() => transferPoints.write?.()}>
+          <Button appearance = {"blueFilled"} disabled={!transferPoints.write} onClick={() => transferPoints.write?.()}>
             Transfer Points
           </Button>
         }
