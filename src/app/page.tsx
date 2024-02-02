@@ -2,11 +2,12 @@
 
 import { QrCodeIcon } from "@heroicons/react/24/outline";
 import { useScreenDimensions } from "./hooks/useScreenDimensions"
-import { Carousel } from "./Carousel"
+import loyaltyProgramsData from "../../public/exampleLoyaltyPrograms.json"; // not that this is a very basic json file data format - can be used in many other cases as well. 
+import { Carousel } from "./ui/Carousel"
 import { TitleText } from "./ui/StandardisedFonts";
 import { foundry, sepolia, baseSepolia } from 'viem/chains'
 import Image from "next/image";
-import { useAccount } from "wagmi";
+import { useAccount, useWaitForTransaction } from "wagmi";
 import { deployContract } from "viem/contract";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { loyaltyProgramBytecode } from "@/context/bytecode";
@@ -20,6 +21,9 @@ import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { Web3Modal } from "@/context/Web3Modal";
 import { useWalletClient } from "wagmi";
 import { parseEthAddress } from "./utils/parsers";
+import { notification } from "@/redux/reducers/notificationReducer";
+import { useDispatch } from "react-redux";
+import { truncate } from "fs/promises";
 
 // This should become the landing page of my app. See here: https://unbounce.com/landing-page-examples/best-landing-page-examples/
 // Doordash example is nice, as is the very first one: Calm. 
@@ -32,11 +36,14 @@ export default function Home() {
   const { open, close } = useWeb3Modal()
   const { data: walletClient, status } = useWalletClient();
   const [deployRequest, setDeployRequest] = useState<string>();
+  const [ selectIndex, setSelectedIndex ] = useState<number | undefined>(1);
+  const dispatch = useDispatch(); 
 
-  console.log("loyaltyProgramBytecode: ", loyaltyProgramBytecode.valueOf() )
+  console.log("deployRequest: ", deployRequest)
 
   const handleDeployRequest = async (uri: string) => {
-    open() 
+    console.log("handleDeployRequest CALLED, uri: ", uri)
+    !walletClient ? open() : null  
     setDeployRequest(uri)
   }
 
@@ -56,9 +63,17 @@ export default function Home() {
         ],
         bytecode: loyaltyProgramBytecode,
       })
+      setDeployRequest(undefined)
       setTransactionHash(hash)
     }
   }
+
+  const { data, isError, isLoading, isSuccess, isIdle } = useWaitForTransaction(
+    { 
+      confirmations: 1,
+      hash: transactionHash
+    })
+
 
   useEffect(() => {
     if (walletClient && deployRequest) deployLoyaltyProgram() 
@@ -158,8 +173,8 @@ export default function Home() {
               className="w-full h-2/3"
             />
             <div className="h-16 flex mx-3"> 
-              <Button appearance="grayEmpty" onClick={() => {handleDeployRequest("https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/Qmf2sd4rFFwGjhyBM7wweCbzGTEEVQLAsigKnm5SAfgC7Y")}}>
-                <a href="#deploy-program">Deploy Program (test)</a> 
+              <Button appearance="grayEmpty" onClick={() => {}}>
+                <a href="#deploy-program">Get started</a> 
               </Button>
               
             </div>
@@ -204,10 +219,92 @@ export default function Home() {
           
         </div>
 
-        <div className='h-[80vh] w-full sm:w-4/5 bg-slate-300 shadow-2xl p-2 grid grid-cols-1 content-center'  id="deploy-program">
+        <div className='h-[80vh] w-full sm:w-4/5 bg-slate-300 shadow-2xl p-2 pt-6 flex flex-col content-center'  id="deploy-program">
           <TitleText title="New here?" subtitle="Deploy and try out any of these examples" size = {2} colourMode={0}/>  
           <div className="px-2 sm:px-20"> 
-            <Carousel /> 
+
+          <div className="relative my-6 mx-auto">
+            <div className="flex flex-row justify-between overflow-x-auto overflow-hidden scroll-px-1 snap-normal w-full h-full self-center">
+          
+            {loyaltyProgramsData.items.map((item) => 
+            
+                <div
+                  key={item.index}
+                  className="carousel-item h-96 w-52 text-center items-center snap-start ml-4 flex flex-col self-center">
+                    <>
+                      <button 
+                        className="w-11/12 z-0 max-h-80 max-w-48 self-center enabled:opacity-50 enabled:w-5/6 transition-all ease-in-out delay-250 self-center"
+                        onClick={() => setSelectedIndex(item.index)}
+                        disabled={ item.index==selectIndex }
+                      >
+                        <Image
+                          src={item.imageUrl || ''}
+                          alt={item.title}
+                          style = {{ objectFit: "cover" }} 
+                          width={400}
+                          height={600}
+                          className="w-48 h-68 self-center" 
+                        />
+                      </button>
+
+                      { item.index==selectIndex  ? 
+
+                        isIdle ? 
+                          <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
+                            <Button appearance='blueEmpty' onClick={() => handleDeployRequest(item.uri)}  disabled={ false }> 
+                              Deploy
+                            </Button>
+                          </div>
+                        :
+                        isError ? 
+                          <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
+                            <Button appearance='redFilled' onClick={()=> {}}  disabled={ true }> 
+                              Error 
+                            </Button>
+                          </div>
+                        :
+                        isLoading ?
+                          <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
+                            <Button appearance='grayEmpty' onClick={()=> {}}  disabled={ true }> 
+                              Loading...  
+                            </Button>
+                          </div>
+                        :
+                        isSuccess ? 
+                          <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
+                            <Button appearance='greenEmpty' onClick={()=> {}}  disabled={ true }> 
+                              <a href="/vendor/home">Visit</a> 
+                            </Button>
+                          </div>
+                        :
+                        <div className='h-fit w-48 flex opacity-0 transition ease-in-out duration-700"'>
+                          <Button appearance='blueEmpty' onClick={()=> {}}  disabled={ true }> 
+                            Invisible  
+                          </Button>
+                        </div>
+                        : 
+                        <div className='h-fit w-48 flex opacity-0 transition ease-in-out duration-700"'>
+                          <Button appearance='blueEmpty' onClick={()=> {}}  disabled={ true }> 
+                            Invisible 
+                          </Button>
+                        </div>
+                      }
+                      </>
+                </div>        
+              )
+            }
+          </div>
+
+          <div className='text-center m-3 text-slate-700'>
+
+            {selectIndex && loyaltyProgramsData ? 
+              loyaltyProgramsData.items[selectIndex - 1].description
+              : 
+              null
+            }
+
+          </div> 
+          </div>
           </div>
         </div>
         

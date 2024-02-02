@@ -88,7 +88,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
       functionName: "safeTransferFrom", 
-      args: [address, customerAddress, Number(lastCardTransferred) + 1, 1n, ""], 
+      args: [address, customerAddress,  Number(lastCardTransferred) + 1, 1, ""], 
       onError(error) {
         dispatch(notification({
           id: "transferLoyaltyCard",
@@ -127,7 +127,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
       const transferredLoyaltyCards = transferSingles.map(item => item.ids[0])
       setLastCardTransferred(bigIntMax(transferredLoyaltyCards))
     } else {
-      setLastCardTransferred(0n)
+      setLastCardTransferred(1n)
     }
 
     setCustomerAddress(qrData?.customerAddress)

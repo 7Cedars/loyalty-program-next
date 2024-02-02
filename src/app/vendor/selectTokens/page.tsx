@@ -85,7 +85,7 @@ export default function Page() {
   }, [selectedToken, loyaltyTokens]) 
 
   return (
-     <div className=" w-full grid grid-cols-1 gap-1">
+     <div className=" w-full grid grid-cols-1 gap-1 overflow-hidden">
 
        <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={2} />
 
@@ -107,7 +107,7 @@ export default function Page() {
       </div>
       :
       
-      <>
+      <div className="overflow-x-scroll">
 
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
@@ -130,8 +130,8 @@ export default function Page() {
           }
         </div> 
         
-        <div className="grid grid-cols-1  xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
-          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
+        <div className="grid grid-cols-1  xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start overflow-x-scroll">
+          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 overflow-x-scroll"> 
             <TitleText title = "Available Gifts" size={0} />
           </div>
           
@@ -149,7 +149,7 @@ export default function Page() {
             </div>
           }
         </div>
-      </>
+      </div>
 
     }
     

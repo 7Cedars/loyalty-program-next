@@ -19,7 +19,7 @@ export default function Page()  {
     <div className="grid grid-cols-1 h-full content-between pt-2">
         <TitleText 
           title = {selectedLoyaltyProgram?.metadata ? selectedLoyaltyProgram?.metadata.attributes[0].value  : "Loyalty Card"} 
-          subtitle="Scan to activate customer loyalty card" 
+          subtitle="Let customer scan this code to give a loyalty card" 
           size={2}
           /> 
       <div className="grid justify-center justify-items-center p-6">

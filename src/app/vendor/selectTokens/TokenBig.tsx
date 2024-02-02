@@ -79,15 +79,15 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
-      functionName: "mintLoyaltyTokens",
+      functionName: "mintLoyaltyVouchers",
       onError(error) {
         dispatch(notification({
-          id: "mintLoyaltyTokens",
-          message: `Something went wrong. Loyalty tokens not minted.`, 
+          id: "mintLoyaltyVouchers",
+          message: `Something went wrong. Loyalty vouchers not minted.`, 
           colour: "red",
           isVisible: true
         }))
-        console.log('mintLoyaltyTokens Error', error)
+        console.log('mintLoyaltyVouchers Error', error)
       }, 
       onSuccess(data) {
         setHashMintTransaction(data.hash)
