@@ -33,10 +33,10 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
       abi: loyaltyProgramAbi,
       functionName: 'safeTransferFrom',
       args: [ 
-        parseEthAddress("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"), 
-        parseEthAddress("0xA3f480C5b6d55303e0c830c236D62d8A056c3Ffd"), 
-        0,
-        500, 
+        parseEthAddress(address), 
+        parseEthAddress(qrData?.loyaltyCardAddress), 
+        0, 
+        numpadNumber, 
         ""], // [ address, qrData?.loyaltyCardAddress, 0, numpadNumber, ""] 
       onError(error) {
         dispatch(notification({

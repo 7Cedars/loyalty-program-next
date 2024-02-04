@@ -16,7 +16,7 @@ VENDOR APP - Implement REFACTORING!
 - [ ] Start designing / thinking through landing page. (/vendor) 
   - [x] What info to include
   - [x]  Layout / UI. 
-  - [ ] Have a easy deploy program in here. 
+  - [x] Have a easy deploy program in here. 
   - [ ] and easy link to actual app if they alreay have one.  
   - [ ] Create seperate json file with necessary info
   - [ ] Create tialwind css carousel with transitions 
@@ -25,6 +25,7 @@ VENDOR APP - Implement REFACTORING!
 - [x]  Home page
   - [x]  Refactor selection programs  
   - [x]  If only one program is deployed, should go straigh to it - skip choice page (see customer app for this logic.)
+  - [ ]  If no programs are deployed - should have link to landing page - very simple (now just shows up empty). 
 - [ ]  Gift & redeem page / QR reading page 
   - [ ]  Fix Bug that when no valid QR code is read - it craches. Needs to have notification + continue reading. 
   - [x]  At sending new card: 

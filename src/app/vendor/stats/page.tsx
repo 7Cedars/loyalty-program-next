@@ -43,6 +43,7 @@ export default function Page() {
         functionName: 'balanceOf', 
         args: [ selectedLoyaltyProgram.programOwner, 0 ]
       });
+      console.log("loyaltyProgramPointsData: ", loyaltyProgramPointsData)
       
       const loyaltyCardPoints = parseBigInt(loyaltyProgramPointsData)
       setLoyaltyPoints(Number(loyaltyCardPoints))
@@ -58,6 +59,8 @@ export default function Page() {
         functionName: 'getNumberLoyaltyCardsMinted', 
         args: []
       });
+
+      console.log("loyaltyCardsData: ", loyaltyCardsData)
       
       const loyaltyCards = parseBigInt(loyaltyCardsData)
 
@@ -67,7 +70,7 @@ export default function Page() {
         )
         console.log("transferredCards: ", transferredCards)
 
-        setCardsMinted(Number(loyaltyCards) - transferredCards.length)
+        transferredCards ? setCardsMinted(Number(loyaltyCards) - Number(transferredCards.length)) : setCardsMinted(Number(loyaltyCards))
       }
     }
   }

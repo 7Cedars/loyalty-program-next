@@ -4,4 +4,4 @@ import { Hex, ToBytesParameters, isHex } from "viem"
 import loyaltyProgram from "../../../loyalty-program-contracts/out/LoyaltyProgram.sol/LoyaltyProgram.json"
 import { parseHex } from "@/app/utils/parsers"
 
-export const loyaltyProgramBytecode: Hex = parseHex(loyaltyProgram.bytecode.object) // why?! why, why, why? It is NOT possible to directly import it. 
+export const loyaltyProgramBytecode: Hex = parseHex(loyaltyProgram.bytecode.object) 
