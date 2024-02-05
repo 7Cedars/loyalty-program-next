@@ -50,7 +50,7 @@ export default function Home() {
   const deployLoyaltyProgram = async () => {
 
     const registry: EthAddress = parseEthAddress("0x782abFB5B5412a0F89D3202a2883744f9B21B732") 
-    const implmentation: EthAddress = parseEthAddress("0x70997970c51812dc3a010c7d01b50e0d17dc79c8") 
+    const implmentation: EthAddress = parseEthAddress("0x71C95911E9a5D330f4D621842EC243EE1343292e") 
 
     if (walletClient) {
       const hash = await walletClient.deployContract({

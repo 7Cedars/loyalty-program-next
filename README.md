@@ -17,11 +17,11 @@ VENDOR APP - Implement REFACTORING!
   - [x] What info to include
   - [x]  Layout / UI. 
   - [x] Have a easy deploy program in here. 
-  - [ ] and easy link to actual app if they alreay have one.  
-  - [ ] Create seperate json file with necessary info
-  - [ ] Create tialwind css carousel with transitions 
-  - [ ] Have two styles of titleText: light and dark. - both sleet. 
-  - [ ] Have sleet version of button? 
+  - [x] and easy link to actual app if they alreay have one.  
+  - [x] Create seperate json file with necessary info
+  - [x] Create tialwind css carousel with transitions 
+  - [x] Have two styles of titleText: light and dark. - both sleet. 
+  - [ ] Have sleet version of button? -- - possibly. 
 - [x]  Home page
   - [x]  Refactor selection programs  
   - [x]  If only one program is deployed, should go straigh to it - skip choice page (see customer app for this logic.)

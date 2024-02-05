@@ -46,21 +46,21 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
     if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
   }, [status, loyaltyTokens])
 
-  const redeemLoyaltyToken = useContractWrite( 
+  const redeemLoyaltyVoucher = useContractWrite( 
     {
       address: parseEthAddress(progAddress),
       abi: loyaltyProgramAbi,
-      functionName: "redeemLoyaltyToken", 
+      functionName: "redeemLoyaltyVoucher", 
       args: [
         `${token?.metadata?.name}`,
         qrData?.loyaltyToken,
         BigInt(Number(qrData?.loyaltyTokenId)), 
-        qrData?.loyaltyCardAddress,
+        qrData?.loyaltyCardId,
         qrData?.customerAddress,
         qrData?.signature
       ], 
       onError(error) {
-        console.log('redeemLoyaltyToken Error', error)
+        console.log('redeemLoyaltyVoucher Error', error)
       }, 
       onSuccess(data) {
         setHashTransaction(data.hash)
@@ -171,7 +171,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
         </div> 
         :
         <div className="flex w-full p-2"> 
-          <Button appearance = {"greenEmpty"} onClick={redeemLoyaltyToken.write} >
+          <Button appearance = {"greenEmpty"} onClick={redeemLoyaltyVoucher.write} >
               Redeem voucher
           </Button>
         </div> 

@@ -68,7 +68,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
         `${token?.metadata?.attributes[1].value} points`,
         qrData?.loyaltyToken,
         BigInt(Number(qrData?.loyaltyTokenId)), 
-        qrData?.loyaltyCardAddress,
+        qrData?.loyaltyCardId, 
         qrData?.customerAddress,
         token?.metadata?.attributes[1].value, 
         qrData?.signature

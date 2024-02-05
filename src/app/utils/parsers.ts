@@ -247,9 +247,6 @@ export const parseSignature = (signature: unknown): Hex => {
   return signature as Hex;
 };
 
- 
-
-
 export const parseContractLogs = (logs: Log[]): LoyaltyProgram[] => {
   if (!isArray(logs)) {
     throw new Error(`Incorrect logs, not an array: ${logs}`);
@@ -535,7 +532,7 @@ export const parseQrData = (qrText: unknown): QrData => {
               type: "claimGift",  
               loyaltyToken: parseEthAddress(data[1]), 
               loyaltyTokenId: Number(data[2]), 
-              loyaltyCardAddress: parseEthAddress(data[3]), 
+              loyaltyCardId: Number(data[3]), 
               customerAddress: parseEthAddress(data[4]), 
               loyaltyPoints: Number(data[5]), 
               signature: parseSignature(data[6])
@@ -547,7 +544,7 @@ export const parseQrData = (qrText: unknown): QrData => {
               type: "redeemToken", 
               loyaltyToken: parseEthAddress(data[1]), 
               loyaltyTokenId: Number(data[2]), 
-              loyaltyCardAddress: parseEthAddress(data[3]), 
+              loyaltyCardId: Number(data[3]), 
               customerAddress: parseEthAddress(data[4]), 
               signature: parseSignature(data[5])
               }

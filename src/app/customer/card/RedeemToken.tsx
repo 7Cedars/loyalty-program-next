@@ -184,7 +184,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
             <div className="m-3"> 
               <QRCode 
-                value={`type:redeemToken;${token.tokenAddress};${token.tokenId};${selectedLoyaltyCard?.cardAddress};${address};${signature}`}
+                value={`type:redeemToken;${token.tokenAddress};${token.tokenId};${selectedLoyaltyCard?.cardId};${address};${signature}`}
                 style={{ height: "400px", width: "100%", objectFit: "cover"  }}
                 />
             </div>

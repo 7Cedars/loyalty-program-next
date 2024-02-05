@@ -52,8 +52,8 @@ export default function Page() {
   }
   
   useEffect(() => {
-    if (!loyaltyPoints) getLoyaltyCardPoints()
-  }, [ , loyaltyPoints ])
+    if (!loyaltyPoints && progAddress) getLoyaltyCardPoints()
+  }, [ , loyaltyPoints, progAddress ])
 
   const getClaimedLoyaltyTokens = async () => {
     console.log("getClaimedLoyaltyTokens called")

@@ -81,6 +81,7 @@ export type QrData = {
   type: "giftPoints" | "redeemToken" | "requestCard" | "claimGift"; 
   loyaltyProgram?: EthAddress; 
   loyaltyCardAddress?: EthAddress; 
+  loyaltyCardId?: number; 
   loyaltyToken?: EthAddress; 
   loyaltyTokenId?: number; 
   customerAddress?: EthAddress;
