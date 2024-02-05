@@ -6,13 +6,13 @@ type ButtonProps = {
   isFilled?: boolean;
   children: any;
   onClick: () => void;
-  appearance?: "blueFilled" | "blueEmpty" | "grayFilled" | "grayEmpty" |  "greenFilled" | "greenEmpty" | "redFilled" | "redEmpty" | "grayEmptyLight"
+  appearance?: "blueFilled" | "grayEmpty" | "grayFilled" | "grayEmpty" |  "greenFilled" | "greenEmpty" | "redFilled" | "redEmpty" | "grayEmptyLight"
 };
 
 export const Button = ({
   children,
   onClick,
-  appearance = "blueEmpty",
+  appearance = "grayEmpty",
   disabled = false
 }: ButtonProps) => {
 
@@ -23,7 +23,7 @@ export const Button = ({
     grayEmpty:   "rounded m-1 grow text-md py-2 px-4 border-2 border-slate-400 text-slate-700 hover:border-slate-700", 
     grayEmptyLight: "rounded m-1 grow text-md py-2 px-4 border-2 border-slate-400 text-slate-300 hover:border-slate-300", 
     greenFilled: "rounded m-1 grow text-md py-2 px-4 bg-green-500 hover:bg-green-600 text-white", 
-    greenEmpty:  "rounded m-1 grow text-md py-2 px-4 border-2 border-green-400 text-green-400 bg-white/50 hover:text-green-700 hover:border-green-700", 
+    greenEmpty:  "rounded m-1 grow text-md py-2 px-4 border-2 border-green-400 text-green-400 bg-white/50 hover:border-green-700", 
     redFilled:   "rounded m-1 grow text-md py-2 px-4 bg-red-500 hover:bg-red-600 text-white", 
     redEmpty:    "rounded m-1 grow text-md py-2 px-4 border-2 border-red-400 text-red-400 bg-white/50 hover:bg-red-200/50 hover:text-red-700 hover:border-red-700", 
   }

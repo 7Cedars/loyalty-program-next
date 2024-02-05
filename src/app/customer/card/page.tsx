@@ -18,7 +18,7 @@ import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
-  disabled: boolean; 
+  disabled: boolean;
 }
 
 export default function Page() {
@@ -125,7 +125,7 @@ export default function Page() {
         <p className="pt-0 w-full text-2xl text-center text-bold">
           {`${loyaltyPoints}`}
         </p>
-        <p className="pb-2 w-1/2 text-center border-b border-blue-800 text-lg">
+        <p className="pb-2 w-1/2 text-center border-b border-slate-700 text-lg">
           {`Loyalty Points`}
         </p>
       </div>

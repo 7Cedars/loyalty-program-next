@@ -139,7 +139,7 @@ export default function Page() {
 
       <div className="grid grid-cols-1 justify-items-center w-full h-full overflow-auto ">
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
-        <div className="grid grid-cols-1 p-2 pt-3 w-1/2 text-center justify-items-center border-b border-blue-800"> 
+        <div className="grid grid-cols-1 p-2 pt-3 w-1/2 text-center justify-items-center border-b border-slate-700"> 
           <p> {`${loyaltyPoints}`} remaining points </p>
           <p> {`${cardsMinted}`} remaining cards </p> 
         </div>
@@ -266,7 +266,7 @@ export default function Page() {
 
           <div className="grid grid-cols-1 gap-1 mb-12">
             <div className="px-12 flex h-12">
-              <Button onClick={() => {setModal(undefined)} } appearance="blueEmpty">
+              <Button onClick={() => {setModal(undefined)} } appearance="grayEmpty">
                 <div className="justify-center items-center">
                   Return to Transaction Overview
                 </div>
@@ -278,14 +278,14 @@ export default function Page() {
 
           <div className="grid grid-cols-1 w-full justify-items-center">
             <div className="flex w-full md:px-48 px-6">
-              <Button onClick={() => {setModal('points')} } appearance="blueEmpty">
+              <Button onClick={() => {setModal('points')} } appearance="grayEmpty">
                 <div className="justify-center items-center">
                   Mint Loyalty Points
                 </div>
               </Button>
             </div>
             <div className="flex w-full md:px-48 px-6">
-              <Button onClick={() => {setModal('cards')} } appearance="blueEmpty">
+              <Button onClick={() => {setModal('cards')} } appearance="grayEmpty">
                 <div className="justify-center items-center">
                   Mint Loyalty Cards
                 </div>

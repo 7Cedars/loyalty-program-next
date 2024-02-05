@@ -310,7 +310,7 @@ export const ModalMain = ({
               <div className="grid grid-cols-1 h-full content-between mb-12">
                 <RequestCard /> 
                 <div className="flex md:px-48 px-6">
-                  <Button onClick={() => setShowRequestCard(false)} appearance="blueEmpty">
+                  <Button onClick={() => setShowRequestCard(false)} appearance="grayEmpty">
                     Return to select card
                   </Button>
                 </div> 
@@ -322,7 +322,7 @@ export const ModalMain = ({
                 <SelectLoyaltyCard loyaltyCards = {loyaltyCards}/> 
                 <div className="flex md:px-48 px-6">
 
-                  <Button onClick={() => setShowRequestCard(true)} appearance="blueEmpty">
+                  <Button onClick={() => setShowRequestCard(true)} appearance="grayEmpty">
                     Request new Card
                   </Button>
                 </div> 

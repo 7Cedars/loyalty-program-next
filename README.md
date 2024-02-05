@@ -20,7 +20,7 @@ Even though repository is public, For now, it is for personal use only.
 - [ ]  ... 
 
 ## Improvements to implement (in order of priority)
-- [ ]  @Everywhere: Use sleet version of button throughout app (consistency with landing page).  
+- [x]  @Everywhere: Use sleet version of button throughout app (consistency with landing page).  
 - [ ]  @Vendor, Home: add mint card button + how many cards left line. 
 - [ ]  @Vendor, QrReader, SendPoints: add mint points button + how many points left line. 
 - [ ]  @ModalMain: can I turn off scrolling altogether? 

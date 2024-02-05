@@ -42,7 +42,7 @@ export default function Page()  {
         <div className="text-center">
           {` Loyalty Card Id: ${selectedLoyaltyCard?.cardId}`}
         </div>
-        <div className="pb-2 text-center border-b border-blue-800">
+        <div className="pb-2 text-center border-b border-slate-700">
           {` Loyalty Card Address: ${selectedLoyaltyCard?.cardAddress?.slice(0,6)}...${selectedLoyaltyCard?.cardAddress?.slice(36,42)}`}
         </div>
       </div>
@@ -57,7 +57,7 @@ export default function Page()  {
       </div>
 
       <div className="flex md:px-48 px-6">
-        <Button onClick={() => dispatch(resetLoyaltyCard(true))} appearance="blueEmpty">
+        <Button onClick={() => dispatch(resetLoyaltyCard(true))} appearance="grayEmpty">
           Switch cards or Request new one
         </Button>
       </div> 

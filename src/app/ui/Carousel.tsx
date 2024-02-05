@@ -44,13 +44,13 @@ export const Carousel = () => {
                     { item.index==selectIndex  ? 
 
                       <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
-                        <Button appearance='blueEmpty' onClick={()=> {}}  disabled={ item.index==selectIndex }> 
+                        <Button appearance='grayEmpty' onClick={()=> {}}  disabled={ item.index==selectIndex }> 
                           Deploy 
                         </Button>
                       </div>
                       :
                       <div className='h-fit w-48 flex opacity-0 transition ease-in-out duration-700"'>
-                        <Button appearance='blueEmpty' onClick={()=> {}}  disabled={ item.index==selectIndex }> 
+                        <Button appearance='grayEmpty' onClick={()=> {}}  disabled={ item.index==selectIndex }> 
                           Deploy 
                         </Button>
                       </div>

@@ -31,14 +31,14 @@ export const NumPad = ({
     {
       numbers.map(number => 
         <div key = {number} className="flex w-24 h-16">
-          <Button  appearance = {"blueEmpty"} onClick={() => handleChange({target: fullNumberString.concat(number)})} >
+          <Button  appearance = {"grayEmpty"} onClick={() => handleChange({target: fullNumberString.concat(number)})} >
                 {number} 
           </Button>
         </div>
       )
     }
       <div className="grow flex px-1"> 
-        <Button appearance = {"blueEmpty"} onClick={ () => handleChange({target: fullNumberString.slice(0, -1)})} >
+        <Button appearance = {"grayEmpty"} onClick={ () => handleChange({target: fullNumberString.slice(0, -1)})} >
           <BackspaceIcon
               className='h-5 w-5 m-2'
               aria-hidden="true"

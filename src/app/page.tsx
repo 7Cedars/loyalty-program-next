@@ -251,7 +251,7 @@ export default function Home() {
 
                         isIdle ? 
                           <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
-                            <Button appearance='blueEmpty' onClick={() => handleDeployRequest(item.uri)}  disabled={ false }> 
+                            <Button appearance='grayEmpty' onClick={() => handleDeployRequest(item.uri)}  disabled={ false }> 
                               Deploy
                             </Button>
                           </div>
@@ -278,13 +278,13 @@ export default function Home() {
                           </div>
                         :
                         <div className='h-fit w-48 flex opacity-0 transition ease-in-out duration-700"'>
-                          <Button appearance='blueEmpty' onClick={()=> {}}  disabled={ true }> 
+                          <Button appearance='grayEmpty' onClick={()=> {}}  disabled={ true }> 
                             Invisible  
                           </Button>
                         </div>
                         : 
                         <div className='h-fit w-48 flex opacity-0 transition ease-in-out duration-700"'>
-                          <Button appearance='blueEmpty' onClick={()=> {}}  disabled={ true }> 
+                          <Button appearance='grayEmpty' onClick={()=> {}}  disabled={ true }> 
                             Invisible 
                           </Button>
                         </div>

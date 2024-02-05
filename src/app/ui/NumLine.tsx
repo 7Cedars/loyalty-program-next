@@ -9,7 +9,7 @@ import Image from "next/image";
 
 type NumLineProps = {
   onClick: (arg0: number) => void;
-  appearance?: "blueFilled" | "blueEmpty";
+  appearance?: "blueFilled" | "grayEmpty";
   isLoading: boolean;
 };
 
@@ -20,7 +20,7 @@ const numbers = [1, 5, 25, 150] // this can be flexible input.
 
 export const NumLine = ({
   onClick,
-  appearance = "blueEmpty", 
+  appearance = "grayEmpty", 
   isLoading = false
 }: NumLineProps) => {
 
@@ -44,7 +44,7 @@ export const NumLine = ({
         </div>
         :
         <div key = {number} className="flex"> 
-          <Button  appearance = {"blueEmpty"} onClick={() => setSelectedAmount(number)} >
+          <Button  appearance = {"grayEmpty"} onClick={() => setSelectedAmount(number)} >
                 {number} 
           </Button>
         </div>
@@ -53,7 +53,7 @@ export const NumLine = ({
       <div className="grow flex px-1"> 
         { !isLoading ? 
 
-        <Button appearance = {"blueEmpty"} onClick={ () => handleClick(selectedAmount)} >
+        <Button appearance = {"grayEmpty"} onClick={ () => handleClick(selectedAmount)} >
             Mint {selectedAmount} Loyalty Gifts
         </Button>
         : 
