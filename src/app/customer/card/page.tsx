@@ -53,6 +53,7 @@ export default function Page() {
   
   useEffect(() => {
     if (!loyaltyPoints && progAddress) getLoyaltyCardPoints()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ , loyaltyPoints, progAddress ])
 
   const getClaimedLoyaltyTokens = async () => {
@@ -98,10 +99,12 @@ export default function Page() {
     
   useEffect(() => {
       getClaimedLoyaltyTokens() 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ , loyaltyTokens, address, selectedToken])
 
   useEffect(() => {
     fetchTokens() 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ ])
 
   useEffect(() => {
@@ -113,6 +116,7 @@ export default function Page() {
         isVisible: true
       }))
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenSent])
 
   return (
