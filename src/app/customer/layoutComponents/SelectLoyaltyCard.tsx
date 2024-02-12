@@ -59,9 +59,9 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
   return (
     <div> 
       <TitleText title = "Choose Loyalty Card" subtitle="Choose Card or request a new one." size={1} /> 
-      <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll overscroll-auto mb-12"> 
+      <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll overscroll-auto mb-12 justify-items-center"> 
         {/* (The following div is an empty div for ui purposes)   */ }
-        <div className="w-[16vw] h-96 me-8 ms-4 opacity-0 border-2 border-green-500" /> 
+        {/* <div className="w-[20vw] h-96 ms-4 opacity-0 border-2 border-green-500" />  */}
         { loyaltyCards && selectedLoyaltyProgram ? 
           loyaltyCards.map(card => {
 
@@ -69,7 +69,7 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
               <button 
                 key={String(card.cardId)}
                 onClick = {() => dispatch(selectLoyaltyCard(card))}
-                className="me-20 mt-6 w-60 p-3 h-fit justify-self-center border border-gray-300 rounded-lg grid grid-cols-1 gap-1"> 
+                className="m-6 mt-6 w-60 p-3 h-fit justify-self-center border border-gray-300 rounded-lg grid grid-cols-1 gap-1"> 
                   <div className='text-center h-fit'> 
                     {`Card id: ${Number(card.cardId)}`} 
                   </div> 

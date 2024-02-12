@@ -12,8 +12,7 @@
   //   - show component for choosing card. 
   // This way: all this complexity is kept away from each page... 
 
-  // later implement transitioning. WIP 
-
+  // later implement transitioning. DONE
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
@@ -22,12 +21,10 @@ import { NotificationDialog } from "../../ui/notificationDialog";
 import { useAccount } from "wagmi";
 import { useUrlProgramAddress } from "../../hooks/useUrl";
 import { useState, useEffect } from "react";
-import { EthAddress, LoyaltyProgram } from "@/types";
+import { EthAddress } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { resetLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
-import { parseEthAddress } from "../../utils/parsers";
 import ChooseProgram from "./ChooseProgram";
-import { useScreenDimensions } from "../../hooks/useScreenDimensions";
 import Image from "next/image";
 
 type ModalProps = {

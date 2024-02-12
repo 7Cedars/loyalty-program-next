@@ -35,7 +35,7 @@ export default function Home() {
 
   const handleDeployRequest = async (data: DeployRequestProps) => {
     console.log("handleDeployRequest CALLED, uri: ", data)
-    !walletClient ? open() : null  
+    !walletClient ? open({view: "Networks"}) : null  
     setDeployRequest(data)
   }
 
@@ -106,11 +106,11 @@ export default function Home() {
               height={600}
               className="w-full h-2/3"
             />
-            <div className="h-16 flex mx-3"> 
+            <a href="#deploy-program" className="h-16 flex mx-3">
               <Button appearance="grayEmptyLight" onClick={() => {}}>
-                <a href="#deploy-program">Get Started</a>
+                Get Started
               </Button>
-            </div>
+            </a> 
           </div>
           <div className="grid grid-cols-1 text-slate-300 py-6">
             <div className="m-3">
@@ -168,12 +168,11 @@ export default function Home() {
               height={600}
               className="w-full h-2/3"
             />
-            <div className="h-16 flex mx-3"> 
+            <a href="#deploy-program" className="h-16 flex mx-3">
               <Button appearance="grayEmpty" onClick={() => {}}>
-                <a href="#deploy-program">Get started</a> 
+                Get Started
               </Button>
-              
-            </div>
+            </a> 
           </div>
         </div>
 
@@ -259,33 +258,33 @@ export default function Home() {
                         :
                         isError ? 
                           <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
-                            <Button appearance='redFilled' onClick={()=> {}}  disabled={ true }> 
+                            <Button appearance='redFilled'   disabled={ true }> 
                               Error 
                             </Button>
                           </div>
                         :
                         isLoading ?
                           <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
-                            <Button appearance='grayEmpty' onClick={()=> {}}  disabled={ true }> 
+                            <Button appearance='grayEmpty'  disabled={ true }> 
                               Loading...  
                             </Button>
                           </div>
                         :
                         isSuccess ? 
-                          <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
-                            <Button appearance='greenEmpty' onClick={()=> {}}  disabled={ true }> 
-                              <a href="/vendor/home">Visit</a> 
-                            </Button>
-                          </div>
+                          <a href="/vendor/home" className='h-fit w-48 h-16 m-2 flex content-center '>
+                            <button className='transition "rounded m-1 grow text-md py-2 px-4 border-2 border-green-400 text-green-400 text-center bg-white/50 hover:border-green-700 hover:text-green-700' disabled={ false }> 
+                              Visit
+                            </button>
+                          </a>
                         :
                         <div className='h-fit w-48 flex opacity-0 transition ease-in-out duration-700"'>
-                          <Button appearance='grayEmpty' onClick={()=> {}}  disabled={ true }> 
+                          <Button appearance='grayEmpty'  disabled={ true }> 
                             Invisible  
                           </Button>
                         </div>
                         : 
                         <div className='h-fit w-48 flex opacity-0 transition ease-in-out duration-700"'>
-                          <Button appearance='grayEmpty' onClick={()=> {}}  disabled={ true }> 
+                          <Button appearance='grayEmpty'  disabled={ true }> 
                             Invisible 
                           </Button>
                         </div>
