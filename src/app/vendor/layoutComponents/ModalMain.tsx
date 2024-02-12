@@ -17,7 +17,7 @@
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import { NotificationDialog } from "../../ui/notificationDialog";
 import { useAccount } from "wagmi";
 import { useUrlProgramAddress } from "../../hooks/useUrl";
@@ -50,6 +50,7 @@ export const ModalMain = ({
   console.log("address at ModalMain: ", address)
   console.log("selectedLoyaltyProgram at ModalMain: ", selectedLoyaltyProgram)
   console.log("userLoggedIn at ModalMain: ", selectedLoyaltyProgram)
+  console.log("modalVisible: ", modalVisible) 
 
   useEffect(() => {
     if (address != userLoggedIn) {
@@ -97,6 +98,7 @@ export const ModalMain = ({
       <div className="relative w-full max-w-4xl h-screen z-1">
 
           <div className="flex flex-col pt-14 h-full z-3">
+          {/* background image of loyaltycard */}
           { selectedLoyaltyProgram?.metadata ? 
             <Image
             className="absolute inset-0 z-0"
@@ -105,42 +107,33 @@ export const ModalMain = ({
             src={selectedLoyaltyProgram.metadata.imageUri} 
             alt="Loyalty Card Token"
             />
-          : null }        
+          : null }
+          {/* Notification dialog */}
           <NotificationDialog/> 
+
+          {/*  shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] */}
           
-          { modalVisible && userLoggedIn != undefined ? 
-            <div className="flex flex-col mt-2 h-full scroll-auto bg-slate-50/[.90] backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10"> 
-            {/* /[.95] */}
-              <div className="grow-0 flex justify-end"> 
+          <div className="flex flex-col h-full justify-end mt-2 overflow-x-auto z-10"> 
                 <button 
-                    className="text-black font-bold pt-2 px-2"
-                    type="submit"
-                    onClick={() => dispatch(updateModalVisible(false))} // should be true / false
-                    >
-                    <XMarkIcon
-                      className="h-7 w-7"
+                  className="grow-0 z-5 flex justify-center text-black font-bold pt-2 px-2 bg-slate-50/[.90] backdrop-blur-xl  mx-4 rounded-t-lg"
+                  type="submit"
+                  onClick={() => dispatch(updateModalVisible(!modalVisible))} // should be true / false
+                  >
+                    <EllipsisHorizontalIcon
+                      className="h-10 w-10"
                       aria-hidden="true"
                     />
                 </button>
-              </div>
-
-              { children }  
-
-            </div>
-          :
-          <button 
-            className="w-full h-full z-10"
-            type="submit"
-            onClick={() => dispatch(updateModalVisible(true))} // should be true / false
-            >
-          </button>
-        }
+              <button
+                className="grow disabled:grow-0 z-0 scroll-auto overflow-x-auto transition:all ease-out duration-500 disabled:h-12 opacity-100 bg-slate-50/[.90] backdrop-blur-xl mx-4"
+                disabled={modalVisible}
+                >
+                  { children }  
+              </button>
+          </div>
         </div>
-      
-    </div>
+      </div>
     </>
-
-    
   )};
 
 
