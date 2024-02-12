@@ -85,7 +85,7 @@ export default function Page() {
   }, [selectedToken, loyaltyTokens]) 
 
   return (
-     <div className=" w-full h-full grid grid-cols-1 gap-1 overflow-hidden">
+     <div className=" w-full h-full grid grid-cols-1 gap-1 content-start overflow-auto">
 
        <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={2} />
 

@@ -115,41 +115,50 @@ export default function Page() {
   }, [tokenReceived])
 
   return (
-     <div className=" w-full grid grid-cols-1 gap-1">
+     <div className="w-full h-full grid grid-cols-1 gap-1 content-start overflow-auto">
 
-      <div className="h-20 m-1"> 
-       <TitleText title = "Claim Gifts" subtitle="Claim gifts and vouchers with your loyalty points." size={2} />
-      </div>
+      <div className="h-30">
+        <div className="m-1 h-20"> 
+        <TitleText title = "Claim Gifts" subtitle="Claim gifts and vouchers with your loyalty points." size={2} />
+        </div>
 
-      <div className="flex justify-center"> 
-        <p className="p-2 w-1/2 text-center border-b border-slate-700">
-          {`${loyaltyPoints} loyalty points remaining`}
-        </p>
+        <div className="flex justify-center"> 
+          <p className="p-2 w-1/2 text-center border-b border-slate-700">
+            {`${loyaltyPoints} loyalty points remaining`}
+          </p>
+        </div>
       </div>
 
       { selectedToken ? 
-      <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-1">
-        <button 
-          className="text-black font-bold p-2"
-          type="submit"
-          onClick={() => setSelectedToken(undefined)} // should be true / false
-          >
-          <ArrowLeftIcon
-            className="h-7 w-7"
-            aria-hidden="true"
-          />
-        </button>
+      <div className="grid grid-cols-1 content-start">
+        <div className=" border border-gray-300 rounded-lg m-1">
+          <button 
+            className="text-black font-bold p-2 grid grid-cols-1 content-start"
+            type="submit"
+            onClick={() => setSelectedToken(undefined)} // should be true / false
+            >
+            <ArrowLeftIcon
+              className="h-7 w-7"
+              aria-hidden="true"
+            />
+          </button>
 
-        <TokenBig token={selectedToken.token} disabled = {selectedToken.disabled} /> 
-      
+          <TokenBig token={selectedToken.token} disabled = {selectedToken.disabled} /> 
+          
+          {/* <div className="h-32" />  */}
+          
+        </div>
+       
       </div>
       :
       <>
+      <div className="overflow-x-scroll">
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
             <TitleText title = "Available Gifts" size={0} />
           </div>
-
+          
+          
           { activeLoyaltyGifts ?
           
           activeLoyaltyGifts.map((gift: LoyaltyToken) => 
@@ -164,10 +173,13 @@ export default function Page() {
             <NoteText message="No gifts available. Ask vendor to enable gifts."/>
           </div>
           }
+          </div>
         </div> 
       </>
 
     }
+
+    
     
     </div> 
     

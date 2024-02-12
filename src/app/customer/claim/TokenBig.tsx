@@ -140,7 +140,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
       
       { token.metadata && !signature ? 
         <>
-        <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full justify-items-center "> 
+        <div className="grid grid-cols-1 sm:grid-cols-2 h-fit w-full justify-items-center "> 
           <div className="rounded-lg w-max"> 
           
             <Image
@@ -152,7 +152,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
               />
           </div>
           
-          <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
+          <div className="grid grid-cols-1 pt-2 content-between w-full h-fit">
             <div> 
             <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
 

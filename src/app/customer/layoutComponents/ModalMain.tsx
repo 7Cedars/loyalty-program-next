@@ -2,7 +2,7 @@
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { NotificationDialog } from "../../ui/notificationDialog";
 import { useUrlProgramAddress } from "../../hooks/useUrl";
 import { useState, useEffect } from "react";
@@ -283,64 +283,64 @@ export const ModalMain = ({
           />
         : null }        
         <NotificationDialog/> 
-        
-        { modalVisible && userLoggedIn != undefined ? 
-          <div className={`grow mt-2 bg-slate-50/[.90] h-full overflow-y-scroll backdrop-blur-xl shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] mx-4 rounded-t-lg z-10 ${visibility[0]}`}> 
-            <div className="grow flex justify-end overflow-y-scroll"> 
-              <button 
-                  className="text-black font-bold pt-2 px-2"
+
+        <div className="flex flex-col h-full justify-end mt-2 overflow-x-auto z-10"> 
+                <button 
+                  className="grow-0 z-5 flex justify-center text-black font-bold pt-2 px-2 bg-slate-50/[.90] backdrop-blur-xl  mx-4 rounded-t-lg"
                   type="submit"
-                  onClick={() => dispatch(updateModalVisible(false))} // should be true / false
+                  onClick={() => dispatch(updateModalVisible(!modalVisible))} // should be true / false
                   >
-                  <XMarkIcon
-                    className="h-7 w-7"
-                    aria-hidden="true"
-                  />
+                    {modalVisible ? 
+                      <ChevronUpIcon
+                        className="h-7 w-7 m-2"
+                        aria-hidden="true"
+                      />
+                      :
+                      <ChevronDownIcon
+                        className="h-7 w-7 m-2"
+                        aria-hidden="true"
+                      />
+                    }
+                </button>
+              <button
+                className="grow disabled:grow-0 disabled:h-12 h-96 z-0 scroll-auto overflow-x-auto transition:all ease-in-out duration-300 opacity-100 bg-slate-50/[.90] backdrop-blur-xl mx-4"
+                disabled={modalVisible}
+                >
+                  { 
+                    selectedLoyaltyCard ? 
+                    children 
+                    :
+                    loyaltyCards && loyaltyCards.length == 0 ?
+                      <RequestCard /> 
+                    : 
+                    showRequestCard ?
+                      <div className="grid grid-cols-1 h-full content-between mb-12">
+                        <RequestCard /> 
+                        <div className="flex md:px-48 px-6">
+                          <Button onClick={() => setShowRequestCard(false)} appearance="grayEmpty">
+                            Return to select card
+                          </Button>
+                        </div> 
+                        <div className="h-16"/> 
+                      </div>
+                    : 
+                    loyaltyCards && loyaltyCards.length >= 1  ? // selectedLoyaltyCard 
+                      <div className="grid grid-cols-1 h-full content-between mb-12">
+                        <SelectLoyaltyCard loyaltyCards = {loyaltyCards}/> 
+                        <div className="flex md:px-48 px-6">
+
+                          <Button onClick={() => setShowRequestCard(true)} appearance="grayEmpty">
+                            Request new Card
+                          </Button>
+                        </div> 
+                        <div className="h-16"/> 
+                      </div>
+                    :
+                    <div> Something went wrong, no loyalty card selected. </div> 
+                  }
               </button>
-            </div>
-
-            { 
-            selectedLoyaltyCard ? 
-            children 
-            :
-            loyaltyCards && loyaltyCards.length == 0 ?
-              <RequestCard /> 
-            : 
-            showRequestCard ?
-              <div className="grid grid-cols-1 h-full content-between mb-12">
-                <RequestCard /> 
-                <div className="flex md:px-48 px-6">
-                  <Button onClick={() => setShowRequestCard(false)} appearance="grayEmpty">
-                    Return to select card
-                  </Button>
-                </div> 
-                <div className="h-16"/> 
-              </div>
-            : 
-            loyaltyCards && loyaltyCards.length >= 1  ? // selectedLoyaltyCard 
-              <div className="grid grid-cols-1 h-full content-between mb-12">
-                <SelectLoyaltyCard loyaltyCards = {loyaltyCards}/> 
-                <div className="flex md:px-48 px-6">
-
-                  <Button onClick={() => setShowRequestCard(true)} appearance="grayEmpty">
-                    Request new Card
-                  </Button>
-                </div> 
-                <div className="h-16"/> 
-              </div>
-            :
-            <div> Something went wrong, no loyalty card selected. </div> 
-            }
           </div>
-        :
-        <button 
-          className="w-full h-full z-10"
-          type="submit"
-          onClick={() => dispatch(updateModalVisible(true))} // should be true / false
-          >
-        </button>
-      }
       </div>
-  </div>
+  </div> 
 )};
 

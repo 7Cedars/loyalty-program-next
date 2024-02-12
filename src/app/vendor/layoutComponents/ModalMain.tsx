@@ -17,7 +17,7 @@
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { NotificationDialog } from "../../ui/notificationDialog";
 import { useAccount } from "wagmi";
 import { useUrlProgramAddress } from "../../hooks/useUrl";
@@ -119,13 +119,20 @@ export const ModalMain = ({
                   type="submit"
                   onClick={() => dispatch(updateModalVisible(!modalVisible))} // should be true / false
                   >
-                    <EllipsisHorizontalIcon
-                      className="h-10 w-10"
-                      aria-hidden="true"
-                    />
+                    {modalVisible ? 
+                      <ChevronUpIcon
+                        className="h-7 w-7 m-2"
+                        aria-hidden="true"
+                      />
+                      :
+                      <ChevronDownIcon
+                        className="h-7 w-7 m-2"
+                        aria-hidden="true"
+                      />
+                    }
                 </button>
               <button
-                className="grow disabled:grow-0 z-0 scroll-auto overflow-x-auto transition:all ease-out duration-500 disabled:h-12 opacity-100 bg-slate-50/[.90] backdrop-blur-xl mx-4"
+                className="grow disabled:grow-0 disabled:h-12 h-96 z-0 scroll-auto overflow-x-auto transition:all ease-in-out duration-300 delay-100 opacity-100 bg-slate-50/[.90] backdrop-blur-xl mx-4"
                 disabled={modalVisible}
                 >
                   { children }  

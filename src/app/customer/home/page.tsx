@@ -31,7 +31,7 @@ export default function Page()  {
   }, [pointsReceived])
 
   return (
-    <div className="flex flex-col justify-between justify-center pt-2">
+    <div className="w-full h-full grid grid-cols-1 gap-1 ">
       <TitleText 
         title = "Request Loyalty Points"
         subtitle="Show this QR code to receive points" 
@@ -56,7 +56,7 @@ export default function Page()  {
         </div>
       </div>
 
-      <div className="flex md:px-48 px-6">
+      <div className="flex md:px-48 px-6 h-14">
         <Button onClick={() => dispatch(resetLoyaltyCard(true))} appearance="grayEmpty">
           Switch cards or Request new one
         </Button>

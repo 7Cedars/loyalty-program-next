@@ -18,7 +18,9 @@ Even though repository is public, For now, it is for personal use only.
 - [ ]  @Vendor, QrReader: Fix Bug that when no valid QR code is read - it just hangs. Needs to have notification + continue reading.
 - [ ]  @LandingPage: when program is deployed, now all programs say 'visit'. It should only be for program deployed. 
 - [ ]  @Everywhere: I updated / optimised contract - will need to check if app still functions. 
-- [ ]   
+- [ ]  @Everywhere: No testing has been implemented yet. Implement Cyprus 
+  - [ ]  NB: it might be quite challenging: how to test QR reader, interaction with wallet?  
+  - [ ]  Need to subdivide per page.  
 - [ ]  ... 
 
 ## Improvements to implement (in order of priority)
