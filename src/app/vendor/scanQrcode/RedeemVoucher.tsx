@@ -166,7 +166,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
                 src={"/loading.svg"}
                 alt="Loading icon"
               />
-              Waiting for confirmation (this can take a few minutes...)
+              Waiting for confirmation
           </Button>
         </div> 
         :

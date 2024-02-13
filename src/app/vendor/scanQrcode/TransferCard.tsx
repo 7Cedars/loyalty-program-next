@@ -23,6 +23,7 @@ import Image from "next/image";
 import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
+import MintCards from "../components/MintCards";
 
 type RedeemTokenProps = {
   qrData: QrData | undefined;  
@@ -34,6 +35,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
   const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>() 
+  const [ modal, setModal] = useState<string>() 
   const [ transferSingles, setTransferSingles ] = useState<Transaction[] | undefined>()
   const [ lastCardTransferred, setLastCardTransferred] = useState<BigInt | undefined>() 
   const [customerAddress, setCustomerAddress] = useState<EthAddress | undefined >() 
@@ -149,24 +151,25 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   return (
     <div className=" w-full grid grid-cols-1 gap-1">
 
-      <div className="h-20 m-1"> 
+      <div className="h-16 m-1"> 
         <TitleText title = "Transfer Loyalty Card" subtitle="Transfer a single card to a customer." size = {2} />
       </div>
 
       { loyaltyCardsMinted.data ? 
         <div className="flex justify-center"> 
           <p className="p-2 w-1/2 text-center border-b border-slate-700">
-            {`Approximately ${ Number(parseBigInt(loyaltyCardsMinted?.data)) - Number(lastCardTransferred)} Loyalty Cards remaining`}
+            {`${ Number(parseBigInt(loyaltyCardsMinted?.data)) - Number(lastCardTransferred)} loyalty cards left.`}
           </p>
         </div>
         :
-        null 
+        <MintCards /> 
+         
       }
 
       {customerAddress ? 
 
         <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3" > 
-          <div className="w-full grid-span-2 gap-1"> 
+          <div className="w-full flex"> 
             <button 
               className="text-black font-bold p-3"
               type="submit"
@@ -219,15 +222,24 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
                   </Button>
                 </div>
                 }
-              </div> 
+              </div>
+              
             </div> 
           : 
           null 
         }
+          
         </div>
         : 
         null
       }
+        <div className="flex w-full md:px-48 px-6">
+          <Button onClick={() => {setModal('cards')} } appearance="grayEmpty">
+            <div className="justify-center items-center">
+              Mint Loyalty Cards
+            </div>
+          </Button>
+        </div> 
     </div>
     )
   } 

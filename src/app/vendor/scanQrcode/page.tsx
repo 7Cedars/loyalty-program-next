@@ -11,7 +11,7 @@ import { parseQrData } from '@/app/utils/parsers';
 
 import SendPoints from './SendPoints';
 import ClaimGift from './ClaimGift';
-import RedeemToken from './RedeemToken';
+import RedeemToken from './RedeemVoucher';
 import TransferCard from './TransferCard';
 
 export default function Page() {

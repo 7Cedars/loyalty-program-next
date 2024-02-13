@@ -27,13 +27,13 @@ Even though repository is public, For now, it is for personal use only.
 - [x]  @Everywhere: Use sleet version of button throughout app (consistency with landing page).  
 - [ ]  @Vendor, Home: add mint card button + how many cards left line. 
 - [ ]  @Vendor, QrReader, SendPoints: add mint points button + how many points left line. 
-- [ ]  @ModalMain: can I turn off scrolling altogether? 
+- [x]  @ModalMain: can I turn off scrolling altogether? 
 - [ ]  @LandingPage: create several different images through the page. -- show off app. 
-- [ ]  @LandingPage: visit button should be simple link / same with get started button. OR make whole button a link! 
+- [x]  @LandingPage: visit button should be simple link / same with get started button. OR make whole button a link! 
 - [x]  @LandingPage: set max width. 
 - [ ]  @Everywhere: change loading image from 'vercel' one to turning indicator.    
-- [ ]  @Customer, Home: improve carousel if multiple cards are present -- see example landing page. 
-- [ ]  @Vendor, Home: improve carousel if multiple programs have been deployed -- see example landing page. 
+- [x]  @Customer, Home: improve carousel if multiple cards are present -- see example landing page. 
+- [x]  @Vendor, Home: improve carousel if multiple programs have been deployed -- see example landing page. 
 - [ ]  @Notifications / Everywhere: Error messaging needs to mention revert message. - currently no idea why something fails. 
 - [ ]  @Customer, Home: When loyaltyCard is received you know have to reload page - is should go straight to the new card. 
 - [ ]  @Everywhere: Gift, Voucher, Token... Get a clear logic, and implement consistently throughout. - WIP but lot better now. 

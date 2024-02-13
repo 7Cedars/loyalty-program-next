@@ -18,8 +18,8 @@ import {
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
-import MintPoints from "./mintPoints";
-import MintCards from "./mintCards";
+import MintPoints from "../components/MintPoints";
+import MintCards from "../components/MintCards";
 import { useAppSelector } from "@/redux/hooks";
 
 export default function Page() {
@@ -135,7 +135,7 @@ export default function Page() {
 
 
   return (
-    <div className="grid grid-cols-1 h-full w-full justify-items-center content-between">
+    <div className="grid grid-cols-1 h-full w-full justify-items-between content-between">
 
       <div className="grid grid-cols-1 justify-items-center w-full h-full overflow-auto ">
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
@@ -276,7 +276,7 @@ export default function Page() {
 
           :
 
-          <div className="grid grid-cols-1 w-full justify-items-center">
+          <div className="grid grid-cols-1 w-full justify-items-center pb-12">
             <div className="flex w-full md:px-48 px-6">
               <Button onClick={() => {setModal('points')} } appearance="grayEmpty">
                 <div className="justify-center items-center">
@@ -293,7 +293,7 @@ export default function Page() {
             </div>
           </div>
       }
-      <div className="pb-24" />
+      {/* <div className="pb-6" /> */}
       
     </div> 
   )

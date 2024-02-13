@@ -116,9 +116,9 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
 
-        <div className="w-full grid-span-2 gap-2"> 
+        <div className="w-full grid-span-2 gap-2" > 
           <button 
-            className="text-black font-bold p-3"
+            className="text-black flex font-bold p-3"
             type="submit"
             onClick={() => {
               setData(undefined) 
@@ -181,7 +181,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
                 src={"/loading.svg"}
                 alt="Loading icon"
               />
-              Waiting for confirmation (this can take a few minutes...)
+              Waiting for confirmation
           </Button>
         </div> 
         :

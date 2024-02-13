@@ -134,13 +134,15 @@ export default function ChooseProgram()  {
 
   // Choosing program. -- This is what I have to get working 100% 
   return (
-    <div> 
+    <div className='w-full h-full grid grid-cols-1 justify-items-center' >
+      <div> 
       <TitleText title = "Choose Loyalty Program" subtitle="Choose existing program or deploy a new one." size={1} /> 
+      </div>
       <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll overscroll-auto mb-12"> 
         {/* (The following div is an empty div for ui purposes)   */ }
-        <div className="w-[16vw] h-96 ms-4 opacity-0 border-2 border-green-500" /> 
+        {/* <div className="w-[16vw] h-96 ms-4 opacity-0 border-2 border-green-500" />  */}
         
-        { loyaltyPrograms  ? 
+        { loyaltyPrograms  && loyaltyPrograms.length > 0 ? 
           loyaltyPrograms.map(program => {
 
             return (
@@ -160,7 +162,16 @@ export default function ChooseProgram()  {
             )
           })
           : 
-          null
+          <div className='w-full h-full grow grid grid-cols-1 gap-1 justify-items-center text-center italic' >
+          <div className='h-48'>
+              <div >
+                No Loyalty Programs found on this address. 
+              </div> 
+              <div >
+                Login with another address or deploy a program <a href="/" className='text-blue-500 underline '> here. </a>
+              </div> 
+            </div> 
+          </div>
         }
 
         {/* TODO: insert button here: 'deploy new program'  */}

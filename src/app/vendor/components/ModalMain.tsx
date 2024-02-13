@@ -38,7 +38,8 @@ export const ModalMain = ({
   // Note this ui modal dialog expects the use of redux. 
   // I can change this in other apps if needed.
   const dispatch = useAppDispatch()
-  const { modalVisible } = useAppSelector(state => state.userInput) 
+  // const { modalVisible } = useAppSelector(state => state.userInput) 
+  const [ modalVisible, setModalVisible ] = useState<boolean>(true); 
   const { address }  = useAccount()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
@@ -114,7 +115,7 @@ export const ModalMain = ({
                 <button 
                   className="grow-0 z-5 flex justify-center text-black font-bold pt-2 px-2 bg-slate-50/[.90] backdrop-blur-xl  mx-4 rounded-t-lg"
                   type="submit"
-                  onClick={() => dispatch(updateModalVisible(!modalVisible))} // should be true / false
+                  onClick={() => setModalVisible(!modalVisible)} // should be true / false
                   >
                     {modalVisible ? 
                       <ChevronUpIcon
