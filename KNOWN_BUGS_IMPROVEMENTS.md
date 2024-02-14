@@ -25,7 +25,7 @@ Even though repository is public, For now, it is for personal use only.
 
 ## Improvements to implement (in order of priority)
 - [x]  @Everywhere: Use sleet version of button throughout app (consistency with landing page).  
-- [ ]  @Vendor, Home: add mint card button + how many cards left line. 
+- [x]  @Vendor, Home: add mint card button + how many cards left line. 
 - [ ]  @Vendor, QrReader, SendPoints: add mint points button + how many points left line. 
 - [x]  @ModalMain: can I turn off scrolling altogether? 
 - [ ]  @LandingPage: create several different images through the page. -- show off app. 
@@ -37,11 +37,12 @@ Even though repository is public, For now, it is for personal use only.
 - [ ]  @Notifications / Everywhere: Error messaging needs to mention revert message. - currently no idea why something fails. 
 - [ ]  @Customer, Home: When loyaltyCard is received you know have to reload page - is should go straight to the new card. 
 - [ ]  @Everywhere: Gift, Voucher, Token... Get a clear logic, and implement consistently throughout. - WIP but lot better now. 
-- [ ]  @Vendor, Home: If no programs are deployed - should have link to landing page - very simple (now just shows up empty). 
+- [x]  @Vendor, Home: If no programs are deployed - should have link to landing page - very simple (now just shows up empty). 
 - [ ]  @Vendor, Tokens: Build a easy UI for adding and removing gift contracts
 - [ ]  @Vendor, tokens: Add address of token + address issuer in description. / later 
-- [ ]  @Everywhere: vertical scaling has to also be correct through out (see minting at vendor stats page for correct example) 
-- [ ]  @Readme.md: Search for templates to create clear and accesible readme file. 
+- [ ]  @Everywhere: vertical scaling has to also be correct through out (see minting at vendor stats page for correct example) - not quite there yet, but getting closer
+- [x]  @Readme.md: Search for templates to create clear and accesible readme file. 
+- [ ]  fill out readme files. 
 
 ## Additional notes 
   // NB: use of useContractEvent versus waitForTransaction (viem) versus useWaitForTransaction (wagmi) to check confirmaiton of transaction

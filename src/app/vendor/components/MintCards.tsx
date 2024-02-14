@@ -83,7 +83,7 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
   }
 
   return (
-    <div className="p-3 px-12 grid grid-cols-1 justify-items-center"> 
+    <div className="p-3 grid grid-cols-1 justify-items-center"> 
       <p className="text-2xl text-center p-3">
         {`${numpadNumber} cards`}
       </p>

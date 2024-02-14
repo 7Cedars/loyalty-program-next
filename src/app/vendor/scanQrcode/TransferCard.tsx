@@ -35,7 +35,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
   const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>() 
-  const [ modal, setModal] = useState<string>() 
+  const [ modal, setModal] = useState<"points" | "cards" | undefined>() 
   const [ transferSingles, setTransferSingles ] = useState<Transaction[] | undefined>()
   const [ lastCardTransferred, setLastCardTransferred] = useState<BigInt | undefined>() 
   const [customerAddress, setCustomerAddress] = useState<EthAddress | undefined >() 
@@ -149,7 +149,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   })
 
   return (
-    <div className=" w-full grid grid-cols-1 gap-1">
+    <div className=" w-full grid grid-cols-1 gap-1 overflow-x-auto">
 
       <div className="h-16 m-1"> 
         <TitleText title = "Transfer Loyalty Card" subtitle="Transfer a single card to a customer." size = {2} />
@@ -162,8 +162,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
           </p>
         </div>
         :
-        <MintCards /> 
-         
+        <MintCards modal = {modal} setModal = {setModal} /> 
       }
 
       {customerAddress ? 
@@ -185,7 +184,15 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
             </button>
           </div>
 
-          { selectedLoyaltyProgram && selectedLoyaltyProgram.metadata ? 
+          { modal === 'cards' ? 
+            <div> 
+              <MintCards modal = {modal} setModal = {setModal} /> 
+            </div>
+            : 
+            null 
+          }
+
+          { selectedLoyaltyProgram && selectedLoyaltyProgram.metadata && modal == undefined ? 
           <div className=" grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center">
             <div className="rounded-lg"> 
               <Image
@@ -234,11 +241,20 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
         null
       }
         <div className="flex w-full md:px-48 px-6">
+          { modal === 'cards' ? 
+          <Button onClick={() => {setModal(undefined)} } appearance="grayEmpty">
+          <div className="justify-center items-center">
+            Return to transfer card
+          </div>
+          </Button>
+        :
           <Button onClick={() => {setModal('cards')} } appearance="grayEmpty">
             <div className="justify-center items-center">
               Mint Loyalty Cards
             </div>
           </Button>
+        }
+          
         </div> 
     </div>
     )
