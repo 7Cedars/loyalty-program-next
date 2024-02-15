@@ -19,9 +19,9 @@ const projectId = NEXT_PUBLIC_WALLETCONNECT_ID
 
 // 2. Create wagmiConfig
 const metadata = {
-  name: 'Customer Loyalty Program',
+  name: 'loyalty-prog',
   description: 'Customer Loyalty Program',
-  url: 'https://web3modal.com', // TODO 
+  url: 'https://loyalty-program-psi.vercel.app/', // TODO 
   icons: ['https://avatars.githubusercontent.com/u/37784886'] // TODO 
 }
 

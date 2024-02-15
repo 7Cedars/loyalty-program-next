@@ -124,7 +124,7 @@ export const ModalMain = ({
                       />
                       :
                       <ChevronDownIcon
-                        className="h-7 w-7 m-2"
+                        className="h-7 w-7 m-2" 
                         aria-hidden="true"
                       />
                     }
