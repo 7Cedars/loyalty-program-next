@@ -20,7 +20,7 @@ import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { NotificationDialog } from "../../ui/notificationDialog";
 import { useAccount } from "wagmi";
 import { useUrlProgramAddress } from "../../hooks/useUrl";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { EthAddress } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { resetLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
@@ -85,7 +85,9 @@ export const ModalMain = ({
       <div className="static w-full max-w-4xl h-dvh z-1">
         <div className="flex flex-col pt-14 h-full z-3">
           <NotificationDialog/> 
-          { address ?  <ChooseProgram /> : null }  
+          {/* <Suspense> */}
+           <ChooseProgram /> 
+          {/* </Suspense> */}
         </div> 
       </div>
     )
@@ -96,7 +98,7 @@ export const ModalMain = ({
       <div className="w-full max-w-4xl h-dvh z-1">
 
           <div className="flex flex-col pt-14 h-full z-3">
-          {/* background image of loyaltycard */}
+
           { selectedLoyaltyProgram?.metadata ? 
             <Image
             className="absolute inset-0 z-0"
@@ -106,10 +108,8 @@ export const ModalMain = ({
             alt="Loyalty Card Token"
             />
           : null }
-          {/* Notification dialog */}
-          <NotificationDialog/> 
 
-          {/*  shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] */}
+          <NotificationDialog/> 
           
           <div className="flex flex-col h-full justify-end mt-2 overflow-x-auto z-10"> 
                 <button 
@@ -129,12 +129,12 @@ export const ModalMain = ({
                       />
                     }
                 </button>
-              <button
-                className="grow disabled:grow-0 disabled:h-12 h-96 z-0 scroll-auto overflow-x-auto transition:all ease-in-out duration-300 delay-100 opacity-100 bg-slate-50/[.90] backdrop-blur-xl mx-4"
-                disabled={modalVisible}
+              <div
+                className="grow aria-disabled:grow-0 aria-disabled:h-12 h-96 z-0 scroll-auto overflow-x-auto transition:all ease-in-out duration-300 delay-100 opacity-100 bg-slate-50/[.90] backdrop-blur-xl mx-4"
+                aria-disabled={modalVisible}
                 >
                   { children }  
-              </button>
+              </div>
           </div>
         </div>
       </div>
