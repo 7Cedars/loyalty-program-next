@@ -11,7 +11,7 @@ type SelectedTokenProps = {
 export default function SelectToken( {token, disabled, onClick}: SelectedTokenProps ) {
 
   // console.log("data loyaltyTokens: ", token)
-  let appearance = `h-72 w-44 m-2 grid grid-cols-1 border rounded-lg border-gray-200 ${ disabled ? 'opacity-50' : null} `
+  let appearance = `h-72 w-40 m-2 grid grid-cols-1 border rounded-lg border-gray-200 ${ disabled ? 'opacity-50' : null} `
 
   console.log("token @SelectToken: ", token)
 
@@ -22,8 +22,8 @@ export default function SelectToken( {token, disabled, onClick}: SelectedTokenPr
         <>
           <Image
               className="rounded-t-lg"
-              width={174}
-              height={174}
+              width={160}
+              height={160}
               src={token.metadata.imageUri}
               alt="Loyalty Token icon "
             />
@@ -36,7 +36,7 @@ export default function SelectToken( {token, disabled, onClick}: SelectedTokenPr
             </div> 
             { token.tokenised ? 
               <div className="text-center text-sm text-gray-500"> 
-                {`${Number(token.availableTokens)} vouchers remaining`}
+                {`${Number(token.availableTokens)} vouchers left`}
               </div>
               :
               <div className="text-center text-sm text-gray-500"> 

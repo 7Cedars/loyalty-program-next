@@ -22,9 +22,23 @@ Even though repository is public, For now, it is for personal use only.
 - [ ]  @Everywhere: No testing has been implemented yet. Implement Cyprus 
   - [ ]  NB: it might be quite challenging: how to test QR reader, interaction with wallet?  
   - [ ]  Need to subdivide per page.  
+- [ ]  @vendor, login: why does web3modal not show?!  Fix! 
 - [ ]  ... 
 
 ## Improvements to implement (in order of priority)
+- [x]  @Everywhere: vertical scaling has to also be correct through out (see minting at vendor stats page for correct example) - not quite there yet, but getting closer
+- [x]  @vendor, SelectLoyaltyGift: While loading, should show loading image.
+- [x]  @vendor, SelectLoyaltyGift: on pixel7 screen should show two rows of gifts.
+- [x]  @vendor, Landing page: improve vertical alignment items. ok-ish
+- [ ]  @ui: make Numline flow across into two lines on small screens. 
+- [x]  @vendor, Qrcode: add spacing around scanner.  
+- [ ]  @vendor, ChooseProgram: fix carousel.  
+- [x]  @Everywhere: Develop, update loading image.  
+- [ ]  @Everywhere: Develop dark theming: Next adds dark theming automatically! WIP 
+  - [ ]  Bg main modal should be slate -- see landing page (maybe bit more lighter & darker)
+  - [ ]  standardized fonts should have dark mode - very simple to do actually. 
+  - [ ]  .. then check on phone what I missed. 
+- [ ]  @vendor, stats: see remainign points and cards. Fix layouting.  
 - [x]  @Everywhere: Use sleet version of button throughout app (consistency with landing page).  
 - [x]  @Vendor, Home: add mint card button + how many cards left line. 
 - [ ]  @Vendor, QrReader, SendPoints: add mint points button + how many points left line. 
@@ -42,7 +56,6 @@ Even though repository is public, For now, it is for personal use only.
 - [x]  @Vendor, Home: If no programs are deployed - should have link to landing page - very simple (now just shows up empty). 
 - [ ]  @Vendor, Tokens: Build a easy UI for adding and removing gift contracts
 - [ ]  @Vendor, tokens: Add address of token + address issuer in description. / later 
-- [ ]  @Everywhere: vertical scaling has to also be correct through out (see minting at vendor stats page for correct example) - not quite there yet, but getting closer
 - [x]  @Readme.md: Search for templates to create clear and accesible readme file. 
 - [ ]  fill out readme files. 
 

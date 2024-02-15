@@ -12,6 +12,7 @@ import { usePublicClient } from 'wagmi'
 import { parseEthAddress, parseLoyaltyGiftLogs} from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import Image from "next/image";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -85,10 +86,10 @@ export default function Page() {
   }, [selectedToken, loyaltyTokens]) 
 
   return (
-     <div className=" w-full h-full grid grid-cols-1 gap-1 content-start overflow-auto">
-
-       <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={2} />
-
+     <div className=" w-full h-full grid grid-cols-1 gap-1 overflow-auto">
+        <div>
+        <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={2} />
+       </div>
       { selectedToken ? 
       <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
         <button 
@@ -106,54 +107,126 @@ export default function Page() {
       
       </div>
       :
-      
-      <div className="overflow-x-scroll">
-
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
-          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
-            <TitleText title = "Selected Gifts" size={0} />
-          </div>
-
-          { activeLoyaltyGifts && status == "isSuccess" ?
-          
-          activeLoyaltyGifts.map((token: LoyaltyToken) => 
-              token.metadata ? 
-              <div key = {`${token.tokenAddress}:${token.tokenId}`} >
-                <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
-              </div>
-              : null 
-            )
-          : 
-          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-            <NoteText message="Selected gifts will appear here."/>
-          </div>
-          }
-        </div> 
-        
-        <div className="grid grid-cols-1  xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start overflow-x-scroll">
-          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 overflow-x-scroll"> 
-            <TitleText title = "Available Gifts" size={0} />
-          </div>
-          
-          { inactiveLoyaltyGifts && status == "isSuccess" ? 
-            inactiveLoyaltyGifts.map((token: LoyaltyToken) => 
-              token.metadata ? 
-              <div key = {`${token.tokenAddress}:${token.tokenId}`} >
-                <TokenSmall token = {token} disabled = {true}  onClick={() => setSelectedToken({token: token, disabled: true})} /> 
-              </div>
-              : null 
-            )
-            : 
-            <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-              <NoteText message="Other available gifts will appear here."/>
+      <div className="overflow-x-scroll flex flex-col items-center h-full">
+        {/* <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start"> */}
+          { 
+          status == "isLoading" ? 
+            <div className="grow z-40">
+              <Image
+                className="rounded-lg opacity-50 flex-none mx-3 animate-spin"
+                width={60}
+                height={60}
+                src={"/loading2.svg"}
+                alt="Loading icon"
+              />
             </div>
-          }
-        </div>
-      </div>
+          : 
+          status == "isSuccess" ?
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
+              <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
+                <TitleText title = "Selected Gifts" size={0} />
+              </div>
+              { activeLoyaltyGifts.length > 0 ?  
+                  activeLoyaltyGifts.map((token: LoyaltyToken) => 
+                      token.metadata ? 
+                      <div key = {`${token.tokenAddress}:${token.tokenId}`} >
+                        <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
+                      </div>
+                      : null 
+                    )
+                  : 
+                  <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+                    <NoteText message="Selected gifts will appear here."/>
+                  </div>
+              }
 
+              <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 overflow-x-scroll pt-4 "> 
+                <TitleText title = "Available Gifts" size={0} />
+              </div>
+              { inactiveLoyaltyGifts.length > 0 ? 
+                  inactiveLoyaltyGifts.map((token: LoyaltyToken) => 
+                    token.metadata ? 
+                      <div key = {`${token.tokenAddress}:${token.tokenId}`} >
+                        <TokenSmall token = {token} disabled = {true}  onClick={() => setSelectedToken({token: token, disabled: true})} /> 
+                      </div>
+                      :
+                      null 
+                    )
+                  :
+                  <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+                    <NoteText message="Other available gifts will appear here."/>
+                  </div>
+              }
+            </div>
+          :
+          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+            <NoteText message="Something went wrong. That's all I know."/>
+          </div>
+        }
+        </div> 
+      // </div> 
     }
-    
     </div> 
+  )
+            
+
+      //       activeLoyaltyGifts && status == "isSuccess" ?
+                      
+      //       activeLoyaltyGifts.map((token: LoyaltyToken) => 
+      //           token.metadata ? 
+      //           <div key = {`${token.tokenAddress}:${token.tokenId}`} >
+      //             <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
+      //           </div>
+      //           : null 
+      //         )
+      //       : 
+      //       <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+      //         <NoteText message="Selected gifts will appear here."/>
+      //       </div>
+          
+        
+      //   }
+
+      //     { activeLoyaltyGifts && status == "isSuccess" ?
+          
+      //     activeLoyaltyGifts.map((token: LoyaltyToken) => 
+      //         token.metadata ? 
+      //         <div key = {`${token.tokenAddress}:${token.tokenId}`} >
+      //           <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
+      //         </div>
+      //         : null 
+      //       )
+      //     : 
+      //     <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+      //       <NoteText message="Selected gifts will appear here."/>
+      //     </div>
+      //     }
+      //   </div> 
+        
+      //   <div className="grid grid-cols-1  xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start overflow-x-scroll">
+      //     <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 overflow-x-scroll"> 
+      //       <TitleText title = "Available Gifts" size={0} />
+      //     </div>
+          
+      //     { inactiveLoyaltyGifts && status == "isSuccess" ? 
+      //       inactiveLoyaltyGifts.map((token: LoyaltyToken) => 
+      //         token.metadata ? 
+      //         <div key = {`${token.tokenAddress}:${token.tokenId}`} >
+      //           <TokenSmall token = {token} disabled = {true}  onClick={() => setSelectedToken({token: token, disabled: true})} /> 
+      //         </div>
+      //         : null 
+      //       )
+      //       : 
+      //       <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+      //         <NoteText message="Other available gifts will appear here."/>
+      //       </div>
+      //     }
+      //   </div>
+      // </div>
+
+    // }
     
-  );
+    // </div> 
+    
+  // );
 }

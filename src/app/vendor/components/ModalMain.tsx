@@ -115,7 +115,7 @@ export const ModalMain = ({
           
           <div className="flex flex-col h-full justify-end mt-2 z-10"> 
           <div 
-            className="h-full aria-disabled:h-24 flex flex-col justify-center  mx-4 backdrop-blur-xl transition:all ease-in-out duration-300 overflow-x-auto shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] bg-slate-50/[.90] rounded-t-lg" 
+            className="h-full aria-disabled:h-24 flex flex-col justify-center  mx-4 backdrop-blur-xl transition:all ease-in-out duration-300 overflow-x-auto shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] bg-slate-200  dark:bg-slate-800 rounded-t-lg" 
             aria-disabled={modalVisible}>
                 <button 
                   className="grow-0 z-5 flex justify-center text-black font-bold pt-2 px-2"
