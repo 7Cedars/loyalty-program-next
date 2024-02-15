@@ -82,7 +82,7 @@ export const ModalMain = ({
 
   if (!selectedLoyaltyProgram) {
     return (
-      <div className="relative w-full max-w-4xl h-screen z-1">
+      <div className="static w-full max-w-4xl h-dvh z-1">
         <div className="flex flex-col pt-14 h-full z-3">
           <NotificationDialog/> 
           { address ?  <ChooseProgram /> : null }  
@@ -93,7 +93,7 @@ export const ModalMain = ({
 
   return (
     <>
-      <div className="relative w-full max-w-4xl h-screen z-1">
+      <div className="w-full max-w-4xl h-dvh z-1">
 
           <div className="flex flex-col pt-14 h-full z-3">
           {/* background image of loyaltycard */}

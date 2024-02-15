@@ -14,9 +14,9 @@ export default function layout({
   
   return (   
  
-    <div className="relative h-screen w-full grid grid-cols-1 justify-items-center bg-slate-100">
+    <div className="h-dvh w-dvh grid grid-cols-1 justify-items-center bg-slate-100 overflow-hidden">
       <NavbarTop/>
-        <div className="flex justify-center w-full max-h-screen max-w-4xl">  
+        <div className="absolute flex justify-center w-full h-full max-w-4xl">  
             <ModalMain>
               {children}
             </ModalMain>
