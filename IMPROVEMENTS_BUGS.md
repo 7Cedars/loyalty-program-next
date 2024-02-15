@@ -30,6 +30,7 @@ Even though repository is public, For now, it is for personal use only.
 - [ ]  @Vendor, QrReader, SendPoints: add mint points button + how many points left line. 
 - [x]  @ModalMain: can I turn off scrolling altogether? 
 - [ ]  @LandingPage: create several different images through the page. -- show off app. 
+- [ ]  Clean up redux - modal visibily can be removed completely. 
 - [x]  @LandingPage: visit button should be simple link / same with get started button. OR make whole button a link! 
 - [x]  @LandingPage: set max width. 
 - [ ]  @Everywhere: change loading image from 'vercel' one to turning indicator.    
