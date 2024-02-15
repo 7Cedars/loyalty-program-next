@@ -15,11 +15,11 @@ const API_KEY = process.env.NEXT_PUBLIC_API_KEY ? process.env.NEXT_PUBLIC_API_KE
 const NEXT_PUBLIC_WALLETCONNECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_ID ? process.env.NEXT_PUBLIC_WALLETCONNECT_ID : "none"
 
 // 1. Get projectId
-const projectId = NEXT_PUBLIC_WALLETCONNECT_ID
+const projectId = "6056a457c9f333cabea03b31fe8917a2"
 
 // 2. Create wagmiConfig
 const metadata = {
-  name: 'loyalty-prog',
+  name: 'loyalty-program',
   description: 'Customer Loyalty Program',
   url: 'https://loyalty-program-psi.vercel.app/', // TODO 
   icons: ['https://avatars.githubusercontent.com/u/37784886'] // TODO 

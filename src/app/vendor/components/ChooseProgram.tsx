@@ -42,7 +42,7 @@ export default function ChooseProgram()  {
       <div> 
       <TitleText title = "Choose Loyalty Program" subtitle="Choose existing program or deploy a new one." size={1} /> 
       </div> 
-       <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll overscroll-auto mb-12"> 
+       <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll mb-12"> 
         
         { status == "isSuccess" && loyaltyPrograms && loyaltyPrograms.length > 0 ? 
           loyaltyPrograms.map(program => {
