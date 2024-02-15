@@ -27,7 +27,7 @@ export default function Page()  {
         <QRCode 
           value={`${BASE_URI}/customer/home?prog=${parseEthAddress(selectedLoyaltyProgram?.programAddress)}`}
           style={{ 
-            height: "500px", 
+            height: "400px", 
             width: "100%", 
             objectFit: "cover"
           }}

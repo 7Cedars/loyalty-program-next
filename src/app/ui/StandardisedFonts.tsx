@@ -29,8 +29,8 @@ const appearanceNote = [
 ]
 
 const colourTitle = [
-  "text-slate-700",
-  "text-slate-300"
+  "text-slate-700 dark:text-slate-300",
+  "text-slate-300 dark:text-slate-700"
 ]
 
 export const TitleText = ({
