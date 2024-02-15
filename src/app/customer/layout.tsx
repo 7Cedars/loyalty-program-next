@@ -2,9 +2,9 @@
 // notification area, and otherwise it will not load... 
 
 import '../globals.css'
-import NavbarTop from "./layoutComponents/NavbarTop"; 
-import NavbarBottom from './layoutComponents/NavbarBottom';
-import { ModalMain } from './layoutComponents/ModalMain';
+import NavbarTop from "./components/NavbarTop"; 
+import NavbarBottom from './components/NavbarBottom';
+import { ModalMain } from './components/ModalMain';
 import Image from 'next/image';
 
 export default function layout({

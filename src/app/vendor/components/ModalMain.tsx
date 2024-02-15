@@ -109,11 +109,16 @@ export const ModalMain = ({
             />
           : null }
 
+{/* shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)]  */}
+
           <NotificationDialog/> 
           
-          <div className="flex flex-col h-full justify-end mt-2 overflow-x-auto z-10"> 
+          <div className="flex flex-col h-full justify-end mt-2 z-10"> 
+          <div 
+            className="h-full aria-disabled:h-24 flex flex-col justify-center  mx-4 backdrop-blur-xl transition:all ease-in-out duration-300 overflow-x-auto shadow-[0_12px_25px_-6px_rgba(0,0,0,0.5)] bg-slate-50/[.90] rounded-t-lg" 
+            aria-disabled={modalVisible}>
                 <button 
-                  className="grow-0 z-5 flex justify-center text-black font-bold pt-2 px-2 bg-slate-50/[.90] backdrop-blur-xl  mx-4 rounded-t-lg"
+                  className="grow-0 z-5 flex justify-center text-black font-bold pt-2 px-2"
                   type="submit"
                   onClick={() => setModalVisible(!modalVisible)} // should be true / false
                   >
@@ -130,11 +135,12 @@ export const ModalMain = ({
                     }
                 </button>
               <div
-                className="grow aria-disabled:grow-0 aria-disabled:h-12 h-96 z-0 scroll-auto overflow-x-auto transition:all ease-in-out duration-300 delay-100 opacity-100 bg-slate-50/[.90] backdrop-blur-xl mx-4"
+                className="grow aria-disabled:grow-0 aria-disabled:h-12 h-96 z-0 scroll-auto overflow-x-auto transition:all ease-in-out duration-300 delay-100"
                 aria-disabled={modalVisible}
                 >
                   { children }  
               </div>
+            </div>
           </div>
         </div>
       </div>
