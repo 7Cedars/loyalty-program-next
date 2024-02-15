@@ -41,18 +41,17 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 
 export const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 
-const config = createConfig({
-  autoConnect: false,  
-  publicClient,
-  webSocketPublicClient,
-})
+// const config = createConfig({
+//   autoConnect: false,  
+//   publicClient,
+//   webSocketPublicClient,
+// })
 
 createWeb3Modal({ wagmiConfig, projectId, chains })
-
 
 export function Web3Modal({ children }: any) {
   const { setThemeMode } = useWeb3ModalTheme()
   setThemeMode('light')
 
-  return <WagmiConfig config={config}>{children}</WagmiConfig>;
+  return <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>;
 }
