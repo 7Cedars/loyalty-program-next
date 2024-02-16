@@ -33,43 +33,45 @@ export const NumLine = ({
   }
 
   return (
-    <div className="flex grow"> 
-    {
-      numbers.map(number => 
-        number === selectedAmount ? 
-        <div key = {number} className="flex"> 
-          <Button  appearance = {"blueFilled"} onClick={() => setSelectedAmount(number)} >
-                {number} 
-          </Button>
-        </div>
-        :
-        <div key = {number} className="flex"> 
-          <Button  appearance = {"grayEmpty"} onClick={() => setSelectedAmount(number)} >
-                {number} 
-          </Button>
-        </div>
-      )
-    }
-      <div className="grow flex px-1"> 
-        { !isLoading ? 
-
-        <Button appearance = {"grayEmpty"} onClick={ () => handleClick(selectedAmount)} >
-            Mint {selectedAmount} Loyalty Gifts
-        </Button>
-        : 
-        <Button appearance = {"grayEmpty"} onClick={() => {}} >
-            <div className="flex justify-center items-center">
-              <Image
-                className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
-                width={30}
-                height={30}
-                src={"/loading.svg"}
-                alt="Loading icon"
-              />
-            </div>
-          </Button>
+    <div className="grid grid-cols-1 sm:grid-cols-2 w-full border border-red-500"  > 
+      <div className="flex grow"> 
+      {
+        numbers.map(number => 
+          number === selectedAmount ? 
+          <div key = {number} className="flex grow"> 
+            <Button  appearance = {"blueFilled"} onClick={() => setSelectedAmount(number)} >
+                  {number} 
+            </Button>
+          </div>
+          :
+          <div key = {number} className="flex grow"> 
+            <Button  appearance = {"grayEmpty"} onClick={() => setSelectedAmount(number)} >
+                  {number} 
+            </Button>
+          </div>
+        )
       }
-      </div>
+      </div> 
+      <div className="flex grow"> 
+          { !isLoading ? 
+
+          <Button appearance = {"grayEmpty"} onClick={ () => handleClick(selectedAmount)} >
+              Mint {selectedAmount} Loyalty Gifts
+          </Button>
+          : 
+          <Button appearance = {"grayEmpty"} onClick={() => {}} >
+              <div className="flex justify-center items-center">
+                <Image
+                  className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
+                  width={30}
+                  height={30}
+                  src={"/loading.svg"}
+                  alt="Loading icon"
+                />
+              </div>
+            </Button>
+        }
+        </div>
     </div>
   );
 };
