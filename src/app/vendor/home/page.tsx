@@ -29,10 +29,12 @@ export default function Page()  {
           style={{ 
             height: "400px", 
             width: "100%", 
-            objectFit: "cover"
+            objectFit: "cover", 
+            margin: "2 auto"
           }}
-          bgColor="#0f172a"
-          fgColor="#e2e8f0"
+          bgColor="#020617" // "#0f172a" 1e293b
+          fgColor="#f8fafc" // "#e2e8f0"
+          level='M'
           />
       </div>
       <div className="flex md:px-48 px-4">
