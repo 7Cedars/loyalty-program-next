@@ -113,7 +113,7 @@ export default function Page() {
           status == "isLoading" ? 
             <div className="grow text-slate-800 dark:text-slate-200 z-40">
               <Image
-                className="rounded-lg opacity-50 flex-none mx-3 animate-spin"
+                className="rounded-lg flex-none mx-3 animate-spin"
                 width={60}
                 height={60}
                 src={"/loading2.svg"}

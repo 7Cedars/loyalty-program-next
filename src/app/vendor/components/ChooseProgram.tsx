@@ -64,9 +64,15 @@ export default function ChooseProgram()  {
           </div>
           : 
           status == "isLoading" ? 
-          <div className='w-full h-full grow grid grid-cols-1 gap-1 justify-items-center text-center italic' >
-          ... Loading  
-          </div>
+            <div className="grow flex flex-col self-center items-center justify-center">
+              <Image
+                className="rounded-lg flex-none mx-3 animate-spin self-center"
+                width={60}
+                height={60}
+                src={"/loading2.svg"}
+                alt="Loading icon"
+              />
+            </div>
           :
           <div className='w-full h-full grow grid grid-cols-1 gap-1 justify-items-center text-center italic' >
           <div className='h-48'>

@@ -14,7 +14,7 @@ Even though repository is public, For now, it is for personal use only.
 - [ ]  Deploy on Vercel 
 
 ## Know bugs (in order of priority)
-- [ ]  @ChooseProgram: Carousel is broken. fix. 
+- [x]  @ChooseProgram: Carousel is broken. fix. 
 - [ ]  @Vendor, Tokens: BUG: When tokens cannot be loaded it goes into a loop. Fix! 
 - [ ]  @Vendor, QrReader: Fix Bug that when no valid QR code is read - it just hangs. Needs to have notification + continue reading.
 - [ ]  @LandingPage: when program is deployed, now all programs say 'visit'. It should only be for program deployed. 
@@ -32,7 +32,7 @@ Even though repository is public, For now, it is for personal use only.
 - [x]  @vendor, Landing page: improve vertical alignment items. ok-ish
 - [ ]  @ui: make Numline flow across into two lines on small screens. 
 - [x]  @vendor, Qrcode: add spacing around scanner.  
-- [ ]  @vendor, ChooseProgram: fix carousel.  
+- [x]  @vendor, ChooseProgram: fix carousel.  
 - [x]  @Everywhere: Develop, update loading image.  
 - [ ]  @Everywhere: Develop dark theming: Next adds dark theming automatically! WIP 
   - [ ]  Bg main modal should be slate -- see landing page (maybe bit more lighter & darker)
