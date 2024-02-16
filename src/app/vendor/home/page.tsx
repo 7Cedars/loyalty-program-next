@@ -23,7 +23,7 @@ export default function Page()  {
           subtitle="Let customer scan this code to activate loyalty card" 
           size={2}
           /> 
-      <div className="grid justify-center justify-items-center p-6">
+      <div className="grid justify-center justify-items-center p-6 bg-white rounded-lg m-3">
         <QRCode 
           value={`${BASE_URI}/customer/home?prog=${parseEthAddress(selectedLoyaltyProgram?.programAddress)}`}
           style={{ 
@@ -32,8 +32,8 @@ export default function Page()  {
             objectFit: "cover", 
             margin: "2 auto"
           }}
-          bgColor="#020617" // "#0f172a" 1e293b
-          fgColor="#f8fafc" // "#e2e8f0"
+          bgColor="#000000" // "#0f172a" 1e293b
+          fgColor="#ffffff" // "#e2e8f0"
           level='M'
           />
       </div>
