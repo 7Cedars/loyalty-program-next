@@ -228,7 +228,7 @@ export default function Home() {
                   className="carousel-item h-96 w-52 text-center items-center snap-start ml-4 flex flex-col self-center">
                     <>
                       <button 
-                        className="w-11/12 z-0 max-h-80 max-w-48 self-center enabled:opacity-50 enabled:w-5/6 transition-all ease-in-out delay-250 self-center"
+                        className="w-11/12 z-0 max-h-80 max-w-48 self-center enabled:opacity-50 enabled:w-5/6 transition-all ease-in-out delay-250"
                         onClick={() => setSelectedIndex(item.index)}
                         disabled={ item.index==selectIndex }
                       >

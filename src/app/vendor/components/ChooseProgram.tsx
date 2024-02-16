@@ -1,13 +1,10 @@
-import { useAccount } from 'wagmi'
-import { LoyaltyProgram, Status } from "@/types";
+"use client";
+
+import { LoyaltyProgram} from "@/types";
 import { TitleText } from "../../ui/StandardisedFonts";
-import { useEffect, useRef, useState } from "react";
+import { useEffect} from "react";
 import Image from "next/image";
 import { useUrlProgramAddress } from '../../hooks/useUrl';
-import { usePublicClient } from 'wagmi';
-import { loyaltyProgramAbi } from '@/context/abi';
-import { Log } from 'viem';
-import { parseContractLogs, parseUri, parseMetadata } from '../../utils/parsers';
 import { useDispatch } from 'react-redux';
 import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer';
 import { useLoyaltyPrograms } from '@/app/hooks/useLoyaltyPrograms';
@@ -36,33 +33,35 @@ export default function ChooseProgram()  {
     dispatch(selectLoyaltyProgram(loyaltyProgram))
   }
 
-  // Choosing program. -- This is what I have to get working 100% 
   return (
-     <div className='w-full h-full grid grid-cols-1 justify-items-center' >
+     <div className='w-full h-full flex flex-col items-center justify-center' >
       <div> 
       <TitleText title = "Choose Loyalty Program" subtitle="Choose existing program or deploy a new one." size={1} /> 
       </div> 
-       <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll mb-12"> 
-        
-        { status == "isSuccess" && loyaltyPrograms && loyaltyPrograms.length > 0 ? 
-          loyaltyPrograms.map(program => {
+       { status == "isSuccess" && loyaltyPrograms && loyaltyPrograms.length > 0 ? 
+        <div className="relative my-6 mx-4 flex flex-col justify-center sm:w-4/5 w-full h-full">
+            <div className="flex flex-row justify-between overflow-x-auto overflow-hidden scroll-px-1 snap-normal w-full h-full self-center">
 
-            return (
+            { loyaltyPrograms.map(program =>  
+            <div
+              key={program.programAddress}
+              className="carousel-item h-96 w-52 text-center items-center snap-start ml-4 flex flex-col self-center">
               <button 
-                key={program.programAddress}
                 onClick = {() => handleProgramSelection(program)}
-                  className="me-20 mt-12 w-72 h-128"> 
+                  className="w-11/12 z-0 h-96 w-52 max-h-80 max-w-48 self-center m-1"> 
                       <Image
-                        className="rounded-lg"
-                        width={288}
-                        height={420}
+                        className="h-90 w-48 self-center rounded-lg" 
+                        width={400}
+                        height={600}
                         style = {{ objectFit: "cover" }} 
                         src={program.metadata? program.metadata.imageUri : `/vercel.svg`}
-                        alt="DAO space icon"
+                        alt="Loyalty Program Card"
                       />
-              </button>
-            )
-          })
+                </button>
+              </div>
+            )}
+            </div>
+          </div>
           : 
           status == "isLoading" ? 
           <div className='w-full h-full grow grid grid-cols-1 gap-1 justify-items-center text-center italic' >
@@ -82,7 +81,5 @@ export default function ChooseProgram()  {
       } 
 
       </div>
-    </div>
-  
     ) 
 } 

@@ -35,8 +35,8 @@ export default function Page() {
       abi: loyaltyProgramAbi, 
       address: parseEthAddress(progAddress), 
       eventName: 'AddedLoyaltyGift', 
-      fromBlock: 1n,
-      toBlock: 16330050n
+      fromBlock: 5200000n // this should be part of settings - it differs per block. - this is sepolia. -- see constants 
+      // toBlock: 16330050n - if this does not create problems: take out. 
     }); 
     const addedGiftsEvents = parseLoyaltyGiftLogs(addedGifts)
 
@@ -44,7 +44,7 @@ export default function Page() {
       abi: loyaltyProgramAbi, 
       address: parseEthAddress(progAddress), 
       eventName: 'RemovedLoyaltyGiftClaimable', 
-      fromBlock: 1n,
+      fromBlock: 5200000n,
       toBlock: 16330050n
     }); 
     const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
@@ -111,7 +111,7 @@ export default function Page() {
         {/* <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start"> */}
           { 
           status == "isLoading" ? 
-            <div className="grow z-40">
+            <div className="grow text-slate-800 dark:text-slate-200 z-40">
               <Image
                 className="rounded-lg opacity-50 flex-none mx-3 animate-spin"
                 width={60}
