@@ -74,7 +74,7 @@ export default function MintPoints( {modal, setModal}: RedeemTokenProps ) {
   }
 
   return (
-    <div className="p-3 px-12 pt-12 grid grid-cols-1 justify-items-center"> 
+    <div className="p-3 grid grid-cols-1 justify-items-center"> 
       <p className="text-2xl text-center p-3">
         {`${numpadNumber} points`}
       </p>
@@ -98,7 +98,7 @@ export default function MintPoints( {modal, setModal}: RedeemTokenProps ) {
             </div>
           </Button>
           : 
-          <Button appearance = {"blueFilled"} disabled={!mintPoints.write} onClick={() => mintPoints.write?.()}>
+          <Button appearance = {"grayFilled"} disabled={!mintPoints.write} onClick={() => mintPoints.write?.()}>
             Mint Points
           </Button>
         }

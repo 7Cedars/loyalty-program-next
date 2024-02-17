@@ -59,11 +59,17 @@ export default function RequestCard()  {
       <div className="grid justify-center justify-items-center p-6">
           <QRCode 
             value={`type:requestCard;lp:${selectedLoyaltyProgram?.programAddress};ca:${address}`}
-            style={{ height: "350px", width: "350px", objectFit: "cover"  }}
-            bgColor="#000000" // "#0f172a" 1e293b
-            fgColor="#ffffff" // "#e2e8f0"
+            style={{ 
+              height: "350px", 
+              width: "350px", 
+              objectFit: "cover", 
+              background: 'white', 
+              padding: '16px', 
+            }}
+            bgColor="#ffffff" // "#0f172a" 1e293b
+            fgColor="#000000" // "#e2e8f0"
             level='L'
-            className="rounded-lg border border-8 border-black dark:border-white"
+            className="rounded-lg"
             />
       </div>
       

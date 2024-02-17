@@ -32,7 +32,7 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
       onError(error) {
         dispatch(notification({
           id: "mintLoyaltyCards",
-          message: `Something went wrong. Loyalty crads not minted.`, 
+          message: `Something went wrong. Loyalty cards not minted.`, 
           colour: "red",
           isVisible: true
         }))
@@ -107,7 +107,7 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
             </div>
           </Button>
           : 
-          <Button appearance = {"blueFilled"} disabled={!mintCards.write} onClick={() => mintCards.write?.()}>
+          <Button appearance = {"grayFilled"} disabled={!mintCards.write} onClick={() => mintCards.write?.()}>
             Mint Cards
           </Button>
         }

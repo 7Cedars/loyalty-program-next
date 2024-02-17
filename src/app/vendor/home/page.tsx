@@ -30,16 +30,13 @@ export default function Page()  {
             height: "350px", 
             width: "350px", 
             objectFit: "cover", 
-            background: 'black', 
-            padding: '8px', 
-            border: 'solid',
-            borderColor: 'white',
-            borderWidth: '8px'
+            background: 'white', 
+            padding: '16px', 
           }}
-          bgColor="#000000" // "#0f172a" 1e293b
-          fgColor="#ffffff" // "#e2e8f0"
-          level='L'
-          className="border border-8 rounded-lg border-black dark:border-black"
+          bgColor="#ffffff" // "#0f172a" 1e293b
+          fgColor="#000000" // "#e2e8f0"
+          level='M'
+          className="rounded-lg"
           />
       </div>
       <div className="flex md:px-48 px-4">
