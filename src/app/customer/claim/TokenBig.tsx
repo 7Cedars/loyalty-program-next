@@ -206,7 +206,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
             <div className="m-3"> 
               <QRCode 
                 value={`type:claimGift;${token.tokenAddress};${token.tokenId};${selectedLoyaltyCard?.cardId};${address};${token.metadata.attributes[1].value};${signature}`}
-                style={{ height: "100%", width: "100%", objectFit: "cover"  }}
+                style={{ height: "350px", width: "350px", objectFit: "cover"  }}
                 bgColor="#000000" // "#0f172a" 1e293b
                 fgColor="#ffffff" // "#e2e8f0"
                 level='L'

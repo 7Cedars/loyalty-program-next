@@ -59,7 +59,7 @@ export default function RequestCard()  {
       <div className="grid justify-center justify-items-center p-6">
           <QRCode 
             value={`type:requestCard;lp:${selectedLoyaltyProgram?.programAddress};ca:${address}`}
-            style={{ height: "100%", width: "100%", objectFit: "cover"  }}
+            style={{ height: "350px", width: "350px", objectFit: "cover"  }}
             bgColor="#000000" // "#0f172a" 1e293b
             fgColor="#ffffff" // "#e2e8f0"
             level='L'

@@ -27,15 +27,19 @@ export default function Page()  {
         <QRCode 
           value={`${BASE_URI}/customer/home?prog=${parseEthAddress(selectedLoyaltyProgram?.programAddress)}`}
           style={{ 
-            height: "100%", 
-            width: "100%", 
+            height: "350px", 
+            width: "350px", 
             objectFit: "cover", 
-            margin: "2 auto"
+            background: 'black', 
+            padding: '8px', 
+            border: 'solid',
+            borderColor: 'white',
+            borderWidth: '8px'
           }}
           bgColor="#000000" // "#0f172a" 1e293b
           fgColor="#ffffff" // "#e2e8f0"
           level='L'
-          className="rounded-lg border border-8 border-black dark:border-white"
+          className="border border-8 rounded-lg border-black dark:border-black"
           />
       </div>
       <div className="flex md:px-48 px-4">
