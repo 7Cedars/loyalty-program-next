@@ -85,9 +85,7 @@ export const ModalMain = ({
       <div className="static w-full max-w-4xl h-dvh z-1">
         <div className="flex flex-col pt-14 h-full z-3">
           <NotificationDialog/> 
-          {/* <Suspense> */}
-           <ChooseProgram /> 
-          {/* </Suspense> */}
+            <ChooseProgram /> 
         </div> 
       </div>
     )

@@ -35,7 +35,7 @@ export default function Page()  {
           bgColor="#000000" // "#0f172a" 1e293b
           fgColor="#ffffff" // "#e2e8f0"
           level='L'
-          className="rounded-lg border border-8 border-slate-800 dark:border-slate-200"
+          className="rounded-lg border border-8 border-black dark:border-white"
           />
       </div>
       <div className="flex md:px-48 px-4">
