@@ -28,7 +28,7 @@ const nextConfig = {
   experimental: {
     missingSuspenseWithCSRBailout: false,
   },
-    async headers() {
+    async headers() { // NB: for now completely open. Should makemore specific later on. 
       return [
         {
           // matching all API routes
