@@ -86,7 +86,7 @@ export default function Page() {
   }, [selectedToken, loyaltyTokens]) 
 
   return (
-     <div className=" w-full h-full grid grid-cols-1 gap-1 overflow-auto">
+     <div className=" w-full h-full grid grid-cols-1 gap-1 overflow-x-auto">
         <div>
         <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={2} />
        </div>
@@ -107,7 +107,7 @@ export default function Page() {
       
       </div>
       :
-      <div className="overflow-x-scroll flex flex-col items-center h-full">
+      <div className="flex flex-col items-center h-full">
         {/* <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start"> */}
           { 
           status == "isLoading" ? 
@@ -140,7 +140,7 @@ export default function Page() {
                   </div>
               }
 
-              <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 overflow-x-scroll pt-4 "> 
+              <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4  pt-4 "> 
                 <TitleText title = "Available Gifts" size={0} />
               </div>
               { inactiveLoyaltyGifts.length > 0 ? 

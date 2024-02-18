@@ -3,7 +3,7 @@
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { Button } from "@/app/ui/Button";
 import { useState } from "react";
-import { Transaction } from "@/types";
+import { Status, Transaction } from "@/types";
 import { Log } from "viem";
 import { parseEthAddress, parseTransferSingleLogs, parseTransferBatchLogs, parseBigInt } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
@@ -29,6 +29,7 @@ export default function Page() {
   const { progAddress } =  useUrlProgramAddress();
   const publicClient = usePublicClient(); 
   const { address } = useAccount() 
+  const [ status, setStatus ] = useState<Status>('isIdle'); 
   const [transactions, setTransactions] = useState<Transaction[] | undefined >()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
 
@@ -117,19 +118,22 @@ export default function Page() {
       Number(secondTransaction.blockNumber) - Number(firstTransaction.blockNumber));
 
     setTransactions(transferData)
+    setStatus("isSuccess")
     console.log("transferData: ", transferData)
   }
 
 
 
   useEffect(() => {
-
+    setStatus('isLoading')
     getTransactions()
-    if (transactions)  {
+    if (status == "isSuccess")  {
+      setStatus("isLoading")
       getLoyaltyProgramPoints() 
       getLoyaltyProgramCardsMinted()
     }
-  }, [ , modal, selectedLoyaltyProgram, transactions])
+    setStatus("isIdle")
+  }, [ , modal, selectedLoyaltyProgram, status])
 
 
   return (
