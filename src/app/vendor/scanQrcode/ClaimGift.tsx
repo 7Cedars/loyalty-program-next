@@ -34,11 +34,13 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   console.log("loyaltyTokens @claim gift: ", loyaltyTokens)
   console.log("simulated entry data into claimLoyaltyGift: ", 
     [
-      qrData?.loyaltyToken, 
+      `${token?.metadata?.name}`, 
+      `${token?.metadata?.attributes[1].value} points`,
+      qrData?.loyaltyToken,
       qrData?.loyaltyTokenId, 
-      qrData?.loyaltyCardAddress,
+      qrData?.loyaltyCardId, 
       qrData?.customerAddress,
-      qrData?.loyaltyPoints,
+      token?.metadata?.attributes[1].value, 
       qrData?.signature
     ]
   )

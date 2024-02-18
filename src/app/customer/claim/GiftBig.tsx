@@ -63,7 +63,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const domain = {
     name: 'Loyalty Program',
     version: '1',
-    chainId: chain?.id,
+    chainId: 11155111, // chain?.id, -- THIS NEEDS TO BE DYNAMIC. £todo
     verifyingContract: parseEthAddress(progAddress)
   } as const
   
