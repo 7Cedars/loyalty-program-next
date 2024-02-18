@@ -125,10 +125,11 @@ export default function Page() {
   useEffect(() => {
 
     getTransactions()
-    getLoyaltyProgramPoints() 
-    getLoyaltyProgramCardsMinted()
-    
-  }, [ , modal, selectedLoyaltyProgram])
+    if (transactions)  {
+      getLoyaltyProgramPoints() 
+      getLoyaltyProgramCardsMinted()
+    }
+  }, [ , modal, selectedLoyaltyProgram, transactions])
 
 
   return (

@@ -225,7 +225,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
         : 
         null 
         }
-        
+      <div className="h16" />
     </div>
   );
 }
