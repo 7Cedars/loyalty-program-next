@@ -1,6 +1,6 @@
 "use client";
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
-import TokenSmall from "./TokenSmall";
+import TokenSmall from "./VoucherSmall";
 import { LoyaltyToken } from "@/types";
 import { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -10,7 +10,7 @@ import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { parseBigInt, parseEthAddress, parseTransferSingleLogs } from "@/app/utils/parsers";
 import { useAppSelector } from "@/redux/hooks";
-import RedeemToken from "./RedeemToken";
+import RedeemToken from "./RedeemVoucher";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useDispatch } from "react-redux";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
