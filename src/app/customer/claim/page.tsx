@@ -124,7 +124,7 @@ export default function Page() {
 
         <div className="flex justify-center"> 
           <p className="p-2 w-1/2 text-center border-b border-slate-700">
-            {`${loyaltyPoints} loyalty points remaining`}
+            {`${loyaltyPoints} loyalty points`}
           </p>
         </div>
       </div>

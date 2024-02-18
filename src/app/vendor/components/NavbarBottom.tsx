@@ -24,17 +24,13 @@ import { pathToFileURL } from 'url';
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
-  const layoutLinks: string = 'py-1 px-6 text-slate-500 aria-selected:text-slate-800 aria-selected:text-slate-800 grid grid-cols-1'
+  const layoutLinks: string = 'py-1 px-6 text-slate-400 aria-selected:text-slate-800 aria-selected:text-slate-800 grid grid-cols-1'
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'
   const layoutIcons: string = 'h-7 w-7'
-  const dispatch = useDispatch() 
   const { address } = useAccount() 
   const { open, close } = useWeb3Modal()
   const path = usePathname()
-  const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
-
-  console.log("path: ", path)
-
+  const { progAddress } = useUrlProgramAddress()
 
   return (
     dimensions.width >= 896 ? 
@@ -43,7 +39,7 @@ const NavbarBottom = ( ) => {
     <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-stone-50/75 text-sm border-t border-gray-400 px-4">
       
         <Link 
-          href={progAddress ? `/vendor/home?prog=${progAddress}` : '/vendor/home'}  ss
+          href={progAddress ? `/vendor/home?prog=${progAddress}` : '/vendor/home'}
           className={layoutLinks}
           aria-selected={path == `/vendor/home`}
           > 

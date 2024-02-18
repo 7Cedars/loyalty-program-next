@@ -13,15 +13,17 @@ import { useScreenDimensions } from '../../hooks/useScreenDimensions';
 import { useAccount } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { useUrlProgramAddress } from '../../hooks/useUrl';
+import { usePathname } from 'next/navigation';
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
-  const layoutLinks: string = 'py-1 px-6 text-gray-600 hover:text-blue-500 focus:text-blue-500 grid grid-cols-1'
+  const layoutLinks: string = 'py-1 px-6 text-slate-400 aria-selected:text-slate-800 aria-selected:text-slate-800 grid grid-cols-1'
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'
   const layoutIcons: string = 'h-7 w-7'
   const { address } = useAccount() 
-  const { open, close } = useWeb3Modal()
-  const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
+  const { open } = useWeb3Modal()
+  const { progAddress } = useUrlProgramAddress()
+  const path = usePathname()
 
   return (
     dimensions.width >= 896 ? 
@@ -29,7 +31,10 @@ const NavbarBottom = ( ) => {
     :
     <header className="absolute bottom-0 h-14 z-10 flex justify-between w-full bg-stone-50/75 text-sm border-t border-gray-400 px-4">
       
-        <Link href={progAddress ? `/customer/home?prog=${progAddress}` : '/customer/home'}  className={layoutLinks}> 
+        <Link 
+          href={progAddress ? `/customer/home?prog=${progAddress}` : '/customer/home'}  
+          className={layoutLinks}
+          aria-selected={path == `/customer/home`}> 
           <div className='col-span-1 grid text-xs justify-items-center'> 
             <QrCodeIcon
               className={layoutIcons}
@@ -38,7 +43,10 @@ const NavbarBottom = ( ) => {
             Home
           </div> 
         </Link>
-        <Link href={progAddress ? `/customer/claim?prog=${progAddress}` : '/customer/home' } className={layoutLinks}> 
+        <Link 
+          href={progAddress ? `/customer/claim?prog=${progAddress}` : '/customer/claim' } 
+          className={layoutLinks}
+          aria-selected={path == `/customer/claim`}> 
           <div className={layoutIconBox}> 
             <GiftIcon
               className={layoutIcons}
@@ -47,7 +55,10 @@ const NavbarBottom = ( ) => {
             Claim
           </div> 
         </Link>
-        <Link href={progAddress ? `/customer/card?prog=${progAddress}` : '/customer/home' }  className={layoutLinks}> 
+        <Link 
+          href={progAddress ? `/customer/card?prog=${progAddress}` : '/customer/card' }  
+          className={layoutLinks}
+          aria-selected={path == `/customer/card`}>  
           <div className={layoutIconBox}> 
             <CreditCardIcon
               className={layoutIcons}
@@ -56,7 +67,10 @@ const NavbarBottom = ( ) => {
             Card 
           </div> 
         </Link>
-        <Link href={progAddress ? `/customer/transactions?prog=${progAddress}` : '/customer/home'} className={layoutLinks}> 
+        <Link 
+          href={progAddress ? `/customer/transactions?prog=${progAddress}` : '/customer/transactions'} 
+          className={layoutLinks}
+          aria-selected={path == `/customer/transactions`}>  
           <div className={layoutIconBox}> 
             <ChartBarSquareIcon
               className={layoutIcons}

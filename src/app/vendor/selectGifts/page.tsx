@@ -1,7 +1,7 @@
 "use client"; 
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
-import TokenSmall from "./TokenSmall";
-import TokenBig from "./TokenBig";
+import TokenSmall from "./GiftSmall";
+import TokenBig from "./GiftBig";
 import { LoyaltyToken } from "@/types";
 import { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
