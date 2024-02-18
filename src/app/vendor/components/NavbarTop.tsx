@@ -47,9 +47,9 @@ const NavbarTop = ( ) => {
               Scan qr code
           </Link>
           <Link 
-            href={progAddress ? `/vendor/selectTokens?prog=${progAddress}` : '/vendor/selectTokens' }  
+            href={progAddress ? `/vendor/selectGifts?prog=${progAddress}` : '/vendor/selectGifts' }  
             className={layoutLinks}
-            aria-selected={path == `/vendor/selectTokens`}> 
+            aria-selected={path == `/vendor/selectGifts`}> 
               Select gifts 
           </Link>
           <Link 

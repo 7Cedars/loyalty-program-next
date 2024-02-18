@@ -62,8 +62,7 @@ export default function Page() {
       abi: loyaltyProgramAbi, 
       address: parseEthAddress(progAddress), 
       eventName: 'AddedLoyaltyGift', 
-      fromBlock: 1n,
-      toBlock: 16330050n
+      fromBlock: 5200000n
     }); 
     const addedGiftsEvents = parseLoyaltyGiftLogs(addedGifts)
 
@@ -71,8 +70,7 @@ export default function Page() {
       abi: loyaltyProgramAbi, 
       address: parseEthAddress(progAddress), 
       eventName: 'RemovedLoyaltyGiftClaimable', 
-      fromBlock: 1n,
-      toBlock: 16330050n
+      fromBlock: 5200000n
     }); 
     const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
 
@@ -123,7 +121,7 @@ export default function Page() {
         </div>
 
         <div className="flex justify-center"> 
-          <p className="p-2 w-1/2 text-center border-b border-slate-700">
+          <p className="p-2 pt-4 w-1/2 text-center border-b border-slate-700">
             {`${loyaltyPoints} loyalty points`}
           </p>
         </div>

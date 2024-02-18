@@ -127,16 +127,16 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
         
         <div className="grid grid-cols-1 pt-2 content-between w-4/5 h-full">
           <div> 
-            <div className="text-center text-lg text-gray-900 text-bold px-1"> 
+            <div className="text-center text-lg text-slate-800 dark:text-slate-200 text-bold px-1"> 
               {token.metadata.name}
             </div>
-            <div className="text-center text-md text-gray-500 pb-4"> 
+            <div className="text-center text-lg text-slate-500 pb-4"> 
               {token.metadata.description}
             </div>
-            <div className="text-center text-md"> 
+            <div className="text-center text-lg"> 
               {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
             </div> 
-            <div className="text-center text-md pb-4"> 
+            <div className="text-center text-lg pb-4"> 
               {`Additional requirements: ${token.metadata.attributes[2].value}`}
             </div> 
           </div>

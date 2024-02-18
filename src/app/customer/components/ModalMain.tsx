@@ -71,8 +71,7 @@ export const ModalMain = ({
         address: parseEthAddress(progAddress), 
         eventName: 'TransferSingle',
         args: {to: address}, 
-        fromBlock: 1n,
-        toBlock: 16330050n
+        fromBlock: 5200000n
       });
       const transferredTokens = parseTransferSingleLogs(transferSingleData)
       const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)

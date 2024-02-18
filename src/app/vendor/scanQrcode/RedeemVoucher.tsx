@@ -178,13 +178,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
         } 
 
       </div>
-      
-      
-         {/* <div className="flex w-full md:px-48 px-6">
-        <Button onClick={() => {setData(undefined)}}>
-            Back to QR reader
-        </Button>
-      </div> */}
+
       <div className='pb-16'/>
     </div>
   )}

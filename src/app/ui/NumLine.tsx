@@ -33,13 +33,13 @@ export const NumLine = ({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 w-full border border-red-500"  > 
+    <div className="grid grid-cols-1 sm:grid-cols-2 w-full"  > 
       <div className="flex grow"> 
       {
         numbers.map(number => 
           number === selectedAmount ? 
           <div key = {number} className="flex grow"> 
-            <Button  appearance = {"blueFilled"} onClick={() => setSelectedAmount(number)} >
+            <Button  appearance = {"grayFilled"} onClick={() => setSelectedAmount(number)} >
                   {number} 
             </Button>
           </div>

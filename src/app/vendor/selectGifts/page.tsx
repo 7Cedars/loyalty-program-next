@@ -27,7 +27,7 @@ export default function Page() {
   const { progAddress } = useUrlProgramAddress() 
   const publicClient = usePublicClient()
 
-  console.log("loyaltyTokens @selectTokens: ", loyaltyTokens)
+  console.log("loyaltyTokens @selectGifts: ", loyaltyTokens)
 
   const getTokenSelection = async () => {
 

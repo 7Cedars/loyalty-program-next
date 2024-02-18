@@ -47,8 +47,7 @@ export const useLoyaltyPrograms = () => {
       abi: loyaltyProgramAbi, 
         eventName: 'DeployedLoyaltyProgram', 
         args: {owner: address}, 
-        fromBlock: 1n,
-        toBlock: 16330050n
+        fromBlock: 5200000n
     });
 
     const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)

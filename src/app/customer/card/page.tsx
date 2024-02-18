@@ -15,6 +15,7 @@ import { notification } from "@/redux/reducers/notificationReducer";
 import { useDispatch } from "react-redux";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
+import Image from "next/image";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -64,8 +65,7 @@ export default function Page() {
       // address: loyaltyToken.tokenAddress, 
       abi: loyaltyGiftAbi,
       eventName: 'TransferSingle', 
-      fromBlock: 1n,
-      toBlock: 16330050n
+      fromBlock: 5200000n
     })
     const claimedTokensData = parseTransferSingleLogs(claimedTokensLogs)
     // console.log("claimedTokensLogs: ", claimedTokensLogs)
@@ -135,58 +135,64 @@ export default function Page() {
       </div>
 
       { selectedToken ? 
-      <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
-        <button 
-          className="text-black font-bold p-3"
-          type="submit"
-          onClick={() => {
-            setSelectedToken(undefined) 
-            setHashTransaction(undefined)}
-          }  
-          >
-          <ArrowLeftIcon
-            className="h-7 w-7"
-            aria-hidden="true"
-          />
-        </button>
-        { 
-          selectedToken ?  
+        <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
+          <button 
+            className="text-black font-bold p-3"
+            type="submit"
+            onClick={() => {
+              setSelectedToken(undefined) 
+              setHashTransaction(undefined)}
+            }  
+            >
+            <ArrowLeftIcon
+              className="h-7 w-7"
+              aria-hidden="true"
+            />
+          </button>
+            
           <RedeemToken token={selectedToken?.token} disabled={false}  /> 
-          : 
-          <div> Loading ... </div>
-        }
-      </div>
-      :
-      <>
-        <div className="grid grid-cols-1 mt-4"> 
-          <TitleText title = "Vouchers" size={1} />
+            
         </div>
-        <div className="grid grid-cols-2  overflow-auto sm:grid-cols-3 md:grid-cols-4 p-4 pt-0 justify-items-center content-start">
-          
+      :
+      !selectedToken && status == "isLoading" ? 
+            <div className="grow  flex flex-col items-center h-full text-slate-800 dark:text-slate-200 z-40">
+              <Image
+                className="rounded-lg flex-none mx-3 animate-spin"
+                width={60}
+                height={60}
+                src={"/loading2.svg"}
+                alt="Loading icon"
+              />
+            </div>
+        :
+        !selectedToken && status == "isSuccess" ? 
+          <>
+            <div className="grid grid-cols-1 mt-4"> 
+              <TitleText title = "Vouchers" size={1} />
+            </div>
+            <div className="grid grid-cols-2  overflow-auto sm:grid-cols-3 md:grid-cols-4 p-4 pt-0 justify-items-center content-start">
+              
 
-          { claimedTokens && claimedTokens.length > 0 ?
-          
-          claimedTokens.map((token: LoyaltyToken, i) => 
-              token.metadata ? 
-              <div key = {i} >
-                <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
+              { claimedTokens && claimedTokens.length > 0 ?
+              
+              claimedTokens.map((token: LoyaltyToken, i) => 
+                  token.metadata ? 
+                  <div key = {i} >
+                    <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
+                  </div>
+                  : null 
+                )
+              : 
+              <div className="col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+                <NoteText message="Vouchers will appear here."/>
               </div>
-              : null 
-            )
-          : 
-          <div className="col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-            <NoteText message="Vouchers will appear here."/>
-          </div>
-          }
-        </div> 
-      </>
+              }
+            </div> 
+        </>
+        : null  
     }
-    
     </div> 
     
   );
-}
-function dispatch(arg0: any) {
-  throw new Error("Function not implemented.");
 }
 

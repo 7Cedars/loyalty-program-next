@@ -85,8 +85,7 @@ export default function Page() {
       args: {
         from: parseEthAddress(address)
       },
-      fromBlock: 1n,
-      toBlock: 16330050n
+      fromBlock: 5200000n
     });
     const transferSingleData =  parseTransferSingleLogs(transferSingleLogs)
 
@@ -97,8 +96,7 @@ export default function Page() {
       args: {
         to: parseEthAddress(address)
       },
-      fromBlock: 1n,
-      toBlock: 16330050n
+      fromBlock: 5200000n
     });
     const transferMintPointsData =  parseTransferSingleLogs(transferMintPointsLogs)
 
@@ -109,8 +107,7 @@ export default function Page() {
       args: {
         to: parseEthAddress(address)
       },
-      fromBlock: 1n,
-      toBlock: 16330050n
+      fromBlock: 5200000n
     });
     console.log("transferMintCardLogs: ", transferMintCardLogs)
     const transferMintCardData =  parseTransferBatchLogs(transferMintCardLogs)
@@ -140,8 +137,7 @@ export default function Page() {
       <div className="grid grid-cols-1 justify-items-center w-full h-full overflow-auto ">
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
         <div className="grid grid-cols-1 p-2 pt-3 w-5/6 sm:w-2/3 text-center justify-items-center border-b border-slate-700"> 
-          <p> {`${loyaltyPoints}`} points left </p>
-          <p> {`${cardsMinted}`} cards left </p> 
+          <p> {`${loyaltyPoints}`} points | {`${cardsMinted}`} cards </p> 
         </div>
 
         { 
