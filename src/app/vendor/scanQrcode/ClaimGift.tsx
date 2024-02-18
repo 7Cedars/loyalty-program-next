@@ -30,18 +30,18 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const dispatch = useDispatch() 
 
-  // console.log("QRDATA @claim gift: ", qrData)
-  // console.log("loyaltyTokens @claim gift: ", loyaltyTokens)
-  // console.log("simulated entry data into claimLoyaltyGift: ", 
-  //   [
-  //     qrData?.loyaltyToken, 
-  //     qrData?.loyaltyTokenId, 
-  //     qrData?.loyaltyCardAddress,
-  //     qrData?.customerAddress,
-  //     qrData?.loyaltyPoints,
-  //     qrData?.signature
-  //   ]
-  // )
+  console.log("QRDATA @claim gift: ", qrData)
+  console.log("loyaltyTokens @claim gift: ", loyaltyTokens)
+  console.log("simulated entry data into claimLoyaltyGift: ", 
+    [
+      qrData?.loyaltyToken, 
+      qrData?.loyaltyTokenId, 
+      qrData?.loyaltyCardAddress,
+      qrData?.customerAddress,
+      qrData?.loyaltyPoints,
+      qrData?.signature
+    ]
+  )
   
   useEffect(() => {
     if (!loyaltyTokens && qrData) {

@@ -3,7 +3,7 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useAccount,  usePublicClient, useSignTypedData } from "wagmi";
+import { useAccount,  useNetwork,  usePublicClient, useSignTypedData } from "wagmi";
 import { loyaltyProgramAbi} from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
@@ -29,11 +29,13 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const {  pointsSent } = useLatestCustomerTransaction() 
   const dispatch = useDispatch() 
-  const {address} = useAccount()
+  const {address } = useAccount()
+  const {chain} = useNetwork() 
 
   console.log("selectedLoyaltyCard?.cardAddress: ", selectedLoyaltyCard?.cardAddress)
   console.log("parseEthAddress(progAddress): ", parseEthAddress(progAddress))
   console.log("nonceData: ", nonceData)
+  console.log("chain: ",chain )
 
   useEffect(() => {
 
@@ -61,7 +63,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const domain = {
     name: 'Loyalty Program',
     version: '1',
-    chainId: 31337,
+    chainId: chain?.id,
     verifyingContract: parseEthAddress(progAddress)
   } as const
   
