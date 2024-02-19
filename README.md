@@ -86,7 +86,10 @@ Crucially, interactions between the two protocols are bounded: points and vouche
 
 ### Built With
 <!-- See for a list of badges: https://github.com/Envoy-VC/awesome-badges -->
-[![Next][Next.js]][Next-url]  [![React][React.js]][React-url] [![Redux][Redux]][Redux-url]  [![Tailwind][Tailwind-css]][Tailwind-url]
+* [![Next][Next.js]][Next-url]  
+* [![React][React.js]][React-url] 
+* [![Redux][Redux]][Redux-url]  
+* [![Tailwind][Tailwind-css]][Tailwind-url]
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -149,6 +152,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
+- [ ] Code clean up and optimisation. 
 - [ ] Add interfac for selecting external gift contracts. 
 - [ ] Implement account abstraction. 
 - [ ] ... 
