@@ -24,7 +24,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/github_username/repo_name">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/iconLoua .png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Loyalty Program</h3>
@@ -36,15 +36,13 @@
     <br />
     <br />
     <!--NB: TO DO --> 
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
+    <a href="https://loyalty-program-psi.vercel.app">View Demo</a>
     ·
     <a href="https://github.com/7Cedars/loyalty-program-next/issues">Report Bug</a>
     ·
     <a href="https://github.com/7Cedars/loyalty-program-next/issues">Request Feature</a>
   </p>
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>

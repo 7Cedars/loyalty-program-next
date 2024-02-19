@@ -54,7 +54,7 @@ export default function ChooseProgram()  {
                         width={400}
                         height={600}
                         style = {{ objectFit: "cover" }} 
-                        src={program.metadata? program.metadata.imageUri : `/vercel.svg`}
+                        src={program.metadata? program.metadata.imageUri : `/images/loading2.svg`}
                         alt="Loyalty Program Card"
                       />
                 </button>
@@ -69,7 +69,7 @@ export default function ChooseProgram()  {
                 className="rounded-lg flex-none mx-3 animate-spin self-center"
                 width={60}
                 height={60}
-                src={"/loading2.svg"}
+                src={"/images/loading2.svg"}
                 alt="Loading icon"
               />
             </div>
