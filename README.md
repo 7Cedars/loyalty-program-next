@@ -74,11 +74,11 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-A front-end dApp demonstration of a web3 protocol for customer engagement. Try it out here. 
+A front-end dApp demonstration of a web3 protocol for customer engagement. Try it out [here](https://loyalty-program-psi.vercel.app/). 
 
 This dApp interacts with two solidity protocols. 
-- The first protocol sets out a standard for loyalty programs: an ERC-1155 based contract that mints points and non-fungible loyalty cards. The latter are registered as ERC-6551 Token Based Accounts and accumulate loyalty points. See this repository for an example implementation. 
-- The second protocol sets out a standard for contracts that exchange points for gifts or vouchers. Gift contracts can be used in any loyalty program. See this repository for an example implementation.
+- The first protocol sets out a standard for loyalty programs: an ERC-1155 based contract that mints points and non-fungible loyalty cards. The latter are registered as ERC-6551 Token Based Accounts and accumulate loyalty points. See [this repository](https://github.com/7Cedars/loyalty-program-contracts) for an example implementation. 
+- The second protocol sets out a standard for contracts that exchange points for gifts or vouchers. Gift contracts can be used in any loyalty program. See [this repository](https://github.com/7Cedars/loyalty-gifts-contracts) for an example implementation.
 
 Crucially, interactions between the two protocols are bounded: points and vouchers that are minted by a loyalty program can only be used among its own loyalty cards. Loyalty cards themselves are freely transferable.
 
@@ -98,8 +98,7 @@ To get a local copy up and running do the following.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm and yarn
+  Npm and yarn
   ```sh
   npm install --global npm@latest yarn  
   ```
@@ -150,10 +149,9 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [ ] Add interfac for selecting external gift contracts. 
+- [ ] Implement account abstraction. 
+- [ ] ... 
 
 See the [open issues](https://github.com/7Cedars/loyalty-program-next/issues) for a full list of proposed features (and known issues).
 
