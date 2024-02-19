@@ -29,7 +29,6 @@ export default function Home() {
   const { data: walletClient, status } = useWalletClient();
   const [deployRequest, setDeployRequest] = useState<DeployRequestProps>();
   const [ selectIndex, setSelectedIndex ] = useState<number | undefined>(1);
-  const dispatch = useDispatch(); 
 
   console.log("deployRequest: ", deployRequest)
 
@@ -42,9 +41,9 @@ export default function Home() {
   const deployLoyaltyProgram = async () => {
 
     // const registry: EthAddress = parseEthAddress("0x782abFB5B5412a0F89D3202a2883744f9B21B732") 
-    // const implmentation: EthAddress = parseEthAddress("0x71C95911E9a5D330f4D621842EC243EE1343292e") 
+    // const implementation: EthAddress = parseEthAddress("0x71C95911E9a5D330f4D621842EC243EE1343292e") 
     const registry: EthAddress = parseEthAddress("0x782abFB5B5412a0F89D3202a2883744f9B21B732") 
-    const implmentation: EthAddress = parseEthAddress("0x71C95911E9a5D330f4D621842EC243EE1343292e") 
+    const implementation: EthAddress = parseEthAddress("0x71C95911E9a5D330f4D621842EC243EE1343292e") 
 
     if (walletClient && deployRequest) {
       const hash = await walletClient.deployContract({
@@ -55,7 +54,7 @@ export default function Home() {
           deployRequest.name,
           deployRequest.version,
           registry, // registry 
-          implmentation // deployArgs.erc65511Implementation
+          implementation // deployArgs.erc65511Implementation
         ],
         bytecode: loyaltyProgramBytecode,
       })
@@ -78,13 +77,13 @@ export default function Home() {
 
   return (
     <main className="grid grid-cols-1 w-full h-fit overflow-y-auto shadow-2xl bg-slate-100 justify-items-center p-4">
-        <div className={`h-[80vh] grid grid-cols-1 xs:grid-cols-2 content-center w-full max-w-4xl sm:w-4/5 bg-slate-300 shadow-2xl rounded-t-lg p-8`}>
+        <div className={`h-[80vh] grid grid-cols-1 sm:grid-cols-2 content-center w-full max-w-4xl sm:w-4/5 bg-slate-300 shadow-2xl rounded-t-lg p-8`}>
           <div className="grid grid-cols-1 content-center"> 
-            <TitleText title="say hi to Loyal" subtitle=" A one-stop, mobile first, solution for customer loyalty programs. " size = {2}/>  
+            <TitleText title="say hi to Loyal" subtitle="A one-stop, mobile first, solution for customer loyalty programs. " size = {2}/>  
             {/* Deployed in under a minute, no-server, no subscriptions or other lockins, open and versatile, while keeping vendors full control. */}
           </div>
           <Image
-            src={"/img/appScreenHome.svg"}
+            src={"/images/vendorHomeScreen.svg"}
             alt={"Example home screen"}
             style = {{ objectFit: "fill" }} 
             width={400}
@@ -93,13 +92,13 @@ export default function Home() {
           />
         </div>
       
-        <div className={`min-h-[80vh] h-fit grid grid-cols-1 xs:grid-cols-2 content-center w-full max-w-4xl sm:w-4/5 bg-slate-700 shadow-2xl p-8`}>
-          <div className="grid grid-cols-1 xs:col-span-2 self-center">
+        <div className={`min-h-[80vh] h-fit grid grid-cols-1 sm:grid-cols-2 content-center w-full max-w-4xl sm:w-4/5 bg-slate-700 shadow-2xl p-8`}>
+          <div className="grid grid-cols-1 sm:col-span-2 self-center">
           <TitleText title="What is it?" size = {2} colourMode= {1}/>  
           </div> 
           <div className="flex flex-col m-2 self-center"> 
             <Image
-              src={"/img/appScreenHome.svg"}
+              src={"/images/customerCardScreen.svg"}
               alt={"Example home screen"}
               style = {{ objectFit: "fill" }} 
               width={400}
@@ -161,7 +160,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col m-2 self-center"> 
             <Image
-              src={"/img/appScreenHome.svg"}
+              src={"/images/vendorTransactionScreen.svg"}
               alt={"Example home screen"}
               style = {{ objectFit: "fill" }} 
               width={400}
@@ -176,12 +175,12 @@ export default function Home() {
           </div>
         </div>
 
-        <div className={`h-[80vh] grid grid-cols-1 xs:grid-cols-2 content-center w-full max-w-4xl sm:w-4/5 bg-slate-700 shadow-2xl p-8`}>
+        <div className={`h-full grid grid-cols-1 sm:grid-cols-2 content-center w-full max-w-4xl sm:w-4/5 bg-slate-700 shadow-2xl p-8`}>
           <div className="col-span-2 content-center">
           <TitleText title="How was it build?" size = {2} colourMode= {1}/>  
           </div> 
           <Image
-              src={"/img/appScreenHome.svg"}
+              src={"/images/appScreenHome.svg"}
               alt={"Example home screen"}
               style = {{ objectFit: "fill" }} 
               width={400}
@@ -309,16 +308,16 @@ export default function Home() {
         </div>
         
 
-        <div className={`h-[40vh] grid grid-cols-1 content-center w-full max-w-4xl sm:w-4/5 bg-slate-700 shadow-2x` }>
+        {/* <div className={`h-[40vh] grid grid-cols-1 content-center w-full max-w-4xl sm:w-4/5 bg-slate-700 shadow-2x` }>
           <div className="">
             <TitleText title="Know what you're doing?" subtitle="Using a valid uri, deploy your loyalty program here" size = {2} colourMode= {1}/>  
           </div> 
           <form className="flex justify-center h-10 m-6">
             <input type="text" name="uri" id="uri" className="w-4/5 rounded-lg focus:border-slate-300 " />
           </form> 
-        </div>
+        </div> */}
 
-        <div className='h-[40vh] w-full sm:w-4/5 bg-slate-300 shadow-2xl rounded-b-lg text-center'>
+        <div className='h-[40vh] w-full sm:w-4/5 bg-slate-700 shadow-2xl rounded-b-lg text-slate-200 text-center'>
           Here a bit of background about me and the project. Work in Progress. 
         </div>
     </main>

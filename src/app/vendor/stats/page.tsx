@@ -269,7 +269,7 @@ export default function Page() {
             <div className="px-12 flex h-12">
               <Button onClick={() => {setModal(undefined)} } appearance="grayEmpty">
                 <div className="justify-center items-center">
-                  Return to Transaction Overview
+                  Return to Transactions
                 </div>
               </Button>
             </div>
@@ -281,14 +281,14 @@ export default function Page() {
             <div className="flex w-full md:px-48 px-6">
               <Button onClick={() => {setModal('points')} } appearance="grayEmpty">
                 <div className="justify-center items-center">
-                  Mint Loyalty Points
+                  Mint Points
                 </div>
               </Button>
             </div>
             <div className="flex w-full md:px-48 px-6">
               <Button onClick={() => {setModal('cards')} } appearance="grayEmpty">
                 <div className="justify-center items-center">
-                  Mint Loyalty Cards
+                  Mint Cards
                 </div>
               </Button>
             </div>

@@ -23,14 +23,14 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="images/iconLoua .png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/7Cedars/loyalty-program-next"> 
+    <img src="public/images/iconLoyaltyProgram.svg" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">Loyalty Program</h3>
+<h3 align="center">Loyal: A Web3 Customer Engagement App</h3>
 
   <p align="center">
-    A composable, lightweight and fully open source app for customer engagement. 
+    A composable, lightweight and fully open source dApp build for real-world customer engagments. 
     <br />
     <a href="https://github.com/7Cedars/loyalty-program-next"><strong>Explore the docs »</strong></a>
     <br />
@@ -74,14 +74,19 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+A concrete demonstration of a web3 protocol for customer engagement. Try it out here. 
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+This dApp interacts with two solidity protocols. 
+- The first protocol sets out a standard for loyalty programs: an ERC-1155 based contract that mints points and loyalty cards. The latter are linked to ERC-6551 Token Based Accounts, and can accumulate points. See this repository for an example implementation. 
+- The second protocol sets out a standard for contracts that exchange points for gifts or vouchers. Anyone can build and deploy such contracts and they can be enabled in any loyalty program. See this repository for an example implementation.
+
+Crucially, interactions between the two protocols are bounded: points and vouchers cannot travel beyond the boundaries of a single loyalty program. 
+
+<img src="public/images/customerCardScreen.svg" alt="my-Card-view" width="200" /> 
 
 Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 ### Built With
 
@@ -214,7 +219,7 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
 [issues-url]: https://github.com/7Cedars/loyalty-program-next/issues
 [license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
+[license-url]: https://github.com/7Cedars/loyalty-program-next/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
