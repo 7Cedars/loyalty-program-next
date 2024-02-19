@@ -120,7 +120,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
 
         <div className="w-full grid-span-2 gap-2" > 
           <button 
-            className="text-black flex font-bold p-3"
+            className="text-slate-800 dark:text-slate-200 flex font-bold p-3"
             type="submit"
             onClick={() => {
               setData(undefined) 

@@ -24,7 +24,7 @@ import { pathToFileURL } from 'url';
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
-  const layoutLinks: string = 'py-1 px-6 text-slate-400 aria-selected:text-slate-800 aria-selected:text-slate-800 grid grid-cols-1'
+  const layoutLinks: string = 'py-1 px-6 text-slate-400 aria-selected:text-slate-800 aria-selected:text-slate-800 dark:text-slate-600 dark:aria-selected:text-slate-200 dark:aria-selected:text-slate-200 grid grid-cols-1'
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'
   const layoutIcons: string = 'h-7 w-7'
   const { address } = useAccount() 
@@ -36,7 +36,7 @@ const NavbarBottom = ( ) => {
     dimensions.width >= 896 ? 
     null
     :
-    <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-stone-50/75 text-sm border-t border-gray-400 px-4">
+    <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-slate-100/75 dark:bg-slate-900/75 text-sm border-t border-gray-400 px-4">
       
         <Link 
           href={progAddress ? `/vendor/home?prog=${progAddress}` : '/vendor/home'}
