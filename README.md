@@ -74,31 +74,30 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-A concrete demonstration of a web3 protocol for customer engagement. Try it out here. 
+A front-end dApp demonstration of a web3 protocol for customer engagement. Try it out here. 
 
 This dApp interacts with two solidity protocols. 
-- The first protocol sets out a standard for loyalty programs: an ERC-1155 based contract that mints points and loyalty cards. The latter are linked to ERC-6551 Token Based Accounts, and can accumulate points. See this repository for an example implementation. 
-- The second protocol sets out a standard for contracts that exchange points for gifts or vouchers. Anyone can build and deploy such contracts and they can be enabled in any loyalty program. See this repository for an example implementation.
+- The first protocol sets out a standard for loyalty programs: an ERC-1155 based contract that mints points and non-fungible loyalty cards. The latter are registered as ERC-6551 Token Based Accounts and accumulate loyalty points. See this repository for an example implementation. 
+- The second protocol sets out a standard for contracts that exchange points for gifts or vouchers. Gift contracts can be used in any loyalty program. See this repository for an example implementation.
 
-Crucially, interactions between the two protocols are bounded: points and vouchers cannot travel beyond the boundaries of a single loyalty program. 
+Crucially, interactions between the two protocols are bounded: points and vouchers that are minted by a loyalty program can only be used among its own loyalty cards. Loyalty cards themselves are freely transferable. 
 
-<img src="public/images/customerCardScreen.svg" alt="my-Card-view" width="200" /> 
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
+
+| Home screen vendor | Transactions vendor | Card overview customer |
+| :--------: | :-------: | :-------: | 
+| <img src="public/images/vendorHomeScreen.svg" alt="my-Card-view" width="200" />  | <img src="public/images/customerCardScreen.svg" alt="my-Card-view" width="200" />  | <img src="public/images/vendorTransactionScreen.svg" alt="my-Card-view" width="200" />  |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
-
+<!-- See for a list of badges: https://github.com/Envoy-VC/awesome-badges -->
 * [![Next][Next.js]][Next-url]
 * [![React][React.js]][React-url]
-* redux
-* tailwind
-* Wagmi 
+* [![Redux][Redux]][Redux-url]
+* [![Tailwind][Tailwind-css]][Tailwind-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -119,7 +118,7 @@ This is an example of how to list things you need to use the software and how to
 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone https://github.com/7Cedars/loyalty-program-next.git
    ```
 3. Install NPM packages
    ```sh
@@ -153,7 +152,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [ ] Feature 3
     - [ ] Nested Feature
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/7Cedars/loyalty-program-next/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -191,7 +190,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
+Project Link: [https://github.com/7Cedars/loyalty-program-next](https://github.com/7Cedars/loyalty-program-next)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -210,15 +209,15 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-<!-- [contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers -->
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/7Cedars/loyalty-program-next/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
+<!-- [contributors-shield]: https://img.shields.io/github/contributors/7Cedars/loyalty-program-next.svg?style=for-the-badge
+[contributors-url]: https://github.com/7Cedars/loyalty-program-next/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/7Cedars/loyalty-program-next.svg?style=for-the-badge
+[forks-url]: https://github.com/7Cedars/loyalty-program-next/network/members
+[stars-shield]: https://img.shields.io/github/stars/7Cedars/loyalty-program-next.svg?style=for-the-badge
+[stars-url]: https://github.com/7Cedars/loyalty-program-next/stargazers -->
+[issues-shield]: https://img.shields.io/github/issues/7Cedars/loyalty-program-next.svg?style=for-the-badge
+[issues-url]: https://github.com/7Cedars/loyalty-program-next/issues/
+[license-shield]: https://img.shields.io/github/license/7Cedars/loyalty-program-next.svg?style=for-the-badge
 [license-url]: https://github.com/7Cedars/loyalty-program-next/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
@@ -228,7 +227,11 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
+[Tailwind-css]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[Tailwind-url]: https://tailwindcss.com/
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
+[Redux]: https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white
+[Redux-url]: https://redux.js.org/
 [Vue-url]: https://vuejs.org/
 [Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
 [Angular-url]: https://angular.io/
