@@ -1,6 +1,6 @@
 "use client";
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
-import TokenSmall from "./VoucherSmall";
+import VoucherSmall from "./VoucherSmall";
 import { LoyaltyToken } from "@/types";
 import { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -10,14 +10,14 @@ import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { parseBigInt, parseEthAddress, parseTransferSingleLogs } from "@/app/utils/parsers";
 import { useAppSelector } from "@/redux/hooks";
-import RedeemToken from "./RedeemVoucher";
+import RedeemVoucher from "./RedeemVoucher";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useDispatch } from "react-redux";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import Image from "next/image";
 
-type setSelectedTokenProps = {
+type setSelectedVoucherProps = {
   token: LoyaltyToken; 
   disabled: boolean;
 }
@@ -25,8 +25,8 @@ type setSelectedTokenProps = {
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
-  const [ claimedTokens, setClaimedTokens ] = useState<LoyaltyToken[] | undefined>() 
-  const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
+  const [ claimedVouchers, setClaimedVouchers ] = useState<LoyaltyToken[] | undefined>() 
+  const [selectedVoucher, setSelectedVoucher] = useState<setSelectedVoucherProps | undefined>() 
   const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { progAddress } = useUrlProgramAddress() 
@@ -34,6 +34,8 @@ export default function Page() {
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
   const { tokenReceived, tokenSent, latestSent } = useLatestCustomerTransaction() 
+
+  console.log("claimedVouchers: ", claimedVouchers)
 
   const getLoyaltyCardPoints = async () => {
     console.log("getLoyaltyCardPoints called") 
@@ -57,50 +59,63 @@ export default function Page() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ , loyaltyPoints, progAddress ])
 
-  const getClaimedLoyaltyTokens = async () => {
-    console.log("getClaimedLoyaltyTokens called")
+  const getClaimedLoyaltyVouchers = async () => {
+    console.log("getClaimedLoyaltyVouchers called")
     console.log("latestSent @redeem token: ", latestSent)
 
-    const claimedTokensLogs: Log[] = await publicClient.getContractEvents({
+    const claimedVouchersLogs: Log[] = await publicClient.getContractEvents({
       // address: loyaltyToken.tokenAddress, 
       abi: loyaltyGiftAbi,
       eventName: 'TransferSingle', 
+      args: {
+        to: selectedLoyaltyCard?.cardAddress
+      },
       fromBlock: 5200000n
     })
-    const claimedTokensData = parseTransferSingleLogs(claimedTokensLogs)
-    // console.log("claimedTokensLogs: ", claimedTokensLogs)
+    const claimedVouchers = parseTransferSingleLogs(claimedVouchersLogs)
 
-    const transactionTo = claimedTokensData.filter(claimedToken => 
-      claimedToken.to == selectedLoyaltyCard?.cardAddress
-    )
-    const transactionFrom = claimedTokensData.filter(claimedToken => 
-      claimedToken.from == selectedLoyaltyCard?.cardAddress 
-    )
+    const redeemedVouchersLogs: Log[] = await publicClient.getContractEvents({
+      // address: loyaltyToken.tokenAddress, 
+      abi: loyaltyGiftAbi,
+      eventName: 'TransferSingle', 
+      args: {
+        from: selectedLoyaltyCard?.cardAddress
+      },
+      fromBlock: 5200000n
+    })
+    const redeemedVouchers = parseTransferSingleLogs(redeemedVouchersLogs)
+    
+    // const transactionTo = claimedVouchersData.filter(claimedVoucher => 
+    //   claimedVoucher.to == selectedLoyaltyCard?.cardAddress
+    // )
+    // const transactionFrom = claimedVouchersData.filter(claimedVoucher => 
+    //   claimedVoucher.from == selectedLoyaltyCard?.cardAddress 
+    // )
 
     if (loyaltyTokens) {
-      let claimedTokensTemp: LoyaltyToken[] = [] 
+      let claimedVouchersTemp: LoyaltyToken[] = [] 
 
       loyaltyTokens.forEach(loyaltyToken => { 
         
-        const addedToken = transactionTo.filter(
+        const addedVoucher = claimedVouchers.filter(
           event => event.address == loyaltyToken.tokenAddress && Number(event.ids[0]) == loyaltyToken.tokenId
           ).length 
-        const removedToken = transactionFrom.filter(
+        const removedVoucher = redeemedVouchers.filter(
           event => event.address == loyaltyToken.tokenAddress && Number(event.ids[0]) == loyaltyToken.tokenId
           ).length
 
-        for (let i = 0; i < (addedToken - removedToken); i++) {
-          claimedTokensTemp.push(loyaltyToken)
+        for (let i = 0; i < (addedVoucher - removedVoucher); i++) {
+          claimedVouchersTemp.push(loyaltyToken)
         }
       })
-      setClaimedTokens(claimedTokensTemp)
+      setClaimedVouchers(claimedVouchersTemp)
     }  
   }
     
   useEffect(() => {
-      getClaimedLoyaltyTokens() 
+      getClaimedLoyaltyVouchers() 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ , loyaltyTokens, address, selectedToken])
+  }, [ , loyaltyTokens, address, selectedVoucher])
 
   useEffect(() => {
     fetchTokens() 
@@ -111,7 +126,7 @@ export default function Page() {
     if (tokenSent) {
       dispatch(notification({
         id: "tokenTransfer",
-        message: `Token id ${tokenSent.ids[0]} successfully redeemed.`, 
+        message: `Voucher id ${tokenSent.ids[0]} successfully redeemed.`, 
         colour: "green",
         isVisible: true
       }))
@@ -120,27 +135,27 @@ export default function Page() {
   }, [tokenSent])
 
   return (
-     <div className=" w-full h-full grid grid-cols-1 gap-1 content-start overflow-auto">
+     <div className=" w-full h-full flex flex-col content-start overflow-auto">
 
       <div className="h-fit m-3 break-words"> 
         <TitleText title = "Your Card" subtitle={`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.loyaltyProgramAddress}`} size={2} />
       </div>
       <div className="grid grid-cols-1 justify-items-center"> 
-        <p className="pt-0 w-full text-2xl text-center text-bold">
-          {`${loyaltyPoints}`}
+        <p className="pt-0 w-5/6 sm:w-1/2 text-lg text-center text-bold border-b border-slate-800 dark:border-slate-200 p-1">
+          {`${loyaltyPoints} Loyalty Points`}
         </p>
-        <p className="pb-2 w-1/2 text-center border-b border-slate-700 text-lg">
-          {`Loyalty Points`}
-        </p>
+        <div className="grid grid-cols-1 mt-4"> 
+          <TitleText title = "Vouchers" size={1} />
+        </div>
       </div>
 
-      { selectedToken ? 
+      { selectedVoucher ? 
         <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
           <button 
             className="text-slate-800 dark:text-slate-200 font-bold p-3"
             type="submit"
             onClick={() => {
-              setSelectedToken(undefined) 
+              setSelectedVoucher(undefined) 
               setHashTransaction(undefined)}
             }  
             >
@@ -150,14 +165,14 @@ export default function Page() {
             />
           </button>
             
-          <RedeemToken token={selectedToken?.token} disabled={false}  /> 
+          <RedeemVoucher token={selectedVoucher?.token} disabled={false}  /> 
             
         </div>
       :
-      !selectedToken && status == "isLoading" ? 
-            <div className="grow  flex flex-col items-center h-full text-slate-800 dark:text-slate-200 z-40">
+      !selectedVoucher && status == "isLoading" ? 
+            <div className="grow flex flex-col self-center items-center justify-center text-slate-800 dark:text-slate-200 z-40">
               <Image
-                className="rounded-lg flex-none mx-3 animate-spin"
+                className="rounded-lg flex-none mx-3 animate-spin self-center"
                 width={60}
                 height={60}
                 src={"/loading2.svg"}
@@ -165,20 +180,17 @@ export default function Page() {
               />
             </div>
         :
-        !selectedToken && status == "isSuccess" ? 
+        !selectedVoucher && status == "isSuccess" ? 
           <>
-            <div className="grid grid-cols-1 mt-4"> 
-              <TitleText title = "Vouchers" size={1} />
-            </div>
             <div className="grid grid-cols-2  overflow-auto sm:grid-cols-3 md:grid-cols-4 p-4 pt-0 justify-items-center content-start">
               
 
-              { claimedTokens && claimedTokens.length > 0 ?
+              { claimedVouchers && claimedVouchers.length > 0 ?
               
-              claimedTokens.map((token: LoyaltyToken, i) => 
+              claimedVouchers.map((token: LoyaltyToken, i) => 
                   token.metadata ? 
                   <div key = {i} >
-                    <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
+                    <VoucherSmall token = {token} disabled = {false} onClick={() => setSelectedVoucher({token: token, disabled: false})}  /> 
                   </div>
                   : null 
                 )

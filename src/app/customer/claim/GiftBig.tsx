@@ -61,11 +61,13 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   /// begin setup for encoding typed data /// 
   const domain = {
-    name: 'Loyalty Program',
-    version: '1',
-    chainId: 11155111, // chain?.id, -- THIS NEEDS TO BE DYNAMIC. £todo
+    name: "Loyalty Program",
+    version: "1",
+    chainId: chain?.id,
     verifyingContract: parseEthAddress(progAddress)
   } as const
+
+  console.log("domain: ", domain)
   
   // The named list of all type definitions
   const types = {
@@ -86,6 +88,8 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     cost: `${token?.metadata?.attributes[1].value} points`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const
+
+  console.log("message: ", message)
 
   const { data: signature, isError, isLoading, isSuccess, reset: resetSignature, signTypedData } =
   useSignTypedData({

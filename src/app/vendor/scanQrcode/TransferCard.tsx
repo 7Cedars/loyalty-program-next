@@ -214,7 +214,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
                         className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
                         width={30}
                         height={30}
-                        src={"/loading.svg"}
+                        src={"/loading2.svg"}
                         alt="Loading icon"
                       />
                       Waiting for confirmation (this can take a few minutes...)

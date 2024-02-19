@@ -32,19 +32,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
 
   console.log("QRDATA @claim gift: ", qrData)
   console.log("loyaltyTokens @claim gift: ", loyaltyTokens)
-  console.log("simulated entry data into claimLoyaltyGift: ", 
-    [
-      `${token?.metadata?.name}`, 
-      `${token?.metadata?.attributes[1].value} points`,
-      qrData?.loyaltyToken,
-      qrData?.loyaltyTokenId, 
-      qrData?.loyaltyCardId, 
-      qrData?.customerAddress,
-      token?.metadata?.attributes[1].value, 
-      qrData?.signature
-    ]
-  )
-  
+
   useEffect(() => {
     if (!loyaltyTokens && qrData) {
             
@@ -69,7 +57,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
         `${token?.metadata?.name}`, 
         `${token?.metadata?.attributes[1].value} points`,
         qrData?.loyaltyToken,
-        qrData?.loyaltyTokenId, // showed up as undefined.. 
+        qrData?.loyaltyTokenId, 
         qrData?.loyaltyCardId, 
         qrData?.customerAddress,
         token?.metadata?.attributes[1].value, 
@@ -109,6 +97,26 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     }
     
   },[isError, isSuccess])
+
+  const handleSubmit = () => {
+    console.log("simulated entry data into claimLoyaltyGift: ", 
+      [
+        `${token?.metadata?.name}`, 
+        `${token?.metadata?.attributes[1].value} points`,
+        qrData?.loyaltyToken,
+        BigInt(Number(qrData?.loyaltyTokenId)), 
+        BigInt(Number(qrData?.loyaltyCardId)), 
+        qrData?.customerAddress,
+        BigInt(Number(token?.metadata?.attributes[1].value)), 
+        qrData?.signature
+      ]
+    )
+
+    claimLoyaltyGift.write()
+
+  }
+
+ 
 
 
   return (
@@ -180,7 +188,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
                 className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
                 width={30}
                 height={30}
-                src={"/loading.svg"}
+                src={"/loading2.svg"}
                 alt="Loading icon"
               />
               Waiting for confirmation
@@ -188,7 +196,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
         </div> 
         :
         <div className="flex w-full p-2"> 
-          <Button appearance = {"greenEmpty"} onClick={claimLoyaltyGift.write} >
+          <Button appearance = {"greenEmpty"} onClick={() => handleSubmit()} >
               Redeem gift
           </Button>
         </div> 
