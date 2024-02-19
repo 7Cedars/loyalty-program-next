@@ -131,7 +131,7 @@ export default function Page() {
       <div className="grid grid-cols-1 content-start">
         <div className=" border border-gray-300 rounded-lg m-1">
           <button 
-            className="text-black font-bold p-2 grid grid-cols-1 content-start"
+            className="text-slate-800 dark:text-slate-200 font-bold p-2 grid grid-cols-1 content-start"
             type="submit"
             onClick={() => setSelectedToken(undefined)} // should be true / false
             >

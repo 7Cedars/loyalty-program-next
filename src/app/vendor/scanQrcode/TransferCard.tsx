@@ -169,7 +169,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
         <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3" > 
           <div className="w-full flex"> 
             <button 
-              className="text-black font-bold p-3"
+              className="text-slate-800 dark:text-slate-200 font-bold p-3"
               type="submit"
               onClick={() => {
                 setData(undefined) 
@@ -214,7 +214,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
                         className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
                         width={30}
                         height={30}
-                        src={"/loading.svg"}
+                        src={"/loading2.svg"}
                         alt="Loading icon"
                       />
                       Waiting for confirmation (this can take a few minutes...)

@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { Button } from "@/app/ui/Button";
-import { useAccount, usePublicClient, useSignTypedData } from "wagmi";
+import { useAccount, useNetwork, usePublicClient, useSignTypedData } from "wagmi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -31,6 +31,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const dispatch = useDispatch() 
   const {address} = useAccount()
   const {  pointsSent, tokenSent } = useLatestCustomerTransaction() 
+  const {chain} = useNetwork() 
 
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
@@ -56,7 +57,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const domain = {
     name: 'Loyalty Program',
     version: '1',
-    chainId: 31337,
+    chainId: chain?.id,
     verifyingContract: parseEthAddress(progAddress)
   } as const
 
