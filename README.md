@@ -80,69 +80,72 @@ This dApp interacts with two solidity protocols.
 - The first protocol sets out a standard for loyalty programs: an ERC-1155 based contract that mints points and non-fungible loyalty cards. The latter are registered as ERC-6551 Token Based Accounts and accumulate loyalty points. See this repository for an example implementation. 
 - The second protocol sets out a standard for contracts that exchange points for gifts or vouchers. Gift contracts can be used in any loyalty program. See this repository for an example implementation.
 
-Crucially, interactions between the two protocols are bounded: points and vouchers that are minted by a loyalty program can only be used among its own loyalty cards. Loyalty cards themselves are freely transferable. 
-
-
-
-| Home screen vendor | Transactions vendor | Card overview customer |
-| :--------: | :-------: | :-------: | 
-| <img src="public/images/vendorHomeScreen.svg" alt="my-Card-view" width="200" />  | <img src="public/images/customerCardScreen.svg" alt="my-Card-view" width="200" />  | <img src="public/images/vendorTransactionScreen.svg" alt="my-Card-view" width="200" />  |
+Crucially, interactions between the two protocols are bounded: points and vouchers that are minted by a loyalty program can only be used among its own loyalty cards. Loyalty cards themselves are freely transferable.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 <!-- See for a list of badges: https://github.com/Envoy-VC/awesome-badges -->
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Redux][Redux]][Redux-url]
-* [![Tailwind][Tailwind-css]][Tailwind-url]
+[![Next][Next.js]][Next-url]  [![React][React.js]][React-url] [![Redux][Redux]][Redux-url]  [![Tailwind][Tailwind-css]][Tailwind-url]
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running do the following.
 
 ### Prerequisites
 
 This is an example of how to list things you need to use the software and how to install them.
-* npm
+* npm and yarn
   ```sh
-  npm install npm@latest -g
+  npm install --global npm@latest yarn  
   ```
 
 ### Installation
+<!-- NB: I have to check if I missed anyting £todo -->
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Get a free alchemy API Key at [alchemy.com](https://docs.alchemy.com/docs/alchemy-quickstart-guide)
+2. Setup a project at walletConnect cloud [WalletConnect](https://cloud.walletconnect.com/app) and create a wallet ID.  
+3. Clone the repo
    ```sh
    git clone https://github.com/7Cedars/loyalty-program-next.git
    ```
-3. Install NPM packages
+4. Install packages
    ```sh
-   npm install
+   yarn add
    ```
-4. Enter your API in `config.js`
+5. Create a .env file in the root directory and add the following lines: 
    ```js
-   const API_KEY = 'ENTER YOUR API';
+   const NEXT_PUBLIC_ALCHEMY_API_KEY = 'your alchemy API Key';
+   const NEXT_PUBLIC_WALLETCONNECT_ID = 'Your wallet Connect project id';
+   ```
+6. run 
+   ```sh
+   yarn dev
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+This dApp is deployed at [loyalty-program-psi.vercel.app](https://loyalty-program-psi.vercel.app/). 
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+The repository consists of two dApps 
+- A vendor dApp in which loyalty points and loyalty cards can be minted; loyalty gifts can be selected and gift vouchers minted; and a Qrcode scanner to read customer requests. It also provides a transaction overview. 
+- A customer dApp that creates Qrcodes to request loyalty points, exchanging points for gifts or vouchers, and redeem vouchers for gifts. It also includes a transaction overview.
+
+Some screenshots:
+| Home screen vendor | Transactions vendor | Card overview customer |
+| :--------: | :-------: | :-------: | 
+| <img src="public/images/vendorHomeScreen.svg" alt="my-Card-view" width="200" />  | <img src="public/images/vendorTransactionScreen.svg" alt="my-Card-view" width="200" />  | <img src="public/images/customerCardScreen.svg" alt="my-Card-view" width="200" />  |
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- ROADMAP -->
 ## Roadmap
@@ -155,8 +158,6 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 See the [open issues](https://github.com/7Cedars/loyalty-program-next/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
