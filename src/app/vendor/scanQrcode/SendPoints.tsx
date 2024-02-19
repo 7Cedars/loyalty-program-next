@@ -115,7 +115,7 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
                 className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
                 width={30}
                 height={30}
-                src={"/loading2.svg"}
+                src={"/images/loading2.svg"}
                 alt="Loading icon"
               />
               Waiting for confirmation... 

@@ -175,7 +175,7 @@ export default function Page() {
                 className="rounded-lg flex-none mx-3 animate-spin self-center"
                 width={60}
                 height={60}
-                src={"/loading2.svg"}
+                src={"/images/loading2.svg"}
                 alt="Loading icon"
               />
             </div>

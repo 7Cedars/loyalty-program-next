@@ -82,7 +82,7 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
                     width={288}
                     height={420}
                     style = {{ objectFit: "cover" }} 
-                    src={selectedLoyaltyProgram.metadata? selectedLoyaltyProgram.metadata.imageUri : `/vercel.svg`}
+                    src={selectedLoyaltyProgram.metadata? selectedLoyaltyProgram.metadata.imageUri : `/images/loading2.svg`}
                     alt="Loyalty Card Icon"
                   />
 

@@ -23,28 +23,26 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/7Cedars/loyalty-program-next"> 
+    <img src="public/images/iconLoyaltyProgram.svg" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">Loyalty Program</h3>
+<h3 align="center">Loyal: A Web3 Customer Engagement App</h3>
 
   <p align="center">
-    A composable, lightweight and fully open source app for customer engagement. 
+    A composable, lightweight and fully open source dApp build for real-world customer engagments. 
     <br />
     <a href="https://github.com/7Cedars/loyalty-program-next"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <!--NB: TO DO --> 
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
+    <a href="https://loyalty-program-psi.vercel.app">View Demo</a>
     ·
     <a href="https://github.com/7Cedars/loyalty-program-next/issues">Report Bug</a>
     ·
     <a href="https://github.com/7Cedars/loyalty-program-next/issues">Request Feature</a>
   </p>
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -76,85 +74,92 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+A front-end dApp demonstration of a web3 protocol for customer engagement. Try it out [here](https://loyalty-program-psi.vercel.app/). 
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+This dApp interacts with two solidity protocols. 
+- The first protocol sets out a standard for loyalty programs: an ERC-1155 based contract that mints points and non-fungible loyalty cards. The latter are registered as ERC-6551 Token Based Accounts and accumulate loyalty points. See [this repository](https://github.com/7Cedars/loyalty-program-contracts) for an example implementation. 
+- The second protocol sets out a standard for contracts that exchange points for gifts or vouchers. Gift contracts can be used in any loyalty program. See [this repository](https://github.com/7Cedars/loyalty-gifts-contracts) for an example implementation.
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
+Crucially, interactions between the two protocols are bounded: points and vouchers that are minted by a loyalty program can only be used among its own loyalty cards. Loyalty cards themselves are freely transferable.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 ### Built With
+<!-- See for a list of badges: https://github.com/Envoy-VC/awesome-badges -->
+* [![Next][Next.js]][Next-url]  
+* [![React][React.js]][React-url] 
+* [![Redux][Redux]][Redux-url]  
+* [![Tailwind][Tailwind-css]][Tailwind-url]
 
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* redux
-* tailwind
-* Wagmi 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running do the following.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+  Npm and yarn
   ```sh
-  npm install npm@latest -g
+  npm install --global npm@latest yarn  
   ```
 
 ### Installation
+<!-- NB: I have to check if I missed anyting £todo -->
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Get a free alchemy API Key at [alchemy.com](https://docs.alchemy.com/docs/alchemy-quickstart-guide)
+2. Setup a project at walletConnect cloud [WalletConnect](https://cloud.walletconnect.com/app) and create a wallet ID.  
+3. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone https://github.com/7Cedars/loyalty-program-next.git
    ```
-3. Install NPM packages
+4. Install packages
    ```sh
-   npm install
+   yarn add
    ```
-4. Enter your API in `config.js`
+5. Create a .env file in the root directory and add the following lines: 
    ```js
-   const API_KEY = 'ENTER YOUR API';
+   const NEXT_PUBLIC_ALCHEMY_API_KEY = 'your alchemy API Key';
+   const NEXT_PUBLIC_WALLETCONNECT_ID = 'Your wallet Connect project id';
+   ```
+6. run 
+   ```sh
+   yarn dev
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
 <!-- USAGE EXAMPLES -->
 ## Usage
+This dApp is deployed at [loyalty-program-psi.vercel.app](https://loyalty-program-psi.vercel.app/). 
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+The repository consists of two dApps 
+- A vendor dApp in which loyalty points and loyalty cards can be minted; loyalty gifts can be selected and gift vouchers minted; and a Qrcode scanner to read customer requests. It also provides a transaction overview. 
+- A customer dApp that creates Qrcodes to request loyalty points, exchanging points for gifts or vouchers, and redeem vouchers for gifts. It also includes a transaction overview.
+
+Some screenshots:
+| Home screen vendor | Transactions vendor | Card overview customer |
+| :--------: | :-------: | :-------: | 
+| <img src="public/images/vendorHomeScreen.svg" alt="my-Card-view" width="200" />  | <img src="public/images/vendorTransactionScreen.svg" alt="my-Card-view" width="200" />  | <img src="public/images/customerCardScreen.svg" alt="my-Card-view" width="200" />  |
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
+- [ ] Code clean up and optimisation. 
+- [ ] Add interfac for selecting external gift contracts. 
+- [ ] Implement account abstraction. 
+- [ ] ... 
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/7Cedars/loyalty-program-next/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -188,7 +193,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
+Project Link: [https://github.com/7Cedars/loyalty-program-next](https://github.com/7Cedars/loyalty-program-next)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -207,16 +212,16 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-<!-- [contributors-shield]: https://img.shields.io/github/contributors/github_username/repo_name.svg?style=for-the-badge
-[contributors-url]: https://github.com/github_username/repo_name/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/github_username/repo_name.svg?style=for-the-badge
-[forks-url]: https://github.com/github_username/repo_name/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers -->
-[issues-shield]: https://img.shields.io/github/issues/github_username/repo_name.svg?style=for-the-badge
-[issues-url]: https://github.com/7Cedars/loyalty-program-next/issues
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
+<!-- [contributors-shield]: https://img.shields.io/github/contributors/7Cedars/loyalty-program-next.svg?style=for-the-badge
+[contributors-url]: https://github.com/7Cedars/loyalty-program-next/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/7Cedars/loyalty-program-next.svg?style=for-the-badge
+[forks-url]: https://github.com/7Cedars/loyalty-program-next/network/members
+[stars-shield]: https://img.shields.io/github/stars/7Cedars/loyalty-program-next.svg?style=for-the-badge
+[stars-url]: https://github.com/7Cedars/loyalty-program-next/stargazers -->
+[issues-shield]: https://img.shields.io/github/issues/7Cedars/loyalty-program-next.svg?style=for-the-badge
+[issues-url]: https://github.com/7Cedars/loyalty-program-next/issues/
+[license-shield]: https://img.shields.io/github/license/7Cedars/loyalty-program-next.svg?style=for-the-badge
+[license-url]: https://github.com/7Cedars/loyalty-program-next/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
@@ -225,7 +230,11 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [Next-url]: https://nextjs.org/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
+[Tailwind-css]: https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white
+[Tailwind-url]: https://tailwindcss.com/
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
+[Redux]: https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white
+[Redux-url]: https://redux.js.org/
 [Vue-url]: https://vuejs.org/
 [Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
 [Angular-url]: https://angular.io/
