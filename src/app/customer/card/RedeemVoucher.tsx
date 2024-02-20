@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { Button } from "@/app/ui/Button";
-import { useAccount, useNetwork, usePublicClient, useSignTypedData } from "wagmi";
+import { useAccount, useNetwork, usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -30,6 +30,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
   const {address} = useAccount()
+  const { data: walletClient, status } = useWalletClient();
   const {  pointsSent, tokenSent } = useLatestCustomerTransaction() 
   const {chain} = useNetwork() 
 
@@ -86,6 +87,11 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
     primaryType: 'RedeemVoucher',
     types,
   })
+
+  const handleSigning = () => {
+    !walletClient ? open() : null  
+    signTypedData()
+  }
 
   useEffect(() => { 
     if (isLoading) {
@@ -172,7 +178,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
           </div>
         </div>
         <div className="p-3 flex w-full"> 
-            <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
+            <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
               Redeem Voucher
             </Button>
           </div>
