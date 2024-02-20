@@ -28,7 +28,7 @@ export const NotificationDialog = () => {
   const dispatch = useAppDispatch()
 
   const handleLoginRequest = async () => {
-    !walletClient ? open({view: "Networks"}) : null  
+    open({view: "Networks"}) 
   }
 
   const notificationToShow = notifications.findLast(notification => notification.isVisible !== false)
