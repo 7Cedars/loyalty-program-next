@@ -36,6 +36,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const {chain} = useNetwork() 
   const {open} = useWeb3Modal()
 
+
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
       try {
@@ -91,7 +92,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   })
 
   const handleSigning = () => {
-    open({view: "Connect"}) 
+    open({view: "Networks"}) 
     signTypedData()
   }
 

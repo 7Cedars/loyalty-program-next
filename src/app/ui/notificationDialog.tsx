@@ -52,7 +52,7 @@ export const NotificationDialog = () => {
 
           { notificationToShow.loginButton ? 
             <div className="w-24 px-3 flex underline"> 
-              <button onClick = {() => {!walletClient ? open({view: "Connect"}) : null  }}> 
+              <button onClick = {() => {!walletClient ? open({view: "Connect"}) : open({view: "Networks"}) }}> 
                login
               </button>
             </div> 
