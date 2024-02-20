@@ -3,7 +3,7 @@ import { LoyaltyToken } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useAccount,  useNetwork,  usePublicClient, useSignTypedData } from "wagmi";
+import { useAccount,  useNetwork,  usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
 import { loyaltyProgramAbi} from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
@@ -33,6 +33,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const {address } = useAccount()
   const {chain} = useNetwork() 
   const {open} = useWeb3Modal()
+  const { data: walletClient, status } = useWalletClient();
 
   console.log("selectedLoyaltyCard?.cardAddress: ", selectedLoyaltyCard?.cardAddress)
   console.log("parseEthAddress(progAddress): ", parseEthAddress(progAddress))
@@ -102,7 +103,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   })
 
   const handleSigning = () => {
-    open({view: "Connect"}) 
+    open({view: "Connect"})  // Netowrks? 
     signTypedData()
   }
 
