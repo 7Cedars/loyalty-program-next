@@ -12,10 +12,10 @@ import { createWalletClient, http } from 'viem';
 
 // const selectedChains = [baseSepolia] // other options: , arbitrum, arbitrumGoerli, optimism, optimismSepolia,
 // 1. Get keys
-const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
-if (!ALCHEMY_API_KEY) {
-  throw new Error('NEXT_PUBLIC_ALCHEMY_API_KEY is not set')
-}
+const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ? process.env.NEXT_PUBLIC_ALCHEMY_API_KEY: "none"
+// if (!ALCHEMY_API_KEY) {
+//   throw new Error('NEXT_PUBLIC_ALCHEMY_API_KEY is not set')
+// }
 
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_ID 
 if (!projectId) {
