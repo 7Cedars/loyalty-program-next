@@ -27,7 +27,7 @@ const metadata = {
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [ foundry, sepolia ],
   [ 
-    publicProvider(), 
+    publicProvider(),   
     // jsonRpcProvider({
     //   rpc: (localhost) => ({
     //     http: "http://localhost:8545",

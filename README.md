@@ -188,9 +188,9 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@7__Cedars](https://twitter.com/7__Cedars) - cedars7@proton.me
+Seven Cedars - [@7__Cedars](https://twitter.com/7__Cedars) - cedars7@proton.me
 
-Project Link: [https://github.com/7Cedars/loyalty-program-next](https://github.com/7Cedars/loyalty-program-next)
+GitHub profile [https://github.com/7Cedars](https://github.com/7Cedars)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -199,9 +199,9 @@ Project Link: [https://github.com/7Cedars/loyalty-program-next](https://github.c
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []() <!-- React course Full stack dev  -->
-* []() <!-- This readme file, page -->
-* []() <!-- SpeedRunEthereum -->
+* [React course Full stack dev... ]() <!-- React course Full stack dev  -->
+* [Readme File... ]() <!-- This readme file, page -->
+* [SpeedRunEthereum]() <!-- SpeedRunEthereum -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
