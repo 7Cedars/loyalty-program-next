@@ -33,7 +33,7 @@ const nextConfig = {
       {
         // matching all API routes
         // source: "/rpc.walletconnect.com/v1/:path*",
-        source: "/:path*",
+        source: "/(.*)", // "/:path*",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
           { key: "Access-Control-Allow-Origin", value: "*" }, // https://loyalty-program-psi.vercel.app/"
