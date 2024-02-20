@@ -33,9 +33,9 @@ const NavbarBottom = ( ) => {
   const { progAddress } = useUrlProgramAddress()
   const { data: walletClient, status } = useWalletClient();
 
-  const handleLogin = () => {
-    walletClient ? open({view: "Account"}) : open({view: "Networks"})
-  }
+  // const handleLogin = () => {
+  //   walletClient ? open({view: "Account"}) : open({view: "Networks"})
+  // }
 
   return (
     dimensions.width >= 896 ? 
@@ -92,7 +92,7 @@ const NavbarBottom = ( ) => {
             Stats 
           </div> 
         </Link>
-        <button onClick = {() => handleLogin()} className={layoutLinks} > 
+        <button onClick = {() => open({view: "Networks"})} className={layoutLinks} > 
           <div className={layoutIconBox}> 
             <ArrowRightOnRectangleIcon
               className={layoutIcons}
