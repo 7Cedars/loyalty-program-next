@@ -92,7 +92,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   })
 
   const handleSigning = () => {
-    open({view: "Networks"}) 
+    walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
     signTypedData()
   }
 
