@@ -209,7 +209,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
         { token.metadata && signature ?
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
-            <div className="m-3"> 
+            <div className="flex m-3 justify-center"> 
               <QRCode 
                 value={`type:claimGift;${token.tokenAddress};${token.tokenId};${selectedLoyaltyCard?.cardId};${address};${token.metadata.attributes[1].value};${signature}`}
                 style={{ 

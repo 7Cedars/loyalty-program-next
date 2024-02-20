@@ -152,8 +152,9 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
+- [ ] Implement Cypress testing throughout app. At the moment it is untested. 
 - [ ] Code clean up and optimisation. 
-- [ ] Add interfac for selecting external gift contracts. 
+- [ ] Add interface at vendor app for selecting external gift contracts. 
 - [ ] Implement account abstraction. 
 - [ ] ... 
 
@@ -164,10 +165,9 @@ See the [open issues](https://github.com/7Cedars/loyalty-program-next/issues) fo
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". Thank you! 
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -178,7 +178,6 @@ Don't forget to give the project a star! Thanks again!
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
 <!-- LICENSE -->
 ## License
 
@@ -186,12 +185,10 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Your Name - [@7__Cedars](https://twitter.com/7__Cedars) - cedars7@proton.me
 
 Project Link: [https://github.com/7Cedars/loyalty-program-next](https://github.com/7Cedars/loyalty-program-next)
 
@@ -202,9 +199,9 @@ Project Link: [https://github.com/7Cedars/loyalty-program-next](https://github.c
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []()
-* []()
-* []()
+* []() <!-- React course Full stack dev  -->
+* []() <!-- This readme file, page -->
+* []() <!-- SpeedRunEthereum -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
