@@ -34,7 +34,7 @@ export default function Home() {
 
   const handleDeployRequest = async (data: DeployRequestProps) => {
     console.log("handleDeployRequest CALLED, uri: ", data)
-    !walletClient ? open({view: "Networks"}) : null  
+    open({view: "Account"})
     setDeployRequest(data)
   }
 
