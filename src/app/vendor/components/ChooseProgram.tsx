@@ -12,7 +12,7 @@ import { useLoyaltyPrograms } from '@/app/hooks/useLoyaltyPrograms';
 export default function ChooseProgram()  {
   const { status, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms()
   const dispatch = useDispatch() 
-  const { putProgAddressInUrl } = useUrlProgramAddress()
+  // const { putProgAddressInUrl } = useUrlProgramAddress()
 
   useEffect(() => {
     if (!loyaltyPrograms) fetchPrograms()
@@ -29,7 +29,7 @@ export default function ChooseProgram()  {
   }, [status, loyaltyPrograms])
 
   const handleProgramSelection = (loyaltyProgram: LoyaltyProgram) => {
-    putProgAddressInUrl(loyaltyProgram.programAddress)
+    // putProgAddressInUrl(loyaltyProgram.programAddress)
     dispatch(selectLoyaltyProgram(loyaltyProgram))
   }
 

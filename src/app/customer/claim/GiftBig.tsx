@@ -15,6 +15,7 @@ import QRCode from "react-qr-code";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { progAddress } from "@/context/constants";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -23,7 +24,7 @@ type SelectedTokenProps = {
 
 export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
-  const { progAddress } =  useUrlProgramAddress();
+  // // const { progAddress } =  useUrlProgramAddress();
   const publicClient = usePublicClient()
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 

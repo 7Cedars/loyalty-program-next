@@ -12,6 +12,8 @@ import {
   parseBigInt
 } from "@/app/utils/parsers";
 import { loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
+import dynamic from 'next/dynamic'
+
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { 
   useAccount, 
@@ -21,6 +23,8 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
 import { useAppSelector } from "@/redux/hooks";
+import { progAddress } from '@/context/constants';
+
 
 type OverviewTransactionProps = {
   transactionsPointsTo: Transaction[]; 
@@ -39,7 +43,7 @@ type OverviewStatusProps = {
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const {selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
-  const { progAddress } =  useUrlProgramAddress();
+  // const { progAddress } =  useUrlProgramAddress();
   const publicClient = usePublicClient(); 
 
   const [ transactions, setTransactions ] = useState<Transaction[]>([]) 

@@ -21,6 +21,7 @@ import { useUrlProgramAddress } from '../../hooks/useUrl';
 import { useRouter } from 'next/router';
 import { usePathname } from 'next/navigation';
 import { pathToFileURL } from 'url';
+import { progAddress } from '@/context/constants';
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
@@ -30,7 +31,7 @@ const NavbarBottom = ( ) => {
   const { address } = useAccount() 
   const { open, close } = useWeb3Modal()
   const path = usePathname()
-  const { progAddress } = useUrlProgramAddress()
+  // const { progAddress } = useUrlProgramAddress()
   const { data: walletClient, status } = useWalletClient();
 
   // const handleLogin = () => {

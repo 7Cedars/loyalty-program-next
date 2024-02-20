@@ -14,6 +14,8 @@ import { QrData } from "@/types";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { progAddress } from '@/context/constants';
+
 
 type SendPointsProps = {
   qrData: QrData | undefined;  
@@ -22,7 +24,7 @@ type SendPointsProps = {
 
 export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   const dimensions = useScreenDimensions();
-  const { progAddress } =  useUrlProgramAddress();
+  // const { progAddress } =  useUrlProgramAddress();
   const [ token, setToken ] = useState<LoyaltyToken>()
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()

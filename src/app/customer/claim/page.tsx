@@ -19,6 +19,7 @@ import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
+import { progAddress } from "@/context/constants";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -33,7 +34,7 @@ export default function Page() {
   const [ activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
 
   const [ selectedToken, setSelectedToken ] = useState<setSelectedTokenProps | undefined>() 
-  const { progAddress } = useUrlProgramAddress() 
+  // const { progAddress } = useUrlProgramAddress() 
   const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 

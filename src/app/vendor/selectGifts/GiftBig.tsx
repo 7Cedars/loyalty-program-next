@@ -12,6 +12,8 @@ import { notification } from "@/redux/reducers/notificationReducer";
 import { foundry } from "viem/chains";
 import { useEffect, useState, useRef } from "react";
 import { NumLine } from "@/app/ui/NumLine";
+import { progAddress } from '@/context/constants';
+
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -20,7 +22,7 @@ type SelectedTokenProps = {
 
 export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
-  const { progAddress } =  useUrlProgramAddress();
+  // const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const [ hashMintTransaction, setHashMintTransaction] = useState<any>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 

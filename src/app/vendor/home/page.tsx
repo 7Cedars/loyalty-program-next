@@ -18,6 +18,7 @@ export default function Page()  {
   return (
      
     <div className="grid grid-cols-1 h-full content-between pt-6">
+      
         <TitleText 
           title = {selectedLoyaltyProgram?.metadata ? selectedLoyaltyProgram?.metadata.attributes[0].value  : "Loyalty Card"} 
           subtitle="Let customer scan this code to activate loyalty card" 

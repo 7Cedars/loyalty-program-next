@@ -13,6 +13,8 @@ import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useAccount } from "wagmi";
+import { progAddress } from '@/context/constants';
+
 
 type SendPointsProps = {
   qrData: QrData | undefined;  
@@ -24,7 +26,7 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
-  const { progAddress } =  useUrlProgramAddress();
+  // const { progAddress } =  useUrlProgramAddress();
   const { address } = useAccount() 
 
   const transferPoints = useContractWrite(  

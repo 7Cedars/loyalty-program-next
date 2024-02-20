@@ -16,6 +16,7 @@ import { loyaltyProgramAbi } from "@/context/abi";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { progAddress } from "@/context/constants";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -25,7 +26,7 @@ type SelectedTokenProps = {
 export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const dimensions = useScreenDimensions();
-  const { progAddress } =  useUrlProgramAddress();
+  // // const { progAddress } =  useUrlProgramAddress();
   const publicClient = usePublicClient()
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
@@ -190,9 +191,9 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
         }
         
         { token.metadata && signature ?
-          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
+          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 flex flex-col items-center"> 
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
-            <div className="m-3"> 
+            <div className="m-3 flex items-center"> 
               <QRCode 
                 value={`type:redeemToken;${token.tokenAddress};${token.tokenId};${selectedLoyaltyCard?.cardId};${address};${signature}`}
                 style={{ 
@@ -205,7 +206,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
                 bgColor="#ffffff" // "#0f172a" 1e293b
                 fgColor="#000000" // "#e2e8f0"
                 level='L'
-                className="rounded-lg border border-8 border-black dark:border-white"
+                className="rounded-lg"
                 />
             </div>
           </div>

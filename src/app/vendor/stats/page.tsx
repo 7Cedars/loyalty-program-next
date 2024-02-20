@@ -21,12 +21,13 @@ import { NoteText } from "@/app/ui/StandardisedFonts";
 import MintPoints from "../components/MintPoints";
 import MintCards from "../components/MintCards";
 import { useAppSelector } from "@/redux/hooks";
+import { progAddress } from '@/context/constants';
 
 export default function Page() {
   const [modal, setModal] = useState<'points' | 'cards' | undefined>()  
   const [loyaltyPoints, setLoyaltyPoints] = useState<Number>()
   const [cardsMinted, setCardsMinted] = useState<Number>()
-  const { progAddress } =  useUrlProgramAddress();
+  // const { progAddress } =  useUrlProgramAddress();
   const publicClient = usePublicClient(); 
   const { address } = useAccount() 
   const [ status, setStatus ] = useState<Status>('isIdle'); 

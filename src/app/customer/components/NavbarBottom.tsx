@@ -14,6 +14,7 @@ import { useAccount } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { useUrlProgramAddress } from '../../hooks/useUrl';
 import { usePathname } from 'next/navigation';
+import { progAddress } from '@/context/constants';
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
@@ -22,7 +23,7 @@ const NavbarBottom = ( ) => {
   const layoutIcons: string = 'h-7 w-7'
   const { address } = useAccount() 
   const { open } = useWeb3Modal()
-  const { progAddress } = useUrlProgramAddress()
+  // const { progAddress } = useUrlProgramAddress()
   const path = usePathname()
 
   return (

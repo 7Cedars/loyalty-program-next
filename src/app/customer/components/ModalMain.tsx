@@ -28,6 +28,7 @@ import {
 } from "@/app/utils/parsers";
 import { Button } from "@/app/ui/Button";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
+import { progAddress } from "@/context/constants";
 
 type ModalProps = {
   children: any;
@@ -45,7 +46,7 @@ export const ModalMain = ({
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
-  const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
+  // const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
   const [ loyaltyProgram, setLoyaltyProgram ] = useState<LoyaltyProgram>() 
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[]>() 
   const [ showRequestCard, setShowRequestCard ] = useState<boolean>(false)

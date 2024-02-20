@@ -8,6 +8,7 @@ import { useWeb3ModalState } from '@web3modal/wagmi/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { useUrlProgramAddress } from '../../hooks/useUrl';
 import { usePathname } from 'next/navigation';
+import { progAddress } from '@/context/constants';
 
 const NavbarTop = ( ) => {
   const dimensions = useScreenDimensions();
@@ -16,7 +17,7 @@ const NavbarTop = ( ) => {
   const { selectedNetworkId } = useWeb3ModalState() 
   const [text, setText] = useState('')
   const { open, close } = useWeb3Modal()
-  const { progAddress } = useUrlProgramAddress()
+  // const { progAddress } = useUrlProgramAddress()
   const path = usePathname()
 
   useEffect(() => {

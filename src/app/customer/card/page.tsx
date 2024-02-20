@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import Image from "next/image";
+import { progAddress } from "@/context/constants";
 
 type setSelectedVoucherProps = {
   token: LoyaltyToken; 
@@ -30,7 +31,7 @@ export default function Page() {
   const [selectedVoucher, setSelectedVoucher] = useState<setSelectedVoucherProps | undefined>() 
   const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()
-  const { progAddress } = useUrlProgramAddress() 
+  // const { progAddress } = useUrlProgramAddress()
   const {address} = useAccount() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 

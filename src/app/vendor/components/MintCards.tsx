@@ -11,6 +11,8 @@ import { parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import Image from "next/image";
+import { progAddress } from '@/context/constants';
+
 
 type RedeemTokenProps = {
   modal: 'points' | 'cards' | undefined;  
@@ -21,7 +23,7 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
-  const { progAddress } =  useUrlProgramAddress();
+  // const { progAddress } =  useUrlProgramAddress();
 
   const mintCards = useContractWrite(  
     {

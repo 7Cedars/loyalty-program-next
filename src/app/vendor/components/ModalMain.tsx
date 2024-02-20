@@ -43,7 +43,7 @@ export const ModalMain = ({
   const { address }  = useAccount()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
-  const { putProgAddressInUrl } = useUrlProgramAddress()
+  // const { putProgAddressInUrl } = useUrlProgramAddress()
 
   console.log("address at ModalMain: ", address)
   console.log("selectedLoyaltyProgram at ModalMain: ", selectedLoyaltyProgram)
@@ -54,7 +54,7 @@ export const ModalMain = ({
     if (address != userLoggedIn) {
       setUserLoggedIn(undefined)
       dispatch(resetLoyaltyProgram(true))
-      putProgAddressInUrl(null)
+      // putProgAddressInUrl(null)
     }
 
     if (!address) {

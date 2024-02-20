@@ -24,6 +24,8 @@ import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import MintCards from "../components/MintCards";
+import { progAddress } from '@/context/constants';
+
 
 type RedeemTokenProps = {
   qrData: QrData | undefined;  
@@ -33,7 +35,7 @@ type RedeemTokenProps = {
 
 export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
-  const { progAddress } =  useUrlProgramAddress();
+  // const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>() 
   const [ modal, setModal] = useState<"points" | "cards" | undefined>() 
   const [ transferSingles, setTransferSingles ] = useState<Transaction[] | undefined>()

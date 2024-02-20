@@ -10,11 +10,12 @@ import { useEffect, useState } from "react";
 import { Hex } from "viem";
 import { EthAddress } from "@/types";
 import { Button } from "./ui/Button";
-import 'viem/window'
+// import 'viem/window'
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useWalletClient } from "wagmi";
 import { parseEthAddress } from "./utils/parsers";
 import { useDispatch } from "react-redux";
+import NavbarBottom from "./vendor/components/NavbarBottom";
 
 type DeployRequestProps = { 
   uri: string; 
@@ -216,6 +217,11 @@ export default function Home() {
 
         <div className='h-[80vh] w-full max-w-4xl  sm:w-4/5 bg-slate-300 shadow-2xl p-2 pt-6 flex flex-col content-center'  id="deploy-program">
           <TitleText title="New here?" subtitle="Deploy and try out any of these examples" size = {2} colourMode={0}/>  
+          <button onClick = {() => open({view: "Networks"})}  > 
+          
+            Login 
+           
+        </button>
           <div className="px-2 sm:px-20"> 
 
           <div className="relative my-6 mx-auto">
