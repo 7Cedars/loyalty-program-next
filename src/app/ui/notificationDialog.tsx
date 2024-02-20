@@ -28,7 +28,7 @@ export const NotificationDialog = () => {
   const dispatch = useAppDispatch()
 
   const handleLoginRequest = async () => {
-    walletClient ? open({view: "Account"}) : open({view: "Networks"}) 
+    open({view: "Networks"}) 
   }
 
   const notificationToShow = notifications.findLast(notification => notification.isVisible !== false)
@@ -52,7 +52,7 @@ export const NotificationDialog = () => {
 
           { notificationToShow.loginButton ? 
             <div className="w-24 px-3 flex underline"> 
-              <button onClick = {() => {walletClient ? open({view: "Account"}) : open({view: "Networks"}) }}> 
+              <button onClick = {() => handleLoginRequest() }> 
                login
               </button>
             </div> 

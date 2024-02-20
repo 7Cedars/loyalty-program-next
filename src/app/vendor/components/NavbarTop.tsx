@@ -3,7 +3,7 @@
 import { notification } from '@/redux/reducers/notificationReducer';
 import Link from 'next/link';
 import { useScreenDimensions } from '../../hooks/useScreenDimensions';
-import { useAccount,  } from 'wagmi';
+import { useAccount, useWalletClient,  } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { useWeb3ModalState } from '@web3modal/wagmi/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
@@ -19,6 +19,11 @@ const NavbarTop = ( ) => {
   const { open } = useWeb3Modal()
   const { progAddress } = useUrlProgramAddress()
   const path = usePathname()
+  const { data: walletClient, status } = useWalletClient();
+
+  const handleLogin = () => {
+    walletClient ? open({view: "Account"}) : open({view: "Networks"})
+  }
 
   useEffect(() => {
     if (address && selectedNetworkId != undefined) {
@@ -59,7 +64,7 @@ const NavbarTop = ( ) => {
               Stats 
           </Link>
         </div> 
-        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )}> 
+        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => handleLogin()}> 
            {text} 
         </button>
 

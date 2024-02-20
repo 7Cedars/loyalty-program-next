@@ -13,7 +13,7 @@ import {
  } from '@heroicons/react/24/outline'
 import { useScreenDimensions } from '../../hooks/useScreenDimensions';
 import { useDispatch } from 'react-redux';
-import { useAccount } from 'wagmi';
+import { useAccount, useWalletClient } from 'wagmi';
 import { useEffect } from 'react';
 import { updateNotificationVisibility } from '@/redux/reducers/notificationReducer';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
@@ -31,6 +31,11 @@ const NavbarBottom = ( ) => {
   const { open, close } = useWeb3Modal()
   const path = usePathname()
   const { progAddress } = useUrlProgramAddress()
+  const { data: walletClient, status } = useWalletClient();
+
+  const handleLogin = () => {
+    walletClient ? open({view: "Account"}) : open({view: "Networks"})
+  }
 
   return (
     dimensions.width >= 896 ? 
@@ -87,7 +92,7 @@ const NavbarBottom = ( ) => {
             Stats 
           </div> 
         </Link>
-        <button onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )} className={layoutLinks} > 
+        <button onClick = {() => handleLogin()} className={layoutLinks} > 
           <div className={layoutIconBox}> 
             <ArrowRightOnRectangleIcon
               className={layoutIcons}
