@@ -13,14 +13,8 @@ import { createWalletClient, http } from 'viem';
 // const selectedChains = [baseSepolia] // other options: , arbitrum, arbitrumGoerli, optimism, optimismSepolia,
 // 1. Get keys
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ? process.env.NEXT_PUBLIC_ALCHEMY_API_KEY: "none"
-// if (!ALCHEMY_API_KEY) {
-//   throw new Error('NEXT_PUBLIC_ALCHEMY_API_KEY is not set')
-// }
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_ID ? process.env.NEXT_PUBLIC_WALLETCONNECT_ID: "none"
 
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_ID 
-if (!projectId) {
-  throw new Error('EXT_PUBLIC_WALLETCONNECT_ID is not set')
-}
 
 // 2. Create wagmiConfig
 const metadata = {
