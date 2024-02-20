@@ -1,4 +1,5 @@
 "use client";
+
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import VoucherSmall from "./VoucherSmall";
 import { LoyaltyToken } from "@/types";

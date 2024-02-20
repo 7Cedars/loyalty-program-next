@@ -11,18 +11,17 @@ import { useWeb3ModalTheme } from '@web3modal/wagmi/react';
 import { createWalletClient, http } from 'viem';
 
 // const selectedChains = [baseSepolia] // other options: , arbitrum, arbitrumGoerli, optimism, optimismSepolia,
-const API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ? process.env.NEXT_PUBLIC_ALCHEMY_API_KEY : "none"
-const NEXT_PUBLIC_WALLETCONNECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_ID ? process.env.NEXT_PUBLIC_WALLETCONNECT_ID : "none"
+// 1. Get keys
+const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ? process.env.NEXT_PUBLIC_ALCHEMY_API_KEY: "none"
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_ID ? process.env.NEXT_PUBLIC_WALLETCONNECT_ID: "none"
 
-// 1. Get projectId
-const projectId = "6056a457c9f333cabea03b31fe8917a2"
 
 // 2. Create wagmiConfig
 const metadata = {
   name: 'loyalty-program',
   description: 'Customer Loyalty Program',
-  url: 'https://loyalty-program-psi.vercel.app/', // TODO 
-  icons: ['https://avatars.githubusercontent.com/u/37784886'] // TODO 
+  url: 'https://loyalty-program-psi.vercel.app/', 
+  icons: ['https://github.com/7Cedars/loyalty-program-next/blob/main/public/iconLoyaltyProgram.svg']
 }
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
@@ -35,11 +34,15 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
         chainId: 31337
       }),
     }),
-    alchemyProvider({ apiKey: API_KEY }),
+    alchemyProvider({ apiKey: ALCHEMY_API_KEY }),
   ],
 )
 
-export const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
+export const wagmiConfig = defaultWagmiConfig({ 
+  chains, 
+  projectId, 
+  metadata
+ })
 
 // const config = createConfig({
 //   autoConnect: false,  
@@ -47,7 +50,12 @@ export const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 //   webSocketPublicClient,
 // })
 
-createWeb3Modal({ wagmiConfig, projectId, chains })
+createWeb3Modal({ 
+  wagmiConfig, 
+  projectId, 
+  chains,
+
+  })
 
 export function Web3Modal({ children }: any) {
   const { setThemeMode } = useWeb3ModalTheme()
