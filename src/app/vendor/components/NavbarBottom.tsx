@@ -37,6 +37,8 @@ const NavbarBottom = ( ) => {
   //   walletClient ? open({view: "Account"}) : open({view: "Networks"})
   // }
 
+  console.log("walletClient: ", walletClient)
+
   return (
     dimensions.width >= 896 ? 
     null

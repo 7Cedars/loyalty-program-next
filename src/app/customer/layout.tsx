@@ -16,7 +16,7 @@ export default function layout({
   return (   
  
     <div className="absolute flex h-full w-full grid grid-cols-1 justify-items-center bg-slate-100 overflow-hidden">
-      <Web3Modal>
+      {/* <Web3Modal> */}
         <NavbarTop/>
           <div className="grow justify-center w-full h-full max-w-4xl overflow-y-scroll">  
             
@@ -26,7 +26,7 @@ export default function layout({
             
               <NavbarBottom/>
             </div>
-        </Web3Modal>
+        {/* </Web3Modal> */}
       </div>
 
   )

@@ -16,7 +16,7 @@ export default function layout({
   return (   
  
     <div className="h-dvh w-dvh grid grid-cols-1 justify-items-center bg-slate-100 overflow-hidden bg-slate-200 dark:bg-slate-800">
-      <Web3Modal> 
+      {/* <Web3Modal>  */}
         <NavbarTop/>
           <div className="absolute flex justify-center w-full h-full max-w-4xl overflow-hidden bg-slate-200 dark:bg-slate-800 ">  
               <ModalMain>
@@ -24,7 +24,7 @@ export default function layout({
               </ModalMain>
               <NavbarBottom/>
             </div>
-        </Web3Modal>
+        {/* </Web3Modal> */}
       </div>
 
   )
