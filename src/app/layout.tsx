@@ -25,11 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ReduxProvider>
-          <Web3Modal>
+        <Web3Modal>
+          <ReduxProvider>
             {children}
-          </Web3Modal>
-        </ReduxProvider>
+          </ReduxProvider>
+        </Web3Modal>
       </body>
     </html>
   )
