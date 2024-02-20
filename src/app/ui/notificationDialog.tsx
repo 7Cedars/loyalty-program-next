@@ -27,10 +27,6 @@ export const NotificationDialog = () => {
   const { data: walletClient, status } = useWalletClient();
   const dispatch = useAppDispatch()
 
-  const handleLoginRequest = async () => {
-    open({view: "Networks"}) 
-  }
-
   const notificationToShow = notifications.findLast(notification => notification.isVisible !== false)
   let colour: "red" | "yellow" | "green" | "gray" | "invisible" = "gray"
   notificationToShow?.colour ? colour = notificationToShow?.colour : "gray" 
@@ -52,7 +48,7 @@ export const NotificationDialog = () => {
 
           { notificationToShow.loginButton ? 
             <div className="w-24 px-3 flex underline"> 
-              <button onClick = {() => {!walletClient ? open({view: "Connect"}) : open({view: "Networks"}) }}> 
+              <button onClick = {() => {walletClient ? open({view: "Account"}) : open({view: "Networks"}) }}> 
                login
               </button>
             </div> 
