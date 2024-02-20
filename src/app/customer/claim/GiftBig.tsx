@@ -103,7 +103,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   })
 
   const handleSigning = () => {
-    open({view: "Connect"})  // Netowrks? 
+    walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
     signTypedData()
   }
 
@@ -204,7 +204,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
                 Claim Voucher
               </Button>
               :
-              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
+              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
                 Claim Gift
               </Button>
            

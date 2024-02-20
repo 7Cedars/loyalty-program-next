@@ -27,6 +27,10 @@ export const NotificationDialog = () => {
   const { data: walletClient, status } = useWalletClient();
   const dispatch = useAppDispatch()
 
+  const handleLoginRequest = async () => {
+    walletClient ? open({view: "Account"}) : open({view: "Networks"}) 
+  }
+
   const notificationToShow = notifications.findLast(notification => notification.isVisible !== false)
   let colour: "red" | "yellow" | "green" | "gray" | "invisible" = "gray"
   notificationToShow?.colour ? colour = notificationToShow?.colour : "gray" 
