@@ -14,6 +14,7 @@ import { useAppSelector } from "@/redux/hooks";
 import QRCode from "react-qr-code";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -31,6 +32,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dispatch = useDispatch() 
   const {address } = useAccount()
   const {chain} = useNetwork() 
+  const {open} = useWeb3Modal()
 
   console.log("selectedLoyaltyCard?.cardAddress: ", selectedLoyaltyCard?.cardAddress)
   console.log("parseEthAddress(progAddress): ", parseEthAddress(progAddress))
@@ -98,6 +100,11 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     primaryType: 'RequestGift',
     types,
   })
+
+  const handleSigning = () => {
+    open({view: "Connect"}) 
+    signTypedData()
+  }
 
   useEffect(() => { 
     if (isLoading) {
@@ -192,7 +199,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
             { token.tokenised == 1n ? 
 
-              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()}  >
+              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()}  >
                 Claim Voucher
               </Button>
               :

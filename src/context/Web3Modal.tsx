@@ -44,11 +44,11 @@ export const wagmiConfig = defaultWagmiConfig({
   metadata
  })
 
-// const config = createConfig({
-//   autoConnect: false,  
-//   publicClient,
-//   webSocketPublicClient,
-// })
+const config = createConfig({
+  autoConnect: true,  
+  publicClient,
+  webSocketPublicClient,
+})
 
 createWeb3Modal({ 
   wagmiConfig, 
@@ -60,5 +60,5 @@ export function Web3Modal({ children }: any) {
   const { setThemeMode } = useWeb3ModalTheme()
   setThemeMode('light')
 
-  return <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>;
+  return <WagmiConfig config={config}>{children}</WagmiConfig>;
 }

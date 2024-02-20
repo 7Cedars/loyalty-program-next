@@ -15,6 +15,7 @@ import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -33,6 +34,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const { data: walletClient, status } = useWalletClient();
   const {  pointsSent, tokenSent } = useLatestCustomerTransaction() 
   const {chain} = useNetwork() 
+  const {open} = useWeb3Modal()
 
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
@@ -89,7 +91,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   })
 
   const handleSigning = () => {
-    !walletClient ? open() : null  
+    open({view: "Connect"}) 
     signTypedData()
   }
 
