@@ -28,12 +28,12 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   [ foundry, sepolia ],
   [ 
     publicProvider(), 
-    jsonRpcProvider({
-      rpc: (localhost) => ({
-        http: "http://localhost:8545",
-        chainId: 31337
-      }),
-    }),
+    // jsonRpcProvider({
+    //   rpc: (localhost) => ({
+    //     http: "http://localhost:8545",
+    //     chainId: 31337
+      // }),
+    // }),
     alchemyProvider({ apiKey: ALCHEMY_API_KEY }),
   ],
 )
@@ -54,8 +54,7 @@ createWeb3Modal({
   wagmiConfig, 
   projectId, 
   chains,
-
-  })
+})
 
 export function Web3Modal({ children }: any) {
   const { setThemeMode } = useWeb3ModalTheme()
