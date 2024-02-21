@@ -18,7 +18,6 @@ import { parseBigInt } from '../../utils/parsers';
 export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: LoyaltyCard[]}) {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
   const [loyaltyCardPoints, setLoyaltyCardPoints ] = useState<{cardAddress: EthAddress | undefined, points: Number}[] | undefined >() 
-  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient(); 
   const dispatch = useDispatch() 
 

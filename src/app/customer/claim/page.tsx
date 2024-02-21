@@ -34,7 +34,7 @@ export default function Page() {
   const [ activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
 
   const [ selectedToken, setSelectedToken ] = useState<setSelectedTokenProps | undefined>() 
-  // const { selectedLoyaltyProgram?.programAddress } = useUrlProgramAddress() 
+  const {selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
   const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 

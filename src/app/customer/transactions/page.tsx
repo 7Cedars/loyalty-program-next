@@ -43,7 +43,6 @@ type OverviewStatusProps = {
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const {selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
-  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient(); 
 
   const [ transactions, setTransactions ] = useState<Transaction[]>([]) 

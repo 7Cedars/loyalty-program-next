@@ -11,9 +11,8 @@ import { parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import Image from "next/image";
+import { useAppSelector } from "@/redux/hooks";
  
-
-
 type RedeemTokenProps = {
   modal: 'points' | 'cards' | undefined;  
   setModal: Dispatch<SetStateAction<'points' | 'cards' | undefined>>; 
