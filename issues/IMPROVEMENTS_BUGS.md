@@ -64,7 +64,7 @@ Even though repository is public, For now, it is for personal use only.
   // has to be tried out on actual test network. Not anvil. 
   /// 
   // useContractEvent({
-  //   address: parseEthAddress(progAddress),
+  //   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
   //   abi: loyaltyProgramAbi,
   //   eventName: 'TransferSingle',
   //   listener(log) {

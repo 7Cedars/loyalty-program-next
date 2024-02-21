@@ -5,6 +5,7 @@ import '../globals.css'
 import NavbarTop from "./components/NavbarTop"; 
 import NavbarBottom from './components/NavbarBottom';
 import { ModalMain } from './components/ModalMain';
+import { Web3Modal } from '@/context/Web3Modal';
 
 export default function layout({
   children,
@@ -15,13 +16,15 @@ export default function layout({
   return (   
  
     <div className="h-dvh w-dvh grid grid-cols-1 justify-items-center bg-slate-100 overflow-hidden bg-slate-200 dark:bg-slate-800">
-      <NavbarTop/>
-        <div className="absolute flex justify-center w-full h-full max-w-4xl overflow-hidden bg-slate-200 dark:bg-slate-800 ">  
-            <ModalMain>
-              {children}
-            </ModalMain>
-            <NavbarBottom/>
-          </div>
+      {/* <Web3Modal>  */}
+        <NavbarTop/>
+          <div className="absolute flex justify-center w-full h-full max-w-4xl overflow-hidden bg-slate-200 dark:bg-slate-800 ">  
+              <ModalMain>
+                {children}
+              </ModalMain>
+              <NavbarBottom/>
+            </div>
+        {/* </Web3Modal> */}
       </div>
 
   )

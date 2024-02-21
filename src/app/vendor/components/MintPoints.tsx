@@ -11,6 +11,9 @@ import { parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import Image from "next/image";
+import { useAppSelector } from "@/redux/hooks";
+ 
+
 
 type RedeemTokenProps = {
   modal: 'points' | 'cards' | undefined;  
@@ -21,11 +24,11 @@ export default function MintPoints( {modal, setModal}: RedeemTokenProps ) {
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
-  const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
 
   const mintPoints = useContractWrite(  
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: 'mintLoyaltyPoints',
       args: [numpadNumber], 

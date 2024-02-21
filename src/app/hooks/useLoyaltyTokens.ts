@@ -2,7 +2,7 @@
 // Note that the structure of this hook is a good standard way of creating hooks with
 // multiple (sequenced) async calls. 
 
-import { EthAddress, LoyaltyToken, Status } from "@/types";
+import {  LoyaltyToken, Status } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { loyaltyGiftAbi } from "@/context/abi";
 import { Log } from "viem"
@@ -16,11 +16,9 @@ import {
 } from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants"; // this should be possible to set at website.  
 import { useAppSelector } from "@/redux/hooks";
-import { useUrlProgramAddress } from "./useUrl";
 
 export const useLoyaltyTokens = () => {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const { progAddress } = useUrlProgramAddress() 
   const publicClient = usePublicClient()
 
   const [ status, setStatus ] = useState<Status>("isIdle")
@@ -133,7 +131,7 @@ export const useLoyaltyTokens = () => {
               address: item.tokenAddress, 
               abi: loyaltyGiftAbi,
               functionName: 'balanceOf', 
-              args: [parseEthAddress(progAddress), item.tokenId]
+              args: [parseEthAddress(selectedLoyaltyProgram?.programAddress), item.tokenId]
             })
 
             loyaltyTokensAvailableTokens.push({...item, availableTokens: Number(parseBigInt(availableTokens))})

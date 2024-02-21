@@ -11,6 +11,7 @@ import {
   parseUri, 
   parseMetadata, 
   parseContractLogs,
+  parseEthAddress,
 } from "@/app/utils/parsers";
 
 export const useLoyaltyPrograms = () => {
@@ -20,24 +21,31 @@ export const useLoyaltyPrograms = () => {
   const [ status, setStatus ] = useState<Status>("isIdle")
   const statusAtAddresses = useRef<Status>("isIdle") 
   const statusAtUri = useRef<Status>("isIdle") 
+  const statusAtProgramOwner = useRef<Status>("isIdle") 
   const statusAtMetadata = useRef<Status>("isIdle") 
   const [ data, setData ] = useState<LoyaltyProgram[] | undefined>() 
   const [ loyaltyPrograms, setLoyaltyPrograms ] = useState<LoyaltyProgram[]>() 
 
   console.log("address: ", address)
-  console.log("statusAt chooseLoyaltyProgram: ", {
+  console.log("statusAt useLoyaltyProgram: ", {
     statusAtAddresses: statusAtAddresses.current,
     statusAtUri: statusAtUri.current, 
+    statusAtProgramOwner: statusAtProgramOwner.current, 
     statusAtMetadata: statusAtMetadata.current
   })
   console.log("data: ", data)
   console.log("loyaltyPrograms: ", loyaltyPrograms)
 
-  const fetchPrograms = () => {
+  const fetchPrograms = (requestedPrograms?: LoyaltyProgram[] ) => {
     setStatus("isIdle")
     setData(undefined)
     setLoyaltyPrograms(undefined)
-    getLoyaltyProgramAddresses()
+    if (requestedPrograms) {
+      setData(requestedPrograms)
+      statusAtAddresses.current = "isSuccess"
+    } else {
+      getLoyaltyProgramAddresses()
+    }
   }
 
   const getLoyaltyProgramAddresses = async () => {
@@ -72,9 +80,7 @@ export const useLoyaltyPrograms = () => {
             functionName: 'uri',
             args: [0]
           })
-
           console.log("uri: ", uri)
-
           loyaltyProgramsUpdated.push({...loyaltyProgram, uri: `${parseUri(uri)}`})
         }
         statusAtUri.current = "isSuccess" 
@@ -83,6 +89,33 @@ export const useLoyaltyPrograms = () => {
         } catch (error) {
           statusAtUri.current = "isError" 
           console.log(error)
+      }
+    }
+  }
+
+  const getLoyaltyProgramOwner = async () => {
+    statusAtProgramOwner.current = "isLoading" 
+
+    let loyaltyProgram: LoyaltyProgram
+    let loyaltyProgramsUpdated: LoyaltyProgram[] = []
+
+    if (data) {
+      try {
+        for await (loyaltyProgram of data) {
+       
+        const owner: unknown = await publicClient.readContract({
+          address: parseEthAddress(loyaltyProgram.programAddress), 
+          abi: loyaltyProgramAbi,
+          functionName: 'getOwner'
+        })
+        console.log("getLoyaltyProgramOwner: ", owner)
+        loyaltyProgramsUpdated.push({...loyaltyProgram, programOwner: `${parseEthAddress(owner)}`})
+      }
+      statusAtProgramOwner.current = "isSuccess" 
+      setData(loyaltyProgramsUpdated) 
+      } catch (error) {
+        statusAtProgramOwner.current = "isError" 
+        console.log(error)
       }
     }
   }
@@ -101,7 +134,7 @@ export const useLoyaltyPrograms = () => {
             await fetch(parseUri(loyaltyProgram.uri))
             ).json()
 
-          loyaltyProgramsUpdated.push({...loyaltyProgram, metadata: parseMetadata(fetchedMetadata), programOwner: address})
+          loyaltyProgramsUpdated.push({...loyaltyProgram, metadata: parseMetadata(fetchedMetadata)})
         }
         statusAtMetadata.current = "isSuccess" 
         setData(loyaltyProgramsUpdated)
@@ -115,22 +148,30 @@ export const useLoyaltyPrograms = () => {
 
 
   useEffect(() => {
-    // if (!data) { getLoyaltyProgramAddresses() } 
-    if ( data && statusAtAddresses.current == "isSuccess" && statusAtUri.current == "isIdle" ) { 
-      // statusAtUri.current = "isLoading"
-      getLoyaltyProgramsUris() 
-    } 
-    if ( data && statusAtUri.current == "isSuccess" && statusAtMetadata.current == "isIdle" ) { 
-      // statusAtMetadata.current = "isLoading"
-      getLoyaltyProgramsMetaData() 
-    }
-  }, [ data  ])
 
+    if ( 
+      data && 
+      statusAtAddresses.current == "isSuccess" && 
+      statusAtUri.current == "isIdle" 
+      ) getLoyaltyProgramsUris() 
+    if ( 
+      data && 
+      statusAtUri.current == "isSuccess" && 
+      statusAtProgramOwner.current == "isIdle" 
+      ) getLoyaltyProgramOwner() 
+    if ( 
+      data && 
+      statusAtProgramOwner.current == "isSuccess" && 
+      statusAtMetadata.current == "isIdle" 
+      ) getLoyaltyProgramsMetaData() 
+    
+  }, [ data  ])
 
   useEffect(() => {
     if (
       statusAtAddresses.current == "isSuccess" && 
       statusAtUri.current == "isSuccess" && 
+      statusAtProgramOwner.current == "isSuccess" && 
       statusAtMetadata.current == "isSuccess"
       ) {
         setStatus("isSuccess")
@@ -139,6 +180,7 @@ export const useLoyaltyPrograms = () => {
     if (
       statusAtAddresses.current == "isLoading" ||
       statusAtUri.current == "isLoading" || 
+      statusAtProgramOwner.current == "isLoading" || 
       statusAtMetadata.current == "isLoading"
       ) {
         setStatus("isLoading")

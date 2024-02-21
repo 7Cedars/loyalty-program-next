@@ -1,7 +1,6 @@
 
 "use client"; 
 
-// Will do clean up later. 
 import QRCode from "react-qr-code";
 import { Button } from "@/app/ui/Button";
 import { BASE_URI } from "@/context/constants";
@@ -18,6 +17,7 @@ export default function Page()  {
   return (
      
     <div className="grid grid-cols-1 h-full content-between pt-6">
+      
         <TitleText 
           title = {selectedLoyaltyProgram?.metadata ? selectedLoyaltyProgram?.metadata.attributes[0].value  : "Loyalty Card"} 
           subtitle="Let customer scan this code to activate loyalty card" 
