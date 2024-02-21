@@ -49,8 +49,8 @@ export const ModalMain = ({
   const [ showRequestCard, setShowRequestCard ] = useState<boolean>(false)
 
   useEffect(() => {
-    if (!loyaltyPrograms) fetchPrograms()
-  }, [, loyaltyPrograms ])
+    if (!loyaltyPrograms && selectedLoyaltyProgram) fetchPrograms([selectedLoyaltyProgram])
+  }, [, loyaltyPrograms, selectedLoyaltyProgram ])
 
   console.log("status: ", status)
 
