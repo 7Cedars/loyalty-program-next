@@ -6,7 +6,6 @@ export const FROM_BLOCK = { // blocks to start check for data.
   33137: 0n, 
   11155111: 5200000n
 }
-export const progAddress = "0x5Abd9Ffd0BC1e3fb401DcC8F31f4EA718DB2a236"
 
 
   

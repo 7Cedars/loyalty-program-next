@@ -23,7 +23,7 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
 import { useAppSelector } from "@/redux/hooks";
-import { progAddress } from '@/context/constants';
+ 
 
 
 type OverviewTransactionProps = {
@@ -43,7 +43,7 @@ type OverviewStatusProps = {
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const {selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
-  // const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient(); 
 
   const [ transactions, setTransactions ] = useState<Transaction[]>([]) 
@@ -58,7 +58,7 @@ export default function Page() {
 
     const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'TransferSingle', 
       args: {
         to: selectedLoyaltyCard?.cardAddress
@@ -73,7 +73,7 @@ export default function Page() {
 
     const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'TransferSingle', 
       args: {
         from: selectedLoyaltyCard?.cardAddress

@@ -6,10 +6,8 @@ import { useAccount,  } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { useWeb3ModalState } from '@web3modal/wagmi/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
-import { useUrlProgramAddress } from '../../hooks/useUrl';
 import { usePathname } from 'next/navigation';
-import { progAddress } from '@/context/constants';
-
+ 
 const NavbarTop = ( ) => {
   const dimensions = useScreenDimensions();
   const layoutLinks: string = 'p-1 px-6 text-slate-400 aria-selected:text-slate-800'
@@ -17,7 +15,6 @@ const NavbarTop = ( ) => {
   const { selectedNetworkId } = useWeb3ModalState() 
   const [text, setText] = useState('')
   const { open, close } = useWeb3Modal()
-  // const { progAddress } = useUrlProgramAddress()
   const path = usePathname()
 
   useEffect(() => {
@@ -35,25 +32,25 @@ const NavbarTop = ( ) => {
       <header className="absolute top-0 z-10 flex justify-between h-18 w-full text-sm border-b border-gray-400 bg-slate-50 px-6">
         <div className="flex divide-x p-3 divide-gray-400">
           <Link 
-            href={progAddress ? `/customer/home?prog=${progAddress}` : '/customer/home'} 
+            href={'/customer/home'} 
             className={layoutLinks}
             aria-selected={path == `/customer/home`}>   
               Home 
           </Link>
           <Link 
-            href={progAddress ? `/customer/claim?prog=${progAddress}` : '/customer/home' }  
+            href={'/customer/home' }  
             className={layoutLinks}
             aria-selected={path == `/customer/claim`}>   
               Claim Gifts 
           </Link>
           <Link 
-            href={progAddress ? `/customer/card?prog=${progAddress}` : '/customer/home' }  
+            href={'/customer/home' }  
             className={layoutLinks}
             aria-selected={path == `/customer/card`}>   
               Your Card 
           </Link>
           <Link 
-            href={progAddress ? `/customer/transactions?prog=${progAddress}` : '/customer/home'}  
+            href={'/customer/home'}  
             className={layoutLinks}
             aria-selected={path == `/customer/transactions`}>   
               Transactions 

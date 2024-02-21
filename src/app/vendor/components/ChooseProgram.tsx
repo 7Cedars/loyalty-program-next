@@ -4,7 +4,6 @@ import { LoyaltyProgram} from "@/types";
 import { TitleText } from "../../ui/StandardisedFonts";
 import { useEffect} from "react";
 import Image from "next/image";
-import { useUrlProgramAddress } from '../../hooks/useUrl';
 import { useDispatch } from 'react-redux';
 import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer';
 import { useLoyaltyPrograms } from '@/app/hooks/useLoyaltyPrograms';
@@ -12,7 +11,6 @@ import { useLoyaltyPrograms } from '@/app/hooks/useLoyaltyPrograms';
 export default function ChooseProgram()  {
   const { status, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms()
   const dispatch = useDispatch() 
-  // const { putProgAddressInUrl } = useUrlProgramAddress()
 
   useEffect(() => {
     if (!loyaltyPrograms) fetchPrograms()
@@ -25,13 +23,8 @@ export default function ChooseProgram()  {
       loyaltyPrograms.length == 1 && 
       loyaltyPrograms.findIndex(loyaltyProgram => loyaltyProgram.metadata) !== -1
       ) 
-        handleProgramSelection(loyaltyPrograms[0])
+      dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
   }, [status, loyaltyPrograms])
-
-  const handleProgramSelection = (loyaltyProgram: LoyaltyProgram) => {
-    // putProgAddressInUrl(loyaltyProgram.programAddress)
-    dispatch(selectLoyaltyProgram(loyaltyProgram))
-  }
 
   return (
      <div className='w-full h-full flex flex-col items-center justify-center' >
@@ -47,7 +40,7 @@ export default function ChooseProgram()  {
               key={program.programAddress}
               className="carousel-item h-96 w-52 text-center items-center snap-start ml-4 flex flex-col self-center">
               <button 
-                onClick = {() => handleProgramSelection(program)}
+                onClick = {() =>  dispatch(selectLoyaltyProgram(program))}
                   className="w-11/12 z-0 h-96 w-52 max-h-80 max-w-48 self-center m-1"> 
                       <Image
                         className="h-90 w-48 self-center rounded-lg" 

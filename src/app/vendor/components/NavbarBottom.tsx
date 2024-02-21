@@ -21,7 +21,7 @@ import { useUrlProgramAddress } from '../../hooks/useUrl';
 import { useRouter } from 'next/router';
 import { usePathname } from 'next/navigation';
 import { pathToFileURL } from 'url';
-import { progAddress } from '@/context/constants';
+ 
 
 const NavbarBottom = ( ) => {
   const dimensions = useScreenDimensions();  
@@ -31,7 +31,7 @@ const NavbarBottom = ( ) => {
   const { address } = useAccount() 
   const { open, close } = useWeb3Modal()
   const path = usePathname()
-  // const { progAddress } = useUrlProgramAddress()
+  // const { selectedLoyaltyProgram?.programAddress } = useUrlProgramAddress()
   const { data: walletClient, status } = useWalletClient();
 
   // const handleLogin = () => {
@@ -47,7 +47,7 @@ const NavbarBottom = ( ) => {
     <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-slate-100/75 dark:bg-slate-900/75 text-sm border-t border-gray-400 px-4">
       
         <Link 
-          href={progAddress ? `/vendor/home?prog=${progAddress}` : '/vendor/home'}
+          href={'/vendor/home'}
           className={layoutLinks}
           aria-selected={path == `/vendor/home`}
           > 
@@ -59,7 +59,7 @@ const NavbarBottom = ( ) => {
           </div> 
         </Link>
         <Link 
-          href={progAddress ? `/vendor/scanQrcode?prog=${progAddress}` : '/vendor/scanQrcode'} 
+          href={'/vendor/scanQrcode'} 
           className={layoutLinks}
           aria-selected={path == `/vendor/scanQrcode`}> 
           <div className={layoutIconBox}> 
@@ -70,7 +70,7 @@ const NavbarBottom = ( ) => {
           </div>  
         </Link>
         <Link 
-          href={progAddress ? `/vendor/selectGifts?prog=${progAddress}` : '/vendor/selectGifts' } 
+          href={'/vendor/selectGifts' } 
           className={layoutLinks}
           aria-selected={path == `/vendor/selectGifts`}
         > 
@@ -83,7 +83,7 @@ const NavbarBottom = ( ) => {
           </div> 
         </Link>
         <Link 
-          href={progAddress ? `/vendor/stats?prog=${progAddress}` : '/vendor/stats' }  
+          href={'/vendor/stats' }  
           className={layoutLinks}
           aria-selected={path == `/vendor/stats`}
           > 

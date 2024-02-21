@@ -11,7 +11,7 @@ import { parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import Image from "next/image";
-import { progAddress } from '@/context/constants';
+ 
 
 
 type RedeemTokenProps = {
@@ -23,11 +23,11 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
-  // const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
 
   const mintCards = useContractWrite(  
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: 'mintLoyaltyCards',
       args: [numpadNumber], 
@@ -50,7 +50,7 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
   // has to be tried out on actual test network. Not anvil. 
   /// 
   // useContractEvent({
-  //   address: parseEthAddress(progAddress),
+  //   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
   //   abi: loyaltyProgramAbi,
   //   eventName: 'TransferSingle',
   //   listener(log) {

@@ -16,7 +16,6 @@ import { loyaltyProgramAbi } from "@/context/abi";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { progAddress } from "@/context/constants";
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -26,7 +25,7 @@ type SelectedTokenProps = {
 export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const dimensions = useScreenDimensions();
-  // // const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient()
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
@@ -42,7 +41,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
     const getNonceLoyaltyCard = async () => {
       try {
         const rawNonceData: unknown = await publicClient.readContract({ 
-          address: parseEthAddress(progAddress), 
+          address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
           abi: loyaltyProgramAbi,
           functionName: 'getNonceLoyaltyCard',
           args: [selectedLoyaltyCard?.cardAddress]
@@ -63,7 +62,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
     name: 'Loyalty Program',
     version: '1',
     chainId: chain?.id,
-    verifyingContract: parseEthAddress(progAddress)
+    verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
   } as const
 
   // The named list of all type definitions
@@ -79,7 +78,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   // // The message that will be hashed and signed
   const message = {
     from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
-    to:  parseEthAddress(progAddress),
+    to:  parseEthAddress(selectedLoyaltyProgram?.programAddress),
     voucher: `${token?.metadata?.name}`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const

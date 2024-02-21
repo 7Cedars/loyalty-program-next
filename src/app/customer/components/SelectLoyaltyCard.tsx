@@ -13,12 +13,12 @@ import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/redux/hooks';
 import { selectLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
 import { parseBigInt } from '../../utils/parsers';
-import { progAddress } from '@/context/constants';
+ 
 
 export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: LoyaltyCard[]}) {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
   const [loyaltyCardPoints, setLoyaltyCardPoints ] = useState<{cardAddress: EthAddress | undefined, points: Number}[] | undefined >() 
-  // // const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient(); 
   const dispatch = useDispatch() 
 
@@ -34,7 +34,7 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
         for await (loyaltyCard of loyaltyCards) {
 
           const loyaltyCardPointsData = await publicClient.readContract({
-              address: parseEthAddress(progAddress), 
+              address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
               abi: loyaltyProgramAbi,
               functionName: 'getBalanceLoyaltyCard', 
               args: [ loyaltyCard.cardId ]

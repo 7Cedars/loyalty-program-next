@@ -1,7 +1,6 @@
 
 "use client"; 
 
-// Will do clean up later. 
 import QRCode from "react-qr-code";
 import { Button } from "@/app/ui/Button";
 import { BASE_URI } from "@/context/constants";

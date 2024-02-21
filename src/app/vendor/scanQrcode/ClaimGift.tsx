@@ -7,7 +7,6 @@ import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
 import { useContractWrite, useWaitForTransaction, useAccount, usePublicClient } from "wagmi";
 import { loyaltyProgramAbi } from "@/context/abi";
-import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress, parseNumber } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
@@ -16,7 +15,7 @@ import { QrData } from "@/types";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
-import { progAddress } from '@/context/constants';
+import { useAppSelector } from "@/redux/hooks";
 
 
 type SendPointsProps = {
@@ -28,9 +27,9 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const dimensions = useScreenDimensions();
   const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [token, setToken] = useState<LoyaltyToken>()
-  // const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const dispatch = useDispatch() 
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
 
   console.log("QRDATA @claim gift: ", qrData)
   console.log("loyaltyTokens @claim gift: ", loyaltyTokens)
@@ -52,7 +51,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
 
   const claimLoyaltyGift = useContractWrite( 
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "claimLoyaltyGift", 
       args: [

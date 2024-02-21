@@ -13,6 +13,7 @@ import { parseEthAddress, parseLoyaltyGiftLogs} from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 import Image from "next/image";
+import { useAppSelector } from "@/redux/hooks";
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -21,10 +22,10 @@ type setSelectedTokenProps = {
 
 export default function Page() {
   const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
+  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
   const [inactiveLoyaltyGifts, setInactiveLoyaltyGifts] = useState<LoyaltyToken[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
-  const { progAddress } = useUrlProgramAddress() 
   const publicClient = usePublicClient()
 
   console.log("loyaltyTokens @selectGifts: ", loyaltyTokens)
@@ -33,7 +34,7 @@ export default function Page() {
 
     const addedGifts: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'AddedLoyaltyGift', 
       fromBlock: 5200000n // this should be part of settings - it differs per block. - this is sepolia. -- see constants 
       // toBlock: 16330050n - if this does not create problems: take out. 
@@ -42,7 +43,7 @@ export default function Page() {
 
     const removedGifts: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'RemovedLoyaltyGiftClaimable', 
       fromBlock: 5200000n,
       toBlock: 16330050n

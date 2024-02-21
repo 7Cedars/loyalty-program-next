@@ -12,7 +12,8 @@ import { notification } from "@/redux/reducers/notificationReducer";
 import { foundry } from "viem/chains";
 import { useEffect, useState, useRef } from "react";
 import { NumLine } from "@/app/ui/NumLine";
-import { progAddress } from '@/context/constants';
+import { useAppSelector } from "@/redux/hooks";
+ 
 
 
 type SelectedTokenProps = {
@@ -22,7 +23,7 @@ type SelectedTokenProps = {
 
 export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
-  // const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const [ hashMintTransaction, setHashMintTransaction] = useState<any>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
@@ -30,7 +31,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   const addLoyaltyGift = useContractWrite(
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "addLoyaltyGift", 
       args: [token.tokenAddress, token.tokenId], 
@@ -51,7 +52,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   const removeLoyaltyGiftClaimable = useContractWrite(
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "removeLoyaltyGiftClaimable", 
       args: [token.tokenAddress, token.tokenId], 
@@ -79,7 +80,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   const mintLoyaltyTokens = useContractWrite(
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "mintLoyaltyVouchers",
       onError(error) {

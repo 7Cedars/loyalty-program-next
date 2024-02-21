@@ -1,10 +1,10 @@
 "use client";
 
+// This page needs a good clean up... 
+
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { NotificationDialog } from "../../ui/notificationDialog";
-import { useUrlProgramAddress } from "../../hooks/useUrl";
 import { useState, useEffect } from "react";
 import { 
   EthAddress, 
@@ -13,7 +13,6 @@ import {
 } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import Image from "next/image";
-import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { resetLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import RequestCard from "./RequestCard";
 import SelectLoyaltyCard from "./SelectLoyaltyCard";
@@ -22,13 +21,10 @@ import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
 import { 
   parseEthAddress, 
-  parseUri, 
-  parseMetadata, 
   parseTransferSingleLogs
 } from "@/app/utils/parsers";
 import { Button } from "@/app/ui/Button";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
-import { progAddress } from "@/context/constants";
 
 type ModalProps = {
   children: any;
@@ -39,25 +35,16 @@ export const ModalMain = ({
 }: ModalProps) => {
 
   const dispatch = useAppDispatch()
-  // const { modalVisible } = useAppSelector(state => state.userInput)
   const [ modalVisible, setModalVisible ] = useState<boolean>(true); 
   const { address }  = useAccount()
   const publicClient = usePublicClient(); 
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
-  // const { progAddress, putProgAddressInUrl } = useUrlProgramAddress()
   const [ loyaltyProgram, setLoyaltyProgram ] = useState<LoyaltyProgram>() 
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[]>() 
   const [ showRequestCard, setShowRequestCard ] = useState<boolean>(false)
   const [ toggleViz, setToggleViz ] = useState<number>(1)
-  const visibility = [
-    "opacity-100",
-    "opacity-0"
-  ]
-
-  console.log("toggleViz: ", toggleViz)
-  console.log("modalVisible", modalVisible)
 
   /////////////////////////////////////////////////// 
   /// Loading data loyalty cards owned by address /// 
@@ -69,7 +56,7 @@ export const ModalMain = ({
     if (address != undefined) {
       const transferSingleData: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi,
-        address: parseEthAddress(progAddress), 
+        address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'TransferSingle',
         args: {to: address}, 
         fromBlock: 5200000n
@@ -77,10 +64,10 @@ export const ModalMain = ({
       const transferredTokens = parseTransferSingleLogs(transferSingleData)
       const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)
 
-      if (loyaltyCardData && progAddress) { 
+      if (loyaltyCardData && selectedLoyaltyProgram?.programAddress) { 
         const data: LoyaltyCard[] = loyaltyCardData.map(item => { return ({
           cardId: Number(item.ids[0]), 
-          loyaltyProgramAddress: parseEthAddress(progAddress)
+          loyaltyProgramAddress: parseEthAddress(selectedLoyaltyProgram?.programAddress)
         })})
         setLoyaltyCards(data) 
       } 
@@ -100,14 +87,14 @@ export const ModalMain = ({
         for await (loyaltyCard of loyaltyCards) {
 
             const cardAddress: unknown = await publicClient.readContract({
-              address: parseEthAddress(progAddress), 
+              address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
               abi: loyaltyProgramAbi,
               functionName: 'getTokenBoundAddress', 
               args: [loyaltyCard.cardId]
             })
 
             const isOwned: unknown = await publicClient.readContract({
-              address: parseEthAddress(progAddress), 
+              address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
               abi: loyaltyProgramAbi,
               functionName: 'balanceOf', 
               args: [address, loyaltyCard.cardId]
@@ -150,82 +137,82 @@ export const ModalMain = ({
   /// Loading data selected loyalty Program /// 
   ///////////////////////////////////////////// 
 
-  // console.log("loyaltyProgram UPDATES: ", loyaltyProgram)
+  // // console.log("loyaltyProgram UPDATES: ", loyaltyProgram)
 
-  const getLoyaltyProgramUri = async () => {
-    console.log("getLoyaltyProgramsUris called. ProgAddress:", progAddress)
+  // const getLoyaltyProgramUri = async () => {
+  //   console.log("getLoyaltyProgramsUris called. selectedLoyaltyProgram?.programAddress:", selectedLoyaltyProgram?.programAddress)
 
-    if (progAddress) {
+  //   if (selectedLoyaltyProgram?.programAddress) {
 
-      try { 
-        const uri: unknown = await publicClient.readContract({
-          address: parseEthAddress(progAddress), 
-          abi: loyaltyProgramAbi,
-          functionName: 'uri',
-          args: [0]
-        })
+  //     try { 
+  //       const uri: unknown = await publicClient.readContract({
+  //         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+  //         abi: loyaltyProgramAbi,
+  //         functionName: 'uri',
+  //         args: [0]
+  //       })
 
-        setLoyaltyProgram({...loyaltyProgram, programAddress: parseEthAddress(progAddress), uri: parseUri(uri)})
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  }
+  //       setLoyaltyProgram({...loyaltyProgram, programAddress: parseEthAddress(selectedLoyaltyProgram?.programAddress), uri: parseUri(uri)})
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
+  // }
 
-  const getLoyaltyProgramOwner = async () => {
-    // console.log("getLoyaltyProgramOwner called. ProgAddress:", progAddress)
+  // const getLoyaltyProgramOwner = async () => {
+  //   // console.log("getLoyaltyProgramOwner called. selectedLoyaltyProgram?.programAddress:", selectedLoyaltyProgram?.programAddress)
 
-    if (progAddress) {
+  //   if (selectedLoyaltyProgram?.programAddress) {
 
-      try { 
-        const owner: unknown = await publicClient.readContract({
-          address: parseEthAddress(progAddress), 
-          abi: loyaltyProgramAbi,
-          functionName: 'getOwner'
-        })
+  //     try { 
+  //       const owner: unknown = await publicClient.readContract({
+  //         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+  //         abi: loyaltyProgramAbi,
+  //         functionName: 'getOwner'
+  //       })
 
-        console.log("getLoyaltyProgramOwner: ", owner)
+  //       console.log("getLoyaltyProgramOwner: ", owner)
 
-        setLoyaltyProgram({...loyaltyProgram, programAddress: parseEthAddress(progAddress), programOwner: parseEthAddress(owner)})
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  }
+  //       setLoyaltyProgram({...loyaltyProgram, programAddress: parseEthAddress(selectedLoyaltyProgram?.programAddress), programOwner: parseEthAddress(owner)})
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
+  // }
 
-  const getLoyaltyProgramMetaData = async () => {
-    // console.log("getLoyaltyProgramMetaData called. ProgAddress:", progAddress )
+  // const getLoyaltyProgramMetaData = async () => {
+  //   // console.log("getLoyaltyProgramMetaData called. selectedLoyaltyProgram?.programAddress:", selectedLoyaltyProgram?.programAddress )
 
-    if (loyaltyProgram) {
-      try {
-          const fetchedMetadata: unknown = await(
-            await fetch(parseUri(loyaltyProgram?.uri))
-            ).json()
+  //   if (loyaltyProgram) {
+  //     try {
+  //         const fetchedMetadata: unknown = await(
+  //           await fetch(parseUri(loyaltyProgram?.uri))
+  //           ).json()
             
-            setLoyaltyProgram({...loyaltyProgram, metadata: parseMetadata(fetchedMetadata)})
+  //           setLoyaltyProgram({...loyaltyProgram, metadata: parseMetadata(fetchedMetadata)})
           
-        } catch (error) {
-          console.log(error)
-      }
-    }
-  }
+  //       } catch (error) {
+  //         console.log(error)
+  //     }
+  //   }
+  // }
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    if (!loyaltyProgram ) { getLoyaltyProgramUri() } // check when address has no deployed programs what happens..  
-    if (
-      loyaltyProgram && 
-      !loyaltyProgram.metadata  
-      ) { getLoyaltyProgramMetaData() } 
-    if (
-      loyaltyProgram && 
-      !loyaltyProgram.programOwner 
-      ) { getLoyaltyProgramOwner() }
-    if (
-      loyaltyProgram 
-      ) { dispatch(selectLoyaltyProgram(loyaltyProgram))}
+  //   if (!loyaltyProgram ) { getLoyaltyProgramUri() } // check when address has no deployed programs what happens..  
+  //   if (
+  //     loyaltyProgram && 
+  //     !loyaltyProgram.metadata  
+  //     ) { getLoyaltyProgramMetaData() } 
+  //   if (
+  //     loyaltyProgram && 
+  //     !loyaltyProgram.programOwner 
+  //     ) { getLoyaltyProgramOwner() }
+  //   if (
+  //     loyaltyProgram 
+  //     ) { dispatch(selectLoyaltyProgram(loyaltyProgram))}
   
-  }, [, progAddress, loyaltyProgram, showRequestCard])
+  // }, [, selectedLoyaltyProgram?.programAddress, loyaltyProgram, showRequestCard])
 
   console.log("loyaltyProgram data: ", loyaltyProgram)
 

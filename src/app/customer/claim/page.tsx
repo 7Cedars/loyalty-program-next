@@ -19,7 +19,7 @@ import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
-import { progAddress } from "@/context/constants";
+
 
 type setSelectedTokenProps = {
   token: LoyaltyToken; 
@@ -34,7 +34,7 @@ export default function Page() {
   const [ activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
 
   const [ selectedToken, setSelectedToken ] = useState<setSelectedTokenProps | undefined>() 
-  // const { progAddress } = useUrlProgramAddress() 
+  // const { selectedLoyaltyProgram?.programAddress } = useUrlProgramAddress() 
   const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
@@ -43,7 +43,7 @@ export default function Page() {
     console.log("getLoyaltyCardPoints called") 
       if (selectedLoyaltyCard) {
       const loyaltyCardPointsData = await publicClient.readContract({
-        address: parseEthAddress(progAddress), 
+        address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         abi: loyaltyProgramAbi,
         functionName: 'getBalanceLoyaltyCard', 
         args: [ selectedLoyaltyCard?.cardAddress ]
@@ -61,7 +61,7 @@ export default function Page() {
 
     const addedGifts: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'AddedLoyaltyGift', 
       fromBlock: 5200000n
     }); 
@@ -69,7 +69,7 @@ export default function Page() {
 
     const removedGifts: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'RemovedLoyaltyGiftClaimable', 
       fromBlock: 5200000n
     }); 

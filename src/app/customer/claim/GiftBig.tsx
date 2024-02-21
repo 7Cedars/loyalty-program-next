@@ -15,7 +15,7 @@ import QRCode from "react-qr-code";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { progAddress } from "@/context/constants";
+
 
 type SelectedTokenProps = {
   token: LoyaltyToken
@@ -24,7 +24,7 @@ type SelectedTokenProps = {
 
 export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
-  // // const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient()
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
@@ -37,7 +37,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const { data: walletClient, status } = useWalletClient();
 
   console.log("selectedLoyaltyCard?.cardAddress: ", selectedLoyaltyCard?.cardAddress)
-  console.log("parseEthAddress(progAddress): ", parseEthAddress(progAddress))
+  console.log("parseEthAddress(selectedLoyaltyProgram?.programAddress): ", parseEthAddress(selectedLoyaltyProgram?.programAddress))
   console.log("nonceData: ", nonceData)
   console.log("chain: ",chain )
 
@@ -46,7 +46,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     const getNonceLoyaltyCard = async () => {
       try {
         const rawNonceData: unknown = await publicClient.readContract({ 
-          address: parseEthAddress(progAddress), 
+          address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
           abi: loyaltyProgramAbi,
           functionName: 'getNonceLoyaltyCard',
           args: [selectedLoyaltyCard?.cardAddress]
@@ -68,7 +68,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     name: "Loyalty Program",
     version: "1",
     chainId: chain?.id,
-    verifyingContract: parseEthAddress(progAddress)
+    verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
   } as const
 
   console.log("domain: ", domain)
@@ -87,7 +87,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   // // The message that will be hashed and signed
   const message = {
     from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
-    to:  parseEthAddress(progAddress),
+    to:  parseEthAddress(selectedLoyaltyProgram?.programAddress),
     gift: `${token?.metadata?.name}`,
     cost: `${token?.metadata?.attributes[1].value} points`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,

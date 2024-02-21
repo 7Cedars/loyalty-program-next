@@ -24,8 +24,6 @@ import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import MintCards from "../components/MintCards";
-import { progAddress } from '@/context/constants';
-
 
 type RedeemTokenProps = {
   qrData: QrData | undefined;  
@@ -35,7 +33,6 @@ type RedeemTokenProps = {
 
 export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
-  // const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>() 
   const [ modal, setModal] = useState<"points" | "cards" | undefined>() 
   const [ transferSingles, setTransferSingles ] = useState<Transaction[] | undefined>()
@@ -53,7 +50,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
 
     const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'TransferSingle', 
       args: {
         from: parseEthAddress(address)
@@ -67,7 +64,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
 
   const loyaltyCardsMinted = useContractRead(
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "getNumberLoyaltyCardsMinted", 
       args: [], 
@@ -88,7 +85,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
 
   const transferCard = useContractWrite(
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "safeTransferFrom", 
       args: [address, customerAddress,  Number(lastCardTransferred) + 1, 1, ""], 

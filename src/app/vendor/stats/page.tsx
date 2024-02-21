@@ -7,32 +7,26 @@ import { Status, Transaction } from "@/types";
 import { Log } from "viem";
 import { parseEthAddress, parseTransferSingleLogs, parseTransferBatchLogs, parseBigInt } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
-import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { 
-  useContractWrite, 
-  useWaitForTransaction, 
   useAccount, 
-  useContractRead, 
   usePublicClient 
 } from "wagmi";
-import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
 import MintPoints from "../components/MintPoints";
 import MintCards from "../components/MintCards";
 import { useAppSelector } from "@/redux/hooks";
-import { progAddress } from '@/context/constants';
+ 
 
 export default function Page() {
   const [modal, setModal] = useState<'points' | 'cards' | undefined>()  
   const [loyaltyPoints, setLoyaltyPoints] = useState<Number>()
   const [cardsMinted, setCardsMinted] = useState<Number>()
-  // const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient(); 
   const { address } = useAccount() 
   const [ status, setStatus ] = useState<Status>('isIdle'); 
   const [transactions, setTransactions] = useState<Transaction[] | undefined >()
-  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
 
   console.log("selectedLoyaltyProgram: ", selectedLoyaltyProgram)
 
@@ -82,7 +76,7 @@ export default function Page() {
 
     const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'TransferSingle', 
       args: {
         from: parseEthAddress(address)
@@ -93,7 +87,7 @@ export default function Page() {
 
     const transferMintPointsLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'TransferSingle', 
       args: {
         to: parseEthAddress(address)
@@ -104,7 +98,7 @@ export default function Page() {
 
     const transferMintCardLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'TransferBatch', 
       args: {
         to: parseEthAddress(address)

@@ -17,7 +17,6 @@ import { useDispatch } from "react-redux";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import Image from "next/image";
-import { progAddress } from "@/context/constants";
 
 type setSelectedVoucherProps = {
   token: LoyaltyToken; 
@@ -26,12 +25,12 @@ type setSelectedVoucherProps = {
 
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
   const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
   const [ claimedVouchers, setClaimedVouchers ] = useState<LoyaltyToken[] | undefined>() 
   const [selectedVoucher, setSelectedVoucher] = useState<setSelectedVoucherProps | undefined>() 
   const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()
-  // const { progAddress } = useUrlProgramAddress()
   const {address} = useAccount() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
@@ -43,7 +42,7 @@ export default function Page() {
     console.log("getLoyaltyCardPoints called") 
       if (selectedLoyaltyCard) {
       const loyaltyCardPointsData = await publicClient.readContract({
-        address: parseEthAddress(progAddress), 
+        address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         abi: loyaltyProgramAbi,
         functionName: 'getBalanceLoyaltyCard', 
         args: [ selectedLoyaltyCard?.cardAddress ]
@@ -57,9 +56,9 @@ export default function Page() {
   }
   
   useEffect(() => {
-    if (!loyaltyPoints && progAddress) getLoyaltyCardPoints()
+    if (!loyaltyPoints && selectedLoyaltyProgram?.programAddress) getLoyaltyCardPoints()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ , loyaltyPoints, progAddress ])
+  }, [ , loyaltyPoints, selectedLoyaltyProgram?.programAddress ])
 
   const getClaimedLoyaltyVouchers = async () => {
     console.log("getClaimedLoyaltyVouchers called")

@@ -33,11 +33,16 @@ export const useLoyaltyPrograms = () => {
   console.log("data: ", data)
   console.log("loyaltyPrograms: ", loyaltyPrograms)
 
-  const fetchPrograms = () => {
+  const fetchPrograms = (requestedPrograms?: LoyaltyProgram[] ) => {
     setStatus("isIdle")
     setData(undefined)
     setLoyaltyPrograms(undefined)
-    getLoyaltyProgramAddresses()
+    if (requestedPrograms) {
+      setData(requestedPrograms)
+      statusAtAddresses.current = "isSuccess"
+    } else {
+      getLoyaltyProgramAddresses()
+    }
   }
 
   const getLoyaltyProgramAddresses = async () => {
@@ -86,6 +91,28 @@ export const useLoyaltyPrograms = () => {
       }
     }
   }
+
+// NB: NEEDS TO BE INTEGRATED HERE. £todo 
+  // const getLoyaltyProgramOwner = async () => {
+  //   // console.log("getLoyaltyProgramOwner called. selectedLoyaltyProgram?.programAddress:", selectedLoyaltyProgram?.programAddress)
+
+  //   if (selectedLoyaltyProgram?.programAddress) {
+
+  //     try { 
+  //       const owner: unknown = await publicClient.readContract({
+  //         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+  //         abi: loyaltyProgramAbi,
+  //         functionName: 'getOwner'
+  //       })
+
+  //       console.log("getLoyaltyProgramOwner: ", owner)
+
+  //       setLoyaltyProgram({...loyaltyProgram, programAddress: parseEthAddress(selectedLoyaltyProgram?.programAddress), programOwner: parseEthAddress(owner)})
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
+  // }
 
   const getLoyaltyProgramsMetaData = async () => {
     statusAtMetadata.current = "isLoading" 
