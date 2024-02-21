@@ -50,7 +50,7 @@ export const ModalMain = ({
 
   useEffect(() => {
     if (!loyaltyPrograms && selectedLoyaltyProgram) fetchPrograms([selectedLoyaltyProgram])
-  }, [, loyaltyPrograms, selectedLoyaltyProgram ])
+  }, [, loyaltyPrograms, selectedLoyaltyProgram, userLoggedIn ])
 
   console.log("status: ", status)
 
@@ -129,7 +129,7 @@ export const ModalMain = ({
 
   useEffect(() => {
     if (selectedLoyaltyProgram && status == "isSuccess" && loyaltyPrograms) dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
-  }, [selectedLoyaltyProgram, status, loyaltyPrograms ])
+  }, [selectedLoyaltyProgram, status, loyaltyPrograms, userLoggedIn ])
 
   useEffect(() => {
     if (
