@@ -44,12 +44,12 @@ export default function Page()  {
 
   return (
     <div className="w-full h-full grid grid-cols-1 gap-1 ">
-      {!selectedLoyaltyProgram ? 
+      {/* {!selectedLoyaltyProgram ? 
         <Suspense fallback={<UrlToReduxFallback />}>
           <UrlToRedux /> 
         </Suspense>
-      : 
-      <>
+      :  */}
+      {/* <> */}
         <TitleText 
           title = "Request Loyalty Points"
           subtitle="Show this QR code to receive points" 
@@ -91,8 +91,8 @@ export default function Page()  {
         </div> 
 
         <div className="h-14"/> 
-      </>
-    }
+      {/* </> */}
+    {/* } */}
 
     </div>  
     )

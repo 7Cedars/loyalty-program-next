@@ -1,28 +1,35 @@
 'use client'
  
-import { useUrlProgramAddress } from '@/app/hooks/useUrl'
-import { LoyaltyProgram } from '@/types'
-import { useLoyaltyPrograms } from '@/app/hooks/useLoyaltyPrograms'
 import { parseEthAddress } from '@/app/utils/parsers'
 import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer'
 import { useDispatch } from 'react-redux'
+import { useSearchParams } from 'next/navigation'
+import Image from 'next/image'
  
 export default function UrlToRedux() {
-  const {progAddress} = useUrlProgramAddress()
-  const { status, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms()
-  const loyaltyProgramAddress: LoyaltyProgram = {programAddress: parseEthAddress(progAddress)}
+  const params = useSearchParams();
   const dispatch = useDispatch() 
+  const progAddress = params.get('prog')
 
-  console.log("loyaltyProgramAddress: ", loyaltyProgramAddress)
+  console.log("progAddress: ", progAddress)
 
-  if (loyaltyProgramAddress) fetchPrograms([loyaltyProgramAddress])
-
-  if (status == "isSuccess" && loyaltyPrograms) {
-    console.log("loyaltyPrograms: ", loyaltyPrograms)
-    dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
+  if (progAddress) {
+    dispatch(selectLoyaltyProgram({programAddress: parseEthAddress(progAddress)}))
   }
 
-  return <> Loading .... </>
+  return (
+    <div className="flex items-center justify-center h-full">
+        <div className="grow flex items-center justify-center text-slate-800 dark:text-slate-200 z-40">
+          <Image
+            className="rounded-lg mx-3 animate-spin"
+            width={60}
+            height={60}
+            src={"/images/loading2.svg"}
+            alt="Loading icon"
+          />
+        </div>
+      </div>
+  )
 }
 
 

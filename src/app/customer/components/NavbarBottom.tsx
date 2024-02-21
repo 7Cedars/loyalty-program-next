@@ -12,6 +12,7 @@ import { useScreenDimensions } from '../../hooks/useScreenDimensions';
 import { useAccount } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { usePathname } from 'next/navigation';
+import { useAppSelector } from '@/redux/hooks';
  
 
 const NavbarBottom = ( ) => {
@@ -19,6 +20,7 @@ const NavbarBottom = ( ) => {
   const layoutLinks: string = 'py-1 px-6 text-slate-400 aria-selected:text-slate-800 aria-selected:text-slate-800 dark:text-slate-600 dark:aria-selected:text-slate-200 dark:aria-selected:text-slate-200 grid grid-cols-1'
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'
   const layoutIcons: string = 'h-7 w-7'
+  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { address } = useAccount() 
   const { open } = useWeb3Modal()
   const path = usePathname()
@@ -30,7 +32,7 @@ const NavbarBottom = ( ) => {
     <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-slate-100/75 dark:bg-slate-900/75 text-sm border-t border-gray-400 px-4">
       
         <Link 
-          href={'/customer/home'}  
+          href={`/customer/home?prog=${selectedLoyaltyProgram?.programAddress}`}  
           className={layoutLinks}
           aria-selected={path == `/customer/home`}> 
           <div className='col-span-1 grid text-xs justify-items-center'> 
@@ -42,7 +44,7 @@ const NavbarBottom = ( ) => {
           </div> 
         </Link>
         <Link 
-          href={'/customer/claim' } 
+          href={`/customer/claim?prog=${selectedLoyaltyProgram?.programAddress}` } 
           className={layoutLinks}
           aria-selected={path == `/customer/claim`}> 
           <div className={layoutIconBox}> 
@@ -54,7 +56,7 @@ const NavbarBottom = ( ) => {
           </div> 
         </Link>
         <Link 
-          href={'/customer/card' }  
+          href={`/customer/card?prog=${selectedLoyaltyProgram?.programAddress}` }  
           className={layoutLinks}
           aria-selected={path == `/customer/card`}>  
           <div className={layoutIconBox}> 
@@ -66,7 +68,7 @@ const NavbarBottom = ( ) => {
           </div> 
         </Link>
         <Link 
-          href={'/customer/transactions'} 
+          href={`/customer/transactions?prog=${selectedLoyaltyProgram?.programAddress}`} 
           className={layoutLinks}
           aria-selected={path == `/customer/transactions`}>  
           <div className={layoutIconBox}> 

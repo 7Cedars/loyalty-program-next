@@ -13,6 +13,6 @@ export function getProgAddressFromUseSearchParams(
     address = parseEthAddress(progParam);
   }
   return {
-    progAddress: progParam,
+    progAddress: address,
   };
 }

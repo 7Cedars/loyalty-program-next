@@ -5,7 +5,7 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { NotificationDialog } from "../../ui/notificationDialog";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { 
   EthAddress, 
   LoyaltyProgram, 
@@ -25,6 +25,9 @@ import {
 } from "@/app/utils/parsers";
 import { Button } from "@/app/ui/Button";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
+import UrlToRedux from "./UrlToRedux";
+import { useLoyaltyPrograms } from "@/app/hooks/useLoyaltyPrograms";
+import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 
 type ModalProps = {
   children: any;
@@ -39,21 +42,20 @@ export const ModalMain = ({
   const { address }  = useAccount()
   const publicClient = usePublicClient(); 
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const { status, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms() 
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
-  const [ loyaltyProgram, setLoyaltyProgram ] = useState<LoyaltyProgram>() 
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[]>() 
   const [ showRequestCard, setShowRequestCard ] = useState<boolean>(false)
-  const [ toggleViz, setToggleViz ] = useState<number>(1)
 
-  /////////////////////////////////////////////////// 
-  /// Loading data loyalty cards owned by address /// 
-  ///////////////////////////////////////////////////  
+  useEffect(() => {
+    if (!loyaltyPrograms) fetchPrograms()
+  }, [, loyaltyPrograms ])
+
+  console.log("status: ", status)
 
   const getLoyaltyCardIds = async () => {
-    // console.log("getLoyaltyCardIds called, address: ", address)
-
-    if (address != undefined) {
+    if (address != undefined && selectedLoyaltyProgram ) {
       const transferSingleData: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi,
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -82,7 +84,7 @@ export const ModalMain = ({
     let loyaltyCard: LoyaltyCard
     let loyaltyCardsUpdated: LoyaltyCard[] = []
 
-    if (loyaltyCards && loyaltyCards.length > 0 ) { 
+    if (loyaltyCards && loyaltyCards.length > 0  && selectedLoyaltyProgram ) { 
       try {
         for await (loyaltyCard of loyaltyCards) {
 
@@ -112,18 +114,22 @@ export const ModalMain = ({
   }
 
   useEffect(() => {
-    if (!loyaltyCards ) { getLoyaltyCardIds() } // check when address has no cards what happens..  
+    if (!loyaltyCards && selectedLoyaltyProgram) { getLoyaltyCardIds() } // check when address has no cards what happens..  
     if (
       loyaltyCards && 
       loyaltyCards.findIndex(loyaltyCard => loyaltyCard.cardAddress) === -1 
       ) { 
         getLoyaltyCardData() 
       } 
-  }, [ , loyaltyCards, address])
+  }, [ , loyaltyCards, selectedLoyaltyProgram ])
 
   useEffect(() => {
     if (loyaltyCards) { setLoyaltyCards(undefined) } 
   }, [ address ])
+
+  useEffect(() => {
+    if (selectedLoyaltyProgram && status == "isSuccess" && loyaltyPrograms) dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
+  }, [selectedLoyaltyProgram, status, loyaltyPrograms ])
 
   useEffect(() => {
     if (
@@ -132,94 +138,9 @@ export const ModalMain = ({
       ) { dispatch(selectLoyaltyCard(loyaltyCards[0])) } 
   }, [, loyaltyCards, address])
 
-
-  ///////////////////////////////////////////// 
-  /// Loading data selected loyalty Program /// 
-  ///////////////////////////////////////////// 
-
-  // // console.log("loyaltyProgram UPDATES: ", loyaltyProgram)
-
-  // const getLoyaltyProgramUri = async () => {
-  //   console.log("getLoyaltyProgramsUris called. selectedLoyaltyProgram?.programAddress:", selectedLoyaltyProgram?.programAddress)
-
-  //   if (selectedLoyaltyProgram?.programAddress) {
-
-  //     try { 
-  //       const uri: unknown = await publicClient.readContract({
-  //         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-  //         abi: loyaltyProgramAbi,
-  //         functionName: 'uri',
-  //         args: [0]
-  //       })
-
-  //       setLoyaltyProgram({...loyaltyProgram, programAddress: parseEthAddress(selectedLoyaltyProgram?.programAddress), uri: parseUri(uri)})
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   }
-  // }
-
-  // const getLoyaltyProgramOwner = async () => {
-  //   // console.log("getLoyaltyProgramOwner called. selectedLoyaltyProgram?.programAddress:", selectedLoyaltyProgram?.programAddress)
-
-  //   if (selectedLoyaltyProgram?.programAddress) {
-
-  //     try { 
-  //       const owner: unknown = await publicClient.readContract({
-  //         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-  //         abi: loyaltyProgramAbi,
-  //         functionName: 'getOwner'
-  //       })
-
-  //       console.log("getLoyaltyProgramOwner: ", owner)
-
-  //       setLoyaltyProgram({...loyaltyProgram, programAddress: parseEthAddress(selectedLoyaltyProgram?.programAddress), programOwner: parseEthAddress(owner)})
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   }
-  // }
-
-  // const getLoyaltyProgramMetaData = async () => {
-  //   // console.log("getLoyaltyProgramMetaData called. selectedLoyaltyProgram?.programAddress:", selectedLoyaltyProgram?.programAddress )
-
-  //   if (loyaltyProgram) {
-  //     try {
-  //         const fetchedMetadata: unknown = await(
-  //           await fetch(parseUri(loyaltyProgram?.uri))
-  //           ).json()
-            
-  //           setLoyaltyProgram({...loyaltyProgram, metadata: parseMetadata(fetchedMetadata)})
-          
-  //       } catch (error) {
-  //         console.log(error)
-  //     }
-  //   }
-  // }
-
-  // useEffect(() => {
-
-  //   if (!loyaltyProgram ) { getLoyaltyProgramUri() } // check when address has no deployed programs what happens..  
-  //   if (
-  //     loyaltyProgram && 
-  //     !loyaltyProgram.metadata  
-  //     ) { getLoyaltyProgramMetaData() } 
-  //   if (
-  //     loyaltyProgram && 
-  //     !loyaltyProgram.programOwner 
-  //     ) { getLoyaltyProgramOwner() }
-  //   if (
-  //     loyaltyProgram 
-  //     ) { dispatch(selectLoyaltyProgram(loyaltyProgram))}
-  
-  // }, [, selectedLoyaltyProgram?.programAddress, loyaltyProgram, showRequestCard])
-
-  console.log("loyaltyProgram data: ", loyaltyProgram)
-
   useEffect(() => {
     if (address != userLoggedIn) {
       setUserLoggedIn(undefined)
-      setLoyaltyProgram(undefined)
       dispatch(resetLoyaltyCard(true))
     }
 
@@ -244,22 +165,24 @@ export const ModalMain = ({
 
   }, [ , address])
 
-  useEffect(() => {
-    
-    if (modalVisible == true)  { setToggleViz(0) } 
-    else { setToggleViz(1) }  
-
-  }, [modalVisible])
-
   console.log(
     "pre render console log", 
     "selectedLoyaltyCard: ", selectedLoyaltyCard, 
-    "loyaltyCards: ", loyaltyCards
+    "loyaltyCards: ", loyaltyCards, 
+    "selectedLoyaltyProgram: ", selectedLoyaltyProgram
   )
 
-  return (
-    <div className="relative grow w-full h-full max-w-4xl z-1">
+  function UrlToReduxFallback() {
+    return <>placeholder</>
+  }
 
+  return (
+    !selectedLoyaltyProgram  ? 
+      <Suspense fallback={<UrlToReduxFallback />}>
+        <UrlToRedux /> 
+      </Suspense>
+       :
+    <div className="relative grow w-full h-full max-w-4xl z-1">
       <div className="flex flex-col pt-14 h-full z-3">
         { selectedLoyaltyProgram?.metadata ? 
           <Image
@@ -269,7 +192,9 @@ export const ModalMain = ({
           src={selectedLoyaltyProgram.metadata.imageUri} 
           alt="Loyalty Card Token"
           />
-        : null }        
+        : 
+          null 
+      }        
         <NotificationDialog/> 
 
         <div className="flex flex-col h-full justify-end mt-2 z-10"> 
@@ -333,6 +258,6 @@ export const ModalMain = ({
               </div>
           </div>
       </div>
-  </div> 
+    </div>
 )};
 
