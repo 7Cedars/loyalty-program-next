@@ -25,7 +25,6 @@ import {
 } from "@/app/utils/parsers";
 import { Button } from "@/app/ui/Button";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
-import UrlToRedux from "./UrlToRedux";
 import { useLoyaltyPrograms } from "@/app/hooks/useLoyaltyPrograms";
 import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import NavbarTop from "./NavbarTop";
@@ -50,11 +49,7 @@ export const DynamicLayout = ({
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[]>() 
   const [ showRequestCard, setShowRequestCard ] = useState<boolean>(false)
 
-  useEffect(() => {
-    if (!loyaltyPrograms && selectedLoyaltyProgram) fetchPrograms([selectedLoyaltyProgram])
-  }, [, loyaltyPrograms, selectedLoyaltyProgram ])
-
-  console.log("status: ", status)
+  console.log("loyaltyPrograms @DynamicLayout: ", loyaltyPrograms)
 
   const getLoyaltyCardIds = async () => {
     if (address != undefined && selectedLoyaltyProgram ) {

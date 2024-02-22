@@ -7,10 +7,9 @@ import { TitleText } from "../../ui/StandardisedFonts";
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/redux/hooks';
 import { resetLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
-import UrlToRedux from "../components/UrlToRedux";
 import { DynamicLayout } from "../components/DynamicLayout";
 
 export default function Page()  {

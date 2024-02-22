@@ -7,6 +7,7 @@ import UrlToRedux from "./components/UrlToRedux"
 import Image from "next/image"
 import { useLoyaltyPrograms } from "../hooks/useLoyaltyPrograms"
 import { Button } from "../ui/Button";
+import Link from "next/link";
 
 // NB: Notice the use of suspense to load url into redux. 
 // This is done because this version of Wagmi (which is needed with this version of Web3Modal) cannot deal with 
@@ -34,9 +35,23 @@ export default function Page()  {
 
   return (
     <div className="w-full h-full flex grow">
-      <Suspense fallback={<UrlToReduxFallback />}>
-        <UrlToRedux /> 
-      </Suspense>
+      <div className="grid grid-cols-1 w-full justify-items-center content-center z-10">
+        <div className="w-64 h-48 grid grid-cols-1 text-slate-200 dark:text-slate-200 z-40 border-2 border-slate-200 bg-slate-700 ">
+          <Suspense fallback={<UrlToReduxFallback />}>
+            <UrlToRedux /> 
+          </Suspense>
+
+          <Link 
+          href="/customer/home" 
+          className="h-16 flex mx-3 opacity-100 aria-hidden:opacity-0 transition-all delay-300 duration-1000 z-15"
+          aria-hidden = {status == "isSuccess"}
+          >
+          <Button appearance="grayEmptyLight">
+            Enter Loyalty Card
+          </Button>
+        </Link> 
+      </div>
+      </div>
 
       <Image
         className="absolute inset-0 z-0 opacity-100 aria-hidden:opacity-0 transition-all delay-300 duration-1000"
@@ -46,8 +61,7 @@ export default function Page()  {
         alt="Loyalty Card Token"
         aria-hidden = {selectedLoyaltyProgram == undefined}
       />
-
-      </div> 
+    </div> 
   )
       {/* <> */}
         
