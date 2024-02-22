@@ -7,10 +7,12 @@ import { useEffect, useState } from 'react';
 import { useWeb3ModalState } from '@web3modal/wagmi/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { usePathname } from 'next/navigation';
+import { useAppSelector } from '@/redux/hooks';
  
 const NavbarTop = ( ) => {
   const dimensions = useScreenDimensions();
   const layoutLinks: string = 'p-1 px-6 text-slate-400 aria-selected:text-slate-800'
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { address } = useAccount()
   const { selectedNetworkId } = useWeb3ModalState() 
   const [text, setText] = useState('')
@@ -32,25 +34,25 @@ const NavbarTop = ( ) => {
       <header className="absolute top-0 z-10 flex justify-between h-18 w-full text-sm border-b border-gray-400 bg-slate-50 px-6">
         <div className="flex divide-x p-3 divide-gray-400">
           <Link 
-            href={`/customer/home`} 
+            href={`/customer/home?${selectedLoyaltyProgram?.programAddress}`} 
             className={layoutLinks}
             aria-selected={path == `/customer/home`}>   
               Home 
           </Link>
           <Link 
-            href={`/customer/claim` }  
+            href={`/customer/claim?${selectedLoyaltyProgram?.programAddress}` }  
             className={layoutLinks}
             aria-selected={path == `/customer/claim`}>   
               Claim Gifts 
           </Link>
           <Link 
-            href={`/customer/card` }  
+            href={`/customer/card?${selectedLoyaltyProgram?.programAddress}` }  
             className={layoutLinks}
             aria-selected={path == `/customer/card`}>   
               Your Card 
           </Link>
           <Link 
-            href={`/customer/transactions`}  
+            href={`/customer/transactions?${selectedLoyaltyProgram?.programAddress}`}  
             className={layoutLinks}
             aria-selected={path == `/customer/transactions`}>   
               Transactions 

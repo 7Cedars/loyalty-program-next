@@ -7,7 +7,6 @@ import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 import { useLoyaltyPrograms } from '@/app/hooks/useLoyaltyPrograms'
-import { Button } from '@/app/ui/Button'
  
 export default function UrlToRedux() {
   const params = useSearchParams();
@@ -28,6 +27,7 @@ export default function UrlToRedux() {
   }, [status])
 
   return (
+    <>
     <Image
       className="rounded-lg m-6 animate-spin opacity-100 aria-hidden:opacity-0"
       width={45}
@@ -36,6 +36,17 @@ export default function UrlToRedux() {
       alt="Loading icon"
       aria-hidden = {status == "isSuccess"}
     />
+    {loyaltyPrograms ? 
+    <div>
+      {loyaltyPrograms[0].programAddress}
+      {loyaltyPrograms[0].uri}
+      {loyaltyPrograms[0].programOwner}
+    </div>
+    :
+    null
+    }
+     
+    </>
   )
 }
 
