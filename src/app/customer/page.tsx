@@ -34,22 +34,50 @@ export default function Page()  {
   console.log("loyaltyPrograms: ", loyaltyPrograms, "status: ", status)
 
   return (
-    <div className="w-full h-full flex grow">
-      <div className="grid grid-cols-1 w-full justify-items-center content-center z-10">
-        <div className="w-64 h-48 grid grid-cols-1 text-slate-200 dark:text-slate-200 z-40 border-2 border-slate-200 bg-slate-700 ">
-          <Suspense fallback={<UrlToReduxFallback />}>
-            <UrlToRedux /> 
-          </Suspense>
+    <div className="w-full h-full flex">
+      <div className="grid grid-cols-1 w-full h-full justify-items-center content-center z-10">
+
+        <div className="w-68 h-96 m-3 p-6 grid grid-cols-1 justify-items-center content-center  text-slate-800 dark:text-slate-200 bg-slate-200 dark:bg-slate-800 backdrop-blur-xl shadow-xl">
+
+        <div className="grid grid-cols-1 gap-4 m-3 justify-items-center content-center">
+          <div className="text-center text-lg text-bold">
+              Say hi to Loyal 
+          </div>
+         
+          <Image
+            className=""
+            width={100}
+            height={200}
+            src={"/images/iconLoyaltyProgram.svg"} 
+            alt="Icon Loyalty Program"
+          />
+           
+            
+            <div className="text-center">
+              A one-stop, mobile first, solution for customer loyalty programs.
+            </div>
+          </div>
+
+          { selectedLoyaltyProgram == undefined ? 
+            <Suspense fallback={<UrlToReduxFallback />}>
+              <UrlToRedux /> 
+            </Suspense>
+          :
 
           <Link 
-          href="/customer/home" 
-          className="h-16 flex mx-3 opacity-100 aria-hidden:opacity-0 transition-all delay-300 duration-1000 z-15"
-          aria-hidden = {status == "isSuccess"}
-          >
-          <Button appearance="grayEmptyLight">
-            Enter Loyalty Card
-          </Button>
-        </Link> 
+            href="/customer/home" 
+            className="h-16 flex mx-3 m-6  transition-all delay-500 duration-1000 z-15"
+            >
+            <div 
+              className=" opacity-100 aria-hidden:opacity-0"
+              aria-hidden = {selectedLoyaltyProgram == undefined}
+              >
+              <Button appearance="grayEmpty">
+                Enter Loyalty Card
+              </Button>
+            </div>
+          </Link> 
+          }
       </div>
       </div>
 

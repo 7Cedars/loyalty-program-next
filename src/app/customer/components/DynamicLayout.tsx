@@ -29,6 +29,7 @@ import { useLoyaltyPrograms } from "@/app/hooks/useLoyaltyPrograms";
 import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import NavbarTop from "./NavbarTop";
 import NavbarBottom from "./NavbarBottom";
+import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 
 type ModalProps = {
   children: any;
@@ -39,12 +40,14 @@ export const DynamicLayout = ({
 }: ModalProps) => {
 
   const dispatch = useAppDispatch()
-  const [ modalVisible, setModalVisible ] = useState<boolean>(true); 
+  // const [ modalVisible, setModalVisible ] = useState<boolean>(true); 
   const { address }  = useAccount()
   const publicClient = usePublicClient(); 
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const { status, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms() 
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+
+  const { modalVisible } = useAppSelector(state => state.userInput )
+  const { status, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms()   
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[]>() 
   const [ showRequestCard, setShowRequestCard ] = useState<boolean>(false)
@@ -124,9 +127,9 @@ export const DynamicLayout = ({
     if (loyaltyCards) { setLoyaltyCards(undefined) } 
   }, [ address ])
 
-  useEffect(() => {
-    if (selectedLoyaltyProgram && status == "isSuccess" && loyaltyPrograms) dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
-  }, [selectedLoyaltyProgram, status, loyaltyPrograms, userLoggedIn ])
+  // useEffect(() => {
+  //   if (selectedLoyaltyProgram && status == "isSuccess" && loyaltyPrograms) dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
+  // }, [selectedLoyaltyProgram, status, loyaltyPrograms, userLoggedIn ])
 
   useEffect(() => {
     if (
@@ -136,10 +139,10 @@ export const DynamicLayout = ({
   }, [, loyaltyCards, address])
 
   useEffect(() => {
-    if (address != userLoggedIn) {
-      setUserLoggedIn(undefined)
-      dispatch(resetLoyaltyCard(true))
-    }
+    // if (address != userLoggedIn) {
+    //   setUserLoggedIn(undefined)
+    //   dispatch(resetLoyaltyCard(true))
+    // }
 
     if (!address) {
       dispatch(notification({
@@ -196,7 +199,7 @@ export const DynamicLayout = ({
                 <button 
                   className="grow-0 z-5 flex justify-center text-slate-800 dark:text-slate-200 font-bold pt-2 px-2"
                   type="submit"
-                  onClick={() => setModalVisible(!modalVisible)} // should be true / false
+                  onClick={() => dispatch(updateModalVisible(!modalVisible))} // should be true / false
                   >
                     {modalVisible ? 
                       <ChevronUpIcon
@@ -244,7 +247,15 @@ export const DynamicLayout = ({
                         <div className="h-16"/> 
                       </div>
                     :
-                    <div> Something went wrong, no loyalty card selected. </div> 
+                    <div className="grid grid-cols-1 w-full h-full justify-items-center content-center text-slate-200 "> 
+                      <Image
+                        className="rounded-lg mx-3 animate-spin"
+                        width={30}
+                        height={30}
+                        src={"/images/loading2.svg"}
+                        alt="Loading icon"
+                      />
+                    </div> 
                   }
               </div>
               </div>
