@@ -31,7 +31,7 @@ type ModalProps = {
   children: any;
 };
 
-export const ModalMain = ({
+export const DynamicLayout = ({
   children 
 }: ModalProps) => {
 
@@ -45,9 +45,9 @@ export const ModalMain = ({
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
   // const { putselectedLoyaltyProgram?.programAddressInUrl } = useUrlProgramAddress()
 
-  console.log("address at ModalMain: ", address)
-  console.log("selectedLoyaltyProgram at ModalMain: ", selectedLoyaltyProgram)
-  console.log("userLoggedIn at ModalMain: ", selectedLoyaltyProgram)
+  console.log("address at DynamicLayout: ", address)
+  console.log("selectedLoyaltyProgram at DynamicLayout: ", selectedLoyaltyProgram)
+  console.log("userLoggedIn at DynamicLayout: ", selectedLoyaltyProgram)
   console.log("modalVisible: ", modalVisible) 
 
   useEffect(() => {

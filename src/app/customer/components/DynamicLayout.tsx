@@ -28,12 +28,14 @@ import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import UrlToRedux from "./UrlToRedux";
 import { useLoyaltyPrograms } from "@/app/hooks/useLoyaltyPrograms";
 import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
+import NavbarTop from "./NavbarTop";
+import NavbarBottom from "./NavbarBottom";
 
 type ModalProps = {
   children: any;
 };
 
-export const ModalMain = ({
+export const DynamicLayout = ({
   children 
 }: ModalProps) => {
 
@@ -172,16 +174,11 @@ export const ModalMain = ({
     "selectedLoyaltyProgram: ", selectedLoyaltyProgram
   )
 
-  function UrlToReduxFallback() {
-    return <>placeholder</>
-  }
-
   return (
-    !selectedLoyaltyProgram  ? 
-      <Suspense fallback={<UrlToReduxFallback />}>
-        <UrlToRedux /> 
-      </Suspense>
-       :
+    <>
+    <NavbarTop/>
+      <div className="grow justify-center w-full h-full max-w-4xl overflow-y-scroll">
+
     <div className="relative grow w-full h-full max-w-4xl z-1">
       <div className="flex flex-col pt-14 h-full z-3">
         { selectedLoyaltyProgram?.metadata ? 
@@ -259,5 +256,8 @@ export const ModalMain = ({
           </div>
       </div>
     </div>
+    <NavbarBottom/>
+  </div>
+  </>
 )};
 

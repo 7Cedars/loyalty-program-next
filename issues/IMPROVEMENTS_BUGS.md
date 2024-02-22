@@ -42,7 +42,7 @@ Even though repository is public, For now, it is for personal use only.
 - [x]  @Everywhere: Use sleet version of button throughout app (consistency with landing page).  
 - [x]  @Vendor, Home: add mint card button + how many cards left line. 
 - [ ]  @Vendor, QrReader, SendPoints: add mint points button + how many points left line. 
-- [x]  @ModalMain: can I turn off scrolling altogether? 
+- [x]  @DynamicLayout: can I turn off scrolling altogether? 
 - [x]  @LandingPage: create several different images through the page. -- show off app. 
 - [ ]  Clean up redux - modal visibily can be removed completely. 
 - [x]  @LandingPage: visit button should be simple link / same with get started button. OR make whole button a link! 

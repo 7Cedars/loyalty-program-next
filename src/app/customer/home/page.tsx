@@ -1,15 +1,6 @@
 
 "use client"; 
 
-// NB: Notice the use of suspense to load url into redux. 
-// This is done because this version of Wagmi (which is needed with this version of Web3Modal) cannot deal with 
-// Next 'Entire page deopted into client-side rendering' error; 
-// which in turn is caused by the use of useSearchParams. I causes web3modal to not show up. As I used useSearchParam in 
-// each and every page - web3modal never showed up. 
-// see description of this bug here: https://github.com/WalletConnect/web3modal/issues/1386 
-// As a solution I create a single component that reads url once, and then transfers it to redux. 
-// see this solution here (from next documentation): https://nextjs.org/docs/messages/deopted-into-client-rendering
-
 import QRCode from "react-qr-code";
 import { Button } from "@/app/ui/Button";
 import { TitleText } from "../../ui/StandardisedFonts";
@@ -20,6 +11,7 @@ import { Suspense, useEffect } from "react";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import UrlToRedux from "../components/UrlToRedux";
+import { DynamicLayout } from "../components/DynamicLayout";
 
 export default function Page()  {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
@@ -38,18 +30,9 @@ export default function Page()  {
     }
   }, [pointsReceived])
 
-  function UrlToReduxFallback() {
-    return <>placeholder</>
-  }
-
   return (
+    <DynamicLayout>
     <div className="w-full h-full grid grid-cols-1 gap-1 ">
-      {/* {!selectedLoyaltyProgram ? 
-        <Suspense fallback={<UrlToReduxFallback />}>
-          <UrlToRedux /> 
-        </Suspense>
-      :  */}
-      {/* <> */}
         <TitleText 
           title = "Request Loyalty Points"
           subtitle="Show this QR code to receive points" 
@@ -95,5 +78,6 @@ export default function Page()  {
     {/* } */}
 
     </div>  
+    </DynamicLayout>
     )
   }

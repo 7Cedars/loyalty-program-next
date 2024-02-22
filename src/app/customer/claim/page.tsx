@@ -19,6 +19,7 @@ import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
+import { DynamicLayout } from "../components/DynamicLayout";
 
 
 type setSelectedTokenProps = {
@@ -114,6 +115,7 @@ export default function Page() {
   }, [tokenReceived])
 
   return (
+    <DynamicLayout>
      <div className="w-full h-full grid grid-cols-1 gap-1 content-start overflow-auto">
 
       <div className="h-30">
@@ -181,6 +183,7 @@ export default function Page() {
     
     
     </div> 
+  </DynamicLayout>
     
   );
 }

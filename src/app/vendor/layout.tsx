@@ -4,7 +4,7 @@
 import '../globals.css'
 import NavbarTop from "./components/NavbarTop"; 
 import NavbarBottom from './components/NavbarBottom';
-import { ModalMain } from './components/ModalMain';
+import { DynamicLayout } from './components/DynamicLayout';
 import { Web3Modal } from '@/context/Web3Modal';
 
 export default function layout({
@@ -19,9 +19,9 @@ export default function layout({
       {/* <Web3Modal>  */}
         <NavbarTop/>
           <div className="absolute flex justify-center w-full h-full max-w-4xl overflow-hidden bg-slate-200 dark:bg-slate-800 ">  
-              <ModalMain>
+              <DynamicLayout>
                 {children}
-              </ModalMain>
+              </DynamicLayout>
               <NavbarBottom/>
             </div>
         {/* </Web3Modal> */}

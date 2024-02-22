@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import Image from "next/image";
+import { DynamicLayout } from "../components/DynamicLayout";
 
 type setSelectedVoucherProps = {
   token: LoyaltyToken; 
@@ -136,6 +137,7 @@ export default function Page() {
   }, [tokenSent])
 
   return (
+    <DynamicLayout>
      <div className=" w-full h-full flex flex-col content-start overflow-auto">
 
       <div className="h-fit m-3 break-words"> 
@@ -205,7 +207,7 @@ export default function Page() {
         : null  
     }
     </div> 
-    
+    </DynamicLayout>
   );
 }
 
