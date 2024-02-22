@@ -132,7 +132,7 @@ export const DynamicLayout = ({
       selectedLoyaltyProgram.programAddress && 
       !selectedLoyaltyProgram.uri
       ) fetchPrograms([{programAddress: selectedLoyaltyProgram.programAddress}]) 
-  }, [ , selectedLoyaltyProgram ])
+  }, [ , selectedLoyaltyProgram, address ])
 
   useEffect(() => { 
     if (
