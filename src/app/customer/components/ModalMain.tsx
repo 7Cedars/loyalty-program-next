@@ -50,7 +50,7 @@ export const ModalMain = ({
 
   useEffect(() => {
     if (!loyaltyPrograms && selectedLoyaltyProgram) fetchPrograms([selectedLoyaltyProgram])
-  }, [, loyaltyPrograms, selectedLoyaltyProgram, userLoggedIn ])
+  }, [, loyaltyPrograms, selectedLoyaltyProgram ])
 
   console.log("status: ", status)
 

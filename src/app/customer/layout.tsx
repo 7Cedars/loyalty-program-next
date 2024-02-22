@@ -6,28 +6,22 @@ import NavbarTop from "./components/NavbarTop";
 import NavbarBottom from './components/NavbarBottom';
 import { ModalMain } from './components/ModalMain';
 
-
 export default function layout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  
-  return (   
-    
- 
+
+  return (
     <div className="absolute flex h-full w-full grid grid-cols-1 justify-items-center bg-slate-100 overflow-hidden">
         <NavbarTop/>
-          <div className="grow justify-center w-full h-full max-w-4xl overflow-y-scroll">  
-            
+          <div className="grow justify-center w-full h-full max-w-4xl overflow-y-scroll">
               <ModalMain>
                 {children}
               </ModalMain>
-            
-              <NavbarBottom/>
-            </div>
+            <NavbarBottom/>
+          </div>
       </div>
-
   )
 }
 

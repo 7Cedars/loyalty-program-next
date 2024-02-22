@@ -28,7 +28,7 @@ const NavbarTop = ( ) => {
   }, [selectedNetworkId, address])
 
     return (
-      dimensions.width < 896 ? 
+      dimensions.width < 896 && selectedLoyaltyProgram  ? 
       null 
       :
       <header className="absolute top-0 z-10 flex justify-between h-18 w-full text-sm border-b border-gray-400 bg-slate-50 px-6">
