@@ -30,7 +30,7 @@ export default function Page()  {
   }, [pointsReceived])
 
   return (
-    <DynamicLayout>
+    // <DynamicLayout>
     <div className="w-full h-full grid grid-cols-1 gap-1 ">
         <TitleText 
           title = "Request Loyalty Points"
@@ -83,6 +83,6 @@ export default function Page()  {
     {/* } */}
 
     </div>  
-    </DynamicLayout>
+    // </DynamicLayout>
     )
   }

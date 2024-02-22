@@ -3,7 +3,7 @@
 import { useAppSelector } from "@/redux/hooks"
 import { Suspense, useEffect, useRef } from "react"
 import { useDispatch } from "react-redux"
-import UrlToRedux from "./components/UrlToRedux"
+import UrlToRedux from "../customer/components/UrlToRedux"
 import Image from "next/image"
 import { useLoyaltyPrograms } from "../hooks/useLoyaltyPrograms"
 import { Button } from "../ui/Button";
@@ -65,7 +65,7 @@ export default function Page()  {
           
           <Link 
             href="/customer/home" 
-            className="h-fit flex mx-3 m-3 transition-all delay-500 duration-1000 z-15 "
+            className="h-fit flex mx-3 m-3 transition-all delay-500 duration-1000 z-50 "
             >
             <div 
               className=" flex opacity-100 aria-hidden:opacity-0 grid grid-cols-1 gap-1"

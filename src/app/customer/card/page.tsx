@@ -137,7 +137,7 @@ export default function Page() {
   }, [tokenSent])
 
   return (
-    <DynamicLayout>
+    // <DynamicLayout>
      <div className=" w-full h-full flex flex-col content-start overflow-auto">
 
       <div className="h-fit m-3 break-words"> 
@@ -207,7 +207,7 @@ export default function Page() {
         : null  
     }
     </div> 
-    </DynamicLayout>
+    // </DynamicLayout>
   );
 }
 

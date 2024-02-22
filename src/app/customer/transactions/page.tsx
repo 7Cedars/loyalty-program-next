@@ -143,7 +143,7 @@ export default function Page() {
   ])
 
   return (
-    <DynamicLayout>
+    // <DynamicLayout>
 
               <div className="grid grid-cols-1 h-full content-between">
                 <div className="grid grid-cols-1 h-full overflow-auto px-2 justify-items-center">
@@ -243,6 +243,6 @@ export default function Page() {
                     }
                   </div> 
               </div>
-        </DynamicLayout>
+        // </DynamicLayout>
   )
 }
