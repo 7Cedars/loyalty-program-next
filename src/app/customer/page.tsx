@@ -35,20 +35,19 @@ export default function Page()  {
   console.log("loyaltyPrograms: ", loyaltyPrograms, "status: ", status)
 
   return (
-    <div className="w-full h-full flex">
+    <div 
+      className="w-full h-full flex bg-slate-100 dark:bg-slate-900 aria-hidden:bg-opacity-0"
+      aria-hidden = {true}
+      >
       <div className="grid grid-cols-1 w-full h-full justify-items-center content-center z-10">
 
         <div className="w-68 h-full m-3 p-6 grid grid-cols-1 justify-items-center content-center text-slate-800 dark:text-slate-200 bg-slate-200 dark:bg-slate-800 backdrop-blur-xl shadow-xl">
 
-        <div className="grid h-full  grid-cols-1 gap-4 m-3 justify-items-center content-center">
-          <TitleText title="Say hi to Loyal" subtitle="A one-stop, mobile first, solution for customer loyalty programs." size={2} /> 
-          {/* // <div className="text-center text-2xl text-bold">
-          //     Say hi to Loyal 
-          // </div>
-          // <div className="text-center">
-              
-          //   </div> */}
-         
+        <div 
+          className="grid h-full grid-cols-1 gap-4 m-3 justify-items-center content-center aria-hidden:bg-opacity-0 transition-all delay-500 duration-1000"
+          aria-hidden = {selectedLoyaltyProgram == undefined}
+          >
+          <TitleText title="Say hi to Loyal" subtitle="A one-stop, mobile first, solution for customer loyalty programs." size={2} />          
           <Image
             className=""
             width={100}
@@ -56,8 +55,6 @@ export default function Page()  {
             src={"/images/iconLoyaltyProgram.svg"} 
             alt="Icon Loyalty Program"
           />
-
-            
           </div>
 
           { selectedLoyaltyProgram == undefined ? 
@@ -67,18 +64,18 @@ export default function Page()  {
           :
           <Link 
             href="/customer/home" 
-            className="h-fit flex mx-3 m-6  transition-all delay-500 duration-1000 z-15"
+            className="h-fit flex mx-3 m-6 transition-all delay-500 duration-1000 z-15 "
             >
             <div 
               className=" opacity-100 aria-hidden:opacity-0 grid grid-cols-1 gap-1"
               aria-hidden = {selectedLoyaltyProgram == undefined}
               >
-                <p className="text-bold text-center">
+                {/* <p className="text-bold text-xl text-center">
                   {selectedLoyaltyProgram.metadata?.name}
                 </p>
                 <p className="text-center">
                   {selectedLoyaltyProgram.metadata?.description}
-                </p>
+                </p> */}
                 {/* <p className="text-center">
                 {`Address: ${selectedLoyaltyProgram.programAddress.slice(0,6)}...${selectedLoyaltyProgram.programAddress.slice(36,42)}`} 
                 </p>
@@ -88,9 +85,11 @@ export default function Page()  {
                 </p>  */}
                 {/* : null  */}
                 {/* } */}
-              <Button appearance="grayEmpty">
-                Enter Loyalty Card
-              </Button>
+                <div className="m-3 flex ">
+                  <Button appearance="grayEmpty">
+                    Enter Loyalty Card
+                  </Button>
+                </div>
             </div>
           </Link> 
           }

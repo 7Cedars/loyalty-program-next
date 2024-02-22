@@ -15,7 +15,7 @@ import {
 } from "@/app/utils/parsers";
 
 export const useLoyaltyPrograms = () => {
-  const { address } = useAccount() 
+  // const { address } = useAccount() 
   const publicClient = usePublicClient(); 
 
   const [ status, setStatus ] = useState<Status>("isIdle")
@@ -26,7 +26,7 @@ export const useLoyaltyPrograms = () => {
   const [ data, setData ] = useState<LoyaltyProgram[] | undefined>() 
   const [ loyaltyPrograms, setLoyaltyPrograms ] = useState<LoyaltyProgram[]>() 
 
-  console.log("address: ", address)
+  // console.log("address: ", address)
   console.log("statusAt useLoyaltyProgram: ", {
     statusAtAddresses: statusAtAddresses.current,
     statusAtUri: statusAtUri.current, 
@@ -36,32 +36,33 @@ export const useLoyaltyPrograms = () => {
   console.log("data: ", data)
   console.log("loyaltyPrograms: ", loyaltyPrograms)
 
-  const fetchPrograms = (requestedPrograms?: LoyaltyProgram[] ) => {
+  const fetchPrograms = (requestedPrograms: LoyaltyProgram[] ) => {
     setStatus("isIdle")
     setData(undefined)
     setLoyaltyPrograms(undefined)
-    if (requestedPrograms) {
+    // if (requestedPrograms) {
       setData(requestedPrograms)
       statusAtAddresses.current = "isSuccess"
-    } else {
-      getLoyaltyProgramAddresses()
-    }
+    // } else {
+      // getLoyaltyProgramAddresses()
+    // }
   }
 
-  const getLoyaltyProgramAddresses = async () => {
-    statusAtAddresses.current = "isLoading"
+  // const getLoyaltyProgramAddresses = async () => {
+    
+  //   statusAtAddresses.current = "isLoading"
 
-    const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi, 
-        eventName: 'DeployedLoyaltyProgram', 
-        args: {owner: address}, 
-        fromBlock: 5200000n
-    });
+  //   const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
+  //     abi: loyaltyProgramAbi, 
+  //       eventName: 'DeployedLoyaltyProgram', 
+  //       args: {owner: address}, 
+  //       fromBlock: 5200000n
+  //   });
 
-    const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
-    if (loyaltyProgramAddresses) statusAtAddresses.current = "isSuccess"
-    setData(loyaltyProgramAddresses)
-  }
+  //   const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
+  //   if (loyaltyProgramAddresses) statusAtAddresses.current = "isSuccess"
+  //   setData(loyaltyProgramAddresses)
+  // }
 
   const getLoyaltyProgramsUris = async () => {
     statusAtUri.current = "isLoading" 

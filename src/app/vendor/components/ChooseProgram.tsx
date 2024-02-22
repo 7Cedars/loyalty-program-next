@@ -2,19 +2,40 @@
 
 import { LoyaltyProgram} from "@/types";
 import { TitleText } from "../../ui/StandardisedFonts";
-import { useEffect} from "react";
+import { useEffect, useState} from "react";
 import Image from "next/image";
 import { useDispatch } from 'react-redux';
 import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer';
 import { useLoyaltyPrograms } from '@/app/hooks/useLoyaltyPrograms';
+import { useAccount, usePublicClient } from "wagmi";
+import { loyaltyProgramAbi } from "@/context/abi";
+import { Log } from "viem";
+import { parseContractLogs } from "@/app/utils/parsers";
 
 export default function ChooseProgram()  {
   const { status, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms()
+  const [ addresses, setAddresses ] = useState<LoyaltyProgram[] | undefined>() 
+  const { address } = useAccount() 
+  const publicClient = usePublicClient(); 
   const dispatch = useDispatch() 
 
+  const getLoyaltyProgramAddresses = async () => {
+
+    const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyProgramAbi, 
+        eventName: 'DeployedLoyaltyProgram', 
+        args: {owner: address}, 
+        fromBlock: 5200000n
+    });
+
+    const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
+    setAddresses(loyaltyProgramAddresses)
+  }
+
   useEffect(() => {
-    if (!loyaltyPrograms) fetchPrograms()
-  }, [, loyaltyPrograms ]) 
+    if (address && !addresses)  getLoyaltyProgramAddresses() 
+    if (addresses && !loyaltyPrograms) fetchPrograms(addresses)
+  }, [, loyaltyPrograms, addresses, address ]) 
 
   useEffect(() => {
     if (
