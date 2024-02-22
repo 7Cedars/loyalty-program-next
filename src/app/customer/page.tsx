@@ -1,7 +1,7 @@
 "use client"; 
 
 import { useAppSelector } from "@/redux/hooks"
-import { Suspense, useEffect } from "react"
+import { Suspense, useEffect, useRef } from "react"
 import { useDispatch } from "react-redux"
 import UrlToRedux from "./components/UrlToRedux"
 import Image from "next/image"
@@ -9,6 +9,8 @@ import { useLoyaltyPrograms } from "../hooks/useLoyaltyPrograms"
 import { Button } from "../ui/Button";
 import Link from "next/link";
 import { TitleText } from "../ui/StandardisedFonts";
+import { parseEthAddress } from "../utils/parsers";
+import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 
 // NB: Notice the use of suspense to load url into redux. 
 // This is done because this version of Wagmi (which is needed with this version of Web3Modal) cannot deal with 
@@ -21,8 +23,6 @@ import { TitleText } from "../ui/StandardisedFonts";
 
 export default function Page()  {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
-  const {status, loyaltyPrograms, fetchPrograms} = useLoyaltyPrograms()
-  const dispatch = useDispatch()
 
   function UrlToReduxFallback() {
     return  (
@@ -32,22 +32,27 @@ export default function Page()  {
     )
   }
 
-  console.log("loyaltyPrograms: ", loyaltyPrograms, "status: ", status)
-
   return (
     <div 
       className="w-full h-full flex bg-slate-100 dark:bg-slate-900 aria-hidden:bg-opacity-0"
       aria-hidden = {true}
       >
+      
       <div className="grid grid-cols-1 w-full h-full justify-items-center content-center z-10">
+      { !selectedLoyaltyProgram ?
+      <Suspense fallback={<UrlToReduxFallback />}>
+        <UrlToRedux /> 
+      </Suspense>
+      :
+      null   
+      }
 
         <div className="w-68 h-full m-3 p-6 grid grid-cols-1 justify-items-center content-center text-slate-800 dark:text-slate-200 bg-slate-200 dark:bg-slate-800 backdrop-blur-xl shadow-xl">
 
         <div 
-          className="grid h-full grid-cols-1 gap-4 m-3 justify-items-center content-center aria-hidden:bg-opacity-0 transition-all delay-500 duration-1000"
+          className="grid h-full grid-cols-1 gap-4 justify-items-center content-center aria-hidden:bg-opacity-0 transition-all delay-500 duration-1000"
           aria-hidden = {selectedLoyaltyProgram == undefined}
-          >
-          <TitleText title="Say hi to Loyal" subtitle="A one-stop, mobile first, solution for customer loyalty programs." size={2} />          
+          >      
           <Image
             className=""
             width={100}
@@ -55,55 +60,34 @@ export default function Page()  {
             src={"/images/iconLoyaltyProgram.svg"} 
             alt="Icon Loyalty Program"
           />
+           <TitleText title="Say hi to Loyal" subtitle="A one-stop, mobile first, solution for customer loyalty programs." size={2} />  
           </div>
-
-          { selectedLoyaltyProgram == undefined ? 
-            <Suspense fallback={<UrlToReduxFallback />}>
-              <UrlToRedux /> 
-            </Suspense>
-          :
+          
           <Link 
             href="/customer/home" 
-            className="h-fit flex mx-3 m-6 transition-all delay-500 duration-1000 z-15 "
+            className="h-fit flex mx-3 m-3 transition-all delay-500 duration-1000 z-15 "
             >
             <div 
-              className=" opacity-100 aria-hidden:opacity-0 grid grid-cols-1 gap-1"
+              className=" flex opacity-100 aria-hidden:opacity-0 grid grid-cols-1 gap-1"
               aria-hidden = {selectedLoyaltyProgram == undefined}
               >
-                {/* <p className="text-bold text-xl text-center">
-                  {selectedLoyaltyProgram.metadata?.name}
-                </p>
-                <p className="text-center">
-                  {selectedLoyaltyProgram.metadata?.description}
-                </p> */}
-                {/* <p className="text-center">
-                {`Address: ${selectedLoyaltyProgram.programAddress.slice(0,6)}...${selectedLoyaltyProgram.programAddress.slice(36,42)}`} 
-                </p>
-                { selectedLoyaltyProgram.programOwner ?
-                <p className="text-center">
-                {`Owner: ${selectedLoyaltyProgram.programOwner.slice(0,6)}...${selectedLoyaltyProgram.programOwner.slice(36,42)}`} 
-                </p>  */}
-                {/* : null  */}
-                {/* } */}
-                <div className="m-3 flex ">
-                  <Button appearance="grayEmpty">
-                    Enter Loyalty Card
-                  </Button>
-                </div>
+                <Button appearance="grayEmpty">
+                  Enter Loyalty Card
+                </Button>
             </div>
           </Link> 
-          }
+
       </div>
       </div>
 
-      <Image
+      {/* <Image
         className="absolute inset-0 z-0 opacity-100 aria-hidden:opacity-0 transition-all delay-300 duration-1000"
         fill 
         style = {{ objectFit: "cover" }} 
         src={selectedLoyaltyProgram && selectedLoyaltyProgram.metadata ? selectedLoyaltyProgram.metadata.imageUri : "/images/loading2.svg"} 
         alt="Loyalty Card Token"
         aria-hidden = {selectedLoyaltyProgram == undefined}
-      />
+      /> */}
     </div> 
   )
       {/* <> */}

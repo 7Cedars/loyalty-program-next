@@ -40,7 +40,6 @@ export const DynamicLayout = ({
 }: ModalProps) => {
 
   const dispatch = useAppDispatch()
-  // const [ modalVisible, setModalVisible ] = useState<boolean>(true); 
   const { address }  = useAccount()
   const publicClient = usePublicClient(); 
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
@@ -126,6 +125,21 @@ export const DynamicLayout = ({
   useEffect(() => {
     if (loyaltyCards) { setLoyaltyCards(undefined) } 
   }, [ address ])
+
+  useEffect(() => {
+    if (
+      selectedLoyaltyProgram && 
+      selectedLoyaltyProgram.programAddress && 
+      !selectedLoyaltyProgram.uri
+      ) fetchPrograms([{programAddress: selectedLoyaltyProgram.programAddress}]) 
+  }, [ , selectedLoyaltyProgram ])
+
+  useEffect(() => { 
+    if (
+      loyaltyPrograms && 
+      loyaltyPrograms[0].metadata != undefined
+      )  dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
+  }, [loyaltyPrograms])
 
   // this is a bug - does nto seem to work. fix £todo 
   // useEffect(() => {

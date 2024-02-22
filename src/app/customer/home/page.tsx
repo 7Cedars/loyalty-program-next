@@ -39,12 +39,18 @@ export default function Page()  {
           /> 
           
         <div className="flex flex-col justify-self-center pt-2 pb-6 w-full md:px-48 px-6"> 
-          <div className="text-center">
-            {` Loyalty Card Id: ${selectedLoyaltyCard?.cardId}`}
-          </div>
-          <div className="pb-2 text-center border-b border-slate-700">
-            {` Loyalty Card Address: ${selectedLoyaltyCard?.cardAddress?.slice(0,6)}...${selectedLoyaltyCard?.cardAddress?.slice(36,42)}`}
-          </div>
+        {selectedLoyaltyCard ? 
+          <>
+            <div className="text-center">
+              {` Loyalty Card Id: ${selectedLoyaltyCard?.cardId}`}
+            </div>
+            <div className="pb-2 text-center border-b border-slate-700">
+              {` Loyalty Card Address: ${selectedLoyaltyCard?.cardAddress?.slice(0,6)}...${selectedLoyaltyCard?.cardAddress?.slice(36,42)}`}
+            </div>
+          </>
+          : 
+          null
+        }
         </div>
             
         <div className="flex flex-col justify-between p-1 h-full">
