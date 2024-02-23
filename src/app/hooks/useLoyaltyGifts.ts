@@ -1,7 +1,3 @@
-// Custom hook loading all available Loyalty token included in a whitelist.. 
-// Note that the structure of this hook is a good standard way of creating hooks with
-// multiple (sequenced) async calls. 
-
 import {  LoyaltyToken, Status } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { loyaltyGiftAbi } from "@/context/abi";
@@ -17,7 +13,7 @@ import {
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants"; // this should be possible to set at website.  
 import { useAppSelector } from "@/redux/hooks";
 
-export const useLoyaltyTokens = () => {
+export const useLoyaltyGifts = () => {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient()
 
@@ -27,22 +23,21 @@ export const useLoyaltyTokens = () => {
   const statusAtMetadata = useRef<Status>("isIdle") 
   const statusAtAvailableTokens = useRef<Status>("isIdle") 
   const [data, setData] = useState<LoyaltyToken[] | undefined>() 
-  const [loyaltyTokens, setLoyaltyTokens] = useState<LoyaltyToken[] | undefined>() 
+  const [loyaltyGifts, setLoyaltyGifts] = useState<LoyaltyToken[] | undefined>() 
 
-  // CONSOLE LOGGING // 
-  console.log("statusAt useLoyaltyTokens: ", {
+  console.log("status @useLoyaltyGifts: ", {
     statusAtTokenAddress: statusAtTokenAddress.current,
     statusAtUri: statusAtUri.current, 
     statusAtMetadata: statusAtMetadata.current,
     statusAtAvailableTokens: statusAtAvailableTokens.current
   })
-  console.log("status useLoyaltyTokens: ", status)
-  console.log("data: ", data)
+  console.log("status @useLoyaltyGifts: ", status)
+  console.log("data @useLoyaltyGifts: ", data)
   
-  const fetchTokens = (requestedTokens?: LoyaltyToken[] ) => {
+  const fetchGifts = (requestedTokens?: LoyaltyToken[] ) => {
     setStatus("isIdle")
     setData(undefined)
-    setLoyaltyTokens(undefined)
+    setLoyaltyGifts(undefined)
     if (requestedTokens) {
       setData(requestedTokens)
       statusAtTokenAddress.current = "isSuccess"
@@ -54,28 +49,31 @@ export const useLoyaltyTokens = () => {
   const getLoyaltyTokenAddresses = async () => {
     statusAtTokenAddress.current = "isLoading"
 
+    try { 
       const logs: Log[] = await publicClient.getContractEvents({
         abi: loyaltyGiftAbi, 
         eventName: 'LoyaltyGiftDeployed', 
         // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, // This should be an editable list inside the front end. improvement for later. 
         fromBlock: 5200000n
       });
-      
-      const loyaltyTokens = parseTokenContractLogs(logs)
-      if (loyaltyTokens) statusAtTokenAddress.current = "isSuccess"
-      setData(loyaltyTokens)
-    } 
+      const loyaltyGifts = parseTokenContractLogs(logs)
+      statusAtTokenAddress.current = "isSuccess"
+      setData(loyaltyGifts)
+    } catch (error) {
+      statusAtTokenAddress.current = "isError"
+      console.log(error)
+    }
+  }
 
-  const getLoyaltyTokensUris = async () => {
+  const getLoyaltyGiftsUris = async () => {
+    statusAtUri.current = "isLoading"
+    
     let item: LoyaltyToken
-    let loyaltyTokensUris: LoyaltyToken[] = []
-
-    console.log("data @getLoyaltyTokensUris: ", loyaltyTokensUris)
+    let loyaltyGiftsUris: LoyaltyToken[] = []
 
     if (data) { 
-
-      for await (item of data) {
-        try {
+      try {
+        for await (item of data) {
           const uri: unknown = await publicClient.readContract({ 
             address: item.tokenAddress, 
             abi: loyaltyGiftAbi,
@@ -84,49 +82,51 @@ export const useLoyaltyTokens = () => {
           })
           const genericUri = parseUri(uri); 
           const specificUri = genericUri.replace("{id}", `000000000000000000000000000000000000000000000000000000000000000${item.tokenId}.json`)
-
-          loyaltyTokensUris.push({...item, uri: specificUri})
-        
-        } catch (error) {
-          console.log(error)
+          loyaltyGiftsUris.push({...item, uri: specificUri})
         }
+        statusAtUri.current = "isSuccess"
+        setData(loyaltyGiftsUris)
+      } catch (error) {
+        statusAtUri.current = "isError"
+        console.log(error)
       }
-      console.log("loyaltyTokensUris @getLoyaltyTokensUris: ", loyaltyTokensUris)
-      setData(loyaltyTokensUris)
-      if (loyaltyTokensUris) statusAtUri.current = "isSuccess"
     }
   }
 
-  const getLoyaltyTokensMetaData = async () => {
-    let item: LoyaltyToken
-    let loyaltyTokensMetadata: LoyaltyToken[] = []
+  const getLoyaltyGiftsMetaData = async () => {
+    statusAtMetadata.current = "isLoading"
 
-    if (data) { 
-      for await (item of data) {
-        try {
+    let item: LoyaltyToken
+    let loyaltyGiftsMetadata: LoyaltyToken[] = []
+
+    if (data) {
+      try {
+        for await (item of data) {
           if (item.uri) {
             const fetchedMetadata: unknown = await(
               await fetch(item.uri)
               ).json()
-              loyaltyTokensMetadata.push({...item, metadata: parseMetadata(fetchedMetadata)})
+              loyaltyGiftsMetadata.push({...item, metadata: parseMetadata(fetchedMetadata)})
           }
-        } catch (error) {
-          console.log(error)
-        }
+        } 
+        statusAtMetadata.current = "isSuccess"
+        setData(loyaltyGiftsMetadata)
+      } catch (error) {
+        statusAtMetadata.current = "isError"
+        console.log(error)
       }
-      setData(loyaltyTokensMetadata)
-      if (loyaltyTokensMetadata.length == data.length) statusAtMetadata.current = "isSuccess"
-    } 
-  }   
+    }
+  }  
 
-  const getAvailableTokens = async () => {
+  const getAvailableVouchers = async () => {
+    statusAtAvailableTokens.current = "isLoading" 
+
     let item: LoyaltyToken
-    let loyaltyTokensAvailableTokens: LoyaltyToken[] = []
+    let loyaltyGiftsAvailableTokens: LoyaltyToken[] = []
 
     if (data && selectedLoyaltyProgram && selectedLoyaltyProgram.programAddress) { 
+      try {
         for await (item of data) {
-          try {
-
             const availableTokens: unknown = await publicClient.readContract({
               address: item.tokenAddress, 
               abi: loyaltyGiftAbi,
@@ -134,29 +134,38 @@ export const useLoyaltyTokens = () => {
               args: [parseEthAddress(selectedLoyaltyProgram?.programAddress), item.tokenId]
             })
 
-            loyaltyTokensAvailableTokens.push({...item, availableTokens: Number(parseBigInt(availableTokens))})
-        } catch (error) {
-          console.log(error)
-        }
-      } 
-      setData(loyaltyTokensAvailableTokens)
-      if (loyaltyTokensAvailableTokens.length == data.length) statusAtAvailableTokens.current = "isSuccess"
-    }
+            loyaltyGiftsAvailableTokens.push({...item, availableTokens: Number(parseBigInt(availableTokens))})
+        } 
+        statusAtAvailableTokens.current = "isSuccess"
+        setData(loyaltyGiftsAvailableTokens)
+      } catch (error) {
+        statusAtAvailableTokens.current = "isError" 
+        console.log(error)
+      }
+    } 
   }
 
-  // if (!data) { getLoyaltyTokenAddresses() }
   useEffect(() => {
-    if ( data && statusAtTokenAddress.current == "isSuccess" && statusAtUri.current == "isIdle" ) { 
-      statusAtUri.current = "isLoading"
-      getLoyaltyTokensUris() 
+    if ( 
+      data && 
+      statusAtTokenAddress.current == "isSuccess" && 
+      statusAtUri.current == "isIdle" 
+      ) { 
+        getLoyaltyGiftsUris() 
     } 
-    if ( data && statusAtUri.current == "isSuccess" && statusAtMetadata.current == "isIdle" ) { 
-      statusAtMetadata.current = "isLoading"
-      getLoyaltyTokensMetaData() 
+    if ( 
+      data && 
+      statusAtUri.current == "isSuccess" && 
+      statusAtMetadata.current == "isIdle" 
+      ) {
+        getLoyaltyGiftsMetaData() 
     }
-    if ( data && statusAtMetadata.current == "isSuccess" && statusAtAvailableTokens.current == "isIdle") { 
-      statusAtAvailableTokens.current = "isLoading"
-      getAvailableTokens() 
+    if ( 
+      data && 
+      statusAtMetadata.current == "isSuccess" && 
+      statusAtAvailableTokens.current == "isIdle"
+      ) {
+        getAvailableVouchers() 
     } 
   }, [ data  ])
 
@@ -168,7 +177,7 @@ export const useLoyaltyTokens = () => {
       statusAtAvailableTokens.current == "isSuccess" 
       ) {
         setStatus("isSuccess")
-        setLoyaltyTokens(data)
+        setLoyaltyGifts(data)
       }
     if (
       statusAtTokenAddress.current == "isLoading" ||
@@ -180,5 +189,5 @@ export const useLoyaltyTokens = () => {
       }
   }, [ data ])
 
-  return {status, loyaltyTokens, fetchTokens}
+  return {status, loyaltyGifts, fetchGifts}
 }

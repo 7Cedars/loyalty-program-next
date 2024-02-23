@@ -11,7 +11,7 @@ import { Log } from "viem"
 import { usePublicClient } from 'wagmi'
 import { parseEthAddress, parseLoyaltyGiftLogs} from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
-import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import Image from "next/image";
 import { useAppSelector } from "@/redux/hooks";
 
@@ -21,14 +21,14 @@ type setSelectedTokenProps = {
 }
 
 export default function Page() {
-  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
+  const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
   const [inactiveLoyaltyGifts, setInactiveLoyaltyGifts] = useState<LoyaltyToken[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
   const publicClient = usePublicClient()
 
-  console.log("loyaltyTokens @selectGifts: ", loyaltyTokens)
+  console.log("loyaltyGifts @selectGifts: ", loyaltyGifts)
 
   const getTokenSelection = async () => {
 
@@ -50,11 +50,11 @@ export default function Page() {
     }); 
     const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
 
-    if (loyaltyTokens) {
+    if (loyaltyGifts) {
       let activeGifts: LoyaltyToken[] = [] 
       let inactiveGifts: LoyaltyToken[] = [] 
 
-      loyaltyTokens.forEach((loyaltyToken, i) => { 
+      loyaltyGifts.forEach((loyaltyToken, i) => { 
         
         const addedEventCount = addedGiftsEvents.filter(
           event => event.giftAddress == loyaltyToken.tokenAddress &&  event.giftId == loyaltyToken.tokenId
@@ -81,10 +81,10 @@ export default function Page() {
   })
 
   useEffect(() => {
-    if (!loyaltyTokens) fetchTokens()
-    if (loyaltyTokens) getTokenSelection() 
+    if (!loyaltyGifts) fetchGifts()
+    if (loyaltyGifts) getTokenSelection() 
 
-  }, [selectedToken, loyaltyTokens]) 
+  }, [selectedToken, loyaltyGifts]) 
 
   return (
      <div className=" w-full h-full grid grid-cols-1 gap-1 overflow-x-auto">

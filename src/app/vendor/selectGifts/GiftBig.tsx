@@ -78,7 +78,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     })
   
 
-  const mintLoyaltyTokens = useContractWrite(
+  const mintloyaltyGifts = useContractWrite(
     {
       address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
@@ -186,7 +186,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
           <div className="grid grid-col-1 gap-0 w-full">
             { token.tokenised ? 
               <div className="p-3 flex w-full"> 
-                <NumLine onClick = {(arg0) => mintLoyaltyTokens.write({
+                <NumLine onClick = {(arg0) => mintloyaltyGifts.write({
                   args: [token.tokenAddress, [token.tokenId], [arg0]]}
                   )} 
                   isLoading = {mintTransaction.isLoading} /> 

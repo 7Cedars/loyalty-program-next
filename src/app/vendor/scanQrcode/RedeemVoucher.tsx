@@ -13,7 +13,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { QrData } from "@/types";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useAppSelector } from "@/redux/hooks";
 
 
@@ -27,26 +27,26 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ token, setToken ] = useState<LoyaltyToken>()
   const [ hashTransaction, setHashTransaction] = useState<any>()
-  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
+  const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
   const dispatch = useDispatch() 
 
   console.log("QRDATA @redeem token: ", qrData)
   console.log("token @redeem token: ", token)
 
   useEffect(() => {
-    if (!loyaltyTokens && qrData) {
+    if (!loyaltyGifts && qrData) {
             
-          fetchTokens([{
+          fetchGifts([{
             tokenAddress: parseEthAddress(qrData?.loyaltyToken), 
             tokenId: parseNumber(qrData?.loyaltyTokenId) 
           }])
     }
-    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
+    if (status == "isSuccess" && loyaltyGifts) setToken(loyaltyGifts[0])
   }, [, qrData])
 
   useEffect(() => {
-    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
-  }, [status, loyaltyTokens])
+    if (status == "isSuccess" && loyaltyGifts) setToken(loyaltyGifts[0])
+  }, [status, loyaltyGifts])
 
   const redeemLoyaltyVoucher = useContractWrite( 
     {

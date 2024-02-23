@@ -15,7 +15,7 @@ import {
   parseLoyaltyGiftLogs
 } from "@/app/utils/parsers";
 import { useAppSelector } from "@/redux/hooks";
-import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
@@ -31,7 +31,7 @@ export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   
-  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
+  const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
   const [ activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
 
   const [ selectedToken, setSelectedToken ] = useState<setSelectedTokenProps | undefined>() 
@@ -76,8 +76,8 @@ export default function Page() {
     }); 
     const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
 
-    if (loyaltyTokens && removedGiftsEvents && addedGiftsEvents) {      
-      loyaltyTokens.forEach(loyaltyToken => { 
+    if (loyaltyGifts && removedGiftsEvents && addedGiftsEvents) {      
+      loyaltyGifts.forEach(loyaltyToken => { 
         
         const addedEvenCount = addedGiftsEvents.filter(
           event => event.giftAddress == loyaltyToken.tokenAddress && event.giftId == loyaltyToken.tokenId
@@ -95,7 +95,7 @@ export default function Page() {
   }
 
   useEffect(() => {
-    fetchTokens()
+    fetchGifts()
     getLoyaltyCardPoints()
   }, [ ] ) 
 

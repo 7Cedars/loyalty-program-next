@@ -14,7 +14,7 @@ import { useAppSelector } from "@/redux/hooks";
 import RedeemVoucher from "./RedeemVoucher";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useDispatch } from "react-redux";
-import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import Image from "next/image";
 import { DynamicLayout } from "../components/DynamicLayout";
@@ -27,7 +27,7 @@ type setSelectedVoucherProps = {
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
-  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
+  const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
   const [ claimedVouchers, setClaimedVouchers ] = useState<LoyaltyToken[] | undefined>() 
   const [selectedVoucher, setSelectedVoucher] = useState<setSelectedVoucherProps | undefined>() 
   const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
@@ -94,10 +94,10 @@ export default function Page() {
     //   claimedVoucher.from == selectedLoyaltyCard?.cardAddress 
     // )
 
-    if (loyaltyTokens) {
+    if (loyaltyGifts) {
       let claimedVouchersTemp: LoyaltyToken[] = [] 
 
-      loyaltyTokens.forEach(loyaltyToken => { 
+      loyaltyGifts.forEach(loyaltyToken => { 
         
         const addedVoucher = claimedVouchers.filter(
           event => event.address == loyaltyToken.tokenAddress && Number(event.ids[0]) == loyaltyToken.tokenId
@@ -117,10 +117,10 @@ export default function Page() {
   useEffect(() => {
       getClaimedLoyaltyVouchers() 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ , loyaltyTokens, address, selectedVoucher])
+  }, [ , loyaltyGifts, address, selectedVoucher])
 
   useEffect(() => {
-    fetchTokens() 
+    fetchGifts() 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ ])
 
