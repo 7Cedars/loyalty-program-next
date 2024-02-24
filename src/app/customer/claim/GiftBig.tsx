@@ -1,5 +1,5 @@
 "use client"; 
-import { LoyaltyToken } from "@/types";
+import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
@@ -18,7 +18,7 @@ import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 
 type SelectedTokenProps = {
-  token: LoyaltyToken
+  token: LoyaltyGift
   disabled: boolean
 }
 
@@ -184,7 +184,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
             }
             <div className="text-center text-md"> 
               <div className="text-center text-md"> 
-                {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
+                {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
               </div>
               {token.tokenised == 1n ? 
                 <div className="text-center text-md"> 
@@ -220,7 +220,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
             <div className="flex m-3 justify-center"> 
               <QRCode 
-                value={`type:claimGift;${token.tokenAddress};${token.tokenId};${selectedLoyaltyCard?.cardId};${address};${token.metadata.attributes[1].value};${signature}`}
+                value={`type:claimGift;${token.giftAddress};${token.giftId};${selectedLoyaltyCard?.cardId};${address};${token.metadata.attributes[1].value};${signature}`}
                 style={{ 
                   height: "350px", 
                   width: "350px", 

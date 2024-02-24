@@ -1,9 +1,9 @@
 "use client"; 
-import { LoyaltyToken } from "@/types";
+import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 
 type SelectedTokenProps = {
-  token: LoyaltyToken; 
+  token: LoyaltyGift; 
   disabled: boolean;
   onClick: () => void;
 }

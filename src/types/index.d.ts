@@ -45,7 +45,7 @@ export type Attribute = {
   value: string;
 }
 
-export type TokenMetadata = {
+export type Metadata = {
   name: string; 
   description: string; 
   imageUri: string;
@@ -55,7 +55,7 @@ export type TokenMetadata = {
 export type LoyaltyProgram = {
   programAddress: EthAddress; 
   uri?: string; 
-  metadata?: TokenMetadata;
+  metadata?: Metadata;
   programOwner?: EthAddress;
 } 
 
@@ -64,16 +64,17 @@ export type LoyaltyCard = {
   cardAddress?: EthAddress; 
   userAddress?: EthAddress; 
   loyaltyProgramAddress?: EthAddress; 
+  balance?: number | undefined; 
 }
 
 // for now type for program and token are the same - but might change in the future 
-export type LoyaltyToken = {
-  tokenAddress: EthAddress; 
-  tokenId: number 
+export type LoyaltyGift = {
+  giftAddress: EthAddress; 
+  giftId: number 
   tokenised?: BigInt 
   issuer?: EthAddress; 
   uri?: string ;
-  metadata?: TokenMetadata ;
+  metadata?: Metadata ;
   availableTokens?: Number;  
 } 
 

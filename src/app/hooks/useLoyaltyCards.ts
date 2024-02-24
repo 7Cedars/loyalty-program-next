@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { usePublicClient } from 'wagmi'
 import { 
+  parseBigInt,
   parseEthAddress,
   parseTransferSingleLogs,
 } from "@/app/utils/parsers";
@@ -121,6 +122,8 @@ export const useLoyaltyCards = () => {
       }
     }
   }
+
+
 
   useEffect(() => {
     if ( 

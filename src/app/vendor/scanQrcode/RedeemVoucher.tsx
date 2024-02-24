@@ -1,5 +1,5 @@
 "use client"; 
-import { LoyaltyToken } from "@/types";
+import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
@@ -25,7 +25,7 @@ type SendPointsProps = {
 export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   const dimensions = useScreenDimensions();
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const [ token, setToken ] = useState<LoyaltyToken>()
+  const [ token, setToken ] = useState<LoyaltyGift>()
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
   const dispatch = useDispatch() 
@@ -37,8 +37,8 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
     if (!loyaltyGifts && qrData) {
             
           fetchGifts([{
-            tokenAddress: parseEthAddress(qrData?.loyaltyToken), 
-            tokenId: parseNumber(qrData?.loyaltyTokenId) 
+            giftAddress: parseEthAddress(qrData?.loyaltyToken), 
+            giftId: parseNumber(qrData?.loyaltyTokenId) 
           }])
     }
     if (status == "isSuccess" && loyaltyGifts) setToken(loyaltyGifts[0])
@@ -146,7 +146,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
             }
             <div className="grid grid-cols-1 pt-4">
               <div className="text-center text-md"> 
-                {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
+                {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
               </div>
               <div className="text-center text-md"> 
                 {`Remaining vouchers: ${token.availableTokens}`}

@@ -85,26 +85,8 @@ export const DynamicLayout = ({
       ) { dispatch(selectLoyaltyCard(loyaltyCards[0])) } 
   }, [, loyaltyCards, address])
 
-  // useEffect(() => { 
-  //   if (
-  //     loyaltyPrograms && 
-  //     loyaltyPrograms[0].metadata != undefined
-  //     )  dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
-  // }, [loyaltyPrograms])
+  
 
-  // this is a bug - does nto seem to work. fix £todo 
-  // useEffect(() => {
-  //   if (selectedLoyaltyProgram && status == "isSuccess" && loyaltyPrograms) dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
-  // }, [selectedLoyaltyProgram, status, loyaltyPrograms, userLoggedIn ])
-
-  // useEffect(() => {
-  //   if (!loyaltyCards && address && selectedLoyaltyProgram) fetchCards({
-  //     userAddress: parseEthAddress(address), 
-  //     programAddress: parseEthAddress(selectedLoyaltyProgram.programAddress)
-  //   })  
-  // }, [, loyaltyCards, address, selectedLoyaltyProgram])
-
-// this should 
   useEffect(() => {
     if (!selectedLoyaltyProgram) dispatch(updateModalVisible(false))
 // and here needs to be a notifation with link to landing page. £todo

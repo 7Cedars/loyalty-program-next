@@ -1,4 +1,4 @@
-import {  LoyaltyToken, Status } from "@/types";
+import {  LoyaltyGift, Status } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { loyaltyGiftAbi } from "@/context/abi";
 import { Log } from "viem"
@@ -18,15 +18,15 @@ export const useLoyaltyGifts = () => {
   const publicClient = usePublicClient()
 
   const [ status, setStatus ] = useState<Status>("isIdle")
-  const statusAtTokenAddress = useRef<Status>("isIdle") 
+  const statusAtgiftAddress = useRef<Status>("isIdle") 
   const statusAtUri = useRef<Status>("isIdle") 
   const statusAtMetadata = useRef<Status>("isIdle") 
   const statusAtAvailableTokens = useRef<Status>("isIdle") 
-  const [data, setData] = useState<LoyaltyToken[] | undefined>() 
-  const [loyaltyGifts, setLoyaltyGifts] = useState<LoyaltyToken[] | undefined>() 
+  const [data, setData] = useState<LoyaltyGift[] | undefined>() 
+  const [loyaltyGifts, setLoyaltyGifts] = useState<LoyaltyGift[] | undefined>() 
 
   console.log("status @useLoyaltyGifts: ", {
-    statusAtTokenAddress: statusAtTokenAddress.current,
+    statusAtgiftAddress: statusAtgiftAddress.current,
     statusAtUri: statusAtUri.current, 
     statusAtMetadata: statusAtMetadata.current,
     statusAtAvailableTokens: statusAtAvailableTokens.current
@@ -34,54 +34,55 @@ export const useLoyaltyGifts = () => {
   console.log("status @useLoyaltyGifts: ", status)
   console.log("data @useLoyaltyGifts: ", data)
   
-  const fetchGifts = (requestedTokens?: LoyaltyToken[] ) => {
+  const fetchGifts = (requestedTokens?: LoyaltyGift[] ) => {
     setStatus("isIdle")
     setData(undefined)
     setLoyaltyGifts(undefined)
-    if (requestedTokens) {
-      setData(requestedTokens)
-      statusAtTokenAddress.current = "isSuccess"
-    } else {
-      getLoyaltyTokenAddresses()
-    }
+    getLoyaltyGiftAddresses(requestedTokens)
   }
 
-  const getLoyaltyTokenAddresses = async () => {
-    statusAtTokenAddress.current = "isLoading"
+  const getLoyaltyGiftAddresses = async (requestedTokens?: LoyaltyGift[]) => {
+    statusAtgiftAddress.current = "isLoading"
 
-    try { 
-      const logs: Log[] = await publicClient.getContractEvents({
-        abi: loyaltyGiftAbi, 
-        eventName: 'LoyaltyGiftDeployed', 
-        // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, // This should be an editable list inside the front end. improvement for later. 
-        fromBlock: 5200000n
-      });
-      const loyaltyGifts = parseTokenContractLogs(logs)
-      statusAtTokenAddress.current = "isSuccess"
-      setData(loyaltyGifts)
-    } catch (error) {
-      statusAtTokenAddress.current = "isError"
-      console.log(error)
+    if (requestedTokens) { 
+      statusAtgiftAddress.current = "isSuccess"
+      setData(requestedTokens)
+      console.log("requestedTokens: ", requestedTokens)
+    } else { 
+      try { 
+        const logs: Log[] = await publicClient.getContractEvents({
+          abi: loyaltyGiftAbi, 
+          eventName: 'LoyaltyGiftDeployed', 
+          // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, // This should be an editable list inside the front end. improvement for later. 
+          fromBlock: 5200000n
+        });
+        const loyaltyGifts = parseTokenContractLogs(logs)
+        statusAtgiftAddress.current = "isSuccess"
+        setData(loyaltyGifts)
+      } catch (error) {
+        statusAtgiftAddress.current = "isError"
+        console.log(error)
+      }
     }
   }
 
   const getLoyaltyGiftsUris = async () => {
     statusAtUri.current = "isLoading"
     
-    let item: LoyaltyToken
-    let loyaltyGiftsUris: LoyaltyToken[] = []
+    let item: LoyaltyGift
+    let loyaltyGiftsUris: LoyaltyGift[] = []
 
     if (data) { 
       try {
         for await (item of data) {
           const uri: unknown = await publicClient.readContract({ 
-            address: item.tokenAddress, 
+            address: item.giftAddress, 
             abi: loyaltyGiftAbi,
             functionName: 'uri',
-            args: [item.tokenId]
+            args: [item.giftId]
           })
           const genericUri = parseUri(uri); 
-          const specificUri = genericUri.replace("{id}", `000000000000000000000000000000000000000000000000000000000000000${item.tokenId}.json`)
+          const specificUri = genericUri.replace("{id}", `000000000000000000000000000000000000000000000000000000000000000${item.giftId}.json`)
           loyaltyGiftsUris.push({...item, uri: specificUri})
         }
         statusAtUri.current = "isSuccess"
@@ -96,8 +97,8 @@ export const useLoyaltyGifts = () => {
   const getLoyaltyGiftsMetaData = async () => {
     statusAtMetadata.current = "isLoading"
 
-    let item: LoyaltyToken
-    let loyaltyGiftsMetadata: LoyaltyToken[] = []
+    let item: LoyaltyGift
+    let loyaltyGiftsMetadata: LoyaltyGift[] = []
 
     if (data) {
       try {
@@ -121,17 +122,17 @@ export const useLoyaltyGifts = () => {
   const getAvailableVouchers = async () => {
     statusAtAvailableTokens.current = "isLoading" 
 
-    let item: LoyaltyToken
-    let loyaltyGiftsAvailableTokens: LoyaltyToken[] = []
+    let item: LoyaltyGift
+    let loyaltyGiftsAvailableTokens: LoyaltyGift[] = []
 
     if (data && selectedLoyaltyProgram && selectedLoyaltyProgram.programAddress) { 
       try {
         for await (item of data) {
             const availableTokens: unknown = await publicClient.readContract({
-              address: item.tokenAddress, 
+              address: item.giftAddress, 
               abi: loyaltyGiftAbi,
               functionName: 'balanceOf', 
-              args: [parseEthAddress(selectedLoyaltyProgram?.programAddress), item.tokenId]
+              args: [parseEthAddress(selectedLoyaltyProgram?.programAddress), item.giftId]
             })
 
             loyaltyGiftsAvailableTokens.push({...item, availableTokens: Number(parseBigInt(availableTokens))})
@@ -148,7 +149,7 @@ export const useLoyaltyGifts = () => {
   useEffect(() => {
     if ( 
       data && 
-      statusAtTokenAddress.current == "isSuccess" && 
+      statusAtgiftAddress.current == "isSuccess" && 
       statusAtUri.current == "isIdle" 
       ) { 
         getLoyaltyGiftsUris() 
@@ -171,7 +172,7 @@ export const useLoyaltyGifts = () => {
 
   useEffect(() => {
     if (
-      statusAtTokenAddress.current == "isSuccess" && 
+      statusAtgiftAddress.current == "isSuccess" && 
       statusAtUri.current == "isSuccess" && 
       statusAtMetadata.current == "isSuccess" && 
       statusAtAvailableTokens.current == "isSuccess" 
@@ -180,7 +181,7 @@ export const useLoyaltyGifts = () => {
         setLoyaltyGifts(data)
       }
     if (
-      statusAtTokenAddress.current == "isLoading" ||
+      statusAtgiftAddress.current == "isLoading" ||
       statusAtUri.current == "isLoading" || 
       statusAtMetadata.current == "isLoading" || 
       statusAtAvailableTokens.current == "isLoading" 

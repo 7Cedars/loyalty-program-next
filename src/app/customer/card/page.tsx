@@ -2,7 +2,7 @@
 
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import VoucherSmall from "./VoucherSmall";
-import { LoyaltyToken } from "@/types";
+import { LoyaltyGift } from "@/types";
 import { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
@@ -18,9 +18,10 @@ import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import Image from "next/image";
 import { DynamicLayout } from "../components/DynamicLayout";
+import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 
 type setSelectedVoucherProps = {
-  token: LoyaltyToken; 
+  token: LoyaltyGift; 
   disabled: boolean;
 }
 
@@ -28,7 +29,7 @@ export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
   const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
-  const [ claimedVouchers, setClaimedVouchers ] = useState<LoyaltyToken[] | undefined>() 
+  const [ claimedVouchers, setClaimedVouchers ] = useState<LoyaltyGift[] | undefined>() 
   const [selectedVoucher, setSelectedVoucher] = useState<setSelectedVoucherProps | undefined>() 
   const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()
@@ -39,34 +40,39 @@ export default function Page() {
 
   console.log("claimedVouchers: ", claimedVouchers)
 
-  const getLoyaltyCardPoints = async () => {
-    console.log("getLoyaltyCardPoints called") 
-      if (selectedLoyaltyCard) {
-      const loyaltyCardPointsData = await publicClient.readContract({
-        address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-        abi: loyaltyProgramAbi,
-        functionName: 'getBalanceLoyaltyCard', 
-        args: [ selectedLoyaltyCard?.cardAddress ]
-      });
-
-      console.log("loyaltyCardPointsData: ", loyaltyCardPointsData)
-      
-      const loyaltyCardPoints = parseBigInt(loyaltyCardPointsData)
-      setLoyaltyPoints(Number(loyaltyCardPoints))
-    }
-  }
+  ///////////////////////////////////
+  ///     Fetch Card Balance      ///
+  ///////////////////////////////////
   
-  useEffect(() => {
-    if (!loyaltyPoints && selectedLoyaltyProgram?.programAddress) getLoyaltyCardPoints()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ , loyaltyPoints, selectedLoyaltyProgram?.programAddress ])
+  const fetchCardBalance = async () => {
+    if (selectedLoyaltyCard && selectedLoyaltyCard.balance == undefined)
+      try {
+        const loyaltyCardPoints = await publicClient.readContract({
+          address: parseEthAddress(selectedLoyaltyCard.loyaltyProgramAddress), 
+          abi: loyaltyProgramAbi,
+          functionName: 'getBalanceLoyaltyCard', 
+          args: [ selectedLoyaltyCard.cardAddress ]
+        });
+
+        const updatedLoyaltyCard = {...selectedLoyaltyCard, balance: Number(parseBigInt(loyaltyCardPoints))}
+        dispatch(selectLoyaltyCard(updatedLoyaltyCard))
+
+        } catch (error) {
+          console.log(error)
+      }
+  }
+
+  // to refetch: set balance to undefined. 
+  useEffect(() => { 
+    if (selectedLoyaltyCard && selectedLoyaltyCard.balance == undefined) fetchCardBalance() 
+  }, [selectedLoyaltyCard])
 
   const getClaimedLoyaltyVouchers = async () => {
     console.log("getClaimedLoyaltyVouchers called")
     console.log("latestSent @redeem token: ", latestSent)
 
     const claimedVouchersLogs: Log[] = await publicClient.getContractEvents({
-      // address: loyaltyToken.tokenAddress, 
+      // address: loyaltyGift.giftAddress, 
       abi: loyaltyGiftAbi,
       eventName: 'TransferSingle', 
       args: {
@@ -77,7 +83,7 @@ export default function Page() {
     const claimedVouchers = parseTransferSingleLogs(claimedVouchersLogs)
 
     const redeemedVouchersLogs: Log[] = await publicClient.getContractEvents({
-      // address: loyaltyToken.tokenAddress, 
+      // address: loyaltyGift.giftAddress, 
       abi: loyaltyGiftAbi,
       eventName: 'TransferSingle', 
       args: {
@@ -87,27 +93,20 @@ export default function Page() {
     })
     const redeemedVouchers = parseTransferSingleLogs(redeemedVouchersLogs)
     
-    // const transactionTo = claimedVouchersData.filter(claimedVoucher => 
-    //   claimedVoucher.to == selectedLoyaltyCard?.cardAddress
-    // )
-    // const transactionFrom = claimedVouchersData.filter(claimedVoucher => 
-    //   claimedVoucher.from == selectedLoyaltyCard?.cardAddress 
-    // )
-
     if (loyaltyGifts) {
-      let claimedVouchersTemp: LoyaltyToken[] = [] 
+      let claimedVouchersTemp: LoyaltyGift[] = [] 
 
-      loyaltyGifts.forEach(loyaltyToken => { 
+      loyaltyGifts.forEach(loyaltyGift => { 
         
         const addedVoucher = claimedVouchers.filter(
-          event => event.address == loyaltyToken.tokenAddress && Number(event.ids[0]) == loyaltyToken.tokenId
+          event => event.address == loyaltyGift.giftAddress && Number(event.ids[0]) == loyaltyGift.giftId
           ).length 
         const removedVoucher = redeemedVouchers.filter(
-          event => event.address == loyaltyToken.tokenAddress && Number(event.ids[0]) == loyaltyToken.tokenId
+          event => event.address == loyaltyGift.giftAddress && Number(event.ids[0]) == loyaltyGift.giftId
           ).length
 
         for (let i = 0; i < (addedVoucher - removedVoucher); i++) {
-          claimedVouchersTemp.push(loyaltyToken)
+          claimedVouchersTemp.push(loyaltyGift)
         }
       })
       setClaimedVouchers(claimedVouchersTemp)
@@ -145,7 +144,7 @@ export default function Page() {
       </div>
       <div className="grid grid-cols-1 justify-items-center"> 
         <p className="pt-0 w-5/6 sm:w-1/2 text-lg text-center text-bold border-b border-slate-800 dark:border-slate-200 p-1">
-          {`${loyaltyPoints} Loyalty Points`}
+          {`${selectedLoyaltyCard?.balance} Loyalty Points`}
         </p>
         <div className="grid grid-cols-1 mt-4"> 
           <TitleText title = "Vouchers" size={1} />
@@ -190,7 +189,7 @@ export default function Page() {
 
               { claimedVouchers && claimedVouchers.length > 0 ?
               
-              claimedVouchers.map((token: LoyaltyToken, i) => 
+              claimedVouchers.map((token: LoyaltyGift, i) => 
                   token.metadata ? 
                   <div key = {i} >
                     <VoucherSmall token = {token} disabled = {false} onClick={() => setSelectedVoucher({token: token, disabled: false})}  /> 
