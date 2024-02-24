@@ -1,7 +1,7 @@
 "use client"; 
 
 import { useAppSelector } from "@/redux/hooks"
-import { Suspense, useEffect, useRef } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
 import { useDispatch } from "react-redux"
 import UrlToLocalStorage from "../customer/components/UrlToLocalStorage"
 import Image from "next/image"
@@ -22,12 +22,17 @@ import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 // see this solution here (from next documentation): https://nextjs.org/docs/messages/deopted-into-client-rendering
 
 export default function Page()  {
-  const progAddress = localStorage.getItem("progAddress")
+  const [progAddress, setProgAddress] = useState<string | null>(); 
 
+  useEffect(() => {
+    const locStore = localStorage.getItem("progAddress")
+    setProgAddress(locStore)
+  }, [])
+  
   function UrlToLocalStorageFallback() {
     return  (
       <div className="grow flex items-center justify-center text-slate-800 dark:text-slate-200 z-40">
-        fallback text. This is probably an error. 
+        ... 
       </div>
     )
   }

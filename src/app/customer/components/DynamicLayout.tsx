@@ -1,29 +1,16 @@
 "use client";
 
-// This page needs a good clean up... 
-
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { NotificationDialog } from "../../ui/notificationDialog";
-import { useState, useEffect, Suspense, useRef } from "react";
-import { 
-  EthAddress, 
-  LoyaltyProgram, 
-  LoyaltyCard 
-} from "@/types";
+import { useState, useEffect} from "react";
+import { EthAddress } from "@/types";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import Image from "next/image";
-import { resetLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import RequestCard from "./RequestCard";
 import SelectLoyaltyCard from "./SelectLoyaltyCard";
-import { loyaltyProgramAbi } from "@/context/abi";
-import { Log } from "viem"
-import { usePublicClient, useAccount } from 'wagmi'
-import { 
-  parseEthAddress, 
-  parseTransferSingleLogs
-} from "@/app/utils/parsers";
-import { Button } from "@/app/ui/Button";
+import { useAccount } from 'wagmi'
+import { parseEthAddress } from "@/app/utils/parsers";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import { useLoyaltyPrograms } from "@/app/hooks/useLoyaltyPrograms";
 import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
@@ -43,7 +30,6 @@ export const DynamicLayout = ({
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
   
   const dispatch = useAppDispatch()
-  const progAddress = localStorage.getItem("progAddress") || ""
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { modalVisible } = useAppSelector(state => state.userInput )
@@ -55,12 +41,12 @@ export const DynamicLayout = ({
   console.log("statusUseLoyaltyCards: ", statusUseLoyaltyCards)
 
   useEffect(() => {
+    const progAddress = localStorage.getItem("progAddress") || ""
     if (
       address &&
-      progAddress && 
       statusUseLoyaltyPrograms == "isIdle"
       ) fetchPrograms([{programAddress: parseEthAddress(progAddress)}]) 
-  }, [ , selectedLoyaltyProgram, address, progAddress ])
+  }, [ , selectedLoyaltyProgram, address ])
 
   useEffect(() => {
     if (
@@ -85,8 +71,6 @@ export const DynamicLayout = ({
       loyaltyCards.length == 1 
       ) { dispatch(selectLoyaltyCard(loyaltyCards[0])) } 
   }, [, loyaltyCards, address])
-
-  
 
   useEffect(() => {
     if (!selectedLoyaltyProgram) dispatch(updateModalVisible(false))

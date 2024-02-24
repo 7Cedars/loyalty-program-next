@@ -5,7 +5,7 @@
 // import { useDispatch } from 'react-redux'
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
  
 export default function UrlToLocalStorage() {
   const params = useSearchParams();
@@ -15,10 +15,14 @@ export default function UrlToLocalStorage() {
 
   console.log("progAddress: ", progAddress)
 
-  if (progAddress && !checked.current) {
-    localStorage.setItem("progAddress", progAddress)
-    checked.current = true
-  }
+  useEffect(() => {
+    if (progAddress && !checked.current && typeof window !== 'undefined') {
+      localStorage.setItem("progAddress", progAddress)
+      checked.current = true
+    }
+  }, [ ])
+
+  
 
   // const locStore = localStorage.getItem("progAddress") || ""
   // console.log("locStore: ", locStore)
