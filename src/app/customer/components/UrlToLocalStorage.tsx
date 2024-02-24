@@ -6,23 +6,21 @@
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { useEffect, useRef } from 'react'
+import { parseEthAddress, parseUri } from '@/app/utils/parsers';
  
 export default function UrlToLocalStorage() {
   const params = useSearchParams();
-  // const dispatch = useDispatch() 
-  const progAddress = params.get('prog')
+  const progAddress = parseEthAddress(params.get('prog'))
+  const progUri = parseUri(params.get('proguri'))  
   const checked = useRef<boolean>(false)
-
-  console.log("progAddress: ", progAddress)
 
   useEffect(() => {
     if (progAddress && !checked.current && typeof window !== 'undefined') {
       localStorage.setItem("progAddress", progAddress)
+      localStorage.setItem("progUri", progUri)
       checked.current = true
     }
   }, [ ])
-
-  
 
   // const locStore = localStorage.getItem("progAddress") || ""
   // console.log("locStore: ", locStore)

@@ -9,7 +9,7 @@ import { useLoyaltyPrograms } from "../hooks/useLoyaltyPrograms"
 import { Button } from "../ui/Button";
 import Link from "next/link";
 import { TitleText } from "../ui/StandardisedFonts";
-import { parseEthAddress } from "../utils/parsers";
+import { parseEthAddress, parseUri } from "../utils/parsers";
 import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 
 // NB: Notice the use of suspense to load url into redux. 
@@ -23,10 +23,13 @@ import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 
 export default function Page()  {
   const [progAddress, setProgAddress] = useState<string | null>(); 
+  const [progUri, setProgUri] = useState<string | null>(); 
 
   useEffect(() => {
-    const locStore = localStorage.getItem("progAddress")
-    setProgAddress(locStore)
+    const progData = parseEthAddress(localStorage.getItem("progAddress"))
+    setProgAddress(progData)
+    const uriData = parseUri(localStorage.getItem("progUri"))
+    uriData ? setProgUri(uriData) : null 
   }, [])
   
   function UrlToLocalStorageFallback() {
@@ -85,14 +88,14 @@ export default function Page()  {
       </div>
       </div>
 
-      {/* <Image
+      <Image
         className="absolute inset-0 z-0 opacity-100 aria-hidden:opacity-0 transition-all delay-300 duration-1000"
         fill 
         style = {{ objectFit: "cover" }} 
-        src={selectedLoyaltyProgram && selectedLoyaltyProgram.metadata ? selectedLoyaltyProgram.metadata.imageUri : "/images/loading2.svg"} 
+        src={progUri ? progUri : "/images/loading2.svg"} 
         alt="Loyalty Card Token"
-        aria-hidden = {selectedLoyaltyProgram == undefined}
-      /> */}
+        aria-hidden = {!progUri}
+      />
     </div> 
   )
       {/* <> */}
