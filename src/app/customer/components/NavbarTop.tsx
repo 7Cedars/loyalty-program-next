@@ -34,25 +34,25 @@ const NavbarTop = ( ) => {
       <header className="absolute top-0 z-10 flex justify-between h-18 w-full text-sm border-b border-gray-400 bg-slate-50 px-6">
         <div className="flex divide-x p-3 divide-gray-400">
           <Link 
-            href={`/customer/home?${selectedLoyaltyProgram?.programAddress}`} 
+            href={`/customer/home`} 
             className={layoutLinks}
             aria-selected={path == `/customer/home`}>   
               Home 
           </Link>
           <Link 
-            href={`/customer/claim?${selectedLoyaltyProgram?.programAddress}` }  
+            href={`/customer/claim` }  
             className={layoutLinks}
             aria-selected={path == `/customer/claim`}>   
               Claim Gifts 
           </Link>
           <Link 
-            href={`/customer/card?${selectedLoyaltyProgram?.programAddress}` }  
+            href={`/customer/card` }  
             className={layoutLinks}
             aria-selected={path == `/customer/card`}>   
               Your Card 
           </Link>
           <Link 
-            href={`/customer/transactions?${selectedLoyaltyProgram?.programAddress}`}  
+            href={`/customer/transactions`}  
             className={layoutLinks}
             aria-selected={path == `/customer/transactions`}>   
               Transactions 

@@ -43,6 +43,7 @@ export const DynamicLayout = ({
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
   
   const dispatch = useAppDispatch()
+  const progAddress = localStorage.getItem("progAddress") || ""
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { modalVisible } = useAppSelector(state => state.userInput )
@@ -56,10 +57,10 @@ export const DynamicLayout = ({
   useEffect(() => {
     if (
       address &&
-      selectedLoyaltyProgram && 
+      progAddress && 
       statusUseLoyaltyPrograms == "isIdle"
-      ) fetchPrograms([selectedLoyaltyProgram]) 
-  }, [ , selectedLoyaltyProgram, address ])
+      ) fetchPrograms([{programAddress: parseEthAddress(progAddress)}]) 
+  }, [ , selectedLoyaltyProgram, address, progAddress ])
 
   useEffect(() => {
     if (

@@ -3,7 +3,7 @@
 import { useAppSelector } from "@/redux/hooks"
 import { Suspense, useEffect, useRef } from "react"
 import { useDispatch } from "react-redux"
-import UrlToRedux from "../customer/components/UrlToRedux"
+import UrlToLocalStorage from "../customer/components/UrlToLocalStorage"
 import Image from "next/image"
 import { useLoyaltyPrograms } from "../hooks/useLoyaltyPrograms"
 import { Button } from "../ui/Button";
@@ -22,9 +22,9 @@ import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 // see this solution here (from next documentation): https://nextjs.org/docs/messages/deopted-into-client-rendering
 
 export default function Page()  {
-  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
+  const progAddress = localStorage.getItem("progAddress")
 
-  function UrlToReduxFallback() {
+  function UrlToLocalStorageFallback() {
     return  (
       <div className="grow flex items-center justify-center text-slate-800 dark:text-slate-200 z-40">
         fallback text. This is probably an error. 
@@ -39,9 +39,9 @@ export default function Page()  {
       >
       
       <div className="grid grid-cols-1 w-full h-full justify-items-center content-center z-10">
-      { !selectedLoyaltyProgram ?
-      <Suspense fallback={<UrlToReduxFallback />}>
-        <UrlToRedux /> 
+      { !progAddress ?
+      <Suspense fallback={<UrlToLocalStorageFallback />}>
+        <UrlToLocalStorage /> 
       </Suspense>
       :
       null   
@@ -51,7 +51,7 @@ export default function Page()  {
 
         <div 
           className="grid h-full grid-cols-1 gap-4 justify-items-center content-center aria-hidden:bg-opacity-0 transition-all delay-500 duration-1000"
-          aria-hidden = {selectedLoyaltyProgram == undefined}
+          aria-hidden = {!progAddress}
           >      
           <Image
             className=""
@@ -69,7 +69,7 @@ export default function Page()  {
             >
             <div 
               className=" flex opacity-100 aria-hidden:opacity-0 grid grid-cols-1 gap-1"
-              aria-hidden = {selectedLoyaltyProgram == undefined}
+              aria-hidden = {!progAddress}
               >
                 <Button appearance="grayEmpty">
                   Enter Loyalty Card

@@ -1,25 +1,27 @@
 'use client'
  
-import { parseEthAddress } from '@/app/utils/parsers'
-import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer'
-import { useDispatch } from 'react-redux'
+// import { parseEthAddress } from '@/app/utils/parsers'
+// import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer'
+// import { useDispatch } from 'react-redux'
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { useRef } from 'react'
  
-export default function UrlToRedux() {
+export default function UrlToLocalStorage() {
   const params = useSearchParams();
-  const dispatch = useDispatch() 
+  // const dispatch = useDispatch() 
   const progAddress = params.get('prog')
   const checked = useRef<boolean>(false)
 
   console.log("progAddress: ", progAddress)
 
   if (progAddress && !checked.current) {
-    dispatch(selectLoyaltyProgram({programAddress: parseEthAddress(progAddress)}))
+    localStorage.setItem("progAddress", progAddress)
     checked.current = true
   }
 
+  // const locStore = localStorage.getItem("progAddress") || ""
+  // console.log("locStore: ", locStore)
   // useEffect(() => {
   //   if (status == "isSuccess" && loyaltyPrograms) dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
   // }, [status])

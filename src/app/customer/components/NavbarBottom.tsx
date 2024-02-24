@@ -32,7 +32,7 @@ const NavbarBottom = ( ) => {
     <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-slate-100/75 dark:bg-slate-900/75 text-sm border-t border-gray-400 px-4">
       
         <Link 
-          href={`/customer/home?${selectedLoyaltyProgram?.programAddress}`}  
+          href={`/customer/home`}  
           className={layoutLinks}
           aria-selected={path == `/customer/home`}> 
           <div className='col-span-1 grid text-xs justify-items-center'> 
@@ -44,7 +44,7 @@ const NavbarBottom = ( ) => {
           </div> 
         </Link>
         <Link 
-          href={`/customer/claim?${selectedLoyaltyProgram?.programAddress}` } 
+          href={`/customer/claim` } 
           className={layoutLinks}
           aria-selected={path == `/customer/claim`}> 
           <div className={layoutIconBox}> 
@@ -56,7 +56,7 @@ const NavbarBottom = ( ) => {
           </div> 
         </Link>
         <Link 
-          href={`/customer/card?${selectedLoyaltyProgram?.programAddress}` }  
+          href={`/customer/card` }  
           className={layoutLinks}
           aria-selected={path == `/customer/card`}>  
           <div className={layoutIconBox}> 
@@ -68,7 +68,7 @@ const NavbarBottom = ( ) => {
           </div> 
         </Link>
         <Link 
-          href={`/customer/transactions?${selectedLoyaltyProgram?.programAddress}`} 
+          href={`/customer/transactions`} 
           className={layoutLinks}
           aria-selected={path == `/customer/transactions`}>  
           <div className={layoutIconBox}> 
