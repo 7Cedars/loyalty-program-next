@@ -104,7 +104,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   })
 
   const handleSigning = () => {
-    walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
+    // walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
     signTypedData()
   }
 
