@@ -23,7 +23,7 @@ export default function Page()  {
 
   useEffect(() => {
     const progData = localStorage.getItem("progAddress")
-    progData ? setProgAddress(parseEthAddress(progData)) : setProgAddress(undefined) 
+    progData ? setProgAddress(progData) : setProgAddress(undefined) 
     
     const uriData = localStorage.getItem("progUri")
     uriData ? setProgUri(uriData) : setProgUri(undefined) 
