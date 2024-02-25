@@ -10,20 +10,34 @@ import { parseEthAddress, parseUri } from '@/app/utils/parsers';
  
 export default function UrlToLocalStorage() {
   const params = useSearchParams();
-  const progAddress = parseEthAddress(params.get('prog'))
-  const progUri = parseUri(params.get('proguri'))  
+  const progAddress = params.get('prog') // parseEthAddress
+
+  console.log("progAddress: ", progAddress)
+  const progUri = params.get('proguri')  
+  console.log("progUri: ", progUri)
+  const chainId = params.get('chainId')  
+  console.log("chainId: ", chainId)
   const checked = useRef<boolean>(false)
 
   useEffect(() => {
-    if (progAddress && !checked.current && typeof window !== 'undefined') {
+    if (
+      progAddress && 
+      progUri && 
+      chainId && 
+      !checked.current && 
+      typeof window !== 'undefined'
+      ) {
       localStorage.setItem("progAddress", progAddress)
       localStorage.setItem("progUri", progUri)
+      localStorage.setItem("progChainId", chainId)
       checked.current = true
-    }
-  }, [ ])
 
-  // const locStore = localStorage.getItem("progAddress") || ""
-  // console.log("locStore: ", locStore)
+      // const locStore = localStorage.getItem("progAddress") || ""
+      // console.log("locStore: ", locStore)
+    }
+  }, [ , progAddress ])
+
+
   // useEffect(() => {
   //   if (status == "isSuccess" && loyaltyPrograms) dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
   // }, [status])

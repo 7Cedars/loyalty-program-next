@@ -8,11 +8,15 @@ import { TitleText } from "@/app/ui/StandardisedFonts";
 import { useDispatch } from "react-redux";
 import { resetLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { useAppSelector } from "@/redux/hooks";
-import { parseEthAddress } from "@/app/utils/parsers";
+import { parseEthAddress, parseUri } from "@/app/utils/parsers";
+import { useAccount, useNetwork } from "wagmi";
 
 export default function Page()  {
   const dispatch = useDispatch() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const { chain } =  useNetwork()
+
+  console.log("chain: ", chain?.id )
 
   return (
      
@@ -25,7 +29,7 @@ export default function Page()  {
           /> 
       <div className="grid justify-center justify-items-center p-6 h-full max-w-24 rounded-lg m-3">
         <QRCode 
-          value={`${BASE_URI}/landing?prog=${parseEthAddress(selectedLoyaltyProgram?.programAddress)}&proguri=${selectedLoyaltyProgram?.uri}`}
+          value={`${BASE_URI}/landing?prog=${parseEthAddress(selectedLoyaltyProgram?.programAddress)}&proguri=${parseUri(selectedLoyaltyProgram?.metadata?.imageUri)}&chainId=${chain?.id}`}
           style={{ 
             height: "350px", 
             width: "350px", 

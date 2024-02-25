@@ -23,14 +23,19 @@ import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 
 export default function Page()  {
   const [progAddress, setProgAddress] = useState<string | null>(); 
-  const [progUri, setProgUri] = useState<string | null>(); 
+  const [progUri, setProgUri] = useState<string | null | undefined>(); 
 
   useEffect(() => {
-    const progData = parseEthAddress(localStorage.getItem("progAddress"))
-    setProgAddress(progData)
-    const uriData = parseUri(localStorage.getItem("progUri"))
-    uriData ? setProgUri(uriData) : null 
+    const progData = localStorage.getItem("progAddress")
+    progData ? setProgAddress(parseEthAddress(progData)) : setProgAddress(undefined) 
+    
+    const uriData = localStorage.getItem("progUri")
+    uriData ? setProgUri(uriData) : setProgUri(undefined) 
   }, [])
+
+  useEffect(() => {
+    if (progUri && new URL(progUri)) setProgUri(parseUri(progUri))
+  }, [progUri])
   
   function UrlToLocalStorageFallback() {
     return  (
