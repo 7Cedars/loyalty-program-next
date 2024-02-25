@@ -201,11 +201,11 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
             { token.tokenised == 1n ? 
 
-              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()}  >
+              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()}  >
                 Claim Voucher
               </Button>
               :
-              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
+              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
                 Claim Gift
               </Button>
            
