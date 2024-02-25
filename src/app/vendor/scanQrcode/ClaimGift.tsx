@@ -1,7 +1,7 @@
 "use client"; 
 
 // See for eip-712 example https://medium.com/coinmonks/eip-712-example-d5877a1600bd 
-import { LoyaltyToken } from "@/types";
+import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
@@ -14,7 +14,7 @@ import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
 import { QrData } from "@/types";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useAppSelector } from "@/redux/hooks";
 
 
@@ -25,29 +25,29 @@ type SendPointsProps = {
 
 export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const dimensions = useScreenDimensions();
-  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
-  const [token, setToken] = useState<LoyaltyToken>()
+  const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
+  const [token, setToken] = useState<LoyaltyGift>()
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const dispatch = useDispatch() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
 
   console.log("QRDATA @claim gift: ", qrData)
-  console.log("loyaltyTokens @claim gift: ", loyaltyTokens)
+  console.log("loyaltyGifts @claim gift: ", loyaltyGifts)
 
   useEffect(() => {
-    if (!loyaltyTokens && qrData) {
+    if (!loyaltyGifts && qrData) {
             
-          fetchTokens([{
-            tokenAddress: parseEthAddress(qrData?.loyaltyToken), 
-            tokenId: parseNumber(qrData?.loyaltyTokenId) 
+          fetchGifts([{
+            giftAddress: parseEthAddress(qrData?.loyaltyToken), 
+            giftId: parseNumber(qrData?.loyaltyTokenId) 
           }])
     }
-    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
+    if (status == "isSuccess" && loyaltyGifts) setToken(loyaltyGifts[0])
   }, [, qrData])
 
   useEffect(() => {
-    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
-  }, [status, loyaltyTokens])
+    if (status == "isSuccess" && loyaltyGifts) setToken(loyaltyGifts[0])
+  }, [status, loyaltyGifts])
 
   const claimLoyaltyGift = useContractWrite( 
     {
@@ -173,7 +173,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
             
             <div className="grid grid-cols-1 pt-4">
               <div className="text-center text-lg"> 
-                {`Gift #${qrData?.loyaltyTokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
+                {`Gift #${qrData?.loyaltyTokenId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
               </div>
             </div>
           </div>

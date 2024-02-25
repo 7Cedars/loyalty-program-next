@@ -1,5 +1,5 @@
 "use client"; 
-import { LoyaltyToken } from "@/types";
+import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
@@ -13,7 +13,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { QrData } from "@/types";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useAppSelector } from "@/redux/hooks";
 
 
@@ -25,28 +25,28 @@ type SendPointsProps = {
 export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   const dimensions = useScreenDimensions();
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const [ token, setToken ] = useState<LoyaltyToken>()
+  const [ token, setToken ] = useState<LoyaltyGift>()
   const [ hashTransaction, setHashTransaction] = useState<any>()
-  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
+  const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
   const dispatch = useDispatch() 
 
   console.log("QRDATA @redeem token: ", qrData)
   console.log("token @redeem token: ", token)
 
   useEffect(() => {
-    if (!loyaltyTokens && qrData) {
+    if (!loyaltyGifts && qrData) {
             
-          fetchTokens([{
-            tokenAddress: parseEthAddress(qrData?.loyaltyToken), 
-            tokenId: parseNumber(qrData?.loyaltyTokenId) 
+          fetchGifts([{
+            giftAddress: parseEthAddress(qrData?.loyaltyToken), 
+            giftId: parseNumber(qrData?.loyaltyTokenId) 
           }])
     }
-    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
+    if (status == "isSuccess" && loyaltyGifts) setToken(loyaltyGifts[0])
   }, [, qrData])
 
   useEffect(() => {
-    if (status == "isSuccess" && loyaltyTokens) setToken(loyaltyTokens[0])
-  }, [status, loyaltyTokens])
+    if (status == "isSuccess" && loyaltyGifts) setToken(loyaltyGifts[0])
+  }, [status, loyaltyGifts])
 
   const redeemLoyaltyVoucher = useContractWrite( 
     {
@@ -146,7 +146,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
             }
             <div className="grid grid-cols-1 pt-4">
               <div className="text-center text-md"> 
-                {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
+                {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
               </div>
               <div className="text-center text-md"> 
                 {`Remaining vouchers: ${token.availableTokens}`}

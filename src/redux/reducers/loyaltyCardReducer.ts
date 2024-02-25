@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { LoyaltyCard } from '../../types'
+import { usePublicClient } from 'wagmi'
+import { parseEthAddress } from '@/app/utils/parsers'
 
 
 interface LoyaltyCardState {
@@ -19,7 +21,6 @@ export const selectedLoyaltyProgramSlice = createSlice({
       state.selectedLoyaltyCard = action.payload
     }, 
     resetLoyaltyCard: (state, action: PayloadAction<boolean>) => {
-      // console.log("prioritizeNotification called")
       if (action.payload === true) {
         state.selectedLoyaltyCard = undefined
       }
@@ -28,5 +29,5 @@ export const selectedLoyaltyProgramSlice = createSlice({
 })
 
 export const { selectLoyaltyCard, resetLoyaltyCard } = selectedLoyaltyProgramSlice.actions
-
 export default selectedLoyaltyProgramSlice.reducer
+

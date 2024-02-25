@@ -23,6 +23,9 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
 import { useAppSelector } from "@/redux/hooks";
+import { DynamicLayout } from "../components/DynamicLayout";
+import NavbarTop from "../components/NavbarTop";
+import NavbarBottom from "../components/NavbarBottom";
  
 
 
@@ -140,103 +143,106 @@ export default function Page() {
   ])
 
   return (
-    <div className="grid grid-cols-1 h-full content-between">
-      <div className="grid grid-cols-1 h-full overflow-auto px-2 justify-items-center">
-        <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
+    // <DynamicLayout>
 
-        { transactions ? 
-            <div className="grid grid-cols-1 w-full md:w-4/5 overflow-auto m-4 mx-2 p-8 divide-y">  
-              {
-              transactions.map((transaction: Transaction, i) => 
-                <div key = {i} className="p-2 ">
-                  {
-                   transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.from === selectedLoyaltyProgram?.programOwner ? 
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Points Received  
-                        </div> 
-                        <div className="">
-                          Blocknumber: {Number(transaction.blockNumber)}
-                        </div> 
-                      </div>
-                      <div> 
-                        {`${transaction.values[0]} points`}
-                      </div>
-                    </div>
-                  :
-                  transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.to === selectedLoyaltyProgram?.programOwner ? 
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Gift Claimed
-                        </div> 
-                        <div className="">
-                          Blocknumber: {Number(transaction.blockNumber)}
-                        </div> 
-                      </div>
-                      <div> 
-                        {`${transaction.values[0]} points`}
-                      </div>
-                    </div>
-                  :
-                  transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.from === selectedLoyaltyProgram?.programAddress ? 
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Voucher Received
-                        </div> 
-                        <div className="">
-                          Blocknumber: {Number(transaction.blockNumber)}
-                        </div> 
-                      </div>
-                      <div> 
-                        {`Voucher Id: ${transaction.values[0]}`}
-                      </div>
-                    </div>
-                  :
-                  transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.to === selectedLoyaltyProgram?.programAddress ? 
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Voucher Redeemed
-                        </div> 
-                        <div className="">
-                          Blocknumber: {Number(transaction.blockNumber)}
-                        </div> 
-                      </div>
-                      <div> 
-                        {`Voucher Id: ${transaction.values[0]}`}
-                      </div>
-                    </div>
-                  :
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Unrecognised
-                        </div> 
-                        <div className="">
-                          Blocknumber: {Number(transaction.blockNumber)}
-                        </div> 
-                      </div>
-                      <div> 
-                        {`to customer address: ${transaction.to}`}
-                      </div>
-                      <div> 
-                        {`Card ID: ${transaction.ids}`}
-                       </div>
-                    </div>
-                  }
-                </div>
-              )
-              }
-            </div>    
-          :
-          <div className="m-6"> 
-              <NoteText message="Transaction history will appear here."/>
-          </div>           
-          }
-        </div> 
-    </div> 
+              <div className="grid grid-cols-1 h-full content-between">
+                <div className="grid grid-cols-1 h-full overflow-auto px-2 justify-items-center">
+                  <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
+
+                  { transactions ? 
+                      <div className="grid grid-cols-1 w-full md:w-4/5 overflow-auto m-4 mx-2 p-8 divide-y">  
+                        {
+                        transactions.map((transaction: Transaction, i) => 
+                          <div key = {i} className="p-2 ">
+                            {
+                            transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.from === selectedLoyaltyProgram?.programOwner ? 
+                              <div className="grid grid-cols-1">
+                                <div className="flex justify-between">
+                                  <div className="font-bold">
+                                    Points Received  
+                                  </div> 
+                                  <div className="">
+                                    Blocknumber: {Number(transaction.blockNumber)}
+                                  </div> 
+                                </div>
+                                <div> 
+                                  {`${transaction.values[0]} points`}
+                                </div>
+                              </div>
+                            :
+                            transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.to === selectedLoyaltyProgram?.programOwner ? 
+                              <div className="grid grid-cols-1">
+                                <div className="flex justify-between">
+                                  <div className="font-bold">
+                                    Gift Claimed
+                                  </div> 
+                                  <div className="">
+                                    Blocknumber: {Number(transaction.blockNumber)}
+                                  </div> 
+                                </div>
+                                <div> 
+                                  {`${transaction.values[0]} points`}
+                                </div>
+                              </div>
+                            :
+                            transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.from === selectedLoyaltyProgram?.programAddress ? 
+                              <div className="grid grid-cols-1">
+                                <div className="flex justify-between">
+                                  <div className="font-bold">
+                                    Voucher Received
+                                  </div> 
+                                  <div className="">
+                                    Blocknumber: {Number(transaction.blockNumber)}
+                                  </div> 
+                                </div>
+                                <div> 
+                                  {`Voucher Id: ${transaction.values[0]}`}
+                                </div>
+                              </div>
+                            :
+                            transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.to === selectedLoyaltyProgram?.programAddress ? 
+                              <div className="grid grid-cols-1">
+                                <div className="flex justify-between">
+                                  <div className="font-bold">
+                                    Voucher Redeemed
+                                  </div> 
+                                  <div className="">
+                                    Blocknumber: {Number(transaction.blockNumber)}
+                                  </div> 
+                                </div>
+                                <div> 
+                                  {`Voucher Id: ${transaction.values[0]}`}
+                                </div>
+                              </div>
+                            :
+                              <div className="grid grid-cols-1">
+                                <div className="flex justify-between">
+                                  <div className="font-bold">
+                                    Unrecognised
+                                  </div> 
+                                  <div className="">
+                                    Blocknumber: {Number(transaction.blockNumber)}
+                                  </div> 
+                                </div>
+                                <div> 
+                                  {`to customer address: ${transaction.to}`}
+                                </div>
+                                <div> 
+                                  {`Card ID: ${transaction.ids}`}
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        )
+                        }
+                      </div>    
+                    :
+                    <div className="m-6"> 
+                        <NoteText message="Transaction history will appear here."/>
+                    </div>           
+                    }
+                  </div> 
+              </div>
+        // </DynamicLayout>
   )
 }

@@ -6,15 +6,12 @@ import { WagmiConfig,  configureChains, createConfig } from 'wagmi'
 import { foundry, sepolia, baseSepolia } from 'viem/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
+// import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { useWeb3ModalTheme } from '@web3modal/wagmi/react';
-import { createWalletClient, http } from 'viem';
 
-// const selectedChains = [baseSepolia] // other options: , arbitrum, arbitrumGoerli, optimism, optimismSepolia,
 // 1. Get keys
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ? process.env.NEXT_PUBLIC_ALCHEMY_API_KEY: "none"
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_ID ? process.env.NEXT_PUBLIC_WALLETCONNECT_ID: "none"
-
 
 // 2. Create wagmiConfig
 const metadata = {
@@ -25,7 +22,7 @@ const metadata = {
 }
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [ foundry, sepolia ],
+  [ foundry, sepolia ], //  arbitrum, arbitrumGoerli, optimism, optimismSepolia, baseSepolia
   [ 
     publicProvider(),   
     // jsonRpcProvider({

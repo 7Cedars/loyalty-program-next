@@ -2,9 +2,9 @@
 // notification area, and otherwise it will not load... 
 
 import '../globals.css'
-import NavbarTop from "./components/NavbarTop"; 
-import NavbarBottom from './components/NavbarBottom';
-import { DynamicLayout } from './components/DynamicLayout';
+import NavbarTop from "../customer/components/NavbarTop"; 
+import NavbarBottom from '../customer/components/NavbarBottom';
+import { DynamicLayout } from '../customer/components/DynamicLayout';
 
 export default function layout({
   children,
@@ -14,9 +14,9 @@ export default function layout({
 
   return (
     <div className="absolute flex h-full w-full grid grid-cols-1 justify-items-center bg-slate-100 overflow-hidden">
-       <DynamicLayout>
+       {/* <DynamicLayout> */}
         {children}
-      </DynamicLayout>
+      {/* </DynamicLayout> */}
     </div>
   )
 }

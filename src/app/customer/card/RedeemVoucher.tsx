@@ -2,7 +2,7 @@
 
 import QRCode from "react-qr-code";
 import { useAppSelector } from '@/redux/hooks';
-import { LoyaltyToken } from "@/types";
+import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { TitleText } from "@/app/ui/StandardisedFonts";
@@ -18,7 +18,7 @@ import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 type SelectedTokenProps = {
-  token: LoyaltyToken
+  token: LoyaltyGift
   disabled: boolean
 }
 
@@ -168,7 +168,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
             }
             <div className="text-center text-md"> 
               <div className="text-center text-md"> 
-                {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
+                {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
               </div>
               {token.tokenised == 1n ? 
                 <div className="text-center text-md"> 
@@ -194,7 +194,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
             <div className="m-3 flex items-center"> 
               <QRCode 
-                value={`type:redeemToken;${token.tokenAddress};${token.tokenId};${selectedLoyaltyCard?.cardId};${address};${signature}`}
+                value={`type:redeemToken;${token.giftAddress};${token.giftId};${selectedLoyaltyCard?.cardId};${address};${signature}`}
                 style={{ 
                   height: "350px", 
                   width: "350px", 

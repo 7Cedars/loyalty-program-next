@@ -1,13 +1,13 @@
 import { 
   EthAddress, 
-  TokenMetadata, 
+  Metadata, 
   Attribute, 
   DeployedContractLog, 
   Transaction, 
   TransactionArgs, 
   QrData,
   LoyaltyProgram, 
-  LoyaltyToken
+  LoyaltyGift
 } from "@/types";
 import { Url } from "url";
 import { isBooleanObject } from "util/types";
@@ -118,7 +118,7 @@ const parseTokenised = (tokenised: unknown): BigInt[] => {
   return tokenised as BigInt[];
 };
 
-const parseArgsAddRemoveLoyaltyToken = (args: unknown): {giftAddress: EthAddress, giftId: number}  => {
+const parseArgsAddRemoveLoyaltyGift = (args: unknown): {giftAddress: EthAddress, giftId: number}  => {
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');
   }
@@ -275,7 +275,7 @@ export const parseContractLogs = (logs: Log[]): LoyaltyProgram[] => {
 };
 
 
-export const parseTokenContractLogs = (logs: Log[]): LoyaltyToken[] => {
+export const parseTokenContractLogs = (logs: Log[]): LoyaltyGift[] => {
   if (!isArray(logs)) {
     throw new Error(`Incorrect logs, not an array: ${logs}`);
   }
@@ -295,9 +295,9 @@ export const parseTokenContractLogs = (logs: Log[]): LoyaltyToken[] => {
           const tokenIds = parseArgsLoyaltyGift(log.args).tokenised 
           console.log("tokenIds @parseTokenContractLogs" , tokenIds)
           const temp = tokenIds.map((tokenId, i) => ({
-            tokenAddress: parseEthAddress(log.address), 
+            giftAddress: parseEthAddress(log.address), 
             issuer: parseArgsLoyaltyGift(log.args).issuer, 
-            tokenId: i, 
+            giftId: i, 
             tokenised: tokenId
           }))
           return temp
@@ -305,7 +305,7 @@ export const parseTokenContractLogs = (logs: Log[]): LoyaltyToken[] => {
         throw new Error('Incorrect data at Token (gift) Contract logs: some fields are missing or incorrect');
     })
 
-    return parsedLogs.flat() as LoyaltyToken[] 
+    return parsedLogs.flat() as LoyaltyGift[] 
 
   } catch {
     throw new Error('Incorrect data at Token (gift) Contract logs. Parser caught error');
@@ -326,8 +326,8 @@ export const parseLoyaltyGiftLogs = (logs: Log[]): {giftAddress: EthAddress, gif
       }
 
       if ( 'args' in log ) {
-        console.log("parseArgsAddRemoveLoyaltyToken(log.args): ",log.args)
-        return parseArgsAddRemoveLoyaltyToken(log.args)
+        console.log("parseArgsAddRemoveLoyaltyGift(log.args): ",log.args)
+        return parseArgsAddRemoveLoyaltyGift(log.args)
       } 
         throw new Error('Incorrect data at LoyaltyGift logs: some fields are missing or incorrect');
     })
@@ -341,7 +341,8 @@ export const parseLoyaltyGiftLogs = (logs: Log[]): {giftAddress: EthAddress, gif
   }
 };
 
-export const parseLoyaltyTokenLogs = (logs: Log[]): EthAddress[] => {
+// Is this parser unused? Check and if so, delete £todo
+export const parseLoyaltyLogs = (logs: Log[]): EthAddress[] => {
   if (!isArray(logs)) {
     throw new Error(`Incorrect logs, not an array: ${logs}`);
   }
@@ -479,7 +480,7 @@ export const parseUri = (uri: unknown): string => {
   return uri as string;
 };
 
-export const parseMetadata = (metadata: unknown): TokenMetadata => {
+export const parseMetadata = (metadata: unknown): Metadata => {
 
   console.log("metadata @parseMetadata: ", metadata)
 

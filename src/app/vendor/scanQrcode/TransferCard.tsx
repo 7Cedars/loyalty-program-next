@@ -75,7 +75,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
           colour: "red",
           isVisible: true
         }))
-        console.log('addLoyaltyToken Error', error)
+        console.log('addLoyaltyGift Error', error)
       }, 
       onSuccess(data: any) {
         console.log("data from getNumberLoyaltyCardsMinted: ", data)
