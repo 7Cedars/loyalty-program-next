@@ -1,16 +1,12 @@
 "use client"; 
 
-import { useAppSelector } from "@/redux/hooks"
-import { Suspense, useEffect, useRef, useState } from "react"
-import { useDispatch } from "react-redux"
+import { Suspense, useEffect, useState } from "react"
 import UrlToLocalStorage from "../customer/components/UrlToLocalStorage"
 import Image from "next/image"
-import { useLoyaltyPrograms } from "../hooks/useLoyaltyPrograms"
 import { Button } from "../ui/Button";
 import Link from "next/link";
 import { TitleText } from "../ui/StandardisedFonts";
 import { parseEthAddress, parseUri } from "../utils/parsers";
-import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 
 // NB: Notice the use of suspense to load url into redux. 
 // This is done because this version of Wagmi (which is needed with this version of Web3Modal) cannot deal with 

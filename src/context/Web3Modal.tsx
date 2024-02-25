@@ -8,13 +8,10 @@ import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 // import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { useWeb3ModalTheme } from '@web3modal/wagmi/react';
-import { useEffect } from 'react';
-import { parseNumber } from '@/app/utils/parsers';
 
 // 1. Get keys
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ? process.env.NEXT_PUBLIC_ALCHEMY_API_KEY: "none"
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_ID ? process.env.NEXT_PUBLIC_WALLETCONNECT_ID: "none"
-const progChainId = parseNumber(Number(localStorage.getItem("progChainId")))
 
 // 2. Create wagmiConfig
 const metadata = {
@@ -24,13 +21,8 @@ const metadata = {
   icons: ['https://github.com/7Cedars/loyalty-program-next/blob/main/public/iconLoyaltyProgram.svg']
 }
 
-const allChains = [ foundry, sepolia ]
-const selectedChain = allChains.filter(chain => chain.id === progChainId)
-
-console.log("selectedChain: ", selectedChain)
-
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  selectedChain, //  arbitrum, arbitrumGoerli, optimism, optimismSepolia, baseSepolia
+  [ foundry, sepolia ], //  arbitrum, arbitrumGoerli, optimism, optimismSepolia, baseSepolia
   [ 
     publicProvider(),   
     // jsonRpcProvider({
