@@ -44,7 +44,6 @@ export default function Home() {
 =======
     console.log("walletClient: ", walletClient)
     walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
->>>>>>> ad3d9c516e9cd87d36b3f104eac4a839203f3c40
     setDeployRequest(data)
   }
 
