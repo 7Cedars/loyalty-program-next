@@ -41,10 +41,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   console.log("nonceData: ", nonceData)
   console.log("chain: ",chain )
 
-
-
   useEffect(() => {
-
     const getNonceLoyaltyCard = async () => {
       try {
         const rawNonceData: unknown = await publicClient.readContract({ 
@@ -107,10 +104,10 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   })
 
   
-  const handleSigning = () => {
-    walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
-    signTypedData()
-  }
+  // const handleSigning = () => {
+  //   // walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
+  //   signTypedData()
+  // }
 
   useEffect(() => { 
     if (isLoading) {
@@ -205,11 +202,11 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
             { token.tokenised == 1n ? 
 
-              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()}  >
+              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()}  >
                 Claim Voucher
               </Button>
               :
-              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
+              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
                 Claim Gift
               </Button>
            
@@ -242,7 +239,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
         : 
         null 
         }
-      <div className="h16" />
+      <div className="h-20" />
     </div>
   );
 }
