@@ -52,7 +52,6 @@ export const wagmiConfig = defaultWagmiConfig({
   chains, 
   projectId, 
   metadata, 
-
  })
 
 const config = createConfig({
@@ -72,5 +71,5 @@ export function Web3Modal({ children }: any) {
   const { setThemeMode } = useWeb3ModalTheme()
   setThemeMode('light')
 
-  return <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>;
+  return <WagmiConfig config={config}>{children}</WagmiConfig>;
 }
