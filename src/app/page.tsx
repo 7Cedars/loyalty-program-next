@@ -36,7 +36,7 @@ export default function Home() {
   const handleDeployRequest = async (data: DeployRequestProps) => {
     console.log("handleDeployRequest CALLED, uri: ", data)
     console.log("walletClient: ", walletClient)
-    // walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
+    walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
     setDeployRequest(data)
   }
 
@@ -48,7 +48,7 @@ export default function Home() {
     const implementation: EthAddress = parseEthAddress("0x71C95911E9a5D330f4D621842EC243EE1343292e") 
 
     if (walletClient && deployRequest) {
-      open({view: "Connect"}) 
+      // open({view: "Connect"}) 
       const hash = await walletClient.deployContract({
         abi: loyaltyProgramAbi,
         chain: sepolia, // needs to be dynamic
