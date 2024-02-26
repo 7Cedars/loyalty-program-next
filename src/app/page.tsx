@@ -29,13 +29,13 @@ export default function Home() {
   const { data: walletClient, status } = useWalletClient();
   const [deployRequest, setDeployRequest] = useState<DeployRequestProps>();
   const [ selectIndex, setSelectedIndex ] = useState<number | undefined>(1);
-  const dispatch = useDispatch(); 
+  // const dispatch = useDispatch(); 
 
   console.log("deployRequest: ", deployRequest)
 
   const handleDeployRequest = async (data: DeployRequestProps) => {
     console.log("handleDeployRequest CALLED, uri: ", data)
-    !walletClient ? open({view: "Networks"}) : null  
+    // !walletClient ? open({view: "Networks"}) : null  
     setDeployRequest(data)
   }
 
@@ -47,7 +47,7 @@ export default function Home() {
     const implmentation: EthAddress = parseEthAddress("0x71C95911E9a5D330f4D621842EC243EE1343292e") 
 
     if (walletClient && deployRequest) {
-      open({view: "Connect"}) 
+      // open({view: "Connect"}) 
       const hash = await walletClient.deployContract({
         abi: loyaltyProgramAbi,
         account: address,
