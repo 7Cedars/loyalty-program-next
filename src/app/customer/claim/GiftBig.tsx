@@ -105,7 +105,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   
   const handleSigning = () => {
-    open({view: "Connect"})
+    open()
     signTypedData()
   }
 
