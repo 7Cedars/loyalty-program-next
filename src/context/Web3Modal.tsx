@@ -19,7 +19,7 @@ const metadata = {
   name: 'loyalty-program',
   description: 'Customer Loyalty Program',
   url: 'https://loyalty-program-psi.vercel.app/', 
-  icons: ['/images/iconLoyaltyProgram.svg']
+  icons: ['public/images/iconLoyaltyProgram.svg']
 }
 
 const w3mConnector = new WalletConnectConnector({
@@ -29,7 +29,7 @@ const w3mConnector = new WalletConnectConnector({
       name: 'loyalty-program',
       description: 'Customer Loyalty Program',
       url: 'https://loyalty-program-psi.vercel.app/', 
-      icons: ['/images/iconLoyaltyProgram.svg']
+      icons: ['public/images/iconLoyaltyProgram.svg']
     }
   },
 })
