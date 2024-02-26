@@ -22,7 +22,7 @@ type SelectedTokenProps = {
   disabled: boolean
 }
 
-export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
+export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient()
@@ -40,6 +40,8 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   console.log("parseEthAddress(selectedLoyaltyProgram?.programAddress): ", parseEthAddress(selectedLoyaltyProgram?.programAddress))
   console.log("nonceData: ", nonceData)
   console.log("chain: ",chain )
+
+
 
   useEffect(() => {
 
@@ -96,6 +98,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   console.log("message: ", message)
 
   const { data: signature, isError, isLoading, isSuccess, reset: resetSignature, signTypedData } =
+
   useSignTypedData({
     domain,
     message,
@@ -103,6 +106,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     types,
   })
 
+  
   const handleSigning = () => {
     walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
     signTypedData()

@@ -1,7 +1,7 @@
 "use client"; 
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./GiftSmall";
-import TokenBig from "./GiftBig";
+import { TokenBig } from "./GiftBig";
 import { LoyaltyGift, Status } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -29,7 +29,6 @@ type setSelectedTokenProps = {
 export default function Page() {
   const dispatch = useDispatch() 
   const publicClient = usePublicClient()
-  const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const { status: statusLoyaltyGifts, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
 
   const statusAtAddedGifts = useRef<Status>("isIdle") 
@@ -52,6 +51,7 @@ export default function Page() {
   ///     Fetch Card Balance      ///
   ///////////////////////////////////
   
+
   const fetchCardBalance = async () => {
     if (selectedLoyaltyCard && selectedLoyaltyCard.balance == undefined)
       try {
