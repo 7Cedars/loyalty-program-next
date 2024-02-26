@@ -30,20 +30,13 @@ export default function Home() {
   const { data: walletClient, status } = useWalletClient();
   const [deployRequest, setDeployRequest] = useState<DeployRequestProps>();
   const [ selectIndex, setSelectedIndex ] = useState<number | undefined>(1);
-<<<<<<< HEAD
-  // const dispatch = useDispatch(); 
-=======
->>>>>>> ad3d9c516e9cd87d36b3f104eac4a839203f3c40
 
   console.log("deployRequest: ", deployRequest)
 
   const handleDeployRequest = async (data: DeployRequestProps) => {
     console.log("handleDeployRequest CALLED, uri: ", data)
-<<<<<<< HEAD
-    // !walletClient ? open({view: "Networks"}) : null  
-=======
     console.log("walletClient: ", walletClient)
-    walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
+    // walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
     setDeployRequest(data)
   }
 
