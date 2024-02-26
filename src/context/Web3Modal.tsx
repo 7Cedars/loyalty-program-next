@@ -72,5 +72,5 @@ export function Web3Modal({ children }: any) {
   const { setThemeMode } = useWeb3ModalTheme()
   setThemeMode('light')
 
-  return <WagmiConfig config={config}>{children}</WagmiConfig>;
+  return <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>;
 }
