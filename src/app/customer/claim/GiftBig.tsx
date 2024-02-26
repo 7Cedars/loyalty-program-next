@@ -14,7 +14,7 @@ import { useAppSelector } from "@/redux/hooks";
 import QRCode from "react-qr-code";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 
 
 type SelectedTokenProps = {
@@ -35,6 +35,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const {chain} = useNetwork() 
   const {open} = useWeb3Modal()
   const { data: walletClient, status } = useWalletClient();
+  const { open: isOpen, selectedNetworkId } = useWeb3ModalState()
 
   console.log("selectedLoyaltyCard?.cardAddress: ", selectedLoyaltyCard?.cardAddress)
   console.log("parseEthAddress(selectedLoyaltyProgram?.programAddress): ", parseEthAddress(selectedLoyaltyProgram?.programAddress))
@@ -103,11 +104,15 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
     types,
   })
 
+  useEffect(() => {
+    if (isOpen) signTypedData()  
+  }, [isOpen, signTypedData])
+
   
-  const handleSigning = () => {
-    open()
-    signTypedData()
-  }
+  // const handleSigning = () => {
+  //   open({view: "Connect"})
+  //   signTypedData()
+  // }
 
   useEffect(() => { 
     if (isLoading) {
@@ -202,11 +207,11 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
             { token.tokenised == 1n ? 
 
-              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()}  >
+              <Button appearance = {"greenEmpty"} onClick={() => open({view: "Connect"})}  >
                 Claim Voucher
               </Button>
               :
-              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
+              <Button appearance = {"greenEmpty"} onClick={() => open({view: "Connect"})} >
                 Claim Gift
               </Button>
            
