@@ -2,10 +2,9 @@
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./GiftSmall";
 import TokenBig from "./GiftBig";
-import { LoyaltyToken } from "@/types";
-import { useEffect, useState } from "react";
+import { LoyaltyGift, Status } from "@/types";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { Log } from "viem"
 import { usePublicClient } from 'wagmi'
@@ -15,96 +14,146 @@ import {
   parseLoyaltyGiftLogs
 } from "@/app/utils/parsers";
 import { useAppSelector } from "@/redux/hooks";
-import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
+import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
+import Image from "next/image";
 
 type setSelectedTokenProps = {
-  token: LoyaltyToken; 
+  token: LoyaltyGift; 
   disabled: boolean; 
 }
 
 export default function Page() {
-  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
-  
-  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
-  const [ activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
-
-  const [ selectedToken, setSelectedToken ] = useState<setSelectedTokenProps | undefined>() 
-  const { progAddress } = useUrlProgramAddress() 
-  const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction() 
-  const publicClient = usePublicClient()
   const dispatch = useDispatch() 
+  const publicClient = usePublicClient()
+  const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
+  const { status: statusLoyaltyGifts, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
 
-  const getLoyaltyCardPoints = async () => {
-    console.log("getLoyaltyCardPoints called") 
-      if (selectedLoyaltyCard) {
-      const loyaltyCardPointsData = await publicClient.readContract({
-        address: parseEthAddress(progAddress), 
-        abi: loyaltyProgramAbi,
-        functionName: 'getBalanceLoyaltyCard', 
-        args: [ selectedLoyaltyCard?.cardAddress ]
-      });
+  const statusAtAddedGifts = useRef<Status>("isIdle") 
+  const statusAtClaimableGifts = useRef<Status>("isIdle") 
+  const [data, setData] = useState<LoyaltyGift[]>()
+  
+  const [ selectedToken, setSelectedToken ] = useState<setSelectedTokenProps | undefined>() 
+  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
+  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+  const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction() 
 
-      console.log("loyaltyCardPointsData: ", loyaltyCardPointsData)
-      
-      const loyaltyCardPoints = parseBigInt(loyaltyCardPointsData)
-      setLoyaltyPoints(Number(loyaltyCardPoints))
+  console.log("status @claim page: ", {
+    statusAtgiftAddress: statusAtAddedGifts.current,
+    statusAtUri: statusAtClaimableGifts.current, 
+    statusLoyaltyGifts: statusLoyaltyGifts
+  })
+  console.log("data @claim page: ", data)
+
+  ///////////////////////////////////
+  ///     Fetch Card Balance      ///
+  ///////////////////////////////////
+  
+  const fetchCardBalance = async () => {
+    if (selectedLoyaltyCard && selectedLoyaltyCard.balance == undefined)
+      try {
+        const loyaltyCardPoints = await publicClient.readContract({
+          address: parseEthAddress(selectedLoyaltyCard.loyaltyProgramAddress), 
+          abi: loyaltyProgramAbi,
+          functionName: 'getBalanceLoyaltyCard', 
+          args: [ selectedLoyaltyCard.cardAddress ]
+        });
+
+        const updatedLoyaltyCard = {...selectedLoyaltyCard, balance: Number(parseBigInt(loyaltyCardPoints))}
+        dispatch(selectLoyaltyCard(updatedLoyaltyCard))
+
+        } catch (error) {
+          console.log(error)
+      }
+  }
+
+  // to refetch: set balance to undefined. 
+  useEffect(() => { 
+    if (selectedLoyaltyCard && selectedLoyaltyCard.balance == undefined) fetchCardBalance() 
+  }, [selectedLoyaltyCard])
+
+
+  ///////////////////////////////////
+  ///         Fetch Gifts         ///
+  ///////////////////////////////////
+
+  const getAddedGifts = async () => {
+    statusAtAddedGifts.current = "isLoading"
+    console.log("getAddedGifts called")
+
+    try {
+      const addedGifts: Log[] = await publicClient.getContractEvents( { 
+        abi: loyaltyProgramAbi, 
+        address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+        eventName: 'AddedLoyaltyGift', 
+        fromBlock: 5200000n
+      }); 
+      const addedGiftsEvents: LoyaltyGift[] = Array.from(new Set(parseLoyaltyGiftLogs(addedGifts))) 
+      statusAtAddedGifts.current = "isSuccess"
+      setData(addedGiftsEvents)
+
+    } catch (error) {
+      statusAtAddedGifts.current = "isError"
+      console.log(error)
     }
   }
 
-  const getTokenSelection = async () => {
-    let activeGifts: LoyaltyToken[]; 
+  const getClaimableGifts = async () => {
+    statusAtClaimableGifts.current = "isLoading"
+    console.log("getClaimableGifts called")
 
-    const addedGifts: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
-      eventName: 'AddedLoyaltyGift', 
-      fromBlock: 5200000n
-    }); 
-    const addedGiftsEvents = parseLoyaltyGiftLogs(addedGifts)
+    let loyaltyGift: LoyaltyGift
+    let loyaltyGiftsUpdated: LoyaltyGift[] = []
 
-    const removedGifts: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
-      eventName: 'RemovedLoyaltyGiftClaimable', 
-      fromBlock: 5200000n
-    }); 
-    const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
-
-    if (loyaltyTokens && removedGiftsEvents && addedGiftsEvents) {      
-      loyaltyTokens.forEach(loyaltyToken => { 
-        
-        const addedEvenCount = addedGiftsEvents.filter(
-          event => event.giftAddress == loyaltyToken.tokenAddress && event.giftId == loyaltyToken.tokenId
-          ).length 
-        const removedEvenCount = removedGiftsEvents.filter(
-          event => event.giftAddress == loyaltyToken.tokenAddress && event.giftId == loyaltyToken.tokenId
-          ).length
-          
-        if (!activeGifts) activeGifts = []
-        if (addedEvenCount > removedEvenCount) activeGifts.push(loyaltyToken) 
-        setActiveLoyaltyGifts(activeGifts)
-        
-      })
+    if (data) { 
+      try {
+        for await (loyaltyGift of data) {
+          const isClaimable: unknown = await publicClient.readContract({
+            address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+            abi: loyaltyProgramAbi,
+            functionName: 'getLoyaltyGiftsIsClaimable', 
+            args: [loyaltyGift.giftAddress, loyaltyGift.giftId]
+          })
+          console.log("isClaimable: ", isClaimable)
+          isClaimable == 1n ? loyaltyGiftsUpdated.push(loyaltyGift) : null
+          console.log("loyaltyGiftsUpdated: ", loyaltyGiftsUpdated)
+        }
+        statusAtClaimableGifts.current = "isSuccess" 
+        setData(loyaltyGiftsUpdated) 
+      } catch (error) {
+        statusAtClaimableGifts.current = "isError" 
+        console.log(error)
+      }
     }
   }
 
   useEffect(() => {
-    fetchTokens()
-    getLoyaltyCardPoints()
-  }, [ ] ) 
+    if (statusAtAddedGifts.current == "isIdle") getAddedGifts()
+  }, [, statusAtAddedGifts ] ) 
 
   useEffect(() => {
-    if (status == "isSuccess" || selectedToken == undefined ) getTokenSelection() 
-  }, [, status, selectedToken ]) 
+    if (
+      data && 
+      statusAtAddedGifts.current == "isSuccess" &&
+      statusAtClaimableGifts.current == "isIdle"
+      ) getClaimableGifts() 
+  }, [ statusAtAddedGifts, statusAtClaimableGifts, data ] )
+
+  useEffect(() => {
+    if (
+      data && 
+      statusAtAddedGifts.current == "isSuccess" &&
+      statusAtClaimableGifts.current == "isSuccess"
+      ) fetchGifts(data) 
+  }, [ statusAtAddedGifts, statusAtClaimableGifts, data ])
 
   useEffect(() => {
     if (tokenReceived) {
       dispatch(notification({
-        id: "claimLoyaltyToken",
+        id: "claimLoyaltyGift",
         message: `Success! You received a new voucher. You can see it in the Your Card tab.`, 
         colour: "green",
         isVisible: true
@@ -113,7 +162,8 @@ export default function Page() {
   }, [tokenReceived])
 
   return (
-     <div className="w-full h-full grid grid-cols-1 gap-1 content-start overflow-auto">
+    // <DynamicLayout>
+     <div className="w-full h-full grid grid-cols-1 gap-1 content-start overflow-x-auto">
 
       <div className="h-30">
         <div className="m-1 h-20"> 
@@ -122,7 +172,7 @@ export default function Page() {
 
         <div className="flex justify-center"> 
           <p className="p-2 pt-4 w-1/2 text-center border-b border-slate-700">
-            {`${loyaltyPoints} loyalty points`}
+            {`${selectedLoyaltyCard?.balance} loyalty points`}
           </p>
         </div>
       </div>
@@ -131,7 +181,7 @@ export default function Page() {
       <div className="grid grid-cols-1 content-start">
         <div className=" border border-gray-300 rounded-lg m-1">
           <button 
-            className="text-black font-bold p-2 grid grid-cols-1 content-start"
+            className="text-slate-800 dark:text-slate-200 font-bold p-2 grid grid-cols-1 content-start"
             type="submit"
             onClick={() => setSelectedToken(undefined)} // should be true / false
             >
@@ -150,36 +200,46 @@ export default function Page() {
       </div>
       :
       <>
-      <div className="overflow-x-scroll">
+      <div className="overflow-y-auto">
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
             <TitleText title = "Available Gifts" size={0} />
           </div>
           
           
-          { activeLoyaltyGifts ?
-          
-          activeLoyaltyGifts.map((gift: LoyaltyToken) => 
-              gift.metadata ? 
-              <div key = {`${gift.tokenAddress}:${gift.tokenId}`} >
-                <TokenSmall token = {gift} disabled = {false} onClick={() => setSelectedToken({token: gift, disabled: false})}  /> 
-              </div>
-              : null 
-            )
+          { 
+          statusLoyaltyGifts === "isLoading" ? 
+            <div className="flex m-12 col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 justify-center items-center text-slate-200 "> 
+              <Image
+                className="rounded-lg mx-3 animate-spin"
+                width={60}
+                height={60}
+                src={"/images/loading2.svg"}
+                alt="Loading icon"
+              />
+            </div> 
+          :
+          statusLoyaltyGifts === "isSuccess" && loyaltyGifts ?
+            loyaltyGifts.map((gift: LoyaltyGift) => 
+                gift.metadata ? 
+                <div key = {`${gift.giftAddress}:${gift.giftId}`} >
+                  <TokenSmall token = {gift} disabled = {false} onClick={() => setSelectedToken({token: gift, disabled: false})}  /> 
+                </div>
+                : null 
+              )
           : 
-          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-            <NoteText message="No gifts available. Ask vendor to enable gifts."/>
-          </div>
+          statusLoyaltyGifts === "isSuccess" && !loyaltyGifts ?
+            <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
+              <NoteText message="No gifts available. Ask vendor to enable gifts."/>
+            </div>
+          : 
+          null
           }
           </div>
         </div> 
       </>
 
     }
-
-    
-    
-    </div> 
-    
+    </div>   
   );
 }

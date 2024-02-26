@@ -1,4 +1,4 @@
-// Example from: https://github.com/peterlidee/mocking-useRouter-useSearchParams-next-13
+// Example from: https://github.com/peterlidee/mocking-useRouter-useSearchParams-next-13 £acknowledgement
 
 import { EthAddress } from "../../types" ;
 import { parseEthAddress } from '../utils/parsers';
@@ -13,6 +13,6 @@ export function getProgAddressFromUseSearchParams(
     address = parseEthAddress(progParam);
   }
   return {
-    progAddress: progParam,
+    progAddress: address,
   };
 }

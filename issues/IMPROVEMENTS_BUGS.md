@@ -30,41 +30,41 @@ Even though repository is public, For now, it is for personal use only.
 - [x]  @vendor, SelectLoyaltyGift: While loading, should show loading image.
 - [x]  @vendor, SelectLoyaltyGift: on pixel7 screen should show two rows of gifts.
 - [x]  @vendor, Landing page: improve vertical alignment items. ok-ish
-- [ ]  @ui: make Numline flow across into two lines on small screens. 
+- [x]  @ui: make Numline flow across into two lines on small screens. 
 - [x]  @vendor, Qrcode: add spacing around scanner.  
 - [x]  @vendor, ChooseProgram: fix carousel.  
 - [x]  @Everywhere: Develop, update loading image.  
-- [ ]  @Everywhere: Develop dark theming: Next adds dark theming automatically! WIP 
-  - [ ]  Bg main modal should be slate -- see landing page (maybe bit more lighter & darker)
-  - [ ]  standardized fonts should have dark mode - very simple to do actually. 
-  - [ ]  .. then check on phone what I missed. 
+- [x]  @Everywhere: Develop dark theming: Next adds dark theming automatically! WIP 
+  - [x]  Bg main modal should be slate -- see landing page (maybe bit more lighter & darker)
+  - [x]  standardized fonts should have dark mode - very simple to do actually. 
+  - [x]  .. then check on phone what I missed. 
 - [ ]  @vendor, stats: see remainign points and cards. Fix layouting.  
 - [x]  @Everywhere: Use sleet version of button throughout app (consistency with landing page).  
 - [x]  @Vendor, Home: add mint card button + how many cards left line. 
 - [ ]  @Vendor, QrReader, SendPoints: add mint points button + how many points left line. 
-- [x]  @ModalMain: can I turn off scrolling altogether? 
-- [ ]  @LandingPage: create several different images through the page. -- show off app. 
+- [x]  @DynamicLayout: can I turn off scrolling altogether? 
+- [x]  @LandingPage: create several different images through the page. -- show off app. 
 - [ ]  Clean up redux - modal visibily can be removed completely. 
 - [x]  @LandingPage: visit button should be simple link / same with get started button. OR make whole button a link! 
 - [x]  @LandingPage: set max width. 
-- [ ]  @Everywhere: change loading image from 'vercel' one to turning indicator.    
+- [x]  @Everywhere: change loading image from 'vercel' one to turning indicator.    
 - [x]  @Customer, Home: improve carousel if multiple cards are present -- see example landing page. 
 - [x]  @Vendor, Home: improve carousel if multiple programs have been deployed -- see example landing page. 
 - [ ]  @Notifications / Everywhere: Error messaging needs to mention revert message. - currently no idea why something fails. 
-- [ ]  @Customer, Home: When loyaltyCard is received you know have to reload page - is should go straight to the new card. -> use window.location.reload(); ? 
+- [ ]  @Customer, Home: When loyaltyCard is received you know have to reload page - is should go straight to the new card. -> use window.location.reload(); - actually not really needed. On phone this is quite natural. 
 - [ ]  @Everywhere: Gift, Voucher, Token... Get a clear logic, and implement consistently throughout. - WIP but lot better now. 
 - [x]  @Vendor, Home: If no programs are deployed - should have link to landing page - very simple (now just shows up empty). 
 - [ ]  @Vendor, Tokens: Build a easy UI for adding and removing gift contracts
 - [ ]  @Vendor, tokens: Add address of token + address issuer in description. / later 
 - [x]  @Readme.md: Search for templates to create clear and accesible readme file. 
-- [ ]  fill out readme files. 
+- [ ]  fill out readme files. - WIP  
 
 ## Additional notes 
   // NB: use of useContractEvent versus waitForTransaction (viem) versus useWaitForTransaction (wagmi) to check confirmaiton of transaction
   // has to be tried out on actual test network. Not anvil. 
   /// 
   // useContractEvent({
-  //   address: parseEthAddress(progAddress),
+  //   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
   //   abi: loyaltyProgramAbi,
   //   eventName: 'TransferSingle',
   //   listener(log) {

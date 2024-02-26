@@ -3,6 +3,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline"
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer"
 import { Button } from "./Button"
 import { useWeb3Modal } from "@web3modal/wagmi/react"
+import { useWalletClient } from "wagmi"
 
 const colourSchemeDialog = { 
   red: `border-red-600 bg-red-300`, 
@@ -23,7 +24,14 @@ const colourSchemeText = {
 export const NotificationDialog = () => {
   const { notifications } = useAppSelector(state => state.notification)
   const { open, close } = useWeb3Modal()
+  const { data: walletClient, status } = useWalletClient();
   const dispatch = useAppDispatch()
+
+  // const handleLoginRequest = () => {
+  //   open({view: "Networks"}) 
+  // }
+
+  console.log("walletClient: ", walletClient)
 
   const notificationToShow = notifications.findLast(notification => notification.isVisible !== false)
   let colour: "red" | "yellow" | "green" | "gray" | "invisible" = "gray"
@@ -46,7 +54,7 @@ export const NotificationDialog = () => {
 
           { notificationToShow.loginButton ? 
             <div className="w-24 px-3 flex underline"> 
-              <button onClick = {() => open({view: "Networks"})}> 
+              <button onClick = {() => open({view: "Networks"})  }> 
                login
               </button>
             </div> 

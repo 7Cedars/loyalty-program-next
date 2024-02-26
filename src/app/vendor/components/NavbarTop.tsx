@@ -1,13 +1,11 @@
 "use client";
 
-import { notification } from '@/redux/reducers/notificationReducer';
 import Link from 'next/link';
 import { useScreenDimensions } from '../../hooks/useScreenDimensions';
-import { useAccount,  } from 'wagmi';
+import { useAccount, useWalletClient,  } from 'wagmi';
 import { useEffect, useState } from 'react';
 import { useWeb3ModalState } from '@web3modal/wagmi/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
-import { useUrlProgramAddress } from '../../hooks/useUrl';
 import { usePathname } from 'next/navigation';
 
 const NavbarTop = ( ) => {
@@ -17,8 +15,13 @@ const NavbarTop = ( ) => {
   const { selectedNetworkId } = useWeb3ModalState() 
   const [text, setText] = useState('')
   const { open } = useWeb3Modal()
-  const { progAddress } = useUrlProgramAddress()
+  // const { selectedLoyaltyProgram?.programAddress } = useUrlProgramAddress()
   const path = usePathname()
+  const { data: walletClient, status } = useWalletClient();
+
+  const handleLogin = () => {
+    walletClient ? open({view: "Account"}) : open({view: "Networks"})
+  }
 
   useEffect(() => {
     if (address && selectedNetworkId != undefined) {
@@ -35,31 +38,31 @@ const NavbarTop = ( ) => {
       <header className="absolute top-0 z-10 flex justify-between h-18 w-full text-sm border-b border-gray-400 bg-slate-50 px-6">
         <div className="flex divide-x p-3 divide-gray-400">
           <Link 
-            href={progAddress ? `/vendor/home?prog=${progAddress}` : '/vendor/home'} 
+            href={'/vendor/home'} 
             className={layoutLinks}
             aria-selected={path == `/vendor/home`}>  
               Home 
           </Link>
           <Link 
-            href={progAddress ? `/vendor/scanQrcode?prog=${progAddress}` : '/vendor/scanQrcode'}  
+            href={'/vendor/scanQrcode'}  
             className={layoutLinks}
             aria-selected={path == `/vendor/scanQrcode`}>  
               Scan qr code
           </Link>
           <Link 
-            href={progAddress ? `/vendor/selectGifts?prog=${progAddress}` : '/vendor/selectGifts' }  
+            href={'/vendor/selectGifts' }  
             className={layoutLinks}
             aria-selected={path == `/vendor/selectGifts`}> 
               Select gifts 
           </Link>
           <Link 
-            href={progAddress ? `/vendor/stats?prog=${progAddress}` : '/vendor/stats' }  
+            href={'/vendor/stats' }  
             className={layoutLinks}
             aria-selected={path == `/vendor/stats`}>  
               Stats 
           </Link>
         </div> 
-        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )}> 
+        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => handleLogin()}> 
            {text} 
         </button>
 

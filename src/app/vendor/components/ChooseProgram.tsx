@@ -2,21 +2,40 @@
 
 import { LoyaltyProgram} from "@/types";
 import { TitleText } from "../../ui/StandardisedFonts";
-import { useEffect} from "react";
+import { useEffect, useState} from "react";
 import Image from "next/image";
-import { useUrlProgramAddress } from '../../hooks/useUrl';
 import { useDispatch } from 'react-redux';
 import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer';
 import { useLoyaltyPrograms } from '@/app/hooks/useLoyaltyPrograms';
+import { useAccount, usePublicClient } from "wagmi";
+import { loyaltyProgramAbi } from "@/context/abi";
+import { Log } from "viem";
+import { parseContractLogs } from "@/app/utils/parsers";
 
 export default function ChooseProgram()  {
   const { status, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms()
+  const [ addresses, setAddresses ] = useState<LoyaltyProgram[] | undefined>() 
+  const { address } = useAccount() 
+  const publicClient = usePublicClient(); 
   const dispatch = useDispatch() 
-  const { putProgAddressInUrl } = useUrlProgramAddress()
+
+  const getLoyaltyProgramAddresses = async () => {
+
+    const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
+      abi: loyaltyProgramAbi, 
+        eventName: 'DeployedLoyaltyProgram', 
+        args: {owner: address}, 
+        fromBlock: 5200000n
+    });
+
+    const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
+    setAddresses(loyaltyProgramAddresses)
+  }
 
   useEffect(() => {
-    if (!loyaltyPrograms) fetchPrograms()
-  }, [, loyaltyPrograms ]) 
+    if (address && !addresses)  getLoyaltyProgramAddresses() 
+    if (addresses && !loyaltyPrograms) fetchPrograms(addresses)
+  }, [, loyaltyPrograms, addresses, address ]) 
 
   useEffect(() => {
     if (
@@ -25,13 +44,8 @@ export default function ChooseProgram()  {
       loyaltyPrograms.length == 1 && 
       loyaltyPrograms.findIndex(loyaltyProgram => loyaltyProgram.metadata) !== -1
       ) 
-        handleProgramSelection(loyaltyPrograms[0])
+      dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
   }, [status, loyaltyPrograms])
-
-  const handleProgramSelection = (loyaltyProgram: LoyaltyProgram) => {
-    putProgAddressInUrl(loyaltyProgram.programAddress)
-    dispatch(selectLoyaltyProgram(loyaltyProgram))
-  }
 
   return (
      <div className='w-full h-full flex flex-col items-center justify-center' >
@@ -47,14 +61,14 @@ export default function ChooseProgram()  {
               key={program.programAddress}
               className="carousel-item h-96 w-52 text-center items-center snap-start ml-4 flex flex-col self-center">
               <button 
-                onClick = {() => handleProgramSelection(program)}
+                onClick = {() =>  dispatch(selectLoyaltyProgram(program))}
                   className="w-11/12 z-0 h-96 w-52 max-h-80 max-w-48 self-center m-1"> 
                       <Image
                         className="h-90 w-48 self-center rounded-lg" 
                         width={400}
                         height={600}
                         style = {{ objectFit: "cover" }} 
-                        src={program.metadata? program.metadata.imageUri : `/vercel.svg`}
+                        src={program.metadata? program.metadata.imageUri : `/images/loading2.svg`}
                         alt="Loyalty Program Card"
                       />
                 </button>
@@ -69,7 +83,7 @@ export default function ChooseProgram()  {
                 className="rounded-lg flex-none mx-3 animate-spin self-center"
                 width={60}
                 height={60}
-                src={"/loading2.svg"}
+                src={"/images/loading2.svg"}
                 alt="Loading icon"
               />
             </div>

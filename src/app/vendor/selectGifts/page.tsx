@@ -2,7 +2,7 @@
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./GiftSmall";
 import TokenBig from "./GiftBig";
-import { LoyaltyToken } from "@/types";
+import { LoyaltyGift } from "@/types";
 import { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
@@ -11,29 +11,30 @@ import { Log } from "viem"
 import { usePublicClient } from 'wagmi'
 import { parseEthAddress, parseLoyaltyGiftLogs} from "@/app/utils/parsers";
 import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
-import { useLoyaltyTokens } from "@/app/hooks/useLoyaltyTokens";
+import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import Image from "next/image";
+import { useAppSelector } from "@/redux/hooks";
 
 type setSelectedTokenProps = {
-  token: LoyaltyToken; 
+  token: LoyaltyGift; 
   disabled: boolean; 
 }
 
 export default function Page() {
-  const { status, loyaltyTokens, fetchTokens } = useLoyaltyTokens()
-  const [activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyToken[] >([]) 
-  const [inactiveLoyaltyGifts, setInactiveLoyaltyGifts] = useState<LoyaltyToken[] >([]) 
+  const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
+  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const [activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyGift[] >([]) 
+  const [inactiveLoyaltyGifts, setInactiveLoyaltyGifts] = useState<LoyaltyGift[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
-  const { progAddress } = useUrlProgramAddress() 
   const publicClient = usePublicClient()
 
-  console.log("loyaltyTokens @selectGifts: ", loyaltyTokens)
+  console.log("loyaltyGifts @selectGifts: ", loyaltyGifts)
 
   const getTokenSelection = async () => {
 
     const addedGifts: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'AddedLoyaltyGift', 
       fromBlock: 5200000n // this should be part of settings - it differs per block. - this is sepolia. -- see constants 
       // toBlock: 16330050n - if this does not create problems: take out. 
@@ -42,24 +43,24 @@ export default function Page() {
 
     const removedGifts: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'RemovedLoyaltyGiftClaimable', 
       fromBlock: 5200000n,
       toBlock: 16330050n
     }); 
     const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
 
-    if (loyaltyTokens) {
-      let activeGifts: LoyaltyToken[] = [] 
-      let inactiveGifts: LoyaltyToken[] = [] 
+    if (loyaltyGifts) {
+      let activeGifts: LoyaltyGift[] = [] 
+      let inactiveGifts: LoyaltyGift[] = [] 
 
-      loyaltyTokens.forEach((loyaltyToken, i) => { 
+      loyaltyGifts.forEach((loyaltyToken, i) => { 
         
         const addedEventCount = addedGiftsEvents.filter(
-          event => event.giftAddress == loyaltyToken.tokenAddress &&  event.giftId == loyaltyToken.tokenId
+          event => event.giftAddress == loyaltyToken.giftAddress &&  event.giftId == loyaltyToken.giftId
           ).length 
         const removedEventCount = removedGiftsEvents.filter(
-          event => event.giftAddress == loyaltyToken.tokenAddress &&  event.giftId == loyaltyToken.tokenId
+          event => event.giftAddress == loyaltyToken.giftAddress &&  event.giftId == loyaltyToken.giftId
           ).length
 
         if (addedEventCount > removedEventCount) { 
@@ -80,10 +81,10 @@ export default function Page() {
   })
 
   useEffect(() => {
-    if (!loyaltyTokens) fetchTokens()
-    if (loyaltyTokens) getTokenSelection() 
+    if (!loyaltyGifts) fetchGifts()
+    if (loyaltyGifts) getTokenSelection() 
 
-  }, [selectedToken, loyaltyTokens]) 
+  }, [selectedToken, loyaltyGifts]) 
 
   return (
      <div className=" w-full h-full grid grid-cols-1 gap-1 overflow-x-auto">
@@ -116,7 +117,7 @@ export default function Page() {
                 className="rounded-lg flex-none mx-3 animate-spin"
                 width={60}
                 height={60}
-                src={"/loading2.svg"}
+                src={"/images/loading2.svg"}
                 alt="Loading icon"
               />
             </div>
@@ -127,9 +128,9 @@ export default function Page() {
                 <TitleText title = "Selected Gifts" size={0} />
               </div>
               { activeLoyaltyGifts.length > 0 ?  
-                  activeLoyaltyGifts.map((token: LoyaltyToken) => 
+                  activeLoyaltyGifts.map((token: LoyaltyGift) => 
                       token.metadata ? 
-                      <div key = {`${token.tokenAddress}:${token.tokenId}`} >
+                      <div key = {`${token.giftAddress}:${token.giftId}`} >
                         <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
                       </div>
                       : null 
@@ -144,9 +145,9 @@ export default function Page() {
                 <TitleText title = "Available Gifts" size={0} />
               </div>
               { inactiveLoyaltyGifts.length > 0 ? 
-                  inactiveLoyaltyGifts.map((token: LoyaltyToken) => 
+                  inactiveLoyaltyGifts.map((token: LoyaltyGift) => 
                     token.metadata ? 
-                      <div key = {`${token.tokenAddress}:${token.tokenId}`} >
+                      <div key = {`${token.giftAddress}:${token.giftId}`} >
                         <TokenSmall token = {token} disabled = {true}  onClick={() => setSelectedToken({token: token, disabled: true})} /> 
                       </div>
                       :
@@ -173,9 +174,9 @@ export default function Page() {
 
       //       activeLoyaltyGifts && status == "isSuccess" ?
                       
-      //       activeLoyaltyGifts.map((token: LoyaltyToken) => 
+      //       activeLoyaltyGifts.map((token: LoyaltyGift) => 
       //           token.metadata ? 
-      //           <div key = {`${token.tokenAddress}:${token.tokenId}`} >
+      //           <div key = {`${token.giftAddress}:${token.giftId}`} >
       //             <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
       //           </div>
       //           : null 
@@ -190,9 +191,9 @@ export default function Page() {
 
       //     { activeLoyaltyGifts && status == "isSuccess" ?
           
-      //     activeLoyaltyGifts.map((token: LoyaltyToken) => 
+      //     activeLoyaltyGifts.map((token: LoyaltyGift) => 
       //         token.metadata ? 
-      //         <div key = {`${token.tokenAddress}:${token.tokenId}`} >
+      //         <div key = {`${token.giftAddress}:${token.giftId}`} >
       //           <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
       //         </div>
       //         : null 
@@ -210,9 +211,9 @@ export default function Page() {
       //     </div>
           
       //     { inactiveLoyaltyGifts && status == "isSuccess" ? 
-      //       inactiveLoyaltyGifts.map((token: LoyaltyToken) => 
+      //       inactiveLoyaltyGifts.map((token: LoyaltyGift) => 
       //         token.metadata ? 
-      //         <div key = {`${token.tokenAddress}:${token.tokenId}`} >
+      //         <div key = {`${token.giftAddress}:${token.giftId}`} >
       //           <TokenSmall token = {token} disabled = {true}  onClick={() => setSelectedToken({token: token, disabled: true})} /> 
       //         </div>
       //         : null 

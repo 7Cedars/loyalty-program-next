@@ -9,10 +9,10 @@ import { NumPad } from "@/app/ui/NumPad";
 import { useContractWrite, useWaitForTransaction  } from "wagmi";
 import { useDispatch } from "react-redux";
 import { parseEthAddress } from "@/app/utils/parsers";
-import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useAccount } from "wagmi";
+import { useAppSelector } from "@/redux/hooks";
 
 type SendPointsProps = {
   qrData: QrData | undefined;  
@@ -24,12 +24,12 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
-  const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { address } = useAccount() 
 
   const transferPoints = useContractWrite(  
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: 'safeTransferFrom',
       args: [ 
@@ -115,7 +115,7 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
                 className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
                 width={30}
                 height={30}
-                src={"/loading2.svg"}
+                src={"/images/loading2.svg"}
                 alt="Loading icon"
               />
               Waiting for confirmation... 

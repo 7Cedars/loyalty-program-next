@@ -1,5 +1,5 @@
 "use client"; 
-import { LoyaltyToken } from "@/types";
+import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
@@ -12,15 +12,18 @@ import { notification } from "@/redux/reducers/notificationReducer";
 import { foundry } from "viem/chains";
 import { useEffect, useState, useRef } from "react";
 import { NumLine } from "@/app/ui/NumLine";
+import { useAppSelector } from "@/redux/hooks";
+ 
+
 
 type SelectedTokenProps = {
-  token: LoyaltyToken
+  token: LoyaltyGift
   disabled: boolean
 }
 
 export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
-  const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const [ hashMintTransaction, setHashMintTransaction] = useState<any>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
@@ -28,10 +31,10 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   const addLoyaltyGift = useContractWrite(
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "addLoyaltyGift", 
-      args: [token.tokenAddress, token.tokenId], 
+      args: [token.giftAddress, token.giftId], 
       onError(error) {
         dispatch(notification({
           id: "addLoyaltyGift",
@@ -49,10 +52,10 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   const removeLoyaltyGiftClaimable = useContractWrite(
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "removeLoyaltyGiftClaimable", 
-      args: [token.tokenAddress, token.tokenId], 
+      args: [token.giftAddress, token.giftId], 
       onError(error) {
         dispatch(notification({
           id: "removeLoyaltyGiftClaimable",
@@ -75,9 +78,9 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     })
   
 
-  const mintLoyaltyTokens = useContractWrite(
+  const mintloyaltyGifts = useContractWrite(
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "mintLoyaltyVouchers",
       onError(error) {
@@ -165,7 +168,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
                 className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
                 width={30}
                 height={30}
-                src={"/loading.svg"}
+                src={"/images/loading2.svg"}
                 alt="Loading icon"
               />
               Waiting for confirmation (this can take a few minutes...)
@@ -183,8 +186,8 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
           <div className="grid grid-col-1 gap-0 w-full">
             { token.tokenised ? 
               <div className="p-3 flex w-full"> 
-                <NumLine onClick = {(arg0) => mintLoyaltyTokens.write({
-                  args: [token.tokenAddress, [token.tokenId], [arg0]]}
+                <NumLine onClick = {(arg0) => mintloyaltyGifts.write({
+                  args: [token.giftAddress, [token.giftId], [arg0]]}
                   )} 
                   isLoading = {mintTransaction.isLoading} /> 
               </div>

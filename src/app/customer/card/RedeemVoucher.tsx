@@ -2,12 +2,12 @@
 
 import QRCode from "react-qr-code";
 import { useAppSelector } from '@/redux/hooks';
-import { LoyaltyToken } from "@/types";
+import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { Button } from "@/app/ui/Button";
-import { useAccount, usePublicClient, useSignTypedData } from "wagmi";
+import { useAccount, useNetwork, usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -15,28 +15,33 @@ import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 type SelectedTokenProps = {
-  token: LoyaltyToken
+  token: LoyaltyGift
   disabled: boolean
 }
 
 export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const dimensions = useScreenDimensions();
-  const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient()
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
   const {address} = useAccount()
+  const { data: walletClient, status } = useWalletClient();
   const {  pointsSent, tokenSent } = useLatestCustomerTransaction() 
+  const {chain} = useNetwork() 
+  const {open} = useWeb3Modal()
+
 
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
       try {
         const rawNonceData: unknown = await publicClient.readContract({ 
-          address: parseEthAddress(progAddress), 
+          address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
           abi: loyaltyProgramAbi,
           functionName: 'getNonceLoyaltyCard',
           args: [selectedLoyaltyCard?.cardAddress]
@@ -56,8 +61,8 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const domain = {
     name: 'Loyalty Program',
     version: '1',
-    chainId: 31337,
-    verifyingContract: parseEthAddress(progAddress)
+    chainId: chain?.id,
+    verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
   } as const
 
   // The named list of all type definitions
@@ -73,7 +78,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   // // The message that will be hashed and signed
   const message = {
     from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
-    to:  parseEthAddress(progAddress),
+    to:  parseEthAddress(selectedLoyaltyProgram?.programAddress),
     voucher: `${token?.metadata?.name}`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const
@@ -85,6 +90,11 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
     primaryType: 'RedeemVoucher',
     types,
   })
+
+  const handleSigning = () => {
+    walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
+    signTypedData()
+  }
 
   useEffect(() => { 
     if (isLoading) {
@@ -158,7 +168,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
             }
             <div className="text-center text-md"> 
               <div className="text-center text-md"> 
-                {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
+                {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
               </div>
               {token.tokenised == 1n ? 
                 <div className="text-center text-md"> 
@@ -171,7 +181,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
           </div>
         </div>
         <div className="p-3 flex w-full"> 
-            <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
+            <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
               Redeem Voucher
             </Button>
           </div>
@@ -180,11 +190,11 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
         }
         
         { token.metadata && signature ?
-          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
+          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 flex flex-col items-center"> 
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
-            <div className="m-3"> 
+            <div className="m-3 flex items-center"> 
               <QRCode 
-                value={`type:redeemToken;${token.tokenAddress};${token.tokenId};${selectedLoyaltyCard?.cardId};${address};${signature}`}
+                value={`type:redeemToken;${token.giftAddress};${token.giftId};${selectedLoyaltyCard?.cardId};${address};${signature}`}
                 style={{ 
                   height: "350px", 
                   width: "350px", 
@@ -195,7 +205,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
                 bgColor="#ffffff" // "#0f172a" 1e293b
                 fgColor="#000000" // "#e2e8f0"
                 level='L'
-                className="rounded-lg border border-8 border-black dark:border-white"
+                className="rounded-lg"
                 />
             </div>
           </div>

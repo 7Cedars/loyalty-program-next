@@ -33,7 +33,6 @@ type RedeemTokenProps = {
 
 export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
-  const { progAddress } =  useUrlProgramAddress();
   const [ hashTransaction, setHashTransaction] = useState<any>() 
   const [ modal, setModal] = useState<"points" | "cards" | undefined>() 
   const [ transferSingles, setTransferSingles ] = useState<Transaction[] | undefined>()
@@ -51,7 +50,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
 
     const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
       abi: loyaltyProgramAbi, 
-      address: parseEthAddress(progAddress), 
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
       eventName: 'TransferSingle', 
       args: {
         from: parseEthAddress(address)
@@ -65,7 +64,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
 
   const loyaltyCardsMinted = useContractRead(
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "getNumberLoyaltyCardsMinted", 
       args: [], 
@@ -76,7 +75,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
           colour: "red",
           isVisible: true
         }))
-        console.log('addLoyaltyToken Error', error)
+        console.log('addLoyaltyGift Error', error)
       }, 
       onSuccess(data: any) {
         console.log("data from getNumberLoyaltyCardsMinted: ", data)
@@ -86,7 +85,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
 
   const transferCard = useContractWrite(
     {
-      address: parseEthAddress(progAddress),
+      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "safeTransferFrom", 
       args: [address, customerAddress,  Number(lastCardTransferred) + 1, 1, ""], 
@@ -169,7 +168,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
         <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3" > 
           <div className="w-full flex"> 
             <button 
-              className="text-black font-bold p-3"
+              className="text-slate-800 dark:text-slate-200 font-bold p-3"
               type="submit"
               onClick={() => {
                 setData(undefined) 
@@ -214,7 +213,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
                         className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
                         width={30}
                         height={30}
-                        src={"/loading.svg"}
+                        src={"/images/loading2.svg"}
                         alt="Loading icon"
                       />
                       Waiting for confirmation (this can take a few minutes...)

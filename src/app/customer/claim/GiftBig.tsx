@@ -1,9 +1,9 @@
 "use client"; 
-import { LoyaltyToken } from "@/types";
+import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useAccount,  useNetwork,  usePublicClient, useSignTypedData } from "wagmi";
+import { useAccount,  useNetwork,  usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
 import { loyaltyProgramAbi} from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
@@ -14,15 +14,17 @@ import { useAppSelector } from "@/redux/hooks";
 import QRCode from "react-qr-code";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
+
 
 type SelectedTokenProps = {
-  token: LoyaltyToken
+  token: LoyaltyGift
   disabled: boolean
 }
 
 export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
-  const { progAddress } =  useUrlProgramAddress();
+  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient()
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
@@ -31,9 +33,11 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dispatch = useDispatch() 
   const {address } = useAccount()
   const {chain} = useNetwork() 
+  const {open} = useWeb3Modal()
+  const { data: walletClient, status } = useWalletClient();
 
   console.log("selectedLoyaltyCard?.cardAddress: ", selectedLoyaltyCard?.cardAddress)
-  console.log("parseEthAddress(progAddress): ", parseEthAddress(progAddress))
+  console.log("parseEthAddress(selectedLoyaltyProgram?.programAddress): ", parseEthAddress(selectedLoyaltyProgram?.programAddress))
   console.log("nonceData: ", nonceData)
   console.log("chain: ",chain )
 
@@ -42,7 +46,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     const getNonceLoyaltyCard = async () => {
       try {
         const rawNonceData: unknown = await publicClient.readContract({ 
-          address: parseEthAddress(progAddress), 
+          address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
           abi: loyaltyProgramAbi,
           functionName: 'getNonceLoyaltyCard',
           args: [selectedLoyaltyCard?.cardAddress]
@@ -61,11 +65,13 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   /// begin setup for encoding typed data /// 
   const domain = {
-    name: 'Loyalty Program',
-    version: '1',
-    chainId: 11155111, // chain?.id, -- THIS NEEDS TO BE DYNAMIC. £todo
-    verifyingContract: parseEthAddress(progAddress)
+    name: "Loyalty Program",
+    version: "1",
+    chainId: chain?.id,
+    verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
   } as const
+
+  console.log("domain: ", domain)
   
   // The named list of all type definitions
   const types = {
@@ -81,11 +87,13 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   // // The message that will be hashed and signed
   const message = {
     from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
-    to:  parseEthAddress(progAddress),
+    to:  parseEthAddress(selectedLoyaltyProgram?.programAddress),
     gift: `${token?.metadata?.name}`,
     cost: `${token?.metadata?.attributes[1].value} points`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const
+
+  console.log("message: ", message)
 
   const { data: signature, isError, isLoading, isSuccess, reset: resetSignature, signTypedData } =
   useSignTypedData({
@@ -94,6 +102,11 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
     primaryType: 'RequestGift',
     types,
   })
+
+  const handleSigning = () => {
+    walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
+    signTypedData()
+  }
 
   useEffect(() => { 
     if (isLoading) {
@@ -171,7 +184,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
             }
             <div className="text-center text-md"> 
               <div className="text-center text-md"> 
-                {`ID: ${token.tokenId} @${token.tokenAddress.slice(0,6)}...${token.tokenAddress.slice(36,42)}`}
+                {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
               </div>
               {token.tokenised == 1n ? 
                 <div className="text-center text-md"> 
@@ -188,11 +201,11 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
             { token.tokenised == 1n ? 
 
-              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()}  >
+              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()}  >
                 Claim Voucher
               </Button>
               :
-              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
+              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
                 Claim Gift
               </Button>
            
@@ -205,9 +218,9 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
         { token.metadata && signature ?
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
-            <div className="m-3"> 
+            <div className="flex m-3 justify-center"> 
               <QRCode 
-                value={`type:claimGift;${token.tokenAddress};${token.tokenId};${selectedLoyaltyCard?.cardId};${address};${token.metadata.attributes[1].value};${signature}`}
+                value={`type:claimGift;${token.giftAddress};${token.giftId};${selectedLoyaltyCard?.cardId};${address};${token.metadata.attributes[1].value};${signature}`}
                 style={{ 
                   height: "350px", 
                   width: "350px", 
