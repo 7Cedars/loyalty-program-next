@@ -207,11 +207,11 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
             { token.tokenised == 1n ? 
 
-              <Button appearance = {"greenEmpty"} onClick={() => open({view: "Connect"})}  >
+              <Button appearance = {"greenEmpty"} onClick={() => open({view: "Networks"})}  >
                 Claim Voucher
               </Button>
               :
-              <Button appearance = {"greenEmpty"} onClick={() => open({view: "Connect"})} >
+              <Button appearance = {"greenEmpty"} onClick={() => open({view: "Networks"})} >
                 Claim Gift
               </Button>
            
