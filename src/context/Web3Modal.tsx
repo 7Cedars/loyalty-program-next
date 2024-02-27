@@ -55,7 +55,7 @@ export const wagmiConfig = defaultWagmiConfig({
  })
 
 const config = createConfig({
-  autoConnect: true,  
+  autoConnect: false,  
   connectors: [w3mConnector], 
   publicClient,
   webSocketPublicClient,

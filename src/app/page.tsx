@@ -38,7 +38,7 @@ export default function Home() {
     console.log("walletClient: ", walletClient)
     // open({view: "Connect"})
     setDeployRequest(data)
-    walletClient ? open({view: "Connect"}) : null 
+    walletClient ? null : open({view: "Connect"}) 
   }
 
   const deployLoyaltyProgram = async () => {
