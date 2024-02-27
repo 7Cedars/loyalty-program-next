@@ -103,11 +103,6 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
     primaryType: 'RequestGift',
     types,
   })
-
-  useEffect(() => {
-    if (isOpen) signTypedData()  
-  }, [isOpen, signTypedData])
-
   
   // const handleSigning = () => {
   //   open({view: "Connect"})
@@ -207,11 +202,11 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
             { token.tokenised == 1n ? 
 
-              <Button appearance = {"greenEmpty"} onClick={() => open({view: "Networks"})}  >
+              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()}  >
                 Claim Voucher
               </Button>
               :
-              <Button appearance = {"greenEmpty"} onClick={() => open({view: "Networks"})} >
+              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
                 Claim Gift
               </Button>
            

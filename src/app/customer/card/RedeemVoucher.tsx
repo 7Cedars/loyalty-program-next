@@ -91,10 +91,10 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
     types,
   })
 
-  const handleSigning = () => {
-    // walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
-    signTypedData()
-  }
+  // const handleSigning = () => {
+  //   // walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
+  //   signTypedData()
+  // }
 
   useEffect(() => { 
     if (isLoading) {
@@ -181,7 +181,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
           </div>
         </div>
         <div className="p-3 flex w-full"> 
-            <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
+            <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
               Redeem Voucher
             </Button>
           </div>
