@@ -49,7 +49,6 @@ export default function Home() {
     const implementation: EthAddress = parseEthAddress("0x71C95911E9a5D330f4D621842EC243EE1343292e") 
 
     if (walletClient && deployRequest) {
-      open({view: "Connect"}) 
       const hash = await walletClient.deployContract({
         abi: loyaltyProgramAbi,
         account: address,
@@ -197,7 +196,7 @@ export default function Home() {
           <TitleText title="New here?" subtitle="Deploy and try out any of these examples" size = {2} colourMode={1}/>  
           <div className="px-2 sm:px-20"> 
 
-          <div className="relative my-6 mx-auto">
+          <div className="relative mt-6 mx-auto">
             <div className="flex flex-row justify-between overflow-x-auto overflow-hidden scroll-px-1 snap-normal w-full h-full self-center">
           
             {loyaltyProgramsData.items.map((item) => 
@@ -220,71 +219,65 @@ export default function Home() {
                           className="w-48 h-68 self-center" 
                         />
                       </button>
+                    </>
+                    </div>
+              )}
+              </div> 
 
-                      { item.index==selectIndex  ? 
+              <div className='text-center text-slate-300 h-32'>
+                {selectIndex && loyaltyProgramsData ? 
+                  loyaltyProgramsData.items[selectIndex - 1].description
+                  : 
+                  null
+                }
+              </div> 
 
-                        isIdle ? 
-                          <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
-                            <Button appearance='grayEmptyLight' onClick={() => handleDeployRequest({
-                                uri: item.uri,  
-                                name: item.title,  
-                                version: "1"
-                              })}  
-                              disabled={ false }> 
-                              Deploy
-                            </Button>
-                          </div>
-                        :
-                        isError ? 
-                          <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
-                            <Button appearance='redFilled'   disabled={ true }> 
-                              Error 
-                            </Button>
-                          </div>
-                        :
-                        isLoading ?
-                          <div className='h-fit w-48 flex transition ease-in-out delay-150"'>
-                            <Button appearance='grayEmpty'  disabled={ true }> 
-                              Loading...  
-                            </Button>
-                          </div>
-                        :
-                        isSuccess ? 
-                          <a href="/vendor/home" className='h-fit w-48 h-16 m-2 flex content-center '>
-                            <button className='transition "rounded m-1 grow text-md py-2 px-4 border-2 border-green-400 text-green-400 text-center bg-white/50 hover:border-green-700 hover:text-green-700' disabled={ false }> 
-                              Visit
-                            </button>
-                          </a>
-                        :
-                        <div className='h-fit w-48 flex opacity-0 transition ease-in-out duration-700"'>
-                          <Button appearance='grayEmpty'  disabled={ true }> 
-                            Invisible  
-                          </Button>
-                        </div>
-                        : 
-                        <div className='h-fit w-48 flex opacity-0 transition ease-in-out duration-700"'>
-                          <Button appearance='grayEmpty'  disabled={ true }> 
-                            Invisible 
-                          </Button>
-                        </div>
-                      }
-                      </>
-                </div>        
-              )
-            }
+              <div className='h-fit flex justify-center transition transition-all ease-in-out delay-150'>
+                <div className=" flex justify-center w-2/3 "> 
+                {
+                  !walletClient ? 
+                    <Button 
+                        appearance='grayEmptyLight' 
+                        onClick={() => open({view: "Connect"})}  
+                        > 
+                      Connect
+                    </Button>
+                  :
+                  walletClient && selectIndex && isIdle ? 
+                    <Button 
+                        appearance='grayEmptyLight' 
+                        onClick={() => handleDeployRequest({
+                          uri: loyaltyProgramsData.items[selectIndex].uri,  
+                          name: loyaltyProgramsData.items[selectIndex].title,  
+                          version: "1"
+                        })}  
+                      > 
+                      Deploy
+                    </Button>
+                  :
+                  walletClient && selectIndex && isLoading ? 
+                    <Button appearance='grayEmptyLight'  disabled={ true }> 
+                      Loading...  
+                    </Button>
+                  :
+                  walletClient && selectIndex && isError ? 
+                    <Button appearance='redFilled'  disabled={ true }> 
+                      Error. Sorry, that`s all I know.   
+                    </Button>
+                  :
+                  walletClient && selectIndex && isSuccess ? 
+                    <a href="/vendor/home" className='h-fit w-48 h-16 m-2 flex content-center '>
+                      <button className='transition "rounded m-1 grow text-md py-2 px-4 border-2 border-green-400 text-green-400 text-center bg-white/50 hover:border-green-700 hover:text-green-700' disabled={ false }> 
+                        Visit Loyalty Program
+                      </button>
+                    </a>
+                  : 
+                  null 
+                }
+                </div>
+              </div>
           </div>
-
-          <div className='text-center m-3 text-slate-300'>
-
-            {selectIndex && loyaltyProgramsData ? 
-              loyaltyProgramsData.items[selectIndex - 1].description
-              : 
-              null
-            }
-
-          </div> 
-          </div>
-          </div>
+        </div>
         </div>
 
         <div className='min-h-[40vh] h-fit w-full max-w-4xl sm:w-4/5 bg-slate-300 shadow-2xl p-2 pt-6 flex flex-col rounded-b-lg content-center'>
