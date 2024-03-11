@@ -192,8 +192,8 @@ export default function Home() {
           </div>
         </div>
 
-        <div className='min-h-[80vh] h-fit w-full max-w-4xl  sm:w-4/5 bg-slate-700 shadow-2xl p-2 pt-6 flex flex-col content-center'  id="deploy-program">
-          <TitleText title="New here?" subtitle="Deploy and try out any of these examples" size = {2} colourMode={1}/>  
+        <div className='min-h-[80vh] h-fit w-full max-w-4xl  sm:w-4/5 bg-slate-700 shadow-2xl p-2 pt-6 flex flex-col content-center rounded-b-lg '  id="deploy-program">
+          <TitleText title="Want to try it out?" subtitle="Deploy any of these examples in less than two minutes" size = {2} colourMode={1}/>  
           <div className="px-2 sm:px-20"> 
 
           <div className="relative mt-6 mx-auto">
@@ -280,9 +280,6 @@ export default function Home() {
         </div>
         </div>
 
-        <div className='min-h-[40vh] h-fit w-full max-w-4xl sm:w-4/5 bg-slate-300 shadow-2xl p-2 pt-6 flex flex-col rounded-b-lg content-center'>
-          Here a bit of background about me and the project. Work in Progress. 
-        </div>
     </main>
   )
 }

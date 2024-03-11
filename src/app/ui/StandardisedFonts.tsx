@@ -41,7 +41,7 @@ export const TitleText = ({
 }: TitleTextProps) => {
 
   return (
-    <div className="grid grid-cols-1 pb-2">
+    <div className="grid grid-cols-1 pb-2 px-2">
       <div className={`text-center font-bold ${colourTitle[colourMode]} ${appearanceTitle[size]}`}>
         {title}
       </div>
