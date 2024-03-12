@@ -113,12 +113,12 @@ export default function Page() {
       
       </div>
       :
-      <div className="flex flex-col items-center h-full">
-        {/* <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start"> */}
+      // <div className="grow flex flex-col items-center w-full h-full">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
           { 
           statusUseLoyaltyGifts == "isLoading" || 
           statusTokenSelection == "isLoading" ? 
-            <div className="grow flex flex-col justify-center text-slate-800 dark:text-slate-200 z-40">
+            <div className="grow flex flex-col self-center items-center justify-center text-slate-800 dark:text-slate-200 z-40">
               <Image
                 className="rounded-lg flex-none mx-3 animate-spin self-center"
                 width={60}

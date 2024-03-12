@@ -33,6 +33,8 @@ export default function Page() {
 
   const statusAtAddedGifts = useRef<Status>("isIdle") 
   const statusAtClaimableGifts = useRef<Status>("isIdle") 
+  const status = useRef<Status>("isIdle") 
+
   const [data, setData] = useState<LoyaltyGift[]>()
   
   const [ selectedToken, setSelectedToken ] = useState<setSelectedTokenProps | undefined>() 
@@ -82,6 +84,7 @@ export default function Page() {
 
   const getAddedGifts = async () => {
     statusAtAddedGifts.current = "isLoading"
+    status.current = "isLoading"
     console.log("getAddedGifts called")
 
     try {
@@ -97,6 +100,7 @@ export default function Page() {
 
     } catch (error) {
       statusAtAddedGifts.current = "isError"
+      status.current = "isError"
       console.log(error)
     }
   }
@@ -125,6 +129,7 @@ export default function Page() {
         setData(loyaltyGiftsUpdated) 
       } catch (error) {
         statusAtClaimableGifts.current = "isError" 
+        status.current = "isError"
         console.log(error)
       }
     }
@@ -147,7 +152,10 @@ export default function Page() {
       data && 
       statusAtAddedGifts.current == "isSuccess" &&
       statusAtClaimableGifts.current == "isSuccess"
-      ) fetchGifts(data) 
+      ) { 
+        fetchGifts(data)
+        status.current = "isSuccess"
+      } 
   }, [ statusAtAddedGifts, statusAtClaimableGifts, data ])
 
   useEffect(() => {
@@ -208,18 +216,24 @@ export default function Page() {
           
           
           { 
-          statusLoyaltyGifts === "isLoading" ? 
-            <div className="flex m-12 col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 justify-center items-center text-slate-200 "> 
-              <Image
-                className="rounded-lg mx-3 animate-spin"
-                width={60}
-                height={60}
-                src={"/images/loading2.svg"}
-                alt="Loading icon"
-              />
+          statusLoyaltyGifts === "isLoading" || 
+          status.current  === "isLoading" ? 
+          
+            <div className="mt-12 col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 h-full flex flex-col w-full self-center items-center justify-center text-slate-800 dark:text-slate-200 z-40"> 
+                <Image
+                  className="rounded-lg mx-3 animate-spin grow self-center"
+                  width={60}
+                  height={60}
+                  src={"/images/loading2.svg"}
+                  alt="Loading icon"
+                />
+                <div className="grow text-center text-slate-500 mt-6">
+                  Retrieving vendor gifts... 
+                </div>
             </div> 
           :
-          statusLoyaltyGifts === "isSuccess" && loyaltyGifts ?
+          statusLoyaltyGifts === "isSuccess" && 
+          loyaltyGifts ?
             loyaltyGifts.map((gift: LoyaltyGift) => 
                 gift.metadata ? 
                 <div key = {`${gift.giftAddress}:${gift.giftId}`} >
