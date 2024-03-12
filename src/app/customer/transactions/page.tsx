@@ -32,7 +32,7 @@ export default function Page() {
   const statusTokensTo = useRef<Status>("isIdle") 
   const statusTokensFrom = useRef<Status>("isIdle") 
   const statusBlockData= useRef<Status>("isIdle") 
-  const status = useRef<Status>("isIdle") 
+  const [status, setStatus] = useState<Status>("isIdle") 
 
   console.log("transactions: ", transactions)
   console.log("status at transactions: ", {
@@ -200,13 +200,46 @@ export default function Page() {
     transactions
   ])
 
+  // updating status
+  useEffect(() => {
+    if (
+      statusTransactionsTo.current == "isError" || 
+      statusTransactionsFrom.current == "isError" ||
+      statusTokensTo.current == "isError" || 
+      statusTokensFrom.current == "isError" || 
+      statusBlockData.current == "isError"
+    ) {
+      setStatus("isError")
+    }
+    if (
+      statusTransactionsTo.current == "isLoading" || 
+      statusTransactionsFrom.current == "isLoading" ||
+      statusTokensTo.current == "isLoading" || 
+      statusTokensFrom.current == "isLoading" || 
+      statusBlockData.current == "isLoading"
+    ) {
+      setStatus("isLoading")
+    }
+    if (
+      statusTransactionsTo.current == "isSuccess" && 
+      statusTransactionsFrom.current == "isSuccess" &&
+      statusTokensTo.current == "isSuccess" && 
+      statusTokensFrom.current == "isSuccess" && 
+      statusBlockData.current == "isSuccess"
+    ) {
+      setStatus("isSuccess")
+    }
+  }, [ 
+    transactions
+  ])
+
   return (
     <div className="grid grid-cols-1 h-full content-between">
       <div className="grid grid-cols-1 h-full overflow-auto px-2 justify-items-center">
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
         { 
-         status.current == "isLoading" ? 
-         <div className="grow flex flex-col self-center items-center justify-center text-slate-800 dark:text-slate-200 z-40">
+         status == "isLoading" ? 
+         <div className="grow flex flex-col self-center items-center justify-center pt-12 text-slate-800 dark:text-slate-200 z-40">
           <Image
             className="rounded-lg flex-none mx-3 animate-spin self-center"
             width={60}
@@ -215,117 +248,133 @@ export default function Page() {
             alt="Loading icon"
           />
           <div className="text-center text-slate-500 mt-6"> 
-            Retrieving transaction history...    
-          </div>  
+            Retrieving transactions history...    
+          </div> 
         </div>
         : 
         transactions && statusBlockData.current == "isSuccess" ? 
-            <div className="grid grid-cols-1 w-full md:w-4/5 overflow-auto m-4 mx-2 p-8 divide-y">  
+
+            ////////////////////////
+            ///  Drawing Table   /// 
+            ////////////////////////
+            <table className="grow flex flex-col w-full md:w-4/5 border border-slate-300 dark:border-slate-700 mt-8 rounded-lg divide-y">  
+              <thead>
+                <tr className="grow flex justify-between bg-slate-300 dark:bg-slate-700">
+                  <th className="flex grow justify-start text-slate-800 dark:text-slate-200 p-4">
+                    Transaction
+                    </th>
+                  <th className="flex grow justify-start text-slate-800 dark:text-slate-200 p-4">
+                    Date & Time
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
               {
               transactions.map((transaction: Transaction, i) => 
-                <div key = {i} className="p-2 ">
-                  {
-                  transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.from === selectedLoyaltyProgram?.programOwner ? 
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
+                <tr key = {i} className="grow grid grid-cols-2 bg-slate-100 dark:bg-slate-950 odd:bg-opacity-0 even:bg-opacity-100 overflow-auto">
+                 { transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.from === selectedLoyaltyProgram?.programOwner ? 
+                    <>
+                      <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
+                        <div className="">
                           Points Received  
-                        </div> 
-                        <div className="">
-                         { toFullDateFormat(Number(transaction.blockData.timestamp)) } 
-                        </div> 
-                      </div>
-                      <div className="flex justify-between">
-                        <div> 
-                          {`${transaction.values[0]} points`}
-                        </div>
-                        <div> 
-                          { toEurTimeFormat(Number(transaction.blockData.timestamp)) } 
-                        </div> 
-                      </div> 
-                    </div>
-                  :
-                  transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.to === selectedLoyaltyProgram?.programOwner ? 
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Gift Claimed
-                        </div> 
-                        <div className="">
-                        { toFullDateFormat(Number(transaction.blockData.timestamp)) } 
-                        </div> 
-                      </div>
-                      <div className="flex justify-between">
-                        <div> 
-                          {`${transaction.values[0]} points`}
-                        </div>
-                        <div> 
-                          { toEurTimeFormat(Number(transaction.blockData.timestamp)) } 
-                        </div> 
-                      </div>
-                    </div>
-                  :
-                  transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.from === selectedLoyaltyProgram?.programAddress ? 
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Voucher Received
-                        </div> 
-                        <div className="">
-                        { toFullDateFormat(Number(transaction.blockData.timestamp)) } 
-                        </div> 
-                      </div>
-                      <div className="flex justify-between">
-                        <div> 
-                          {`Voucher Id: ${transaction.values[0]}`}
-                        </div>
-                        <div> 
-                          { toEurTimeFormat(Number(transaction.blockData.timestamp)) } 
-                        </div> 
-                      </div>
-                    </div>
-                  :
-                  transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.to === selectedLoyaltyProgram?.programAddress ? 
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Voucher Redeemed
                         </div> 
                         <div className="">
                           { toFullDateFormat(Number(transaction.blockData.timestamp)) } 
                         </div> 
-                      </div>
-                      <div className="flex justify-between">
+                      </td>
+                      <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
                         <div> 
-                          {`Voucher Id: ${transaction.values[0]}`}
+                          {`${transaction.values[0]} points`}
                         </div>
                         <div> 
                           { toEurTimeFormat(Number(transaction.blockData.timestamp)) } 
                         </div> 
-                      </div> 
-                    </div>
-                  :
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
+                      </td>
+                     </>
+                    :
+                    transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.to === selectedLoyaltyProgram?.programOwner ? 
+                    <>
+                      <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
+                        <div className="">
+                          Gift Claimed  
+                        </div> 
+                        <div className="">
+                          { toFullDateFormat(Number(transaction.blockData.timestamp)) } 
+                        </div> 
+                      </td>
+                      <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
+                        <div> 
+                          {`${transaction.values[0]} points`}
+                        </div>
+                        <div> 
+                          { toEurTimeFormat(Number(transaction.blockData.timestamp)) } 
+                        </div> 
+                      </td>
+                     </>
+                    :
+                    transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.from === selectedLoyaltyProgram?.programAddress ? 
+                    <>
+                     <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
+                        <div>
+                          Voucher Received 
+                        </div>  
+                        <div className="">
+                          {toFullDateFormat(Number(transaction.blockData.timestamp)) } 
+                        </div> 
+                      </td>
+                      <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
+                        <div > 
+                          Voucher Id: {`${transaction.values[0]}`}
+                        </div>
+                        <div> 
+                          {toEurTimeFormat(Number(transaction.blockData.timestamp)) } 
+                        </div> 
+                      </td>
+                     </>
+                     :
+                     transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.to === selectedLoyaltyProgram?.programAddress ? 
+                     <>
+                     <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
+                        <div className="">
+                          Voucher Redeemed
+                        </div> 
+                        <div className="">
+                          {toFullDateFormat(Number(transaction.blockData.timestamp)) } 
+                        </div> 
+                      </td>
+                      <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
+                        <div> 
+                          Voucher Id: {`${transaction.values[0]}`}
+                        </div>
+                        <div> 
+                          {toEurTimeFormat(Number(transaction.blockData.timestamp)) } 
+                        </div> 
+                      </td>
+                     </>
+                     :
+                     <>
+                     <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
+                        <div className="">
                           Unrecognised
                         </div> 
                         <div className="">
                           Blocknumber: {Number(transaction.blockNumber)}
                         </div> 
-                      </div>
-                      <div> 
-                        {`to customer address: ${transaction.to}`}
-                      </div>
-                      <div> 
+                      </td>
+                      <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
+                        <div> 
+                          {`to customer address: ${transaction.to}`}
+                        </div>
+                        <div> 
                         {`Card ID: ${transaction.ids}`}
-                      </div>
-                    </div>
-                  }
-                </div>
-              )
-              }
-            </div>    
+                        </div> 
+                      </td>
+                     </>
+                 } 
+                 </tr>
+                )}
+              </tbody>
+            </table>    
           :
           <div className="m-6"> 
               <NoteText message="Transaction history will appear here."/>
