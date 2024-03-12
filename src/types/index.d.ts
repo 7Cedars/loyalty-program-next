@@ -99,6 +99,7 @@ export type Transaction = {
   to: EthAddress; 
   ids: BigInt[]; 
   values: BigInt[]; 
+  blockData?: Any
 }
 
 export type TransactionArgs = UnionOmit<Transaction, 'blockNumber' | 'logIndex'>;
