@@ -26,6 +26,7 @@ export default function UrlToLocalStorage() {
       localStorage.setItem("progAddress", progAddress)
       localStorage.setItem("progUri", progUri)
       localStorage.setItem("progChainId", chainId)
+      window.dispatchEvent(new Event("localStorageUpdated"));
       checked.current = true
     }
   }, [ ])
