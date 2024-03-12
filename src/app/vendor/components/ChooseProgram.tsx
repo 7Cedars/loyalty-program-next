@@ -109,17 +109,23 @@ export default function ChooseProgram()  {
                 src={"/images/loading2.svg"}
                 alt="Loading icon"
               />
+              <div className="text-center text-slate-500 mt-6">
+                Retrieving your programs... 
+              </div> 
             </div>
           :
-          <div className='w-full h-full grow grid grid-cols-1 gap-1 justify-items-center text-center italic' >
-          <div className='h-48'>
-              <div >
-                No Loyalty Programs found on this address. 
+          <div className='w-full h-full max-w-96 grid grid-cols-1 gap-4 justify-items-center content-center text-center text-slate-800 dark:text-slate-200' >
+            <div className='h-48 max-w-48'>
+                <div className="">
+                  Please wait..  
+                </div> 
+                <div className="">
+                  If this message does not disappear after ten seconds, it is likely that no loyalty programs were deployed with this wallet address. 
+                </div>
+                <div className="">  
+                  Login with another address or deploy a new program <a href="/" className='text-blue-500 underline '> here. </a>
+                </div> 
               </div> 
-              <div >
-                Login with another address or deploy a program <a href="/" className='text-blue-500 underline '> here. </a>
-              </div> 
-            </div> 
           </div>
       } 
 
