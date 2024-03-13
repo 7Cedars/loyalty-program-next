@@ -1,6 +1,6 @@
 // TODO 
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useRef } from "react";
 import { EthAddress, QrData, Transaction } from "@/types";
 import { Button } from "@/app/ui/Button";
 import { 
@@ -24,6 +24,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import MintCards from "../components/MintCards";
+import { useLatestVendorTransaction } from "@/app/hooks/useLatestTransaction";
 
 type RedeemTokenProps = {
   qrData: QrData | undefined;  
@@ -42,6 +43,8 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const dispatch = useDispatch() 
   const { address } = useAccount() 
   const publicClient = usePublicClient()
+  const polling = useRef<boolean>(false) 
+  const { pointsReceived, pointsSent, tokenReceived, tokenSent } = useLatestVendorTransaction(polling.current) 
 
   console.log("transferSingles: ", transferSingles) 
 

@@ -21,10 +21,12 @@ export default function Page()  {
   const [progAddress, setProgAddress] = useState<string | null  >(); 
   const [progUri, setProgUri] = useState<string | null >(); 
 
-  window.addEventListener('localStorageUpdated', () => {
-    setProgAddress(localStorage.getItem("progAddress"))
-    setProgUri(localStorage.getItem("progUri"))
-  })
+  useEffect(() => {
+    window.addEventListener('localStorageUpdated', () => {
+      setProgAddress(localStorage.getItem("progAddress"))
+      setProgUri(localStorage.getItem("progUri")) 
+    })
+  }, [])
   
   function UrlToLocalStorageFallback() {
     return  (

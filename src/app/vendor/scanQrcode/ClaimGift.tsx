@@ -16,7 +16,8 @@ import { TitleText } from "@/app/ui/StandardisedFonts";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useAppSelector } from "@/redux/hooks";
-
+import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { useLatestVendorTransaction } from "@/app/hooks/useLatestTransaction";
 
 type SendPointsProps = {
   qrData: QrData | undefined;  
@@ -29,6 +30,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const [token, setToken] = useState<LoyaltyGift>()
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const dispatch = useDispatch() 
+  const { pointsReceived } = useLatestVendorTransaction(true) 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
 
   console.log("QRDATA @claim gift: ", qrData)
@@ -73,14 +75,14 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     } 
   )
 
-  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
-    { 
-      confirmations: 2,
-      hash: hashTransaction 
-    })
+  // const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+  //   { 
+  //     confirmations: 2,
+  //     hash: hashTransaction 
+  //   })
 
   useEffect(() => {
-    if (isSuccess) {
+    if (pointsReceived) {
       dispatch(notification({
         id: "claimGift",
         message: `Points received.`, 
@@ -88,16 +90,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
         isVisible: true
       }))
     }
-    if (isError) {
-      dispatch(notification({
-        id: "claimGift",
-        message: `Error.`, 
-        colour: "red",
-        isVisible: true
-      }))
-    }
-    
-  },[isError, isSuccess])
+  },[ pointsReceived ])
 
   const handleSubmit = () => {
     console.log("simulated entry data into claimLoyaltyGift: ", 
@@ -158,7 +151,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
                 {`Cost: ${token.metadata.attributes[1].value} loyalty points`}
               </div>
             </div>
-            {isSuccess?  
+            {pointsReceived?  
             <p className="text-center text-xl font-bold p-8">
               {token.metadata?.attributes[3].value}
             </p>
@@ -177,8 +170,8 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
         null 
         }
 
-        { isLoading ? 
-        <Button appearance = {"grayEmpty"} onClick={() => {}} >
+        { hashTransaction && !pointsReceived ? 
+        <Button appearance = {"grayEmpty"} onClick={() => {}} disabled={true} >
          <div className="flex justify-center items-center">
            <Image
              className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
