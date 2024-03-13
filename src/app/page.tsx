@@ -3,7 +3,7 @@
 import loyaltyProgramsData from "../../public/exampleLoyaltyPrograms.json"; // not that this is a very basic json file data format - can be used in many other cases as well. 
 import { TitleText } from "./ui/StandardisedFonts";
 import Image from "next/image";
-import { useAccount, useWaitForTransaction } from "wagmi";
+import { sepolia, useAccount, useWaitForTransaction } from "wagmi";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { loyaltyProgramBytecode } from "@/context/bytecode";
 import { useEffect, useState } from "react";
@@ -37,8 +37,9 @@ export default function Home() {
   const handleDeployRequest = async (data: DeployRequestProps) => {
     console.log("handleDeployRequest CALLED, uri: ", data)
     console.log("walletClient: ", walletClient)
-    // walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
+    // open({view: "Connect"})
     setDeployRequest(data)
+    walletClient ? null : open({view: "Connect"}) 
   }
 
   const deployLoyaltyProgram = async () => {
@@ -51,6 +52,7 @@ export default function Home() {
     if (walletClient && deployRequest) {
       const hash = await walletClient.deployContract({
         abi: loyaltyProgramAbi,
+        chain: sepolia, // needs to be dynamic
         account: address,
         args: [
           deployRequest.uri,

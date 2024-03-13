@@ -8,6 +8,7 @@ import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 // import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { useWeb3ModalTheme } from '@web3modal/wagmi/react';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 // 1. Get keys
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ? process.env.NEXT_PUBLIC_ALCHEMY_API_KEY: "none"
@@ -18,13 +19,24 @@ const metadata = {
   name: 'loyalty-program',
   description: 'Customer Loyalty Program',
   url: 'https://loyalty-program-psi.vercel.app/', 
-  icons: ['https://github.com/7Cedars/loyalty-program-next/blob/main/public/iconLoyaltyProgram.svg']
+  icons: ['public/images/iconLoyaltyProgram.svg']
 }
+
+const w3mConnector = new WalletConnectConnector({
+  options: {
+    projectId: projectId,
+    metadata: {
+      name: 'loyalty-program',
+      description: 'Customer Loyalty Program',
+      url: 'https://loyalty-program-psi.vercel.app/', 
+      icons: ['public/images/iconLoyaltyProgram.svg']
+    }
+  },
+})
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [ foundry, sepolia ], //  arbitrum, arbitrumGoerli, optimism, optimismSepolia, baseSepolia
   [ 
-    publicProvider(),   
     // jsonRpcProvider({
     //   rpc: (localhost) => ({
     //     http: "http://localhost:8545",
@@ -32,17 +44,19 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
       // }),
     // }),
     alchemyProvider({ apiKey: ALCHEMY_API_KEY }),
+    publicProvider(), 
   ],
 )
 
 export const wagmiConfig = defaultWagmiConfig({ 
   chains, 
   projectId, 
-  metadata
+  metadata, 
  })
 
 const config = createConfig({
-  autoConnect: true,  
+  autoConnect: false,  
+  connectors: [w3mConnector], 
   publicClient,
   webSocketPublicClient,
 })

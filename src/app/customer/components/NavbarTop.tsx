@@ -58,7 +58,7 @@ const NavbarTop = ( ) => {
               Transactions 
           </Link>
         </div> 
-        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open(address ? {view: "Account"} : {view: "Networks"} )}> 
+        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open(address ? {view: "Account"} : {view: "Connect"} )}> 
            {text} 
         </button>
       </header>
