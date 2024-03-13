@@ -118,6 +118,21 @@ const parseTokenised = (tokenised: unknown): BigInt[] => {
   return tokenised as BigInt[];
 };
 
+export const parseBalances = (balancesBigInt: unknown): number[] => {
+  if (!isArray(balancesBigInt)) {
+    throw new Error(`Incorrect data, not an array: ${balancesBigInt}`);
+  }
+
+  balancesBigInt.forEach(balance => {
+    if (!isBigInt(balance)) {
+      throw new Error(`Incorrect item at tokenised, not a bigint: ${balance} at  ${balance}`);
+    }
+  })
+
+  const balances = balancesBigInt.map(balance => Number(balance)) 
+  return balances as number[];
+};
+
 const parseArgsAddRemoveLoyaltyGift = (args: unknown): {giftAddress: EthAddress, giftId: number}  => {
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');

@@ -51,10 +51,10 @@ Even though repository is public, For now, it is for personal use only.
 - [x]  @Customer, Home: improve carousel if multiple cards are present -- see example landing page. 
 - [x]  @Vendor, Home: improve carousel if multiple programs have been deployed -- see example landing page. 
 - [ ]  @Notifications / Everywhere: Error messaging needs to mention revert message. - currently no idea why something fails. 
-- [ ]  @Customer, Home: When loyaltyCard is received you know have to reload page - is should go straight to the new card. -> use window.location.reload(); - actually not really needed. On phone this is quite natural. 
+- [x]  @Customer, Home: When loyaltyCard is received you know have to reload page - is should go straight to the new card. -> use window.location.reload(); - actually not really needed. On phone this is quite natural. 
 - [ ]  @Everywhere: Gift, Voucher, Token... Get a clear logic, and implement consistently throughout. - WIP but lot better now. 
 - [x]  @Vendor, Home: If no programs are deployed - should have link to landing page - very simple (now just shows up empty). 
-- [ ]  @Vendor, Tokens: Build a easy UI for adding and removing gift contracts
+- [ ]  @Vendor, Tokens: Build a easy UI for adding and removing gift contracts / later
 - [ ]  @Vendor, tokens: Add address of token + address issuer in description. / later 
 - [x]  @Readme.md: Search for templates to create clear and accesible readme file. 
 - [ ]  fill out readme files. - WIP  

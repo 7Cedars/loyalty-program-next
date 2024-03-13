@@ -75,7 +75,7 @@ export default function ChooseProgram()  {
       <div> 
       <TitleText title = "Choose Loyalty Program" subtitle="Choose existing program or deploy a new one." size={1} /> 
       </div> 
-       { status == "isSuccess" && loyaltyPrograms && loyaltyPrograms.length > 0 ? 
+       { status == "isSuccess" && loyaltyPrograms && loyaltyPrograms.length > 0 && address ? 
         <div className="relative my-6 mx-4 flex flex-col justify-center sm:w-4/5 w-full h-full">
             <div className="flex flex-row justify-between overflow-x-auto overflow-hidden scroll-px-1 snap-normal w-full h-full self-center">
 
@@ -114,19 +114,22 @@ export default function ChooseProgram()  {
               </div> 
             </div>
           :
-          <div className='w-full h-full max-w-96 grid grid-cols-1 gap-4 justify-items-center content-center text-center text-slate-800 dark:text-slate-200' >
-            <div className='h-48 max-w-48'>
-                <div className="">
-                  Please wait..  
-                </div> 
-                <div className="">
-                  If this message does not disappear after ten seconds, it is likely that no loyalty programs were deployed with this wallet address. 
-                </div>
-                <div className="">  
-                  Login with another address or deploy a new program <a href="/" className='text-blue-500 underline '> here. </a>
-                </div> 
-              </div> 
-          </div>
+          address ?
+            <div className='grow flex flex-col self-center items-center justify-center text-center text-slate-800 dark:text-slate-200' >
+              {/* <div className='h-48 max-w-48'> */}
+                  <div className="w-48 m-2">
+                    Please wait..  
+                  </div> 
+                  <div className="w-96 m-2">
+                    If this message does not disappear after ten seconds, it is likely that no loyalty programs were deployed with this wallet address. 
+                  </div>
+                  <div className="w-96 m-2">  
+                    Login with another address or deploy a new program <a href="/" className='text-blue-500 underline '> here. </a>
+                  </div> 
+                {/* </div>  */}
+            </div>
+          : 
+          <div className="grow" />
       } 
 
       </div>

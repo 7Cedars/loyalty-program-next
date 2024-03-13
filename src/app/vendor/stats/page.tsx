@@ -2,7 +2,7 @@
 
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { Button } from "@/app/ui/Button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Status, Transaction } from "@/types";
 import { Log } from "viem";
 import { parseEthAddress, parseTransferSingleLogs, parseTransferBatchLogs, parseBigInt } from "@/app/utils/parsers";
@@ -16,128 +16,203 @@ import { NoteText } from "@/app/ui/StandardisedFonts";
 import MintPoints from "../components/MintPoints";
 import MintCards from "../components/MintCards";
 import { useAppSelector } from "@/redux/hooks";
+import { useVendorAccount } from "@/app/hooks/useVendorAccount";
+import Image from "next/image";
+import { toEurTimeFormat, toFullDateFormat } from "@/app/utils/timestampToDate";
  
-
 export default function Page() {
-  const [modal, setModal] = useState<'points' | 'cards' | undefined>()  
-  const [loyaltyPoints, setLoyaltyPoints] = useState<Number>()
-  const [cardsMinted, setCardsMinted] = useState<Number>()
+  const [ modal, setModal] = useState<'points' | 'cards' | undefined>()  
+  const { status: statusBalances, balances } = useVendorAccount() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient(); 
   const { address } = useAccount() 
-  const [ status, setStatus ] = useState<Status>('isIdle'); 
-  const [transactions, setTransactions] = useState<Transaction[] | undefined >()
+  
+  const [ transferSingleTo, setTransferSingleTo ] = useState<Transaction[]>([]) 
+  const [ transferSingleFrom, setTransferSingleFrom ] = useState<Transaction[]>([])  
+  const [ transferBatchTo, setTransferBatchToTo ] = useState<Transaction[]>([]) 
+  const [ transactions, setTransactions ] = useState<Transaction[]>([]) 
+  
+  const statusTransferSingleTo = useRef<Status>("isIdle") 
+  const statusTransferSingleFrom = useRef<Status>("isIdle") 
+  const statusTransferBatchTo = useRef<Status>("isIdle") 
+  const statusBlockData= useRef<Status>("isIdle") 
+  const [status, setStatus] = useState<Status>("isIdle") 
 
-  console.log("selectedLoyaltyProgram: ", selectedLoyaltyProgram)
+  console.log("transactions @stats vendor: ", transactions)
+  console.log("status at @stats vendor: ", {
+    statusTransferSingleTo: statusTransferSingleTo, 
+    statusTransferSingleFrom: statusTransferSingleFrom, 
+    statusTransferBatchTo: statusTransferBatchTo, 
+    statusBlockData: statusBlockData, 
+    status: status
+  })
 
-  const getLoyaltyProgramPoints = async () => {
-    console.log("getLoyaltyProgramPoints called")
-      if (selectedLoyaltyProgram) {
-      const loyaltyProgramPointsData = await publicClient.readContract({
-        address: parseEthAddress(selectedLoyaltyProgram.programAddress), 
-        abi: loyaltyProgramAbi,
-        functionName: 'balanceOf', 
-        args: [ selectedLoyaltyProgram.programOwner, 0 ]
+  const getTransferSingleTo = async () => {
+    statusTransferSingleTo.current = "isLoading"
+    try { 
+      const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
+        abi: loyaltyProgramAbi, 
+        address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+        eventName: 'TransferSingle', 
+        args: {
+          to: parseEthAddress(address)
+        },
+        fromBlock: 5200000n
       });
-      console.log("loyaltyProgramPointsData: ", loyaltyProgramPointsData)
-      
-      const loyaltyCardPoints = parseBigInt(loyaltyProgramPointsData)
-      setLoyaltyPoints(Number(loyaltyCardPoints))
+      const transactions =  parseTransferSingleLogs(transferSingleLogs)
+      setTransferSingleTo([...transactions])
+      statusTransferSingleTo.current = "isSuccess" 
+    } catch (error) {
+      statusTransferSingleTo.current = "isError"
+      console.log(error)
     }
   }
 
-  const getLoyaltyProgramCardsMinted = async () => {
-    console.log("getLoyaltyProgramCardsMinted called")
-      if (selectedLoyaltyProgram) {
-      const loyaltyCardsData = await publicClient.readContract({
-        address: parseEthAddress(selectedLoyaltyProgram.programAddress), 
-        abi: loyaltyProgramAbi,
-        functionName: 'getNumberLoyaltyCardsMinted', 
-        args: []
+  const getTransferSingleFrom = async () => {
+    statusTransferSingleFrom.current = "isLoading"
+    try { 
+      const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
+        abi: loyaltyProgramAbi, 
+        address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+        eventName: 'TransferSingle', 
+        args: {
+          from: parseEthAddress(address)
+        },
+        fromBlock: 5200000n
       });
+      const transactions =  parseTransferSingleLogs(transferSingleLogs)
+      setTransferSingleFrom([...transactions])
+      statusTransferSingleFrom.current = "isSuccess"
+    } catch (error) {
+      statusTransferSingleFrom.current = "isError"
+      console.log(error)
+    }
+  }
 
-      console.log("loyaltyCardsData: ", loyaltyCardsData)
-      
-      const loyaltyCards = parseBigInt(loyaltyCardsData)
+  const getTransferBatchTo = async () => {
+    statusTransferBatchTo.current = "isLoading"
 
-      if (transactions) {
-        const transferredCards = transactions.filter(transaction => 
-          transaction.ids[0] != 0n 
-        )
-        console.log("transferredCards: ", transferredCards)
+    try { 
+      const transferBatchLogs: Log[] = await publicClient.getContractEvents( { 
+        abi: loyaltyProgramAbi, 
+            address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+            eventName: 'TransferBatch', 
+            args: {
+              to: parseEthAddress(address)
+            },
+            fromBlock: 5200000n
+          });
+      const transactions =  parseTransferBatchLogs(transferBatchLogs)
+      setTransferBatchToTo([...transactions])
+      statusTransferBatchTo.current = "isSuccess"
 
-        transferredCards ? setCardsMinted(Number(loyaltyCards) - Number(transferredCards.length)) : setCardsMinted(Number(loyaltyCards))
+    } catch (error) {
+      statusTransferBatchTo.current = "isError"
+      console.log(error)
+    }
+  }
+
+  const getBlockData = async () => {
+    statusBlockData.current = "isLoading"
+
+    let transaction: Transaction
+    let transactionUpdated: Transaction[] = []
+
+    if (transactions) { 
+      try {
+        for await (transaction of transactions) {
+        const data: unknown = await publicClient.getBlock({
+          blockNumber: BigInt(Number(transaction.blockNumber)) 
+        })
+        transactionUpdated.push({...transaction, blockData: data})
+      }
+      setTransactions(transactionUpdated) 
+      statusBlockData.current = "isSuccess" 
+      } catch (error) {
+        statusBlockData.current = "isError" 
+        console.log(error)
       }
     }
   }
 
-  const getTransactions = async () => {
-    console.log("getTransactions called")
-
-    const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi, 
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-      eventName: 'TransferSingle', 
-      args: {
-        from: parseEthAddress(address)
-      },
-      fromBlock: 5200000n
-    });
-    const transferSingleData =  parseTransferSingleLogs(transferSingleLogs)
-
-    const transferMintPointsLogs: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi, 
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-      eventName: 'TransferSingle', 
-      args: {
-        to: parseEthAddress(address)
-      },
-      fromBlock: 5200000n
-    });
-    const transferMintPointsData =  parseTransferSingleLogs(transferMintPointsLogs)
-
-    const transferMintCardLogs: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi, 
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-      eventName: 'TransferBatch', 
-      args: {
-        to: parseEthAddress(address)
-      },
-      fromBlock: 5200000n
-    });
-    console.log("transferMintCardLogs: ", transferMintCardLogs)
-    const transferMintCardData =  parseTransferBatchLogs(transferMintCardLogs)
-
-    const transferData = [...transferSingleData, ...transferMintPointsData, ...transferMintCardData]
-    transferData.sort((firstTransaction, secondTransaction) => 
-      Number(secondTransaction.blockNumber) - Number(firstTransaction.blockNumber));
-
-    setTransactions(transferData)
-    setStatus("isSuccess")
-    console.log("transferData: ", transferData)
-  }
-
-
+  useEffect(() => {
+    getTransferSingleTo()
+    getTransferSingleFrom()
+    getTransferBatchTo()
+  }, [ ])
 
   useEffect(() => {
-    setStatus('isLoading')
-    getTransactions()
-    if (status == "isSuccess")  {
-      setStatus("isLoading")
-      getLoyaltyProgramPoints() 
-      getLoyaltyProgramCardsMinted()
-    }
-    setStatus("isIdle")
-  }, [ , modal, selectedLoyaltyProgram, status])
+    if (
+      transferSingleTo && 
+      transferSingleFrom && 
+      transferBatchTo && 
+      statusTransferSingleTo.current == "isSuccess" && 
+      statusTransferSingleFrom.current == "isSuccess" &&
+      statusTransferBatchTo.current == "isSuccess"
+      ) {
+        const allTransactions = [...transferSingleTo, ...transferSingleFrom, ...transferBatchTo]
 
+        allTransactions.sort((firstTransaction, secondTransaction) => 
+          Number(secondTransaction.blockNumber) - Number(firstTransaction.blockNumber)
+        );
+        setTransactions(allTransactions)
+      }
+  }, [
+    transferSingleTo,
+    transferSingleFrom,  
+    transferBatchTo
+  ])
+
+  useEffect(() => {
+    if (
+      statusTransferSingleTo.current == "isSuccess" && 
+      statusTransferSingleFrom.current == "isSuccess" &&
+      statusTransferBatchTo.current == "isSuccess" && 
+      statusBlockData.current == "isIdle"  && 
+      transactions.length > 0 
+    ) {
+      getBlockData() 
+    }
+  }, [ 
+    transactions
+  ])
+
+   // updating status
+   useEffect(() => {
+    if (
+      statusTransferSingleTo.current == "isError" || 
+      statusTransferSingleFrom.current == "isError" ||
+      statusTransferBatchTo.current == "isError" || 
+      statusBlockData.current == "isError"
+    ) {
+      setStatus("isError")
+    }
+    if (
+      statusTransferSingleTo.current == "isLoading" || 
+      statusTransferSingleFrom.current == "isLoading" ||
+      statusTransferBatchTo.current == "isLoading" || 
+      statusBlockData.current == "isLoading"
+    ) {
+      setStatus("isLoading")
+    }
+    if (
+      statusTransferSingleTo.current == "isSuccess" && 
+      statusTransferSingleFrom.current == "isSuccess" &&
+      statusTransferBatchTo.current == "isSuccess" && 
+      statusBlockData.current == "isSuccess"
+    ) {
+      setStatus("isSuccess")
+    }
+  }, [ 
+    transactions
+  ])
 
   return (
     <div className="grid grid-cols-1 h-full w-full justify-items-between content-between">
-
       <div className="grid grid-cols-1 justify-items-center w-full h-full overflow-auto ">
         <TitleText title = "Transaction Overview" subtitle="See transactions, mint loyalty points and cards." size = {2} />
         <div className="grid grid-cols-1 p-2 pt-3 w-5/6 sm:w-2/3 text-center justify-items-center border-b border-slate-700"> 
-          <p> {`${loyaltyPoints}`} points | {`${cardsMinted}`} cards </p> 
+          <p> {`${balances?.points}`} points | {`${balances?.cards}`} cards </p> 
         </div>
 
         { 
@@ -151,105 +226,157 @@ export default function Page() {
               <MintCards modal = {modal} setModal = {setModal} /> 
             </div>
         : 
-          transactions ? 
-            <div className="grid grid-cols-1 overflow-auto w-full md:w-4/5 m-1 mx-3 p-6 divide-y">  
-              {
-              transactions.map((transaction: Transaction, i) => 
-                <div key = {i} className="p-2 ">
-                  {
-                   transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.from === address ? 
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Transfer Points 
-                        </div> 
-                        <div className="">
-                          Blocknumber: {Number(transaction.blockNumber)}
-                        </div> 
-                      </div>
-                      <div> 
-                        {`to loyalty card address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
-                      </div>
-                      <div> 
-                        {`${transaction.values[0]} points`}
-                      </div>
+          status == "isLoading" ? 
+            <div className="grow flex flex-col self-center items-center justify-center pt-12 text-slate-800 dark:text-slate-200 z-40">
+            <Image
+              className="rounded-lg flex-none mx-3 animate-spin self-center"
+              width={60}
+              height={60}
+              src={"/images/loading2.svg"}
+              alt="Loading icon"
+            />
+            <div className="text-center text-slate-500 mt-6"> 
+              Retrieving transactions history...    
+            </div> 
+          </div>
+         : 
+         transactions && statusBlockData.current == "isSuccess" ? 
+
+          ////////////////////////
+          ///  Drawing Table   /// 
+          ////////////////////////
+          <table className="grow flex flex-col w-11/12 border border-slate-300 dark:border-slate-700 mt-8 rounded-lg mx-2">  
+            <thead>
+              <tr className="grow flex justify-between bg-slate-300 dark:bg-slate-700">
+                <th className="flex grow justify-start text-slate-800 dark:text-slate-200 p-2">
+                  Transaction
+                  </th>
+                <th className="flex grow justify-start text-slate-800 dark:text-slate-200 p-2">
+                  Date & Time
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+            { transactions.map((transaction: Transaction, i) => 
+              <tr key = {i} className="grow grid grid-cols-2 bg-slate-100 dark:bg-slate-950 odd:bg-opacity-0 even:bg-opacity-100 overflow-auto">
+                { transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.from === address ? 
+                  <>
+                  <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 my-2 ms-2">
+                    <div className="">
+                      Transfer Points 
+                    </div> 
+                    <div className="">
+                      {`${transaction.values[0]} points`}
+                    </div> 
+                    <div className=""> 
+                      {`to address:`}
                     </div>
-                  :
+                  </td>
+                  <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 my-2">
+                    <div className=""> 
+                      { toFullDateFormat(Number(transaction.blockData.timestamp)) } 
+                    </div>
+                    <div className=""> 
+                      { toEurTimeFormat(Number(transaction.blockData.timestamp)) } 
+                    </div> 
+                    <div className=""> 
+                    {`${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
+                    </div> 
+                  </td>
+                  {/* <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 ">
+                    <div className=""> 
+                      {`to: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
+                    </div>
+                    <div className=""> 
+                      Empty Slot
+                    </div> 
+                  </td> */}
+                 </>
+                 : 
                   transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.to === address ?
-                    <div className="grid grid-cols-1">
-                    <div className="flex justify-between">
-                      <div className="font-bold">
-                        Mint Points 
+                  <>
+                    <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 pt-4 px-2">
+                      <div className="">
+                        Mint Points  
+                      </div> 
+                      <div className="">
+                        {`${transaction.values[0]} points`}
+                      </div> 
+                    </td>
+                    <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4 px-2">
+                      <div> 
+                        { toFullDateFormat(Number(transaction.blockData.timestamp)) } 
+                      </div>
+                      <div> 
+                        { toEurTimeFormat(Number(transaction.blockData.timestamp)) } 
+                      </div> 
+                    </td>
+                  </>
+                  :
+                  transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.from === address ?
+                  <>
+                    <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 pt-4 px-2">
+                      <div className="">
+                        Transfer Cards  
+                      </div> 
+                      <div className="">
+                        {`Card ID: ${String(transaction.ids[0])}`}
+                      </div> 
+                    </td>
+                    <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4 px-2">
+                      <div> 
+                        { toFullDateFormat(Number(transaction.blockData.timestamp)) } 
+                      </div>
+                      <div> 
+                        { toEurTimeFormat(Number(transaction.blockData.timestamp)) } 
+                      </div> 
+                    </td>
+                  </>
+                  :
+                  transaction.ids.length > 1 ? 
+                  <>
+                    <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 pt-4 px-2">
+                      <div className="">
+                        Mint Cards  
+                      </div> 
+                      <div className="">
+                        {`# Cards: ${transaction.ids.length}`}
+                      </div> 
+                    </td>
+                    <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4 px-2">
+                      <div> 
+                        { toFullDateFormat(Number(transaction.blockData.timestamp)) } 
+                      </div>
+                      <div> 
+                        { toEurTimeFormat(Number(transaction.blockData.timestamp)) } 
+                      </div> 
+                    </td>
+                  </>
+                  :
+                  <>
+                    <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
+                      <div className="">
+                        Unrecognised
                       </div> 
                       <div className="">
                         Blocknumber: {Number(transaction.blockNumber)}
                       </div> 
-                    </div>
-                    <div> 
-                      {`to loyalty card address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
-                    </div>
-                    <div> 
-                      {`${transaction.values[0]} points`}
-                    </div>
-                  </div>
-                  : 
-                  transaction.ids.length === 1 && transaction.ids[0] !== 0n && transaction.from === address ?
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Transfer Loyalty Card 
-                        </div> 
-                        <div className="">
-                          Blocknumber: {Number(transaction.blockNumber)}
-                        </div> 
-                      </div>
-                      <div> 
-                        {`to customer address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
-                      </div>
-                      <div> 
-                        {`Card ID: ${String(transaction.ids[0])}`}
-                </div>
-                    </div>
-                  :
-                  transaction.ids.length > 1 ? 
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Mint Loyalty Cards 
-                        </div> 
-                        <div className="">
-                          Blocknumber: {Number(transaction.blockNumber)}
-                        </div> 
-                      </div>
-                      <div> 
-                        {`to customer address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
-                      </div>
-                      <div> 
-                        {`number Cards minted ${transaction.ids.length}`}
-                   </div>
-                    </div>
-                  :
-                    <div className="grid grid-cols-1">
-                      <div className="flex justify-between">
-                        <div className="font-bold">
-                          Unrecognised
-                        </div> 
-                        <div className="">
-                          Blocknumber: {Number(transaction.blockNumber)}
-                        </div> 
-                      </div>
+                    </td>
+                    <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
                       <div> 
                         {`to customer address: ${transaction.to}`}
                       </div>
                       <div> 
-                        {`Card ID: ${transaction.ids}`}
-                 </div>
-                    </div>
+                      {`Card ID: ${transaction.ids}`}
+                      </div> 
+                    </td>
+                    </>
                   }
-                </div>
+                </tr>
               )
               }
-            </div>    
+               </tbody>
+            </table>    
           :
           <div className="m-6"> 
               <NoteText message="Transaction history will appear here."/>

@@ -118,31 +118,34 @@ export default function Page() {
           { 
           statusUseLoyaltyGifts == "isLoading" || 
           statusTokenSelection == "isLoading" ? 
-            <div className="grow flex flex-col self-center items-center justify-center text-slate-800 dark:text-slate-200 z-40">
-              <Image
-                className="rounded-lg flex-none mx-3 animate-spin self-center"
-                width={60}
-                height={60}
-                src={"/images/loading2.svg"}
-                alt="Loading icon"
-              />
-              { statusUseLoyaltyGifts == "isLoading" ? 
-                  <div className="text-center text-slate-500 mt-6"> 
-                    Retrieving gift contracts deployed on chain...   
-                  </div>  
-                : 
-                statusTokenSelection == "isLoading" ? 
-                  <div className="text-center text-slate-500 mt-6"> 
-                    Retrieving your gift selection...   
-                  </div>  
-                :
-                null 
-              }
+            <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
+              <div className="grow flex flex-col self-center items-center justify-center text-slate-800 dark:text-slate-200 z-40">
+                <Image
+                  className="rounded-lg flex-none mx-3 animate-spin self-center"
+                  width={60}
+                  height={60}
+                  src={"/images/loading2.svg"}
+                  alt="Loading icon"
+                />
+                { statusUseLoyaltyGifts == "isLoading" ? 
+                    <div className="text-center text-slate-500 mt-6"> 
+                      Retrieving gift contracts deployed on chain...   
+                    </div>  
+                  : 
+                  statusTokenSelection == "isLoading" ? 
+                    <div className="text-center text-slate-500 mt-6"> 
+                      Retrieving your gift selection...   
+                    </div>  
+                  :
+                  null 
+                }
+              </div>
             </div>
           : 
           statusUseLoyaltyGifts == "isSuccess" &&  
           statusTokenSelection == "isSuccess" ?
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
+            // <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
+            <>
               <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
                 <TitleText title = "Selected Gifts" size={0} />
               </div>
@@ -177,7 +180,7 @@ export default function Page() {
                     <NoteText message="Other available gifts will appear here."/>
                   </div>
               }
-            </div>
+            </>
           :
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
             <NoteText message="Something went wrong. That's all I know."/>

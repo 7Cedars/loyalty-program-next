@@ -57,6 +57,7 @@ export type LoyaltyProgram = {
   uri?: string; 
   metadata?: Metadata;
   programOwner?: EthAddress;
+  balances?: number[] | undefined;
 } 
 
 export type LoyaltyCard = {
