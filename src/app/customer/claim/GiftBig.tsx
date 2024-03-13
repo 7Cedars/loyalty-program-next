@@ -29,7 +29,8 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  const {  pointsSent } = useLatestCustomerTransaction() 
+  const polling = useRef<boolean>(false) 
+  const {  pointsSent } = useLatestCustomerTransaction(polling.current) 
   const dispatch = useDispatch() 
   const {address } = useAccount()
   const {chain} = useNetwork() 
@@ -60,7 +61,6 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
       }
 
     if(!nonceData) { getNonceLoyaltyCard() } 
-
   }, [nonceData] ) 
 
   /// begin setup for encoding typed data /// 
@@ -95,31 +95,29 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   console.log("message: ", message)
 
-  const { data: signature, isError, isLoading, isSuccess, reset: resetSignature, signTypedData } =
-
-  useSignTypedData({
+  const { data: signature, isError, isLoading, isSuccess, reset: resetSignature, signTypedData } = useSignTypedData({
     domain,
     message,
     primaryType: 'RequestGift',
     types,
   })
   
-  // const handleSigning = () => {
-  //   open({view: "Connect"})
-  //   signTypedData()
-  // }
+  const handleSigning = () => {
+    signTypedData()
+  }
 
   useEffect(() => { 
     if (isLoading) {
       dispatch(notification({
         id: "qrCodeAuthentication",
-        message: `Waiting for authentication..`, 
+        message: `Please sign your request in your blockchain wallet app.`, 
         colour: "yellow",
         isVisible: true
       }))
     }
     if (isSuccess) {
       setIsDisabled(!isDisabled)
+      polling.current = true 
 
       dispatch(notification({
         id: "qrCodeAuthentication",
@@ -141,6 +139,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   useEffect(() => {
     if (pointsSent) {
       resetSignature() 
+      polling.current = false 
       dispatch(notification({
         id: "qrCodeAuthentication",
         message: `Your loyalty points have been succesfully received.`, 
@@ -152,8 +151,6 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   return (
     <div className="grid grid-cols-1"> 
-
-      
       { token.metadata && !signature ? 
         <>
         <div className="grid grid-cols-1 sm:grid-cols-2 h-fit w-full justify-items-center "> 

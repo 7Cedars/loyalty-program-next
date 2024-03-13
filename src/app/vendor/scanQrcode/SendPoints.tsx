@@ -1,6 +1,6 @@
 // TODO 
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { QrData } from "@/types";
 import { Button } from "@/app/ui/Button";
 import Image from "next/image";
@@ -13,6 +13,7 @@ import { loyaltyProgramAbi } from "@/context/abi";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useAccount } from "wagmi";
 import { useAppSelector } from "@/redux/hooks";
+import { useLatestVendorTransaction } from "@/app/hooks/useLatestTransaction";
 
 type SendPointsProps = {
   qrData: QrData | undefined;  
@@ -25,7 +26,9 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const { address } = useAccount() 
+  const { address } = useAccount()
+  const polling = useRef<boolean>(false) 
+  const { pointsReceived, pointsSent, tokenReceived, tokenSent } = useLatestVendorTransaction(polling.current) 
 
   const transferPoints = useContractWrite(  
     {

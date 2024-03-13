@@ -9,12 +9,13 @@ import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress, parseNumber } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { QrData } from "@/types";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useAppSelector } from "@/redux/hooks";
+import { useLatestVendorTransaction } from "@/app/hooks/useLatestTransaction";
 
 
 type SendPointsProps = {
@@ -29,6 +30,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
   const dispatch = useDispatch() 
+  const { tokenReceived } = useLatestVendorTransaction(true) 
 
   console.log("QRDATA @redeem token: ", qrData)
   console.log("token @redeem token: ", token)
@@ -70,31 +72,22 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
     } 
   )
 
-  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
-    { 
-      confirmations: 1,
-      hash: hashTransaction 
-    })
+  // const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+  //   { 
+  //     confirmations: 1,
+  //     hash: hashTransaction 
+  //   })
 
   useEffect(() => {
-    if (isSuccess) {
+    if (tokenReceived) {
       dispatch(notification({
         id: "redeemToken",
         message: `Voucher successfully retrieved: exchange for gift.`, 
         colour: "green",
         isVisible: true
       }))
-    }
-    if (isError) {
-      dispatch(notification({
-        id: "redeemToken",
-        message: `Error: Loyalty Voucher not redeemed. Do not give gift.`, 
-        colour: "red",
-        isVisible: true
-      }))
-    }
-    
-  },[isError, isSuccess])
+    }    
+  },[tokenReceived])
   
   
   return (
@@ -137,7 +130,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
             <div> 
               <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
             </div>
-            {isSuccess?  
+            {tokenReceived?  
               <p className="text-center text-xlfont-bold p-4">
                 {token.metadata?.attributes[5].value}
               </p>
@@ -158,19 +151,19 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
         null 
         }
 
-        { isLoading ? 
-        <div className="flex w-full p-2"> 
-          <Button appearance = {"grayEmpty"} onClick={() => {}} >
-              <Image
-                className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
-                width={30}
-                height={30}
-                src={"/images/loading2.svg"}
-                alt="Loading icon"
-              />
-              Waiting for confirmation
-          </Button>
-        </div> 
+        { hashTransaction && !tokenReceived ? 
+       <Button appearance = {"grayEmpty"} onClick={() => {}} >
+          <div className="flex justify-center items-center">
+            <Image
+              className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
+              width={30}
+              height={30}
+              src={"/images/loading2.svg"}
+              alt="Loading icon"
+            />
+            Waiting for confirmation..
+          </div>
+        </Button>
         :
         <div className="flex w-full p-2"> 
           <Button appearance = {"greenEmpty"} onClick={redeemLoyaltyVoucher.write} >

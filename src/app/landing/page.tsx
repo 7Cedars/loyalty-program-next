@@ -1,6 +1,6 @@
 "use client"; 
 
-import { Suspense, useEffect, useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
 import UrlToLocalStorage from "../customer/components/UrlToLocalStorage"
 import Image from "next/image"
 import { Button } from "../ui/Button";
@@ -18,20 +18,15 @@ import { parseEthAddress, parseUri } from "../utils/parsers";
 // see this solution here (from next documentation): https://nextjs.org/docs/messages/deopted-into-client-rendering
 
 export default function Page()  {
-  const [progAddress, setProgAddress] = useState<string | null>(); 
-  const [progUri, setProgUri] = useState<string | null | undefined>(); 
+  const [progAddress, setProgAddress] = useState<string | null  >(); 
+  const [progUri, setProgUri] = useState<string | null >(); 
 
   useEffect(() => {
-    const progData = localStorage.getItem("progAddress")
-    progData ? setProgAddress(progData) : setProgAddress(undefined) 
-    
-    const uriData = localStorage.getItem("progUri")
-    uriData ? setProgUri(uriData) : setProgUri(undefined) 
+    window.addEventListener('localStorageUpdated', () => {
+      setProgAddress(localStorage.getItem("progAddress"))
+      setProgUri(localStorage.getItem("progUri")) 
+    })
   }, [])
-
-  useEffect(() => {
-    if (progUri && new URL(progUri)) setProgUri(parseUri(progUri))
-  }, [progUri])
   
   function UrlToLocalStorageFallback() {
     return  (
@@ -94,6 +89,7 @@ export default function Page()  {
         fill 
         style = {{ objectFit: "cover" }} 
         src={progUri ? progUri : "/images/loading2.svg"} 
+        // src={"/images/loading2.svg"} 
         alt="Loyalty Card Token"
         aria-hidden = {!progUri}
       />

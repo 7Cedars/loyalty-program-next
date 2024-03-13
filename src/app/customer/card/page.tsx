@@ -2,10 +2,9 @@
 
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import VoucherSmall from "./VoucherSmall";
-import { LoyaltyGift } from "@/types";
-import { useEffect, useState } from "react";
+import { LoyaltyGift, Status } from "@/types";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { loyaltyGiftAbi, loyaltyProgramAbi } from "@/context/abi";
 import { Log } from "viem"
 import { usePublicClient, useAccount } from 'wagmi'
@@ -17,7 +16,6 @@ import { useDispatch } from "react-redux";
 import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import Image from "next/image";
-import { DynamicLayout } from "../components/DynamicLayout";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 
 type setSelectedVoucherProps = {
@@ -27,16 +25,16 @@ type setSelectedVoucherProps = {
 
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
-  const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
+  const { status: statusLoyaltyGifts, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
+  const statusGetClaimedVouchers = useRef<Status>() 
   const [ claimedVouchers, setClaimedVouchers ] = useState<LoyaltyGift[] | undefined>() 
   const [selectedVoucher, setSelectedVoucher] = useState<setSelectedVoucherProps | undefined>() 
-  const [loyaltyPoints, setLoyaltyPoints] = useState<number>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const {address} = useAccount() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
-  const { tokenReceived, tokenSent, latestSent } = useLatestCustomerTransaction() 
+  const polling = useRef<boolean>(false) 
+  const { tokenReceived, tokenSent, latestSent } = useLatestCustomerTransaction(polling.current) 
 
   console.log("claimedVouchers: ", claimedVouchers)
 
@@ -62,81 +60,89 @@ export default function Page() {
       }
   }
 
-  // to refetch: set balance to undefined. 
+  // refetch if balance is undefined. 
   useEffect(() => { 
     if (selectedLoyaltyCard && selectedLoyaltyCard.balance == undefined) fetchCardBalance() 
   }, [selectedLoyaltyCard])
 
+
+  ///////////////////////////////////
+  ///      Fetch  Vouchers        ///
+  ///////////////////////////////////
+
   const getClaimedLoyaltyVouchers = async () => {
     console.log("getClaimedLoyaltyVouchers called")
     console.log("latestSent @redeem token: ", latestSent)
+    statusGetClaimedVouchers.current = "isLoading"
 
-    const claimedVouchersLogs: Log[] = await publicClient.getContractEvents({
-      // address: loyaltyGift.giftAddress, 
-      abi: loyaltyGiftAbi,
-      eventName: 'TransferSingle', 
-      args: {
-        to: selectedLoyaltyCard?.cardAddress
-      },
-      fromBlock: 5200000n
-    })
-    const claimedVouchers = parseTransferSingleLogs(claimedVouchersLogs)
-
-    const redeemedVouchersLogs: Log[] = await publicClient.getContractEvents({
-      // address: loyaltyGift.giftAddress, 
-      abi: loyaltyGiftAbi,
-      eventName: 'TransferSingle', 
-      args: {
-        from: selectedLoyaltyCard?.cardAddress
-      },
-      fromBlock: 5200000n
-    })
-    const redeemedVouchers = parseTransferSingleLogs(redeemedVouchersLogs)
-    
-    if (loyaltyGifts) {
-      let claimedVouchersTemp: LoyaltyGift[] = [] 
-
-      loyaltyGifts.forEach(loyaltyGift => { 
-        
-        const addedVoucher = claimedVouchers.filter(
-          event => event.address == loyaltyGift.giftAddress && Number(event.ids[0]) == loyaltyGift.giftId
-          ).length 
-        const removedVoucher = redeemedVouchers.filter(
-          event => event.address == loyaltyGift.giftAddress && Number(event.ids[0]) == loyaltyGift.giftId
-          ).length
-
-        for (let i = 0; i < (addedVoucher - removedVoucher); i++) {
-          claimedVouchersTemp.push(loyaltyGift)
-        }
+    try { 
+      const claimedVouchersLogs: Log[] = await publicClient.getContractEvents({
+        // address: loyaltyGift.giftAddress, 
+        abi: loyaltyGiftAbi,
+        eventName: 'TransferSingle', 
+        args: {
+          to: selectedLoyaltyCard?.cardAddress
+        },
+        fromBlock: 5200000n
       })
-      setClaimedVouchers(claimedVouchersTemp)
+      const claimedVouchers = parseTransferSingleLogs(claimedVouchersLogs)
+
+      const redeemedVouchersLogs: Log[] = await publicClient.getContractEvents({
+        // address: loyaltyGift.giftAddress, 
+        abi: loyaltyGiftAbi,
+        eventName: 'TransferSingle', 
+        args: {
+          from: selectedLoyaltyCard?.cardAddress
+        },
+        fromBlock: 5200000n
+      })
+      const redeemedVouchers = parseTransferSingleLogs(redeemedVouchersLogs)
+      
+      if (loyaltyGifts) {
+        let claimedVouchersTemp: LoyaltyGift[] = [] 
+
+        loyaltyGifts.forEach(loyaltyGift => { 
+          
+          const addedVoucher = claimedVouchers.filter(
+            event => event.address == loyaltyGift.giftAddress && Number(event.ids[0]) == loyaltyGift.giftId
+            ).length 
+          const removedVoucher = redeemedVouchers.filter(
+            event => event.address == loyaltyGift.giftAddress && Number(event.ids[0]) == loyaltyGift.giftId
+            ).length
+
+          for (let i = 0; i < (addedVoucher - removedVoucher); i++) {
+            claimedVouchersTemp.push(loyaltyGift)
+          }
+        })
+        setClaimedVouchers(claimedVouchersTemp)
+        statusGetClaimedVouchers.current = "isSuccess"
+      }
+    } catch (error) {
+      statusGetClaimedVouchers.current = "isError"
+      console.log(error)
     }  
   }
     
   useEffect(() => {
-      getClaimedLoyaltyVouchers() 
+    if (statusLoyaltyGifts == "isSuccess" && loyaltyGifts) getClaimedLoyaltyVouchers() 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ , loyaltyGifts, address, selectedVoucher])
+  }, [ , loyaltyGifts, statusLoyaltyGifts, address])
 
   useEffect(() => {
-    fetchGifts() 
+    if (!loyaltyGifts && statusLoyaltyGifts != "isLoading") fetchGifts() 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ ])
+  }, [ , loyaltyGifts ])
 
   useEffect(() => {
-    if (tokenSent) {
-      dispatch(notification({
-        id: "tokenTransfer",
-        message: `Voucher id ${tokenSent.ids[0]} successfully redeemed.`, 
-        colour: "green",
-        isVisible: true
-      }))
-    }
+    if (!loyaltyGifts && statusLoyaltyGifts != "isLoading") fetchGifts() 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenSent])
+  }, [ , loyaltyGifts ])
+
+  useEffect(() => {
+    if (selectedVoucher) polling.current = true 
+  }, [selectedVoucher])
 
   return (
-    // <DynamicLayout>
      <div className=" w-full h-full flex flex-col content-start overflow-auto">
 
       <div className="h-fit m-3 break-words"> 
@@ -158,7 +164,9 @@ export default function Page() {
             type="submit"
             onClick={() => {
               setSelectedVoucher(undefined) 
-              setHashTransaction(undefined)}
+              setHashTransaction(undefined)
+              polling.current = false 
+            }
             }  
             >
             <ArrowLeftIcon
@@ -171,7 +179,11 @@ export default function Page() {
             
         </div>
       :
-      !selectedVoucher && status == "isLoading" ? 
+      !selectedVoucher && 
+      ( 
+        statusLoyaltyGifts == "isLoading" || 
+        statusGetClaimedVouchers.current == "isLoading"
+      )  ? 
             <div className="grow flex flex-col self-center items-center justify-center text-slate-800 dark:text-slate-200 z-40">
               <Image
                 className="rounded-lg flex-none mx-3 animate-spin self-center"
@@ -180,9 +192,14 @@ export default function Page() {
                 src={"/images/loading2.svg"}
                 alt="Loading icon"
               />
+              <div className="text-center text-slate-500 mt-6">
+                Retrieving your vouchers... 
+              </div>
             </div>
         :
-        !selectedVoucher && status == "isSuccess" ? 
+        !selectedVoucher && 
+        statusLoyaltyGifts == "isSuccess" && 
+        statusGetClaimedVouchers.current == "isSuccess" ? 
           <>
             <div className="grid grid-cols-2  overflow-auto sm:grid-cols-3 md:grid-cols-4 p-4 pt-0 justify-items-center content-start">
               
@@ -206,7 +223,6 @@ export default function Page() {
         : null  
     }
     </div> 
-    // </DynamicLayout>
   );
 }
 

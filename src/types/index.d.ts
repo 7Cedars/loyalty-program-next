@@ -57,6 +57,7 @@ export type LoyaltyProgram = {
   uri?: string; 
   metadata?: Metadata;
   programOwner?: EthAddress;
+  balances?: number[] | undefined;
 } 
 
 export type LoyaltyCard = {
@@ -99,6 +100,7 @@ export type Transaction = {
   to: EthAddress; 
   ids: BigInt[]; 
   values: BigInt[]; 
+  blockData?: Any
 }
 
 export type TransactionArgs = UnionOmit<Transaction, 'blockNumber' | 'logIndex'>;

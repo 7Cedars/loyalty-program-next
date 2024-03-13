@@ -2,7 +2,7 @@
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./GiftSmall";
 import TokenBig from "./GiftBig";
-import { LoyaltyGift } from "@/types";
+import { LoyaltyGift, Status } from "@/types";
 import { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
@@ -21,7 +21,8 @@ type setSelectedTokenProps = {
 }
 
 export default function Page() {
-  const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
+  const { status: statusUseLoyaltyGifts, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
+  const [statusTokenSelection, setStatusTokenSelection] = useState<Status>()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyGift[] >([]) 
   const [inactiveLoyaltyGifts, setInactiveLoyaltyGifts] = useState<LoyaltyGift[] >([]) 
@@ -31,47 +32,52 @@ export default function Page() {
   console.log("loyaltyGifts @selectGifts: ", loyaltyGifts)
 
   const getTokenSelection = async () => {
+    setStatusTokenSelection("isLoading")
+    try {
+      const addedGifts: Log[] = await publicClient.getContractEvents( { 
+        abi: loyaltyProgramAbi, 
+        address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+        eventName: 'AddedLoyaltyGift', 
+        fromBlock: 5200000n // this should be part of settings - it differs per block. - this is sepolia. -- see constants 
+        // toBlock: 16330050n - if this does not create problems: take out. 
+      }); 
+      const addedGiftsEvents = parseLoyaltyGiftLogs(addedGifts)
 
-    const addedGifts: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi, 
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-      eventName: 'AddedLoyaltyGift', 
-      fromBlock: 5200000n // this should be part of settings - it differs per block. - this is sepolia. -- see constants 
-      // toBlock: 16330050n - if this does not create problems: take out. 
-    }); 
-    const addedGiftsEvents = parseLoyaltyGiftLogs(addedGifts)
+      const removedGifts: Log[] = await publicClient.getContractEvents( { 
+        abi: loyaltyProgramAbi, 
+        address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+        eventName: 'RemovedLoyaltyGiftClaimable', 
+        fromBlock: 5200000n,
+        toBlock: 16330050n
+      }); 
+      const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
 
-    const removedGifts: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi, 
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-      eventName: 'RemovedLoyaltyGiftClaimable', 
-      fromBlock: 5200000n,
-      toBlock: 16330050n
-    }); 
-    const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
+      if (loyaltyGifts) {
+        let activeGifts: LoyaltyGift[] = [] 
+        let inactiveGifts: LoyaltyGift[] = [] 
 
-    if (loyaltyGifts) {
-      let activeGifts: LoyaltyGift[] = [] 
-      let inactiveGifts: LoyaltyGift[] = [] 
+        loyaltyGifts.forEach((loyaltyToken, i) => { 
+          
+          const addedEventCount = addedGiftsEvents.filter(
+            event => event.giftAddress == loyaltyToken.giftAddress &&  event.giftId == loyaltyToken.giftId
+            ).length 
+          const removedEventCount = removedGiftsEvents.filter(
+            event => event.giftAddress == loyaltyToken.giftAddress &&  event.giftId == loyaltyToken.giftId
+            ).length
 
-      loyaltyGifts.forEach((loyaltyToken, i) => { 
-        
-        const addedEventCount = addedGiftsEvents.filter(
-          event => event.giftAddress == loyaltyToken.giftAddress &&  event.giftId == loyaltyToken.giftId
-          ).length 
-        const removedEventCount = removedGiftsEvents.filter(
-          event => event.giftAddress == loyaltyToken.giftAddress &&  event.giftId == loyaltyToken.giftId
-          ).length
-
-        if (addedEventCount > removedEventCount) { 
-          activeGifts.push(loyaltyToken)
-        } else {
-          inactiveGifts.push(loyaltyToken)
-        }
-      })
-
-      setActiveLoyaltyGifts(activeGifts)
-      setInactiveLoyaltyGifts(inactiveGifts)
+          if (addedEventCount > removedEventCount) { 
+            activeGifts.push(loyaltyToken)
+          } else {
+            inactiveGifts.push(loyaltyToken)
+          }
+        })
+        setActiveLoyaltyGifts(activeGifts)
+        setInactiveLoyaltyGifts(inactiveGifts)
+        setStatusTokenSelection("isSuccess")
+      } 
+    } catch (error) { 
+      setStatusTokenSelection("isError")
+      console.log(error)
     }
   }
 
@@ -83,8 +89,7 @@ export default function Page() {
   useEffect(() => {
     if (!loyaltyGifts) fetchGifts()
     if (loyaltyGifts) getTokenSelection() 
-
-  }, [selectedToken, loyaltyGifts]) 
+  }, [, selectedToken, loyaltyGifts]) 
 
   return (
      <div className=" w-full h-full grid grid-cols-1 gap-1 overflow-x-auto">
@@ -108,22 +113,39 @@ export default function Page() {
       
       </div>
       :
-      <div className="flex flex-col items-center h-full">
-        {/* <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start"> */}
+      // <div className="grow flex flex-col items-center w-full h-full">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
           { 
-          status == "isLoading" ? 
-            <div className="grow text-slate-800 dark:text-slate-200 z-40">
-              <Image
-                className="rounded-lg flex-none mx-3 animate-spin"
-                width={60}
-                height={60}
-                src={"/images/loading2.svg"}
-                alt="Loading icon"
-              />
+          statusUseLoyaltyGifts == "isLoading" || 
+          statusTokenSelection == "isLoading" ? 
+            <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
+              <div className="grow flex flex-col self-center items-center justify-center text-slate-800 dark:text-slate-200 z-40">
+                <Image
+                  className="rounded-lg flex-none mx-3 animate-spin self-center"
+                  width={60}
+                  height={60}
+                  src={"/images/loading2.svg"}
+                  alt="Loading icon"
+                />
+                { statusUseLoyaltyGifts == "isLoading" ? 
+                    <div className="text-center text-slate-500 mt-6"> 
+                      Retrieving gift contracts deployed on chain...   
+                    </div>  
+                  : 
+                  statusTokenSelection == "isLoading" ? 
+                    <div className="text-center text-slate-500 mt-6"> 
+                      Retrieving your gift selection...   
+                    </div>  
+                  :
+                  null 
+                }
+              </div>
             </div>
           : 
-          status == "isSuccess" ?
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
+          statusUseLoyaltyGifts == "isSuccess" &&  
+          statusTokenSelection == "isSuccess" ?
+            // <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
+            <>
               <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
                 <TitleText title = "Selected Gifts" size={0} />
               </div>
@@ -158,7 +180,7 @@ export default function Page() {
                     <NoteText message="Other available gifts will appear here."/>
                   </div>
               }
-            </div>
+            </>
           :
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
             <NoteText message="Something went wrong. That's all I know."/>
@@ -170,65 +192,4 @@ export default function Page() {
     <div className="h-16" />
     </div> 
   )
-            
-
-      //       activeLoyaltyGifts && status == "isSuccess" ?
-                      
-      //       activeLoyaltyGifts.map((token: LoyaltyGift) => 
-      //           token.metadata ? 
-      //           <div key = {`${token.giftAddress}:${token.giftId}`} >
-      //             <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
-      //           </div>
-      //           : null 
-      //         )
-      //       : 
-      //       <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-      //         <NoteText message="Selected gifts will appear here."/>
-      //       </div>
-          
-        
-      //   }
-
-      //     { activeLoyaltyGifts && status == "isSuccess" ?
-          
-      //     activeLoyaltyGifts.map((token: LoyaltyGift) => 
-      //         token.metadata ? 
-      //         <div key = {`${token.giftAddress}:${token.giftId}`} >
-      //           <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
-      //         </div>
-      //         : null 
-      //       )
-      //     : 
-      //     <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-      //       <NoteText message="Selected gifts will appear here."/>
-      //     </div>
-      //     }
-      //   </div> 
-        
-      //   <div className="grid grid-cols-1  xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start overflow-x-scroll">
-      //     <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 overflow-x-scroll"> 
-      //       <TitleText title = "Available Gifts" size={0} />
-      //     </div>
-          
-      //     { inactiveLoyaltyGifts && status == "isSuccess" ? 
-      //       inactiveLoyaltyGifts.map((token: LoyaltyGift) => 
-      //         token.metadata ? 
-      //         <div key = {`${token.giftAddress}:${token.giftId}`} >
-      //           <TokenSmall token = {token} disabled = {true}  onClick={() => setSelectedToken({token: token, disabled: true})} /> 
-      //         </div>
-      //         : null 
-      //       )
-      //       : 
-      //       <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-      //         <NoteText message="Other available gifts will appear here."/>
-      //       </div>
-      //     }
-      //   </div>
-      // </div>
-
-    // }
-    
-    // </div> 
-    
-  // );
 }

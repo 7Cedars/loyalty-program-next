@@ -1,6 +1,6 @@
 "use client";
 
-import { LoyaltyProgram} from "@/types";
+import { LoyaltyProgram, Status} from "@/types";
 import { TitleText } from "../../ui/StandardisedFonts";
 import { useEffect, useState} from "react";
 import Image from "next/image";
@@ -13,24 +13,47 @@ import { Log } from "viem";
 import { parseContractLogs } from "@/app/utils/parsers";
 
 export default function ChooseProgram()  {
-  const { status, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms()
+  const { status: statusUseLoyaltyPrograms, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms()
+  const [ statusFetchingAddresses, setStatusFetchingAddresses ] = useState<Status>("isIdle")
+  const [ status, setStatus ] = useState<Status>("isIdle")
   const [ addresses, setAddresses ] = useState<LoyaltyProgram[] | undefined>() 
   const { address } = useAccount() 
   const publicClient = usePublicClient(); 
   const dispatch = useDispatch() 
 
   const getLoyaltyProgramAddresses = async () => {
-
-    const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi, 
-        eventName: 'DeployedLoyaltyProgram', 
-        args: {owner: address}, 
-        fromBlock: 5200000n
-    });
-
-    const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
-    setAddresses(loyaltyProgramAddresses)
+    setStatusFetchingAddresses("isLoading")
+    try { 
+        const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
+          abi: loyaltyProgramAbi, 
+            eventName: 'DeployedLoyaltyProgram', 
+            args: {owner: address}, 
+            fromBlock: 5200000n
+        });
+        const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
+        setAddresses(loyaltyProgramAddresses)
+        setStatusFetchingAddresses("isSuccess")
+      } catch (error) { 
+        setStatusFetchingAddresses("isError")
+        console.log(error)
+      }
   }
+  
+  // updating status 
+  useEffect(() => {
+    if (
+      statusUseLoyaltyPrograms == "isLoading" || 
+      statusFetchingAddresses == "isLoading"
+    ) setStatus("isLoading")
+    if (
+      statusUseLoyaltyPrograms == "isError" || 
+      statusFetchingAddresses == "isError"
+    ) setStatus("isError")
+    if (
+      statusUseLoyaltyPrograms == "isSuccess" && 
+      statusFetchingAddresses == "isSuccess"
+    ) setStatus("isSuccess")
+  }, [ statusUseLoyaltyPrograms, statusFetchingAddresses ])
 
   useEffect(() => {
     if (address && !addresses)  getLoyaltyProgramAddresses() 
@@ -39,20 +62,20 @@ export default function ChooseProgram()  {
 
   useEffect(() => {
     if (
-      status == "isSuccess" && 
+      statusUseLoyaltyPrograms == "isSuccess" && 
       loyaltyPrograms && 
       loyaltyPrograms.length == 1 && 
       loyaltyPrograms.findIndex(loyaltyProgram => loyaltyProgram.metadata) !== -1
       ) 
       dispatch(selectLoyaltyProgram(loyaltyPrograms[0]))
-  }, [status, loyaltyPrograms])
+  }, [statusUseLoyaltyPrograms, loyaltyPrograms])
 
   return (
      <div className='w-full h-full flex flex-col items-center justify-center' >
       <div> 
       <TitleText title = "Choose Loyalty Program" subtitle="Choose existing program or deploy a new one." size={1} /> 
       </div> 
-       { status == "isSuccess" && loyaltyPrograms && loyaltyPrograms.length > 0 ? 
+       { status == "isSuccess" && loyaltyPrograms && loyaltyPrograms.length > 0 && address ? 
         <div className="relative my-6 mx-4 flex flex-col justify-center sm:w-4/5 w-full h-full">
             <div className="flex flex-row justify-between overflow-x-auto overflow-hidden scroll-px-1 snap-normal w-full h-full self-center">
 
@@ -86,18 +109,27 @@ export default function ChooseProgram()  {
                 src={"/images/loading2.svg"}
                 alt="Loading icon"
               />
+              <div className="text-center text-slate-500 mt-6">
+                Retrieving your programs... 
+              </div> 
             </div>
           :
-          <div className='w-full h-full grow grid grid-cols-1 gap-1 justify-items-center text-center italic' >
-          <div className='h-48'>
-              <div >
-                No Loyalty Programs found on this address. 
-              </div> 
-              <div >
-                Login with another address or deploy a program <a href="/" className='text-blue-500 underline '> here. </a>
-              </div> 
-            </div> 
-          </div>
+          address ?
+            <div className='grow flex flex-col self-center items-center justify-center text-center text-slate-800 dark:text-slate-200' >
+              {/* <div className='h-48 max-w-48'> */}
+                  <div className="w-48 m-2">
+                    Please wait..  
+                  </div> 
+                  <div className="w-96 m-2">
+                    If this message does not disappear after ten seconds, it is likely that no loyalty programs were deployed with this wallet address. 
+                  </div>
+                  <div className="w-96 m-2">  
+                    Login with another address or deploy a new program <a href="/" className='text-blue-500 underline '> here. </a>
+                  </div> 
+                {/* </div>  */}
+            </div>
+          : 
+          <div className="grow" />
       } 
 
       </div>
