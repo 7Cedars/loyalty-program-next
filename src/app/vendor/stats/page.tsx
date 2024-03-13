@@ -283,14 +283,6 @@ export default function Page() {
                     {`${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
                     </div> 
                   </td>
-                  {/* <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 ">
-                    <div className=""> 
-                      {`to: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
-                    </div>
-                    <div className=""> 
-                      Empty Slot
-                    </div> 
-                  </td> */}
                  </>
                  : 
                   transaction.ids.length === 1 && transaction.ids[0] === 0n && transaction.to === address ?

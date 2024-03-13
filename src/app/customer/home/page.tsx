@@ -7,7 +7,7 @@ import { TitleText } from "../../ui/StandardisedFonts";
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/redux/hooks';
 import { resetLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { DynamicLayout } from "../components/DynamicLayout";
@@ -16,7 +16,7 @@ export default function Page()  {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
   const dispatch = useDispatch()
-  const { pointsReceived } = useLatestCustomerTransaction() 
+  const { pointsReceived } = useLatestCustomerTransaction(true) 
 
   useEffect(() => {
     if (pointsReceived) {
@@ -30,7 +30,6 @@ export default function Page()  {
   }, [pointsReceived])
 
   return (
-    // <DynamicLayout>
     <div className="w-full h-full grid grid-cols-1 gap-1 ">
         <TitleText 
           title = "Request Loyalty Points"
@@ -79,10 +78,6 @@ export default function Page()  {
         </div> 
 
         <div className="h-14"/> 
-      {/* </> */}
-    {/* } */}
-
     </div>  
-    // </DynamicLayout>
     )
   }

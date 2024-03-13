@@ -40,7 +40,8 @@ export default function Page() {
   const [ selectedToken, setSelectedToken ] = useState<setSelectedTokenProps | undefined>() 
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction() 
+  const polling = useRef<boolean>(false)
+  const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction(polling.current) 
 
   console.log("status @claim page: ", {
     statusAtgiftAddress: statusAtAddedGifts.current,
@@ -52,7 +53,6 @@ export default function Page() {
   ///////////////////////////////////
   ///     Fetch Card Balance      ///
   ///////////////////////////////////
-  
 
   const fetchCardBalance = async () => {
     if (selectedLoyaltyCard && selectedLoyaltyCard.balance == undefined)
@@ -140,6 +140,11 @@ export default function Page() {
   }, [, statusAtAddedGifts ] ) 
 
   useEffect(() => {
+    if (selectedToken) polling.current = true
+    else polling.current = false   
+  }, [, selectedToken ] )
+
+  useEffect(() => {
     if (
       data && 
       statusAtAddedGifts.current == "isSuccess" &&
@@ -160,6 +165,8 @@ export default function Page() {
 
   useEffect(() => {
     if (tokenReceived) {
+      polling.current = false
+      
       dispatch(notification({
         id: "claimLoyaltyGift",
         message: `Success! You received a new voucher. You can see it in the Your Card tab.`, 

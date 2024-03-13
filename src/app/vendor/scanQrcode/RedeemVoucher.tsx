@@ -88,7 +88,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
     if (isError) {
       dispatch(notification({
         id: "redeemToken",
-        message: `Error: Loyalty Voucher not redeemed. Do not give gift.`, 
+        message: `Error.`, 
         colour: "red",
         isVisible: true
       }))
@@ -159,18 +159,18 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
         }
 
         { isLoading ? 
-        <div className="flex w-full p-2"> 
-          <Button appearance = {"grayEmpty"} onClick={() => {}} >
-              <Image
-                className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
-                width={30}
-                height={30}
-                src={"/images/loading2.svg"}
-                alt="Loading icon"
-              />
-              Waiting for confirmation
-          </Button>
-        </div> 
+       <Button appearance = {"grayEmpty"} onClick={() => {}} >
+          <div className="flex justify-center items-center">
+            <Image
+              className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
+              width={30}
+              height={30}
+              src={"/images/loading2.svg"}
+              alt="Loading icon"
+            />
+            Waiting for confirmation..
+          </div>
+        </Button>
         :
         <div className="flex w-full p-2"> 
           <Button appearance = {"greenEmpty"} onClick={redeemLoyaltyVoucher.write} >

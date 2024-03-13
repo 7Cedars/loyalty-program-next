@@ -193,6 +193,9 @@ export const DynamicLayout = ({
                         src={"/images/loading2.svg"}
                         alt="Loading icon"
                       />
+                       <div className="text-center text-slate-500 mt-6">
+                        Retrieving loyalty cards... 
+                      </div> 
                     </div> 
                   }
               </div>

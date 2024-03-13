@@ -33,7 +33,8 @@ export default function Page() {
   const {address} = useAccount() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
-  const { tokenReceived, tokenSent, latestSent } = useLatestCustomerTransaction() 
+  const polling = useRef<boolean>(false) 
+  const { tokenReceived, tokenSent, latestSent } = useLatestCustomerTransaction(polling.current) 
 
   console.log("claimedVouchers: ", claimedVouchers)
 
@@ -133,19 +134,15 @@ export default function Page() {
   }, [ , loyaltyGifts ])
 
   useEffect(() => {
-    if (tokenSent) {
-      dispatch(notification({
-        id: "tokenTransfer",
-        message: `Voucher id ${tokenSent.ids[0]} successfully redeemed.`, 
-        colour: "green",
-        isVisible: true
-      }))
-    }
+    if (!loyaltyGifts && statusLoyaltyGifts != "isLoading") fetchGifts() 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenSent])
+  }, [ , loyaltyGifts ])
+
+  useEffect(() => {
+    if (selectedVoucher) polling.current = true 
+  }, [selectedVoucher])
 
   return (
-    // <DynamicLayout>
      <div className=" w-full h-full flex flex-col content-start overflow-auto">
 
       <div className="h-fit m-3 break-words"> 
@@ -167,7 +164,9 @@ export default function Page() {
             type="submit"
             onClick={() => {
               setSelectedVoucher(undefined) 
-              setHashTransaction(undefined)}
+              setHashTransaction(undefined)
+              polling.current = false 
+            }
             }  
             >
             <ArrowLeftIcon
@@ -224,7 +223,6 @@ export default function Page() {
         : null  
     }
     </div> 
-    // </DynamicLayout>
   );
 }
 

@@ -9,7 +9,7 @@ import { TitleText } from "@/app/ui/StandardisedFonts";
 import { Button } from "@/app/ui/Button";
 import { useAccount, useNetwork, usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
@@ -31,11 +31,10 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
   const {address} = useAccount()
-  const { data: walletClient, status } = useWalletClient();
-  const {  pointsSent, tokenSent } = useLatestCustomerTransaction() 
-  const {chain} = useNetwork() 
-  const {open} = useWeb3Modal()
 
+  const  polling = useRef<boolean>(false) 
+  const {  pointsSent, tokenSent } = useLatestCustomerTransaction(polling.current) 
+  const {chain} = useNetwork() 
 
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
@@ -92,7 +91,6 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   })
 
   const handleSigning = () => {
-    walletClient ? open({view: "Connect"}) : open({view: "Networks"}) 
     signTypedData()
   }
 
@@ -100,14 +98,14 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
     if (isLoading) {
       dispatch(notification({
         id: "qrCodeAuthentication",
-        message: `Waiting for authentication..`, 
+        message: `Please provide your signature in your blockchain wallet app.`, 
         colour: "yellow",
         isVisible: true
       }))
     }
     if (isSuccess) {
+      polling.current = true   
       setIsDisabled(!isDisabled)
-
       dispatch(notification({
         id: "qrCodeAuthentication",
         message: `Qrcode succesfully authenticated`, 
@@ -116,6 +114,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
       }))
     }
     if (isError) {
+      polling.current = false  
       dispatch(notification({
         id: "qrCodeAuthentication",
         message: `Something went wrong. Qrcode not created.`, 
@@ -125,9 +124,14 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
     }
   }, [isSuccess, isError, isLoading])
 
+  // useEffect(() => {
+  //   if (selectedVoucher) polling.current = true 
+  // }, [selectedVoucher])
+
   useEffect(() => {
     if (tokenSent) {
       resetSignature() 
+      polling.current = false  
       dispatch(notification({
         id: "redeemToken",
         message: `Your voucher has been succesfully received.`, 

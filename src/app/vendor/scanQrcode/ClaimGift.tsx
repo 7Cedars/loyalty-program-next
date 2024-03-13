@@ -75,7 +75,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
     { 
-      confirmations: 1,
+      confirmations: 2,
       hash: hashTransaction 
     })
 
@@ -91,7 +91,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     if (isError) {
       dispatch(notification({
         id: "claimGift",
-        message: `Error: No points received.`, 
+        message: `Error.`, 
         colour: "red",
         isVisible: true
       }))
@@ -112,13 +112,8 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
         qrData?.signature
       ]
     )
-
     claimLoyaltyGift.write()
-
   }
-
- 
-
 
   return (
     <div className="grid grid-cols-1 h-full justify-items-center content-between p-3"> 
@@ -183,18 +178,18 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
         }
 
         { isLoading ? 
-        <div className="flex w-full p-2"> 
-          <Button appearance = {"grayEmpty"} onClick={() => {}} >
-              <Image
-                className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
-                width={30}
-                height={30}
-                src={"/images/loading2.svg"}
-                alt="Loading icon"
-              />
-              Waiting for confirmation
-          </Button>
-        </div> 
+        <Button appearance = {"grayEmpty"} onClick={() => {}} >
+         <div className="flex justify-center items-center">
+           <Image
+             className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
+             width={30}
+             height={30}
+             src={"/images/loading2.svg"}
+             alt="Loading icon"
+           />
+           Waiting for confirmation..
+         </div>
+       </Button>
         :
         <div className="flex w-full p-2"> 
           <Button appearance = {"greenEmpty"} onClick={() => handleSubmit()} >
