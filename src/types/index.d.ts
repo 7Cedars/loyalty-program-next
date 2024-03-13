@@ -76,7 +76,7 @@ export type LoyaltyGift = {
   issuer?: EthAddress; 
   uri?: string ;
   metadata?: Metadata ;
-  availableTokens?: Number;  
+  availableTokens?: number;  
 } 
 
 export type QrData = {
