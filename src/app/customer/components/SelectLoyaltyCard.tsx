@@ -55,17 +55,14 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
     getLoyaltyCardsPoints() 
   }, [])
 
-  // Choosing program. -- This is what I have to get working 100% 
   return (
     <div> 
       <TitleText title = "Choose Loyalty Card" subtitle="Choose Card or request a new one." size={1} /> 
       <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll overscroll-auto mb-12 justify-items-center"> 
-        {/* (The following div is an empty div for ui purposes)   */ }
-        {/* <div className="w-[20vw] h-96 ms-4 opacity-0 border-2 border-green-500" />  */}
+          
         { loyaltyCards && selectedLoyaltyProgram ? 
-          loyaltyCards.map(card => {
-
-            return (                
+          loyaltyCards.map(card => 
+                        
               <button 
                 key={String(card.cardId)}
                 onClick = {() => dispatch(selectLoyaltyCard(card))}
@@ -94,8 +91,8 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
                     null
                   }
               </button>
-            )
-          })
+            
+          )
           : 
           null
         }
