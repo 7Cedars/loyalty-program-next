@@ -185,7 +185,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
           </div>
         </div>
         <div className="p-3 flex w-full"> 
-            <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
+            <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
               Redeem Voucher
             </Button>
           </div>
@@ -216,7 +216,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
         : 
         null 
         }
-        
+        <div className="h-20" />
     </div>
   )
 }

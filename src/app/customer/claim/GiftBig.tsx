@@ -14,7 +14,7 @@ import { useAppSelector } from "@/redux/hooks";
 import QRCode from "react-qr-code";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 
 
 type SelectedTokenProps = {
@@ -36,6 +36,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const {address } = useAccount()
   const {chain} = useNetwork() 
   const {open} = useWeb3Modal()
+  const { data: walletClient, status } = useWalletClient();
 
   console.log("selectedLoyaltyCard?.cardAddress: ", selectedLoyaltyCard?.cardAddress)
   console.log("parseEthAddress(selectedLoyaltyProgram?.programAddress): ", parseEthAddress(selectedLoyaltyProgram?.programAddress))
@@ -221,24 +222,18 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
           </div>
         </div>
         <div className="p-3 flex w-full"> 
-          { !requirementsMet ? 
-              <Button appearance = {"grayEmpty"} disabled={true} >
-                Your card does not meet the requirements for this gift. 
-              </Button>
-            : 
-            token.tokenised == 1n && token.availableTokens && token.availableTokens == 0  ? 
-              <Button appearance = {"grayEmpty"} disabled={true} >
-                No vouchers available. 
-              </Button>
-            : 
-            token.tokenised == 1n && token.availableTokens && token.availableTokens > 0  ? 
+          {/* { pointsSent ? */}
+
+            { token.tokenised == 1n ? 
+
               <Button appearance = {"greenEmpty"} onClick={() => handleSigning()}  >
                 Claim Voucher
-              </Button> 
-            :
-            <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
-              Claim Gift
-            </Button>
+              </Button>
+              :
+              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
+                Claim Gift
+              </Button>
+           
           }
           </div>
         </>
@@ -268,7 +263,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
         : 
         null 
         }
-      <div className="h16" />
+      <div className="h-20" />
     </div>
   );
 }
