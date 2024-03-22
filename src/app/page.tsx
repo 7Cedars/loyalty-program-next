@@ -3,10 +3,10 @@
 import loyaltyProgramsData from "../../public/exampleLoyaltyPrograms.json"; // not that this is a very basic json file data format - can be used in many other cases as well. 
 import { TitleText } from "./ui/StandardisedFonts";
 import Image from "next/image";
-import { sepolia, useAccount, useWaitForTransaction } from "wagmi";
+import { sepolia, useAccount, useNetwork, useWaitForTransaction } from "wagmi";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { loyaltyProgramBytecode } from "@/context/bytecode";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Hex } from "viem";
 import { EthAddress } from "@/types";
 import { Button } from "./ui/Button";
@@ -38,7 +38,7 @@ export default function Home() {
     walletClient ? null : open({view: "Connect"}) 
   }
 
-  const deployLoyaltyProgram = async () => {
+  const deployLoyaltyProgram = useCallback( async () => {
     const registry: EthAddress = parseEthAddress("0x782abFB5B5412a0F89D3202a2883744f9B21B732") 
     const implementation: EthAddress = parseEthAddress("0x71C95911E9a5D330f4D621842EC243EE1343292e") 
 
@@ -59,7 +59,7 @@ export default function Home() {
       setDeployRequest(undefined)
       setTransactionHash(hash)
     }
-  }
+  },  [address, walletClient, deployRequest] )
 
   const { data, isError, isLoading, isSuccess, isIdle } = useWaitForTransaction(
     { 
@@ -70,8 +70,7 @@ export default function Home() {
 
   useEffect(() => {
     if (walletClient && deployRequest) deployLoyaltyProgram() 
-  }, [walletClient, deployRequest])
-
+  }, [walletClient, deployRequest, deployLoyaltyProgram])
 
   return (
     <main className="grid grid-cols-1 w-full h-fit overflow-y-auto shadow-2xl bg-slate-100 justify-items-center p-4">

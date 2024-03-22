@@ -6,7 +6,9 @@ import Image from "next/image"
 import { Button } from "../ui/Button";
 import Link from "next/link";
 import { TitleText } from "../ui/StandardisedFonts";
-import { parseEthAddress, parseUri } from "../utils/parsers";
+import { useNetwork, useWalletClient } from "wagmi";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { switchNetwork } from "@wagmi/core";
 
 // NB: Notice the use of suspense to load url into redux. 
 // This is done because this version of Wagmi (which is needed with this version of Web3Modal) cannot deal with 
@@ -20,11 +22,17 @@ import { parseEthAddress, parseUri } from "../utils/parsers";
 export default function Page()  {
   const [progAddress, setProgAddress] = useState<string | null  >(); 
   const [progUri, setProgUri] = useState<string | null >(); 
+  const [progChainId, setProgChainId] = useState<number | null >(); 
+  const { data: walletClient, status } = useWalletClient();
+  const { open, close } = useWeb3Modal()
+
+  console.log("walletClient: ", walletClient)
 
   useEffect(() => {
     window.addEventListener('localStorageUpdated', () => {
       setProgAddress(localStorage.getItem("progAddress"))
       setProgUri(localStorage.getItem("progUri")) 
+      setProgChainId(Number(localStorage.getItem("progChainId")))  
     })
   }, [])
   
@@ -76,7 +84,7 @@ export default function Page()  {
               aria-hidden = {!progAddress}
               >
                 <Button appearance="grayEmpty">
-                  Enter Loyalty Card
+                  Enter
                 </Button>
             </div>
           </Link> 
@@ -90,7 +98,7 @@ export default function Page()  {
         style = {{ objectFit: "cover" }} 
         src={progUri ? progUri : "/images/loading2.svg"} 
         // src={"/images/loading2.svg"} 
-        alt="Loyalty Card Token"
+        alt="Loyalty Card"
         aria-hidden = {!progUri}
       />
     </div> 

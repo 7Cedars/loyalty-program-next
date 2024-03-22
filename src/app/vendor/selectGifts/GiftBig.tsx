@@ -3,18 +3,14 @@ import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useContractEvent, useWaitForTransaction } from "wagmi";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
 import { loyaltyProgramAbi } from "@/context/abi";
-import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
-import { foundry } from "viem/chains";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { NumLine } from "@/app/ui/NumLine";
 import { useAppSelector } from "@/redux/hooks";
- 
-
 
 type SelectedTokenProps = {
   token: LoyaltyGift
