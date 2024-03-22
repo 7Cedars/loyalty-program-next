@@ -2,24 +2,24 @@
   "items": [
     {
       "index": 1, 
-      "title": "A Corner Coffeeshop example",
-      "description": "This example mimics a small coffee shop. This example mimics a small coffee shop. This example mimics a small coffee shop.",
-      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/Qmf2sd4rFFwGjhyBM7wweCbzGTEEVQLAsigKnm5SAfgC7Y", 
-      "uri": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/Qmac3tnopwY6LGfqsDivJwRwEmhMJrCWsx4453JbUyVUnD"
+      "title": "A Corner Coffeeshop",
+      "description": "An example use case of a local coffee shop, showcasing Loyal's easy of use for small to medium size companies.",
+      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/Qmed5RYkj5Fn4BudCxQyf594wkZS3q9b1L1DCTRSTJRUnQ", 
+      "uri": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmdVpLWbY99qjJyn5HSixe7ff47ggiJqiZ2nELKMwVU9EX"
     },
     {
       "index": 2, 
-      "title": "Example B",
-      "description": "This is currently a random example. This is currently a random example. This is currently a random example. This is currently a random example. This is currently a random example.",
-      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmRxnq9JBF3ERVmdchhozQgm1BpUfNqkiJeWcxhjoBLN1r", 
-      "uri": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmbvmP9dER87bHeqVTLUzJygfKfXoWi6a9oEpB7apm9Kk8"
+      "title": "Railway modelling",
+      "description": "A use case of a niche market - Railway modelling - that can use a web3 based points program to connect local shops globally.",
+      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmUk2xNhbCrHKBFxRnSAaeShqEndNhSYoe7hsuVwCRPtcY", 
+      "uri": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmdcA6JNcTduBMXLyBm6YuBh1GDvbG2gqyj95kV5D4oD87"
     },
     {
       "index": 3,
-      "title": "Example C",
-      "description": "This is currently a second random example. This is currently a random example. This is currently a random example. This is currently a random example. This is currently a random example",
-      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmVL9XH2fmibVpfUatEj1pLiwVXDhpGJtSbytJK5Ng8TE2", 
-      "uri": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmP7txSRsU9rVNszmbzhC5Kj9fBHj1JGyad7da2BBDrDiD"
+      "title": "Shopping Street",
+      "description": "An example where a web3 loyalty program such as Loyal can be used to facilitates coordination among multiple shops in the same locale.",
+      "imageUrl": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/Qmaz9YTnobU9F1CUngNWLGphYkiCzukZhTPHf9ZxmG4eNt", 
+      "uri": "https://aqua-famous-sailfish-288.mypinata.cloud/ipfs/QmU3uuSj2wiL5e19pvymT4WejPF67q4qaQWtAC7YiSxCoE"
     } 
   ]
 }

@@ -94,7 +94,7 @@ export default function Page() {
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'AddedLoyaltyGift', 
-        fromBlock: 5200000n
+        fromBlock: 25888893n
       }); 
       const addedGiftsEvents: LoyaltyGift[] = Array.from(new Set(parseLoyaltyGiftLogs(addedGifts))) 
       statusAtAddedGifts.current = "isSuccess"

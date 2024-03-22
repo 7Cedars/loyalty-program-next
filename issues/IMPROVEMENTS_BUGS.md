@@ -1,5 +1,6 @@
 ## Loyalty Program Next 
 **Frontend of blockchain based modular platform for loyalty programs**
+<!-- £todo edit text here. -->
 
 This repository is meant as initial playground to develop and test front end as I develop to solidity backend. 
 Even though repository is public, For now, it is for personal use only. 
@@ -18,6 +19,7 @@ Even though repository is public, For now, it is for personal use only.
 - [ ]  @vendor (& @customer?) when their are no transactions, transaction overview hangs at 'retrieving transaction history...'  
 
 ## Improvements to implement (in order of priority)
+<!-- go through this list and check how many I have already fixed -->
 - [ ]  @Vendor, QrReader, SendPoints: add mint points button + how many points left line. 
 - [ ]  @LandingPage: update text to reflect only deployed on OP sepolia. 
 - [ ]  @Everywhere: create new content loyalty programs. Inkscape + metadata.  

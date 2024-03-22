@@ -83,7 +83,7 @@ export default function Page() {
         args: {
           to: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: 5200000n
+        fromBlock: 25888893n
       })
       const claimedVouchers = parseTransferSingleLogs(claimedVouchersLogs)
 
@@ -94,7 +94,7 @@ export default function Page() {
         args: {
           from: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: 5200000n
+        fromBlock: 25888893n
       })
       const redeemedVouchers = parseTransferSingleLogs(redeemedVouchersLogs)
       

@@ -34,7 +34,7 @@ const w3mConnector = new WalletConnectConnector({
 })
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [ optimismSepolia ], //  local: foundry // L1 test: sepolia, //L2 test: baseSepolia, arbitrumSepolia, arbitrumGoerli, polygonMumbai // L2s: arbitrum, optimism, base, polygon 
+  [ arbitrumSepolia ], //  local: foundry // L1 test: sepolia, //L2 test: baseSepolia, arbitrumSepolia, arbitrumGoerli, polygonMumbai // L2s: arbitrum, optimism, base, polygon 
   [ 
     // jsonRpcProvider({
     //   rpc: (localhost) => ({

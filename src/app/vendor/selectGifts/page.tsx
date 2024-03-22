@@ -38,7 +38,7 @@ export default function Page() {
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'AddedLoyaltyGift', 
-        fromBlock: 5200000n // this should be part of settings - it differs per block. - this is sepolia. -- see constants 
+        fromBlock: 25888893n // this should be part of settings - it differs per block. - this is arbitrum Sepolia. -- see constants 
         // toBlock: 16330050n - if this does not create problems: take out. 
       }); 
       const addedGiftsEvents = parseLoyaltyGiftLogs(addedGifts)
@@ -47,7 +47,7 @@ export default function Page() {
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'RemovedLoyaltyGiftClaimable', 
-        fromBlock: 5200000n,
+        fromBlock: 25888893n,
         toBlock: 16330050n
       }); 
       const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)

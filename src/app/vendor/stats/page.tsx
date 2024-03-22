@@ -57,7 +57,7 @@ export default function Page() {
         args: {
           to: parseEthAddress(address)
         },
-        fromBlock: 5200000n
+        fromBlock: 25888893n
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransferSingleTo([...transactions])
@@ -78,7 +78,7 @@ export default function Page() {
         args: {
           from: parseEthAddress(address)
         },
-        fromBlock: 5200000n
+        fromBlock: 25888893n
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransferSingleFrom([...transactions])
@@ -100,7 +100,7 @@ export default function Page() {
             args: {
               to: parseEthAddress(address)
             },
-            fromBlock: 5200000n
+            fromBlock: 25888893n
           });
       const transactions =  parseTransferBatchLogs(transferBatchLogs)
       setTransferBatchToTo([...transactions])

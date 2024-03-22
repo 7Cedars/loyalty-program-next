@@ -218,7 +218,7 @@ export const DynamicLayout = ({
   //       address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
   //       eventName: 'TransferSingle',
   //       args: {to: address}, 
-  //       fromBlock: 5200000n
+  //       fromBlock: 25888893n
   //     });
   //     const transferredTokens = parseTransferSingleLogs(transferSingleData)
   //     const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)
