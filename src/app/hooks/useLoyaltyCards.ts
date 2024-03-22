@@ -48,7 +48,7 @@ export const useLoyaltyCards = () => {
         address: programAddress, 
         eventName: 'TransferSingle', 
         args: {to: userAddress}, 
-        fromBlock: 5200000n
+        fromBlock: 25888893n
       });
       const transferredTokens = parseTransferSingleLogs(transferSingleData)
       const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)

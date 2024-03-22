@@ -1,14 +1,13 @@
 "use client";
 
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
-
 import { WagmiConfig,  configureChains, createConfig } from 'wagmi'
-import { foundry, sepolia, baseSepolia } from 'viem/chains'
+import { optimismSepolia, foundry, sepolia, baseSepolia, arbitrumSepolia } from 'viem/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
-// import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 import { useWeb3ModalTheme } from '@web3modal/wagmi/react';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+// import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc'
 
 // 1. Get keys
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ? process.env.NEXT_PUBLIC_ALCHEMY_API_KEY: "none"
@@ -35,7 +34,7 @@ const w3mConnector = new WalletConnectConnector({
 })
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [ foundry, sepolia ], //  arbitrum, arbitrumGoerli, optimism, optimismSepolia, baseSepolia
+  [ arbitrumSepolia ], //  local: foundry // L1 test: sepolia, //L2 test: baseSepolia, arbitrumSepolia, arbitrumGoerli, polygonMumbai // L2s: arbitrum, optimism, base, polygon 
   [ 
     // jsonRpcProvider({
     //   rpc: (localhost) => ({
@@ -67,7 +66,9 @@ createWeb3Modal({
   chains,
 })
 
+// NB! Continue here!!! 
 export function Web3Modal({ children }: any) {
+
   const { setThemeMode } = useWeb3ModalTheme()
   setThemeMode('light')
 

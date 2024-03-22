@@ -55,7 +55,8 @@ export default function Page() {
   ///////////////////////////////////
 
   const fetchCardBalance = async () => {
-    if (selectedLoyaltyCard && selectedLoyaltyCard.balance == undefined)
+    console.log("fetchCardBalance TRIGGERED, selectedLoyaltyCard: ", selectedLoyaltyCard)
+    if (selectedLoyaltyCard)
       try {
         const loyaltyCardPoints = await publicClient.readContract({
           address: parseEthAddress(selectedLoyaltyCard.loyaltyProgramAddress), 
@@ -63,6 +64,7 @@ export default function Page() {
           functionName: 'getBalanceLoyaltyCard', 
           args: [ selectedLoyaltyCard.cardAddress ]
         });
+        console.log("fetchCardBalance TRIGGERED, loyaltyCardPoints: ", loyaltyCardPoints)
 
         const updatedLoyaltyCard = {...selectedLoyaltyCard, balance: Number(parseBigInt(loyaltyCardPoints))}
         dispatch(selectLoyaltyCard(updatedLoyaltyCard))
@@ -92,7 +94,7 @@ export default function Page() {
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'AddedLoyaltyGift', 
-        fromBlock: 5200000n
+        fromBlock: 25888893n
       }); 
       const addedGiftsEvents: LoyaltyGift[] = Array.from(new Set(parseLoyaltyGiftLogs(addedGifts))) 
       statusAtAddedGifts.current = "isSuccess"
@@ -164,6 +166,8 @@ export default function Page() {
   }, [ statusAtAddedGifts, statusAtClaimableGifts, data ])
 
   useEffect(() => {
+    console.log("useEffect with fetchCardBalance TRIGGERED")
+    fetchCardBalance() 
     if (tokenReceived) {
       polling.current = false
       

@@ -54,7 +54,7 @@ export default function Page() {
         args: {
           to: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: 5200000n
+        fromBlock: 25888893n
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       // console.log("incoming getTransactionsTo transactions: ", transactions)
@@ -77,7 +77,7 @@ export default function Page() {
         args: {
           from: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: 5200000n
+        fromBlock: 25888893n
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransactionsPointsFrom([...transactions])
@@ -98,7 +98,7 @@ export default function Page() {
         args: {
           to: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: 5200000n
+        fromBlock: 25888893n
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransactionsTokensTo([...transactions])
@@ -118,7 +118,7 @@ export default function Page() {
         args: {
           from: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: 5200000n
+        fromBlock: 25888893n
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransactionsTokensFrom(transactions)

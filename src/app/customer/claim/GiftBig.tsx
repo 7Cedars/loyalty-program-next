@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
 import { useAccount,  useNetwork,  usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
-import { loyaltyProgramAbi} from "@/context/abi";
+import { loyaltyGiftAbi, loyaltyProgramAbi} from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
@@ -27,6 +27,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient()
   const [ nonceData, setNonceData ] = useState<BigInt>()
+  const [ requirementsMet, setRequirementsMet] = useState<boolean>() 
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const polling = useRef<boolean>(false) 
@@ -36,12 +37,12 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const {chain} = useNetwork() 
   const {open} = useWeb3Modal()
   const { data: walletClient, status } = useWalletClient();
-  const { open: isOpen, selectedNetworkId } = useWeb3ModalState()
 
   console.log("selectedLoyaltyCard?.cardAddress: ", selectedLoyaltyCard?.cardAddress)
   console.log("parseEthAddress(selectedLoyaltyProgram?.programAddress): ", parseEthAddress(selectedLoyaltyProgram?.programAddress))
   console.log("nonceData: ", nonceData)
   console.log("chain: ",chain )
+  console.log("token: ", token)
 
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
@@ -59,9 +60,30 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
           console.log(error)
         }
       }
-
     if(!nonceData) { getNonceLoyaltyCard() } 
   }, [nonceData] ) 
+
+
+  // this function reverts if requirements are not met
+  const checkRequirementsMet = async () => {
+    if (selectedLoyaltyCard) {
+      try {
+        const requirementsMetData: unknown = await publicClient.readContract({ 
+          address: parseEthAddress(token.giftAddress), 
+          abi: loyaltyGiftAbi,
+          functionName: 'requirementsLoyaltyGiftMet',
+          args: [selectedLoyaltyCard.cardAddress, token.giftId, selectedLoyaltyCard.balance]
+        })
+          setRequirementsMet(true)
+        } catch {
+          setRequirementsMet(false)
+        }
+      }
+    }
+
+  useEffect(() => {
+    checkRequirementsMet()
+  }, [ ] ) 
 
   /// begin setup for encoding typed data /// 
   const domain = {
@@ -94,6 +116,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   } as const
 
   console.log("message: ", message)
+  
 
   const { data: signature, isError, isLoading, isSuccess, reset: resetSignature, signTypedData } = useSignTypedData({
     domain,
@@ -161,29 +184,33 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
                 width={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35  : 400}
                 height={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35 : 400}
                 src={token.metadata.imageUri}
-                alt="Loyalty Token icon "
+                alt="Loyalty Gift icon"
               />
           </div>
           
           <div className="grid grid-cols-1 pt-2 content-between w-full h-fit">
             <div> 
             <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
-
-              <div className="text-center text-sm"> 
-                {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
+            
+              <div className="text-center text-md flex flex-col pb-2 "> 
+                <div> {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`} </div> 
+                <div> {`Additional Requirements: ${token.metadata.attributes[2].value}`} </div> 
               </div> 
+
             </div>
             {pointsSent ? 
-              <p className="text-center text-xl font-bold p-8">
+              <p className="text-center text-md font-bold p-8">
                 {token.metadata?.attributes[4].value}
               </p>
             :
             null
             }
             <div className="text-center text-md"> 
-              <div className="text-center text-md"> 
-                {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
-              </div>
+            <div className="text-center text-md text-slate-400"> 
+              {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
+            </div>
+
+             
               {token.tokenised == 1n ? 
                 <div className="text-center text-md"> 
                   {`Remaining vouchers: ${token.availableTokens}`}
@@ -199,11 +226,11 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
             { token.tokenised == 1n ? 
 
-              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()}  >
+              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()}  >
                 Claim Voucher
               </Button>
               :
-              <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
+              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
                 Claim Gift
               </Button>
            

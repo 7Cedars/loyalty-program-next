@@ -3,20 +3,17 @@
 import loyaltyProgramsData from "../../public/exampleLoyaltyPrograms.json"; // not that this is a very basic json file data format - can be used in many other cases as well. 
 import { TitleText } from "./ui/StandardisedFonts";
 import Image from "next/image";
-import { sepolia, useAccount, useWaitForTransaction } from "wagmi";
+import { useAccount, useNetwork, useWaitForTransaction } from "wagmi";
+import { optimismSepolia, foundry, sepolia, baseSepolia, arbitrumSepolia } from 'viem/chains'
 import { loyaltyProgramAbi } from "@/context/abi";
 import { loyaltyProgramBytecode } from "@/context/bytecode";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Hex } from "viem";
 import { EthAddress } from "@/types";
 import { Button } from "./ui/Button";
-// import 'viem/window'
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useWalletClient } from "wagmi";
 import { parseEthAddress } from "./utils/parsers";
-import { useDispatch } from "react-redux";
-import NavbarBottom from "./vendor/components/NavbarBottom";
-import Link from "next/link";
 
 type DeployRequestProps = { 
   uri: string; 
@@ -42,17 +39,14 @@ export default function Home() {
     walletClient ? null : open({view: "Connect"}) 
   }
 
-  const deployLoyaltyProgram = async () => {
-
-    // const registry: EthAddress = parseEthAddress("0x782abFB5B5412a0F89D3202a2883744f9B21B732") 
-    // const implementation: EthAddress = parseEthAddress("0x71C95911E9a5D330f4D621842EC243EE1343292e") 
-    const registry: EthAddress = parseEthAddress("0x782abFB5B5412a0F89D3202a2883744f9B21B732") 
-    const implementation: EthAddress = parseEthAddress("0x71C95911E9a5D330f4D621842EC243EE1343292e") 
+  const deployLoyaltyProgram = useCallback( async () => {
+    const registry: EthAddress = parseEthAddress("0x000000006551c19487814612e58FE06813775758") 
+    const implementation: EthAddress = parseEthAddress("0x0b651850F1b7EA080A0039119dEEE7Cc7516706E")  // 
 
     if (walletClient && deployRequest) {
       const hash = await walletClient.deployContract({
         abi: loyaltyProgramAbi,
-        chain: sepolia, // needs to be dynamic
+        chain: arbitrumSepolia, // needs to be dynamic
         account: address,
         args: [
           deployRequest.uri,
@@ -66,7 +60,7 @@ export default function Home() {
       setDeployRequest(undefined)
       setTransactionHash(hash)
     }
-  }
+  },  [address, walletClient, deployRequest] )
 
   const { data, isError, isLoading, isSuccess, isIdle } = useWaitForTransaction(
     { 
@@ -77,8 +71,7 @@ export default function Home() {
 
   useEffect(() => {
     if (walletClient && deployRequest) deployLoyaltyProgram() 
-  }, [walletClient, deployRequest])
-
+  }, [walletClient, deployRequest, deployLoyaltyProgram])
 
   return (
     <main className="grid grid-cols-1 w-full h-fit overflow-y-auto shadow-2xl bg-slate-100 justify-items-center p-4">
@@ -128,7 +121,7 @@ export default function Home() {
               <div className="text-slate-400 text-sm"> The protocol deploys loyalty points as fungible, loyalty cards as non-fungible and loyalty vouchers as semi-fungible assets. </div>     
             </div> 
             <div className="m-3">
-              <div className="font-bold text-slate-300 text-sm"> ERC-6511: Token Based Accounts </div>
+              <div className="font-bold text-slate-300 text-sm"> ERC-6551: Token Based Accounts </div>
               <div className="text-slate-400 text-sm">Loyalty Cards are deployed as TBAs using the ERC6511 standard and registries.  </div>     
             </div> 
             <div className="m-3">
@@ -140,9 +133,9 @@ export default function Home() {
               <div className="text-slate-400 text-sm"> Coming soon. </div>     
             </div> 
             <div className="m-3">
-              <div className="font-bold text-slate-300 text-sm"> Deployed at several testnets </div>
+              <div className="font-bold text-slate-300 text-sm"> Deployable at any testnet with a ERC-6551 registry (v.0.3.1). </div>
               {/* FILL OUT TEST NETS HERE  */}
-              <div className="text-slate-400 text-sm"> Sepolia, OP Sepolia, ... </div>      
+              <div className="text-slate-400 text-sm"> This frontend runs on the Arbitrum Sepolia testnet. </div>      
             </div> 
             <div className="m-3">
               <div className="font-bold text-slate-300 text-sm"> Want to know more? </div>
@@ -196,37 +189,29 @@ export default function Home() {
 
         <div className='min-h-[80vh] h-fit w-full max-w-4xl  sm:w-4/5 bg-slate-700 shadow-2xl p-2 pt-6 flex flex-col content-center rounded-b-lg '  id="deploy-program">
           <TitleText title="Want to try it out?" subtitle="Deploy any of these examples in less than two minutes" size = {2} colourMode={1}/>  
-          <div className="px-2 sm:px-20"> 
-
-          <div className="relative mt-6 mx-auto">
-            <div className="flex flex-row justify-between overflow-x-auto overflow-hidden scroll-px-1 snap-normal w-full h-full self-center">
+          
+            <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-auto overscroll-auto mb-12 justify-items-center content-center"> 
           
             {loyaltyProgramsData.items.map((item) => 
-            
-                <div
-                  key={item.index}
-                  className="carousel-item h-96 w-52 text-center items-center snap-start ml-4 flex flex-col self-center">
-                    <>
-                      <button 
-                        className="w-11/12 z-0 max-h-80 max-w-48 self-center enabled:opacity-50 enabled:w-5/6 transition-all ease-in-out delay-250"
-                        onClick={() => setSelectedIndex(item.index)}
-                        disabled={ item.index==selectIndex }
-                      >
-                        <Image
-                          src={item.imageUrl || ''}
-                          alt={item.title}
-                          style = {{ objectFit: "cover" }} 
-                          width={400}
-                          height={600}
-                          className="w-48 h-68 self-center" 
-                        />
-                      </button>
-                    </>
-                    </div>
+              <button 
+                key={item.index}
+                onClick={() => setSelectedIndex(item.index)}
+                disabled={ item.index==selectIndex }
+                className="ms-6 mt-6 w-60 h-fit justify-self-center rounded-lg grid grid-cols-1 enabled:opacity-25 transition-all ease-in-out delay-250"> 
+                  <Image
+                      src={item.imageUrl || ''}
+                      alt={item.title}
+                      style = {{ objectFit: "cover" }} 
+                      width={400}
+                      height={600}
+                      className="w-48 h-68 self-center" 
+                    />
+              </button>
+           
               )}
               </div> 
 
-              <div className='text-center text-slate-300 h-32'>
+              <div className='text-center text-slate-300 mb-4'>
                 {selectIndex && loyaltyProgramsData ? 
                   loyaltyProgramsData.items[selectIndex - 1].description
                   : 
@@ -249,8 +234,8 @@ export default function Home() {
                     <Button 
                         appearance='grayEmptyLight' 
                         onClick={() => handleDeployRequest({
-                          uri: loyaltyProgramsData.items[selectIndex].uri,  
-                          name: loyaltyProgramsData.items[selectIndex].title,  
+                          uri: loyaltyProgramsData.items[selectIndex -1].uri,  
+                          name: loyaltyProgramsData.items[selectIndex -1].title,  
                           version: "1"
                         })}  
                       > 
@@ -268,10 +253,10 @@ export default function Home() {
                     </Button>
                   :
                   walletClient && selectIndex && isSuccess ? 
-                    <a href="/vendor/home" className='h-fit w-48 h-16 m-2 flex content-center '>
-                      <button className='transition "rounded m-1 grow text-md py-2 px-4 border-2 border-green-400 text-green-400 text-center bg-white/50 hover:border-green-700 hover:text-green-700' disabled={ false }> 
-                        Visit Loyalty Program
-                      </button>
+                    <a href="/vendor/home">
+                       <Button appearance='greenEmpty'  disabled={ false }> 
+                          Visit Loyalty Program
+                      </Button>
                     </a>
                   : 
                   null 
@@ -279,9 +264,6 @@ export default function Home() {
                 </div>
               </div>
           </div>
-        </div>
-        </div>
-
     </main>
   )
 }

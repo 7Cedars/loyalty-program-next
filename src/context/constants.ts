@@ -2,5 +2,6 @@ export const WHITELIST_TOKEN_ISSUERS_FOUNDRY = ["0x15d34AAf54267DB7D7c367839AAf7
 export const WHITELIST_TOKEN_ISSUERS_SEPOLIA = []
 export const FROM_BLOCK = { // blocks to start check for data. 
   33137: 0n, 
-  11155111: 5200000n
+  11155111: 25888893n, 
+  421614: 25888893n
 }

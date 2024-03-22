@@ -58,7 +58,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
       args: {
         from: parseEthAddress(address)
       },
-      fromBlock: 5200000n
+      fromBlock: 25888893n
     });
 
     setTransferSingles(parseTransferSingleLogs(transferSingleLogs))

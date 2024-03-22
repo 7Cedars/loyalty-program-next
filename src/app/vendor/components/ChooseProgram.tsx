@@ -28,7 +28,7 @@ export default function ChooseProgram()  {
           abi: loyaltyProgramAbi, 
             eventName: 'DeployedLoyaltyProgram', 
             args: {owner: address}, 
-            fromBlock: 5200000n
+            fromBlock: 25888893n
         });
         const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
         setAddresses(loyaltyProgramAddresses)
