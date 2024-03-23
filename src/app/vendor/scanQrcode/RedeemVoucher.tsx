@@ -3,20 +3,18 @@ import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi"; 
 import { loyaltyProgramAbi } from "@/context/abi";
-import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseEthAddress, parseNumber } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { QrData } from "@/types";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useAppSelector } from "@/redux/hooks";
 import { useLatestVendorTransaction } from "@/app/hooks/useLatestTransaction";
-
 
 type SendPointsProps = {
   qrData: QrData | undefined;  
@@ -30,10 +28,8 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
   const dispatch = useDispatch() 
-  const { tokenReceived } = useLatestVendorTransaction(true) 
-
-  console.log("QRDATA @redeem token: ", qrData)
-  console.log("token @redeem token: ", token)
+  const { tokenReceived } = useLatestVendorTransaction(true)
+  const { writeContract, isError, isSuccess, data } = useWriteContract()
 
   useEffect(() => {
     if (!loyaltyGifts && qrData) {
@@ -50,34 +46,6 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
     if (status == "isSuccess" && loyaltyGifts) setToken(loyaltyGifts[0])
   }, [status, loyaltyGifts])
 
-  const redeemLoyaltyVoucher = useContractWrite( 
-    {
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-      abi: loyaltyProgramAbi,
-      functionName: "redeemLoyaltyVoucher", 
-      args: [
-        `${token?.metadata?.name}`,
-        qrData?.loyaltyToken,
-        BigInt(Number(qrData?.loyaltyTokenId)), 
-        qrData?.loyaltyCardId,
-        qrData?.customerAddress,
-        qrData?.signature
-      ], 
-      onError(error) {
-        console.log('redeemLoyaltyVoucher Error', error)
-      }, 
-      onSuccess(data) {
-        setHashTransaction(data.hash)
-      },
-    } 
-  )
-
-  // const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
-  //   { 
-  //     confirmations: 1,
-  //     hash: hashTransaction 
-  //   })
-
   useEffect(() => {
     if (tokenReceived) {
       dispatch(notification({
@@ -88,7 +56,21 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
       }))
     }    
   },[tokenReceived])
-  
+
+  useEffect(() => {
+    if (isError) {
+      dispatch(notification({
+        id: "claimGift",
+          message: `Something went wrong. Gift not Claimed.`, 
+          colour: "red",
+          isVisible: true
+      }))
+    }
+  }, [isError])
+
+  useEffect(() => {
+    if (isSuccess)  setHashTransaction(data)
+  }, [isSuccess])
   
   return (
     <div className="grid grid-cols-1 h-full justify-items-center content-between p-3"> 
@@ -166,7 +148,19 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
         </Button>
         :
         <div className="flex w-full p-2"> 
-          <Button appearance = {"greenEmpty"} onClick={redeemLoyaltyVoucher.write} >
+          <Button appearance = {"greenEmpty"}onClick={() => writeContract({ 
+              abi: loyaltyProgramAbi,
+              address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+              functionName: "redeemLoyaltyVoucher", 
+              args: [
+                `${token?.metadata?.name}`,
+                qrData?.loyaltyToken,
+                BigInt(Number(qrData?.loyaltyTokenId)), 
+                qrData?.loyaltyCardId,
+                qrData?.customerAddress,
+                qrData?.signature
+              ]
+            })} >
               Redeem voucher
           </Button>
         </div> 

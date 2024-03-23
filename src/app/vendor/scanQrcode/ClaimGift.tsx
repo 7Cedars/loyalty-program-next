@@ -5,18 +5,17 @@ import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useWaitForTransaction, useAccount, usePublicClient } from "wagmi";
+import { useWriteContract } from "wagmi";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { parseEthAddress, parseNumber } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
-import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { QrData } from "@/types";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useAppSelector } from "@/redux/hooks";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useLatestVendorTransaction } from "@/app/hooks/useLatestTransaction";
 
 type SendPointsProps = {
@@ -32,6 +31,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const dispatch = useDispatch() 
   const { pointsReceived } = useLatestVendorTransaction(true) 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const { writeContract, isError, isSuccess, data } = useWriteContract()
 
   console.log("QRDATA @claim gift: ", qrData)
   console.log("loyaltyGifts @claim gift: ", loyaltyGifts)
@@ -51,36 +51,6 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     if (status == "isSuccess" && loyaltyGifts) setToken(loyaltyGifts[0])
   }, [status, loyaltyGifts])
 
-  const claimLoyaltyGift = useContractWrite( 
-    {
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-      abi: loyaltyProgramAbi,
-      functionName: "claimLoyaltyGift", 
-      args: [
-        `${token?.metadata?.name}`, 
-        `${token?.metadata?.attributes[1].value} points`,
-        qrData?.loyaltyToken,
-        qrData?.loyaltyTokenId, 
-        qrData?.loyaltyCardId, 
-        qrData?.customerAddress,
-        token?.metadata?.attributes[1].value, 
-        qrData?.signature
-      ], 
-      onError(error) {
-        console.log('claimLoyaltyGift Error', error)
-      }, 
-      onSuccess(data) {
-        setHashTransaction(data.hash)
-      },
-    } 
-  )
-
-  // const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
-  //   { 
-  //     confirmations: 2,
-  //     hash: hashTransaction 
-  //   })
-
   useEffect(() => {
     if (pointsReceived) {
       dispatch(notification({
@@ -92,21 +62,21 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     }
   },[ pointsReceived ])
 
-  const handleSubmit = () => {
-    console.log("simulated entry data into claimLoyaltyGift: ", 
-      [
-        `${token?.metadata?.name}`, 
-        `${token?.metadata?.attributes[1].value} points`,
-        qrData?.loyaltyToken,
-        BigInt(Number(qrData?.loyaltyTokenId)), 
-        BigInt(Number(qrData?.loyaltyCardId)), 
-        qrData?.customerAddress,
-        BigInt(Number(token?.metadata?.attributes[1].value)), 
-        qrData?.signature
-      ]
-    )
-    claimLoyaltyGift.write()
-  }
+  useEffect(() => {
+    if (isError) {
+      dispatch(notification({
+        id: "claimGift",
+          message: `Something went wrong. Gift not Claimed.`, 
+          colour: "red",
+          isVisible: true
+      }))
+    }
+  }, [isError])
+
+  useEffect(() => {
+    if (isSuccess)  setHashTransaction(data)
+  }, [isSuccess])
+
 
   return (
     <div className="grid grid-cols-1 h-full justify-items-center content-between p-3"> 
@@ -185,7 +155,21 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
        </Button>
         :
         <div className="flex w-full p-2"> 
-          <Button appearance = {"greenEmpty"} onClick={() => handleSubmit()} >
+          <Button appearance = {"greenEmpty"} onClick={() => writeContract({ 
+              abi: loyaltyProgramAbi,
+              address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+              functionName: "claimLoyaltyGift", 
+              args: [
+                `${token?.metadata?.name}`, 
+                `${token?.metadata?.attributes[1].value} points`,
+                qrData?.loyaltyToken,
+                qrData?.loyaltyTokenId, 
+                qrData?.loyaltyCardId, 
+                qrData?.customerAddress,
+                token?.metadata?.attributes[1].value, 
+                qrData?.signature
+              ]
+            })} >
               Redeem gift
           </Button>
         </div> 
