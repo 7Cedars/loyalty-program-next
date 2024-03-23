@@ -1,26 +1,17 @@
 "use client";
 
 import Link from 'next/link';
-import { NotificationDialog } from '../../ui/notificationDialog';
-import { notification } from '@/redux/reducers/notificationReducer';
 import { 
   ArrowRightOnRectangleIcon, 
-  GiftIcon, 
   SquaresPlusIcon,
   QrCodeIcon,
   HomeIcon, 
   ChartBarSquareIcon
  } from '@heroicons/react/24/outline'
 import { useScreenDimensions } from '../../hooks/useScreenDimensions';
-import { useDispatch } from 'react-redux';
 import { useAccount, useWalletClient } from 'wagmi';
-import { useEffect } from 'react';
-import { updateNotificationVisibility } from '@/redux/reducers/notificationReducer';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
-import { useUrlProgramAddress } from '../../hooks/useUrl';
-import { useRouter } from 'next/router';
 import { usePathname } from 'next/navigation';
-import { pathToFileURL } from 'url';
  
 
 const NavbarBottom = ( ) => {
@@ -28,18 +19,11 @@ const NavbarBottom = ( ) => {
   const layoutLinks: string = 'py-1 px-6 text-slate-400 aria-selected:text-slate-800 aria-selected:text-slate-800 dark:text-slate-600 dark:aria-selected:text-slate-200 dark:aria-selected:text-slate-200 grid grid-cols-1'
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'
   const layoutIcons: string = 'h-7 w-7'
-  const { address } = useAccount() 
-  const { open, close } = useWeb3Modal()
+  const { open } = useWeb3Modal()
   const path = usePathname()
   // const { selectedLoyaltyProgram?.programAddress } = useUrlProgramAddress()
   const { data: walletClient, status } = useWalletClient();
-
-  // const handleLogin = () => {
-  //   walletClient ? open({view: "Account"}) : open({view: "Networks"})
-  // }
-
-  console.log("walletClient: ", walletClient)
-
+  
   return (
     dimensions.width >= 896 ? 
     null

@@ -15,8 +15,6 @@ export default function Page()  {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { chain } =  useAccount()
 
-  console.log("chain: ", chain?.id )
-
   return (
      
     <div className="grid grid-cols-1 h-full content-between">

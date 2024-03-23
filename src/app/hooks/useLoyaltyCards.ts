@@ -42,6 +42,7 @@ export const useLoyaltyCards = () => {
   const getLoyaltyCardIds = async (userAddress: EthAddress, programAddress: EthAddress) => {
     statusAtIds.current = "isLoading"
 
+    if (publicClient)
     try {
       const transferSingleData: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
@@ -74,7 +75,7 @@ export const useLoyaltyCards = () => {
     let loyaltyCard: LoyaltyCard
     let loyaltyCardsUpdated: LoyaltyCard[] = []
 
-    if (data) { 
+    if (data && publicClient) { 
       try {
         for await (loyaltyCard of data) {
         
@@ -101,7 +102,7 @@ export const useLoyaltyCards = () => {
     let loyaltyCard: LoyaltyCard
     let loyaltyCardsUpdated: LoyaltyCard[] = []
 
-    if (data) { 
+    if (data && publicClient) { 
       try {
         for await (loyaltyCard of data) {
         

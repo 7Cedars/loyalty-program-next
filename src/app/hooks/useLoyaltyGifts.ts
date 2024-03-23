@@ -49,6 +49,7 @@ export const useLoyaltyGifts = () => {
       setData(requestedTokens)
       console.log("requestedTokens: ", requestedTokens)
     } else { 
+      if (publicClient)
       try { 
         const logs: Log[] = await publicClient.getContractEvents({
           abi: loyaltyGiftAbi, 
@@ -72,7 +73,7 @@ export const useLoyaltyGifts = () => {
     let item: LoyaltyGift
     let loyaltyGiftsUris: LoyaltyGift[] = []
 
-    if (data) { 
+    if (data && publicClient) { 
       try {
         for await (item of data) {
           const uri: unknown = await publicClient.readContract({ 
@@ -100,7 +101,7 @@ export const useLoyaltyGifts = () => {
     let item: LoyaltyGift
     let loyaltyGiftsMetadata: LoyaltyGift[] = []
 
-    if (data) {
+    if (data && publicClient) {
       try {
         for await (item of data) {
           if (item.uri) {
@@ -125,7 +126,7 @@ export const useLoyaltyGifts = () => {
     let item: LoyaltyGift
     let loyaltyGiftsAvailableTokens: LoyaltyGift[] = []
 
-    if (data && selectedLoyaltyProgram && selectedLoyaltyProgram.programAddress) { 
+    if (data && selectedLoyaltyProgram && selectedLoyaltyProgram.programAddress && publicClient) { 
       try {
         for await (item of data) {
             const availableTokens: unknown = await publicClient.readContract({

@@ -17,6 +17,7 @@ import { useWeb3Modal } from "@web3modal/wagmi/react";
 // see description of this bug here: https://github.com/WalletConnect/web3modal/issues/1386 
 // As a solution I create a single component that reads url once, and then transfers it to redux. 
 // see this solution here (from next documentation): https://nextjs.org/docs/messages/deopted-into-client-rendering
+// Note that I ended up upgrading to a newer version of Wagmi in the end. 
 
 export default function Page()  {
   const [progAddress, setProgAddress] = useState<string | null  >(); 
@@ -102,48 +103,4 @@ export default function Page()  {
       />
     </div> 
   )
-      {/* <> */}
-        
-          
-    //     <div className="flex flex-col justify-self-center pt-2 pb-6 w-full md:px-48 px-6"> 
-    //       <div className="text-center">
-    //         {` Loyalty Card Id: ${selectedLoyaltyCard?.cardId}`}
-    //       </div>
-    //       <div className="pb-2 text-center border-b border-slate-700">
-    //         {` Loyalty Card Address: ${selectedLoyaltyCard?.cardAddress?.slice(0,6)}...${selectedLoyaltyCard?.cardAddress?.slice(36,42)}`}
-    //       </div>
-    //     </div>
-            
-    //     <div className="flex flex-col justify-between p-1 h-full">
-    //       <div className="grid justify-center justify-items-center">
-    //           <QRCode 
-    //             value={`type:giftPoints;lp:${selectedLoyaltyProgram?.programAddress};lc:${selectedLoyaltyCard?.cardAddress}`}
-    //             style={{ 
-    //               height: "350px", 
-    //               width: "350px", 
-    //               objectFit: "cover", 
-    //               background: 'white', 
-    //               padding: '16px', 
-    //             }}
-    //             bgColor="#ffffff" // "#0f172a" 1e293b
-    //             fgColor="#000000" // "#e2e8f0"
-    //             level='L'
-    //             className="rounded-lg"
-    //             />
-    //       </div>
-    //     </div>
-
-    //     <div className="flex md:px-48 px-6 h-14">
-    //       <Button onClick={() => dispatch(resetLoyaltyCard(true))} appearance="grayEmpty">
-    //         Switch cards or Request new one
-    //       </Button>
-    //     </div> 
-
-    //     <div className="h-14"/> 
-    //   {/* </> */}
-    // {/* } */}
-
-    // </div>  
-    // </DynamicLayout>
-    // )
 }

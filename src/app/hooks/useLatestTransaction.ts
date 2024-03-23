@@ -19,7 +19,7 @@ export const useLatestCustomerTransaction = (polling: boolean) => {
   const [tokenReceived, setTokenReceived] = useState<Transaction>() 
   const [tokenSent, setTokenSent] = useState<Transaction>() 
 
-  if (polling) {
+  if (polling && publicClient) {
     publicClient.watchContractEvent({
       abi: loyaltyProgramAbi,
       eventName: 'TransferSingle', 
@@ -82,7 +82,7 @@ export const useLatestVendorTransaction = (polling: boolean) => {
   const [tokenSent, setTokenSent] = useState<Transaction>() 
   const {address} = useAccount() 
   
-  if (polling) {
+  if (polling && publicClient) {
     publicClient.watchContractEvent({
       abi: loyaltyProgramAbi,
       eventName: 'TransferSingle', 
