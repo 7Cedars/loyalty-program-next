@@ -8,12 +8,12 @@ import { useDispatch } from "react-redux";
 import { resetLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import { useAppSelector } from "@/redux/hooks";
 import { parseEthAddress, parseUri } from "@/app/utils/parsers";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 
 export default function Page()  {
   const dispatch = useDispatch() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const { chain } =  useNetwork()
+  const { chain } =  useAccount()
 
   console.log("chain: ", chain?.id )
 

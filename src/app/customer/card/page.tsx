@@ -43,7 +43,7 @@ export default function Page() {
   ///////////////////////////////////
   
   const fetchCardBalance = async () => {
-    if (selectedLoyaltyCard && selectedLoyaltyCard.balance == undefined)
+    if (selectedLoyaltyCard && selectedLoyaltyCard.balance == undefined && publicClient)
       try {
         const loyaltyCardPoints = await publicClient.readContract({
           address: parseEthAddress(selectedLoyaltyCard.loyaltyProgramAddress), 
@@ -75,52 +75,54 @@ export default function Page() {
     console.log("latestSent @redeem token: ", latestSent)
     statusGetClaimedVouchers.current = "isLoading"
 
-    try { 
-      const claimedVouchersLogs: Log[] = await publicClient.getContractEvents({
-        // address: loyaltyGift.giftAddress, 
-        abi: loyaltyGiftAbi,
-        eventName: 'TransferSingle', 
-        args: {
-          to: selectedLoyaltyCard?.cardAddress
-        },
-        fromBlock: 25888893n
-      })
-      const claimedVouchers = parseTransferSingleLogs(claimedVouchersLogs)
-
-      const redeemedVouchersLogs: Log[] = await publicClient.getContractEvents({
-        // address: loyaltyGift.giftAddress, 
-        abi: loyaltyGiftAbi,
-        eventName: 'TransferSingle', 
-        args: {
-          from: selectedLoyaltyCard?.cardAddress
-        },
-        fromBlock: 25888893n
-      })
-      const redeemedVouchers = parseTransferSingleLogs(redeemedVouchersLogs)
-      
-      if (loyaltyGifts) {
-        let claimedVouchersTemp: LoyaltyGift[] = [] 
-
-        loyaltyGifts.forEach(loyaltyGift => { 
-          
-          const addedVoucher = claimedVouchers.filter(
-            event => event.address == loyaltyGift.giftAddress && Number(event.ids[0]) == loyaltyGift.giftId
-            ).length 
-          const removedVoucher = redeemedVouchers.filter(
-            event => event.address == loyaltyGift.giftAddress && Number(event.ids[0]) == loyaltyGift.giftId
-            ).length
-
-          for (let i = 0; i < (addedVoucher - removedVoucher); i++) {
-            claimedVouchersTemp.push(loyaltyGift)
-          }
+    if (publicClient) {
+      try { 
+        const claimedVouchersLogs: Log[] = await publicClient.getContractEvents({
+          // address: loyaltyGift.giftAddress, 
+          abi: loyaltyGiftAbi,
+          eventName: 'TransferSingle', 
+          args: {
+            to: selectedLoyaltyCard?.cardAddress
+          },
+          fromBlock: 25888893n
         })
-        setClaimedVouchers(claimedVouchersTemp)
-        statusGetClaimedVouchers.current = "isSuccess"
-      }
-    } catch (error) {
-      statusGetClaimedVouchers.current = "isError"
-      console.log(error)
-    }  
+        const claimedVouchers = parseTransferSingleLogs(claimedVouchersLogs)
+  
+        const redeemedVouchersLogs: Log[] = await publicClient.getContractEvents({
+          // address: loyaltyGift.giftAddress, 
+          abi: loyaltyGiftAbi,
+          eventName: 'TransferSingle', 
+          args: {
+            from: selectedLoyaltyCard?.cardAddress
+          },
+          fromBlock: 25888893n
+        })
+        const redeemedVouchers = parseTransferSingleLogs(redeemedVouchersLogs)
+        
+        if (loyaltyGifts) {
+          let claimedVouchersTemp: LoyaltyGift[] = [] 
+  
+          loyaltyGifts.forEach(loyaltyGift => { 
+            
+            const addedVoucher = claimedVouchers.filter(
+              event => event.address == loyaltyGift.giftAddress && Number(event.ids[0]) == loyaltyGift.giftId
+              ).length 
+            const removedVoucher = redeemedVouchers.filter(
+              event => event.address == loyaltyGift.giftAddress && Number(event.ids[0]) == loyaltyGift.giftId
+              ).length
+  
+            for (let i = 0; i < (addedVoucher - removedVoucher); i++) {
+              claimedVouchersTemp.push(loyaltyGift)
+            }
+          })
+          setClaimedVouchers(claimedVouchersTemp)
+          statusGetClaimedVouchers.current = "isSuccess"
+        }
+      } catch (error) {
+        statusGetClaimedVouchers.current = "isError"
+        console.log(error)
+      }  
+    }
   }
     
   useEffect(() => {

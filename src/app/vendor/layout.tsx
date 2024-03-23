@@ -5,7 +5,7 @@ import '../globals.css'
 import NavbarTop from "./components/NavbarTop"; 
 import NavbarBottom from './components/NavbarBottom';
 import { DynamicLayout } from './components/DynamicLayout';
-import { Web3Modal } from '@/context/Web3Modal';
+import { Web3Modal } from '@/context/Web3ModalProvider';
 
 export default function layout({
   children,

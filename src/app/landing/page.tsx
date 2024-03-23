@@ -1,14 +1,13 @@
 "use client"; 
 
-import { Suspense, useEffect, useRef, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import UrlToLocalStorage from "../customer/components/UrlToLocalStorage"
 import Image from "next/image"
 import { Button } from "../ui/Button";
 import Link from "next/link";
 import { TitleText } from "../ui/StandardisedFonts";
-import { useNetwork, useWalletClient } from "wagmi";
+import { useWalletClient } from "wagmi";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { switchNetwork } from "@wagmi/core";
 
 // NB: Notice the use of suspense to load url into redux. 
 // This is done because this version of Wagmi (which is needed with this version of Web3Modal) cannot deal with 

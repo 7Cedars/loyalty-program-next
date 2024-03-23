@@ -9,7 +9,7 @@ import { notification, updateNotificationVisibility } from "@/redux/reducers/not
 import Image from "next/image";
 import RequestCard from "./RequestCard";
 import SelectLoyaltyCard from "./SelectLoyaltyCard";
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { parseEthAddress } from "@/app/utils/parsers";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import { useLoyaltyPrograms } from "@/app/hooks/useLoyaltyPrograms";
@@ -18,7 +18,6 @@ import NavbarTop from "./NavbarTop";
 import NavbarBottom from "./NavbarBottom";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { useLoyaltyCards } from "@/app/hooks/useLoyaltyCards";
-import { switchNetwork } from '@wagmi/core'
 
 type ModalProps = {
   children: any;
@@ -27,8 +26,7 @@ type ModalProps = {
 export const DynamicLayout = ({
   children 
 }: ModalProps) => {
-  const { address }  = useAccount()
-  const { chain } = useNetwork() 
+  const { address, chain }  = useAccount()
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
   
   const dispatch = useAppDispatch()
@@ -106,18 +104,6 @@ export const DynamicLayout = ({
     }
 
   }, [ , address])
-  
-  // checks what chain the program has been deplopyed on & asks to switch if not the same. 
-  useEffect(() => { 
-    const progChainId = localStorage.getItem("progChainId")
-    const changeNetwork = async () => {
-      await switchNetwork({
-        chainId: Number(progChainId),
-      })
-    } 
-    if (chain && chain.id != Number(progChainId)) changeNetwork() 
-
-  }, [])
 
   console.log(
     "pre render console log", 

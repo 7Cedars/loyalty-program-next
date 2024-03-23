@@ -7,15 +7,14 @@ import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { Button } from "@/app/ui/Button";
-import { useAccount, useNetwork, usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
-import { useUrlProgramAddress } from "@/app/hooks/useUrl";
+import { useAccount, usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
+import { RootState } from "@/redux/store";
 
 type SelectedTokenProps = {
   token: LoyaltyGift
@@ -23,21 +22,22 @@ type SelectedTokenProps = {
 }
 
 export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
-  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
+  const { selectedLoyaltyCard } = useAppSelector((state: RootState) => state.selectedLoyaltyCard )
   const dimensions = useScreenDimensions();
-  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const { selectedLoyaltyProgram  } = useAppSelector((state: RootState) => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient()
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
-  const {address} = useAccount()
+  const {address, chain} = useAccount()
+  const { data: signature, isPending, isError, isSuccess, signTypedData, reset } = useSignTypedData()
 
   const  polling = useRef<boolean>(false) 
   const {  pointsSent, tokenSent } = useLatestCustomerTransaction(polling.current) 
-  const {chain} = useNetwork() 
 
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
+      if (publicClient)
       try {
         const rawNonceData: unknown = await publicClient.readContract({ 
           address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -57,12 +57,13 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   }, [nonceData] ) 
 
   /// begin setup for encoding typed data /// 
-  const domain = {
-    name: 'Loyalty Program',
-    version: '1',
-    chainId: chain?.id,
-    verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
-  } as const
+  // depricated? 
+  // const domain = {
+  //   name: 'Loyalty Program',
+  //   version: '1',
+  //   chainId: chain?.id,
+  //   verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
+  // } as const
 
   // The named list of all type definitions
   const types = {
@@ -82,20 +83,8 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const
 
-  const { data: signature, isError, isLoading, isSuccess, reset: resetSignature, signTypedData } =
-  useSignTypedData({
-    domain,
-    message,
-    primaryType: 'RedeemVoucher',
-    types,
-  })
-
-  const handleSigning = () => {
-    signTypedData()
-  }
-
   useEffect(() => { 
-    if (isLoading) {
+    if (isPending) {
       dispatch(notification({
         id: "qrCodeAuthentication",
         message: `Please provide your signature in your blockchain wallet app.`, 
@@ -122,7 +111,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
         isVisible: true
       }))
     }
-  }, [isSuccess, isError, isLoading])
+  }, [isSuccess, isError, isPending])
 
   // useEffect(() => {
   //   if (selectedVoucher) polling.current = true 
@@ -130,7 +119,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
 
   useEffect(() => {
     if (tokenSent) {
-      resetSignature() 
+      reset() 
       polling.current = false  
       dispatch(notification({
         id: "redeemToken",
@@ -185,7 +174,11 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
           </div>
         </div>
         <div className="p-3 flex w-full"> 
-            <Button appearance = {"greenEmpty"} onClick={() => signTypedData()} >
+            <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
+                types, 
+                primaryType: 'RedeemVoucher',
+                message
+              })} >
               Redeem Voucher
             </Button>
           </div>

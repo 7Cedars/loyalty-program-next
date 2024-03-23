@@ -3,7 +3,7 @@
 import loyaltyProgramsData from "../../public/exampleLoyaltyPrograms.json"; // not that this is a very basic json file data format - can be used in many other cases as well. 
 import { TitleText } from "./ui/StandardisedFonts";
 import Image from "next/image";
-import { useAccount, useNetwork, useWaitForTransaction } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { optimismSepolia, foundry, sepolia, baseSepolia, arbitrumSepolia } from 'viem/chains'
 import { loyaltyProgramAbi } from "@/context/abi";
 import { loyaltyProgramBytecode } from "@/context/bytecode";
@@ -62,7 +62,7 @@ export default function Home() {
     }
   },  [address, walletClient, deployRequest] )
 
-  const { data, isError, isLoading, isSuccess, isIdle } = useWaitForTransaction(
+  const { data, isError, isPending, isSuccess } = useWaitForTransactionReceipt(
     { 
       confirmations: 1,
       hash: transactionHash
@@ -230,7 +230,7 @@ export default function Home() {
                       Connect
                     </Button>
                   :
-                  walletClient && selectIndex && isIdle ? 
+                  walletClient && selectIndex && !transactionHash ? 
                     <Button 
                         appearance='grayEmptyLight' 
                         onClick={() => handleDeployRequest({
@@ -242,7 +242,7 @@ export default function Home() {
                       Deploy
                     </Button>
                   :
-                  walletClient && selectIndex && isLoading ? 
+                  walletClient && selectIndex && isPending ? 
                     <Button appearance='grayEmptyLight'  disabled={ true }> 
                       Loading...  
                     </Button>
