@@ -19,12 +19,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const initialState = cookieToInitialState(config, headers().get('cookie'))
+  // const initialState = cookieToInitialState(config, headers().get('cookie'))
   return (
     <html lang="en">
       <body>
       <ReduxProvider>
-        <Web3ModalProvider initialState={initialState}>
+        <Web3ModalProvider > {/* initialState={initialState} */}
             {children}
           </Web3ModalProvider>
         </ReduxProvider>
