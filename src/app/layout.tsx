@@ -4,7 +4,7 @@ import './globals.css'
 import { headers } from 'next/headers'
 import { cookieToInitialState } from 'wagmi'
 import { config } from '../../config'
-import Web3ModalProvider from '../context/Web3ModalProvider'
+import Web3ModalProvider from '../context'
 import { ReduxProvider } from "../context/reduxProvider" 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -23,11 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+      <ReduxProvider>
         <Web3ModalProvider initialState={initialState}>
-          <ReduxProvider>
-          {children}
-          </ReduxProvider>
-        </Web3ModalProvider>
+            {children}
+          </Web3ModalProvider>
+        </ReduxProvider>
       </body>
     </html>
   )
