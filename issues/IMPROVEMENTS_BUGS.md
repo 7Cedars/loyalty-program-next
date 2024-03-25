@@ -15,6 +15,7 @@ Even though repository is public, For now, it is for personal use only.
 - [ ]  @Vendor, landing: 'visit page' is broken. Fix. 
 - [x]  @Vendor, landing: 'visit page' theming is broken. Fix. 
 - [ ]  @vendor, stats: balance not loading. Fix. -- problem does not exist at customer.. 
+- [ ]  @customer, transactions: received points show up double. 
 - [ ]  @vendor (& @customer?) when their are no transactions, transaction overview hangs at 'retrieving transaction history...'  
 - [x]  @Vendor, Tokens: BUG: When tokens cannot be loaded it goes into a loop. Fix! 
 - [ ]  @Vendor, QrReader: Fix Bug that when no valid QR code is read - it just hangs. Needs to have notification + continue reading.

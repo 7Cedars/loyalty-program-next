@@ -21,7 +21,7 @@ const chains = [arbitrumSepolia] as const // Here place all chains
 export const config = createConfig({
   chains: chains,
   transports: {
-    [arbitrumSepolia.id]: http(), // £todo: link to avalance RPC. 
+    [arbitrumSepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
   },
   connectors: [
     walletConnect({ projectId, metadata, showQrModal: false }),
