@@ -1,3 +1,4 @@
+import { emailConnector } from '@web3modal/wagmi'
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
 
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi'
@@ -25,7 +26,8 @@ export const config = createConfig({
   },
   connectors: [
     walletConnect({ projectId, metadata, showQrModal: false }),
-    injected({ shimDisconnect: true }),
+    // injected({ shimDisconnect: true }),
+    emailConnector({ chains, options: { projectId } }) // this is ff-ing cool! Enable ERc-4337 account abstraction with one line of code. What the f! 
   ],
   ssr: true,
   storage: createStorage({
