@@ -7,7 +7,6 @@ import { Button } from "../ui/Button";
 import Link from "next/link";
 import { TitleText } from "../ui/StandardisedFonts";
 import { useWalletClient } from "wagmi";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
 
 // NB: Notice the use of suspense to load url into redux. 
 // This is done because this version of Wagmi (which is needed with this version of Web3Modal) cannot deal with 

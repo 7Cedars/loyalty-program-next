@@ -13,7 +13,7 @@ Even though repository is public, For now, it is for personal use only.
 
 ## Know bugs (in order of priority)
 - [ ]  @Vendor, landing: 'visit page' is broken. Fix. 
-- [ ]  @Vendor, landing: 'visit page' theming is broken. Fix. 
+- [x]  @Vendor, landing: 'visit page' theming is broken. Fix. 
 - [ ]  @vendor, stats: balance not loading. Fix. -- problem does not exist at customer.. 
 - [ ]  @vendor (& @customer?) when their are no transactions, transaction overview hangs at 'retrieving transaction history...'  
 - [x]  @Vendor, Tokens: BUG: When tokens cannot be loaded it goes into a loop. Fix! 

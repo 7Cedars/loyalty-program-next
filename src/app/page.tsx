@@ -166,7 +166,6 @@ export default function Home() {
               </div>
             </div>
 
-          {/* <TitleText title="Why use it?" size = {2} colourMode= {0}/>   */}
           </div> 
           <div className="flex flex-col text-slate-300 py-6 text-right">
             <div className="m-3">
@@ -208,7 +207,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className='min-h-[80vh] h-fit w-full max-w-4xl  sm:w-4/5 bg-slate-700 shadow-2xl p-2 pt-6 flex flex-col content-center rounded-b-lg '  id="deploy-program">
+        <div className='h-fit w-full max-w-4xl  sm:w-4/5 bg-slate-700 shadow-2xl p-2 pt-6 pb-8 flex flex-col content-center'  id="deploy-program">
           <TitleText title="Want to try it out?" subtitle="Deploy any of these examples in less than two minutes" size = {2} colourMode={1}/>  
           
             <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-auto overscroll-auto mb-12 justify-items-center content-center"> 
@@ -285,6 +284,21 @@ export default function Home() {
                 </div>
               </div>
           </div>
+
+          <div className={`h-fit grid grid-cols-1 sm:grid-cols-2 w-full max-w-4xl h-full sm:w-4/5 bg-slate-300 shadow-2xl p-8 rounded-b-lg justify-items-center`}>
+              <div className="grid grid-cols-1 pb-2 px-20 cols-span-1 sm:col-span-2">
+                <div className={`text-center font-bold text-slate-700 text-2xl py-1`}>
+                  Already have a program deployed?
+                </div>
+            </div> 
+
+            <a href="/vendor/home" className="h-16 w-60 flex justify-center cols-span-1 sm:col-span-2 my-8 ">
+              <Button appearance="grayEmpty" onClick={() => {}}>
+                Visit vendor website
+              </Button>
+            </a> 
+          </div>
+
     </main>
   )
 }
