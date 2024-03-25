@@ -19,7 +19,10 @@ createWeb3Modal({
   wagmiConfig: config,
   projectId,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
-  enableOnramp: true // Optional - false as default
+  enableOnramp: true, // Optional - false as default
+  chainImages: {
+    421614: 'public/images/arbitrumLogo.png' // public/images/arbitrum.svg' -- does nto work yet. 
+  }
 })
 
 export default function Web3ModalProvider({
