@@ -22,7 +22,8 @@ const chains = [arbitrumSepolia] as const // Here place all chains
 export const config = createConfig({
   chains: chains,
   transports: {
-    [arbitrumSepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
+    // [arbitrumSepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
+    [arbitrumSepolia.id]: http(), 
   },
   connectors: [
     walletConnect({ projectId, metadata, showQrModal: false }),
