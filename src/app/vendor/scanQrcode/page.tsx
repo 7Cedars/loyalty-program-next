@@ -1,4 +1,5 @@
 "use client"; 
+
 import { QrReader } from 'react-qr-reader';
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -18,8 +19,6 @@ export default function Page() {
   const [data, setData] = useState<QrData>(); 
   const {address} = useAccount();  
   const dispatch = useDispatch();  
-
-  console.log("DATA QR: ", data)
 
   if (!address) {
     dispatch(notification({
@@ -63,9 +62,6 @@ export default function Page() {
                 }
                 if (!!error) {
                   console.info("No QR code detected.");
-                  // setData(undefined)
-                  // result = null 
-                  // error = null 
                 }
               }}            
             />

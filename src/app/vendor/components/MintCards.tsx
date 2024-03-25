@@ -4,60 +4,22 @@ import { Dispatch, SetStateAction } from "react";
 import { NumPad } from "@/app/ui/NumPad";
 import { useState, useEffect } from "react";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useWaitForTransaction, useContractEvent } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
-import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import Image from "next/image";
 import { useAppSelector } from "@/redux/hooks";
- 
-type RedeemTokenProps = {
-  modal: 'points' | 'cards' | undefined;  
-  setModal: Dispatch<SetStateAction<'points' | 'cards' | undefined>>; 
-}
 
-export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
+export default function MintCards() {
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const { writeContract, isError, isPending, isSuccess, data } = useWriteContract()
 
-  const mintCards = useContractWrite(  
-    {
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-      abi: loyaltyProgramAbi,
-      functionName: 'mintLoyaltyCards',
-      args: [numpadNumber], 
-      onError(error) {
-        dispatch(notification({
-          id: "mintLoyaltyCards",
-          message: `Something went wrong. Loyalty cards not minted.`, 
-          colour: "red",
-          isVisible: true
-        }))
-        console.log('mintLoyaltyCards Error', error)
-      }, 
-      onSuccess(data) {
-        setHashTransaction(data.hash)
-      }
-    }, 
-  )
-
-  // NB: use of useContractEvent versus waitForTransaction to check confirmaiton of transaction
-  // has to be tried out on actual test network. Not anvil. 
-  /// 
-  // useContractEvent({
-  //   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-  //   abi: loyaltyProgramAbi,
-  //   eventName: 'TransferSingle',
-  //   listener(log) {
-  //     console.log("TransferSingle log:", log)
-  //   },
-  // })
-
-  const waitForTransaction = useWaitForTransaction(
+  const waitForTransaction = useWaitForTransactionReceipt(
     { 
       confirmations: 1,
       hash: hashTransaction,
@@ -77,11 +39,20 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waitForTransaction.isSuccess ])
 
-  
-  const handleChange = (number: number) => {
-    setNumpadNumber(number)
-    console.log("NUMPAD number: ", number)
-  }
+  useEffect(() => {
+    if (isError) {
+      dispatch(notification({
+        id: "mintLoyaltyCards",
+        message: `Something went wrong. Loyalty cards not minted.`, 
+        colour: "red",
+        isVisible: true
+      }))
+    }
+  }, [isError])
+
+  useEffect(() => {
+    if (isSuccess)  setHashTransaction(data)
+  }, [isSuccess])
 
   return (
     <div className="p-3 grid grid-cols-1 justify-items-center"> 
@@ -89,7 +60,7 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
         {`${numpadNumber} cards`}
       </p>
       <div className="max-w-xl"> 
-        <NumPad onChange={(number: number) => handleChange(number) } /> 
+        <NumPad onChange={(number: number) => setNumpadNumber(number) } /> 
    
         <div className="flex mt-3"> 
 
@@ -108,11 +79,16 @@ export default function MintCards( {modal, setModal}: RedeemTokenProps ) {
             </div>
           </Button>
           : 
-          <Button appearance = {"grayFilled"} disabled={!mintCards.write} onClick={() => mintCards.write?.()}>
+          <Button appearance = {"grayFilled"} onClick={() => writeContract({ 
+            abi: loyaltyProgramAbi,
+            address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+            functionName: 'mintLoyaltyCards',
+            args: [numpadNumber]
+         })
+        }>
             Mint Cards
           </Button>
         }
-        
         </div>
       </div>
     </div>      

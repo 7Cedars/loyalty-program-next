@@ -1,14 +1,12 @@
 "use client"; 
 
-import { Suspense, useEffect, useRef, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import UrlToLocalStorage from "../customer/components/UrlToLocalStorage"
 import Image from "next/image"
 import { Button } from "../ui/Button";
 import Link from "next/link";
 import { TitleText } from "../ui/StandardisedFonts";
-import { useNetwork, useWalletClient } from "wagmi";
-import { useWeb3Modal } from "@web3modal/wagmi/react";
-import { switchNetwork } from "@wagmi/core";
+import { useWalletClient } from "wagmi";
 
 // NB: Notice the use of suspense to load url into redux. 
 // This is done because this version of Wagmi (which is needed with this version of Web3Modal) cannot deal with 
@@ -18,13 +16,12 @@ import { switchNetwork } from "@wagmi/core";
 // see description of this bug here: https://github.com/WalletConnect/web3modal/issues/1386 
 // As a solution I create a single component that reads url once, and then transfers it to redux. 
 // see this solution here (from next documentation): https://nextjs.org/docs/messages/deopted-into-client-rendering
+// Note that I ended up upgrading to a newer version of Wagmi in the end. 
 
 export default function Page()  {
   const [progAddress, setProgAddress] = useState<string | null  >(); 
   const [progUri, setProgUri] = useState<string | null >(); 
-  const [progChainId, setProgChainId] = useState<number | null >(); 
   const { data: walletClient, status } = useWalletClient();
-  const { open, close } = useWeb3Modal()
 
   console.log("walletClient: ", walletClient)
 
@@ -32,7 +29,6 @@ export default function Page()  {
     window.addEventListener('localStorageUpdated', () => {
       setProgAddress(localStorage.getItem("progAddress"))
       setProgUri(localStorage.getItem("progUri")) 
-      setProgChainId(Number(localStorage.getItem("progChainId")))  
     })
   }, [])
   
@@ -103,48 +99,4 @@ export default function Page()  {
       />
     </div> 
   )
-      {/* <> */}
-        
-          
-    //     <div className="flex flex-col justify-self-center pt-2 pb-6 w-full md:px-48 px-6"> 
-    //       <div className="text-center">
-    //         {` Loyalty Card Id: ${selectedLoyaltyCard?.cardId}`}
-    //       </div>
-    //       <div className="pb-2 text-center border-b border-slate-700">
-    //         {` Loyalty Card Address: ${selectedLoyaltyCard?.cardAddress?.slice(0,6)}...${selectedLoyaltyCard?.cardAddress?.slice(36,42)}`}
-    //       </div>
-    //     </div>
-            
-    //     <div className="flex flex-col justify-between p-1 h-full">
-    //       <div className="grid justify-center justify-items-center">
-    //           <QRCode 
-    //             value={`type:giftPoints;lp:${selectedLoyaltyProgram?.programAddress};lc:${selectedLoyaltyCard?.cardAddress}`}
-    //             style={{ 
-    //               height: "350px", 
-    //               width: "350px", 
-    //               objectFit: "cover", 
-    //               background: 'white', 
-    //               padding: '16px', 
-    //             }}
-    //             bgColor="#ffffff" // "#0f172a" 1e293b
-    //             fgColor="#000000" // "#e2e8f0"
-    //             level='L'
-    //             className="rounded-lg"
-    //             />
-    //       </div>
-    //     </div>
-
-    //     <div className="flex md:px-48 px-6 h-14">
-    //       <Button onClick={() => dispatch(resetLoyaltyCard(true))} appearance="grayEmpty">
-    //         Switch cards or Request new one
-    //       </Button>
-    //     </div> 
-
-    //     <div className="h-14"/> 
-    //   {/* </> */}
-    // {/* } */}
-
-    // </div>  
-    // </DynamicLayout>
-    // )
 }

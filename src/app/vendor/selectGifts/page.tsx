@@ -33,6 +33,7 @@ export default function Page() {
 
   const getTokenSelection = async () => {
     setStatusTokenSelection("isLoading")
+    if(publicClient)
     try {
       const addedGifts: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 

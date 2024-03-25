@@ -47,7 +47,7 @@ export const useLoyaltyPrograms = () => {
     let loyaltyProgram: LoyaltyProgram
     let loyaltyProgramsUpdated: LoyaltyProgram[] = []
 
-    if (requestedPrograms) { 
+    if (requestedPrograms && publicClient) { 
       try {
         for await (loyaltyProgram of requestedPrograms) {
 
@@ -76,7 +76,7 @@ export const useLoyaltyPrograms = () => {
     let loyaltyProgram: LoyaltyProgram
     let loyaltyProgramsUpdated: LoyaltyProgram[] = []
 
-    if (data) {
+    if (data && publicClient) {
       try {
         for await (loyaltyProgram of data) {
        

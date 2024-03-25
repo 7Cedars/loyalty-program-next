@@ -3,7 +3,7 @@ import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { parseEthAddress } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
@@ -24,88 +24,45 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const [ hashMintTransaction, setHashMintTransaction] = useState<any>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
+  const { writeContract, isSuccess: isSuccessWriteContract, isError: isErrorWriteContract } = useWriteContract()
+  const { writeContract: mintVouchers, isSuccess: isSuccessMintVouchers } = useWriteContract()
 
-  const addLoyaltyGift = useContractWrite(
-    {
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-      abi: loyaltyProgramAbi,
-      functionName: "addLoyaltyGift", 
-      args: [token.giftAddress, token.giftId], 
-      onError(error) {
-        dispatch(notification({
-          id: "addLoyaltyGift",
-          message: `Something went wrong. Loyalty gift has not been added.`, 
-          colour: "red",
-          isVisible: true
-        }))
-        console.log('addLoyaltyGift Error', error)
-      }, 
-      onSuccess(data) {
-        setHashTransaction(data.hash)
-      },
-    }
-  )
-
-  const removeLoyaltyGiftClaimable = useContractWrite(
-    {
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-      abi: loyaltyProgramAbi,
-      functionName: "removeLoyaltyGiftClaimable", 
-      args: [token.giftAddress, token.giftId], 
-      onError(error) {
-        dispatch(notification({
-          id: "removeLoyaltyGiftClaimable",
-          message: `Something went wrong. Loyalty gift has not been removed.`, 
-          colour: "red",
-          isVisible: true
-        }))
-        console.log('removeLoyaltyGiftClaimable Error', error)
-      }, 
-      onSuccess(data) {
-        setHashTransaction(data.hash)
-      }
-    }
-  )
-
-  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+  const { data, isError, isLoading, isSuccess } = useWaitForTransactionReceipt(
     { 
       confirmations: 1,
       hash: hashTransaction 
     })
-  
 
-  const mintloyaltyGifts = useContractWrite(
-    {
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-      abi: loyaltyProgramAbi,
-      functionName: "mintLoyaltyVouchers",
-      onError(error) {
-        dispatch(notification({
-          id: "mintLoyaltyVouchers",
-          message: `Something went wrong. Loyalty vouchers not minted.`, 
-          colour: "red",
-          isVisible: true
-        }))
-        console.log('mintLoyaltyVouchers Error', error)
-      }, 
-      onSuccess(data) {
-        setHashMintTransaction(data.hash)
-      }
-    }
-  )
-
-  const mintTransaction = useWaitForTransaction(
+  const mintTransaction = useWaitForTransactionReceipt(
     { 
       confirmations: 1,
       hash: hashMintTransaction 
     })
-
 
   useEffect(() => { 
     if (isSuccess) {
       setIsDisabled(!isDisabled)
     }
   }, [isSuccess])
+
+  useEffect(() => {
+    if (isErrorWriteContract) {
+      dispatch(notification({
+        id: "loyaltyGift",
+        message: `Something went wrong. That's all I know.`, 
+        colour: "red",
+        isVisible: true
+      }))
+    }
+  }, [isErrorWriteContract])
+
+  useEffect(() => {
+    if (isSuccessWriteContract) setHashTransaction(data)
+  }, [isSuccessWriteContract])
+
+  useEffect(() => {
+    if (isSuccessMintVouchers) setHashMintTransaction(data)
+  }, [isSuccessMintVouchers])
 
   return (
     <div className="grid grid-cols-1"> 
@@ -174,15 +131,23 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
         :
         isDisabled ? 
           <div className="p-3 flex "> 
-            <Button appearance = {"greenEmpty"} onClick={addLoyaltyGift.write} >
-                Select Loyalty Gift
+            <Button appearance = {"greenEmpty"} onClick={() => writeContract({ 
+                abi: loyaltyProgramAbi,
+                address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+                functionName: "addLoyaltyGift", 
+                args: [token.giftAddress, token.giftId]
+              })} >
+                Add Loyalty Gift
             </Button>
           </div> 
           : 
           <div className="grid grid-col-1 gap-0 w-full">
             { token.tokenised ? 
               <div className="p-3 flex w-full"> 
-                <NumLine onClick = {(arg0) => mintloyaltyGifts.write({
+                <NumLine onClick = {(arg0) => mintVouchers({
+                  abi: loyaltyProgramAbi,
+                  address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+                  functionName: "mintLoyaltyVouchers",
                   args: [token.giftAddress, [token.giftId], [arg0]]}
                   )} 
                   isLoading = {mintTransaction.isLoading} /> 
@@ -190,7 +155,13 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
               : null
             }
             <div className="p-3 flex "> 
-              <Button appearance = {"redEmpty"} onClick={removeLoyaltyGiftClaimable.write} >
+              <Button appearance = {"redEmpty"} onClick={() => writeContract({ 
+                  abi: loyaltyProgramAbi,
+                  address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+                  functionName: "removeLoyaltyGiftClaimable", 
+                  args: [token.giftAddress, token.giftId]
+                })
+              } >
                 Remove Loyalty Gift
               </Button>
             </div>

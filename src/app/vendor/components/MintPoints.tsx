@@ -1,53 +1,24 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
 import { NumPad } from "@/app/ui/NumPad";
 import { useState, useEffect } from "react";
 import { Button } from "@/app/ui/Button";
-import { useContractWrite, useWaitForTransaction, useContractEvent } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
-import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import Image from "next/image";
 import { useAppSelector } from "@/redux/hooks";
- 
 
-
-type RedeemTokenProps = {
-  modal: 'points' | 'cards' | undefined;  
-  setModal: Dispatch<SetStateAction<'points' | 'cards' | undefined>>; 
-}
-
-export default function MintPoints( {modal, setModal}: RedeemTokenProps ) {
+export default function MintPoints() {
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const { writeContract, isError, isSuccess, data } = useWriteContract()
 
-  const mintPoints = useContractWrite(  
-    {
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-      abi: loyaltyProgramAbi,
-      functionName: 'mintLoyaltyPoints',
-      args: [numpadNumber], 
-      onError(error) {
-        dispatch(notification({
-          id: "mintLoyaltyPoints",
-          message: `Something went wrong. Loyalty Points not minted.`, 
-          colour: "red",
-          isVisible: true
-        }))
-        console.log('mintLoyaltyPoints Error', error)
-      }, 
-      onSuccess(data) {
-        setHashTransaction(data.hash)
-      }
-    }, 
-  )
-
-  const waitForTransaction = useWaitForTransaction(
+  const waitForTransaction = useWaitForTransactionReceipt(
     { 
       confirmations: 1,
       hash: hashTransaction,
@@ -64,17 +35,23 @@ export default function MintPoints( {modal, setModal}: RedeemTokenProps ) {
         isVisible: true
       }))
     }
-    if (waitForTransaction.status) {
-      console.log("data waitForTransaction: ", waitForTransaction.status)
-    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waitForTransaction.isSuccess, waitForTransaction.status ])
 
-  
-  const handleChange = (number: number) => {
-    setNumpadNumber(number)
-    console.log("NUMPAD number: ", number)
-  }
+  useEffect(() => {
+    if (isError) {
+      dispatch(notification({
+        id: "mintLoyaltyPoints",
+          message: `Something went wrong. Loyalty Points not minted.`, 
+          colour: "red",
+          isVisible: true
+      }))
+    }
+  }, [isError])
+
+  useEffect(() => {
+    if (isSuccess)  setHashTransaction(data)
+  }, [isSuccess])
 
   return (
     <div className="p-3 grid grid-cols-1 justify-items-center"> 
@@ -82,7 +59,7 @@ export default function MintPoints( {modal, setModal}: RedeemTokenProps ) {
         {`${numpadNumber} points`}
       </p>
       <div className="max-w-xl"> 
-        <NumPad onChange={(number: number) => handleChange(number) } /> 
+        <NumPad onChange={(number: number) => setNumpadNumber(number) } /> 
    
         <div className="flex mt-3"> 
 
@@ -101,7 +78,12 @@ export default function MintPoints( {modal, setModal}: RedeemTokenProps ) {
             </div>
           </Button>
           : 
-          <Button appearance = {"grayFilled"} disabled={!mintPoints.write} onClick={() => mintPoints.write?.()}>
+          <Button appearance = {"grayFilled"} onClick={() => writeContract({ 
+            abi: loyaltyProgramAbi,
+            address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+            functionName: 'mintLoyaltyPoints',
+            args: [numpadNumber]
+         })} >
             Mint Points
           </Button>
         }

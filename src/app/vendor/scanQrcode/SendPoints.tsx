@@ -1,25 +1,21 @@
-// TODO 
-
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { QrData } from "@/types";
 import { Button } from "@/app/ui/Button";
 import Image from "next/image";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { NumPad } from "@/app/ui/NumPad";
-import { useContractWrite, useWaitForTransaction  } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt  } from "wagmi";
 import { useDispatch } from "react-redux";
 import { parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useAccount } from "wagmi";
 import { useAppSelector } from "@/redux/hooks";
-import { useLatestVendorTransaction } from "@/app/hooks/useLatestTransaction";
 
 type SendPointsProps = {
   qrData: QrData | undefined;  
   setData: Dispatch<SetStateAction<QrData | undefined>>; 
 }
-// use Setdata to reset qrdata when action is completed. 
 
 export default function SendPoints({qrData, setData}: SendPointsProps)  {
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
@@ -27,36 +23,9 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
   const dispatch = useDispatch() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { address } = useAccount()
-  const polling = useRef<boolean>(false) 
-  const { pointsReceived, pointsSent, tokenReceived, tokenSent } = useLatestVendorTransaction(polling.current) 
+  const { writeContract, isError, isSuccess, data } = useWriteContract()
 
-  const transferPoints = useContractWrite(  
-    {
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-      abi: loyaltyProgramAbi,
-      functionName: 'safeTransferFrom',
-      args: [ 
-        parseEthAddress(address), 
-        parseEthAddress(qrData?.loyaltyCardAddress), 
-        0, 
-        numpadNumber, 
-        ""], // [ address, qrData?.loyaltyCardAddress, 0, numpadNumber, ""] 
-      onError(error) {
-        dispatch(notification({
-          id: "transferPoints",
-          message: `Something went wrong. Loyalty points not sent.`, 
-          colour: "red",
-          isVisible: true
-        }))
-        console.log('transferPoints Error', error)
-      }, 
-      onSuccess(data) {
-        setHashTransaction(data.hash)
-      }
-    }, 
-  )
-
-  const waitForTransaction = useWaitForTransaction(
+  const waitForTransaction = useWaitForTransactionReceipt(
     { 
       confirmations: 1,
       hash: hashTransaction,
@@ -78,6 +47,21 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waitForTransaction.isSuccess, waitForTransaction.status ])
+
+  useEffect(() => {
+    if (isError) {
+      dispatch(notification({
+        id: "transferPoints",
+        message: `Something went wrong. Loyalty points not sent.`, 
+        colour: "red",
+        isVisible: true
+      }))
+    }
+  }, [isError])
+
+  useEffect(() => {
+    if (isSuccess)  setHashTransaction(data)
+  }, [isSuccess])
 
 
   const handleChange = (number: number) => {
@@ -125,7 +109,17 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
             </div>
           </Button>
           : 
-          <Button appearance = {"blueFilled"} disabled={!transferPoints.write} onClick={() => transferPoints.write?.()}>
+          <Button appearance = {"blueFilled"} onClick={() => writeContract({ 
+              abi: loyaltyProgramAbi,
+              address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+              functionName: 'safeTransferFrom',
+              args: [ 
+                parseEthAddress(address), 
+                parseEthAddress(qrData?.loyaltyCardAddress), 
+                0, 
+                numpadNumber, 
+                ""],
+            })} >
             Transfer Points
           </Button>
         }

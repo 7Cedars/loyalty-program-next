@@ -36,7 +36,7 @@ export const useVendorAccount = () => {
 
   /// Fetch number of Cards Minted ///  
   const fetchMintedCards = async () => {
-    if (selectedLoyaltyProgram) {
+    if (selectedLoyaltyProgram && publicClient) {
       statusMintedCards.current = "isLoading"
       try {
         const cardData = await publicClient.readContract({
@@ -68,7 +68,7 @@ export const useVendorAccount = () => {
         addressArray: addressArray
       })
 
-      if (tokenIds.length == addressArray.length)
+      if (tokenIds.length == addressArray.length && publicClient)
         try {
           const pointsData = await publicClient.readContract({
             address: parseEthAddress(selectedLoyaltyProgram.programAddress), 

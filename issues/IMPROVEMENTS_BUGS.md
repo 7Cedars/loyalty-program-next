@@ -12,11 +12,15 @@ Even though repository is public, For now, it is for personal use only.
 - Design of solidity frontend is on my Figma. 
 
 ## Know bugs (in order of priority)
-- [ ]  @Vendor, Tokens: BUG: When tokens cannot be loaded it goes into a loop. Fix! 
-- [ ]  @Vendor, QrReader: Fix Bug that when no valid QR code is read - it just hangs. Needs to have notification + continue reading.
 - [ ]  @Vendor, landing: 'visit page' is broken. Fix. 
-- [ ]  @Everywhere: No testing has been implemented yet. Implement Cyprus 
+- [x]  @Vendor, landing: 'visit page' theming is broken. Fix. 
+- [ ]  @vendor, stats: balance not loading. Fix. -- problem does not exist at customer.. 
+- [ ]  @customer, transactions: received points show up double. 
 - [ ]  @vendor (& @customer?) when their are no transactions, transaction overview hangs at 'retrieving transaction history...'  
+- [x]  @Vendor, Tokens: BUG: When tokens cannot be loaded it goes into a loop. Fix! 
+- [ ]  @Vendor, QrReader: Fix Bug that when no valid QR code is read - it just hangs. Needs to have notification + continue reading.
+- [ ]  @vendor, QrScan: Mint cards still shows, even if scanned a code. -- ONKY WHEN NO Cards have been minted!    
+- [ ]  @Everywhere: No testing has been implemented yet. Implement Cyprus 
 
 ## Improvements to implement (in order of priority)
 <!-- go through this list and check how many I have already fixed -->

@@ -24,7 +24,8 @@ export const useContractLogs = (parameters: getContractEventsProps) => { // {add
   useEffect(() => {
     const getData = async () => {  
       setData({ data: <Log[]>[], isError: null, isLoading: false });
-      try {
+      if (publicClient)
+        try {
           const res: Log[] = await publicClient.getContractEvents(parameters); 
           result.data = res;
           

@@ -3,7 +3,7 @@ import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useAccount,  useNetwork,  usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
 import { loyaltyGiftAbi, loyaltyProgramAbi} from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
@@ -33,10 +33,10 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const polling = useRef<boolean>(false) 
   const {  pointsSent } = useLatestCustomerTransaction(polling.current) 
   const dispatch = useDispatch() 
-  const {address } = useAccount()
-  const {chain} = useNetwork() 
+  const {address, chain } = useAccount()
   const {open} = useWeb3Modal()
   const { data: walletClient, status } = useWalletClient();
+  const { data: signature, isPending, isError, isSuccess, signTypedData, reset } = useSignTypedData()
 
   console.log("selectedLoyaltyCard?.cardAddress: ", selectedLoyaltyCard?.cardAddress)
   console.log("parseEthAddress(selectedLoyaltyProgram?.programAddress): ", parseEthAddress(selectedLoyaltyProgram?.programAddress))
@@ -46,6 +46,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
+      if (publicClient)
       try {
         const rawNonceData: unknown = await publicClient.readContract({ 
           address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -66,7 +67,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
   // this function reverts if requirements are not met
   const checkRequirementsMet = async () => {
-    if (selectedLoyaltyCard) {
+    if (selectedLoyaltyCard && publicClient) {
       try {
         const requirementsMetData: unknown = await publicClient.readContract({ 
           address: parseEthAddress(token.giftAddress), 
@@ -86,14 +87,16 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   }, [ ] ) 
 
   /// begin setup for encoding typed data /// 
-  const domain = {
-    name: "Loyalty Program",
-    version: "1",
-    chainId: chain?.id,
-    verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
-  } as const
+  // depricated? How does it work without it?!  
+  // 
+  // const domain = {
+  //   name: "Loyalty Program",
+  //   version: "1",
+  //   chainId: chain?.id,
+  //   verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
+  // } as const
 
-  console.log("domain: ", domain)
+  // console.log("domain: ", domain)
   
   // The named list of all type definitions
   const types = {
@@ -118,19 +121,8 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   console.log("message: ", message)
   
 
-  const { data: signature, isError, isLoading, isSuccess, reset: resetSignature, signTypedData } = useSignTypedData({
-    domain,
-    message,
-    primaryType: 'RequestGift',
-    types,
-  })
-  
-  const handleSigning = () => {
-    signTypedData()
-  }
-
   useEffect(() => { 
-    if (isLoading) {
+    if (isPending) {
       dispatch(notification({
         id: "qrCodeAuthentication",
         message: `Please sign your request in your blockchain wallet app.`, 
@@ -157,11 +149,11 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
         isVisible: true
       }))
     }
-  }, [isSuccess, isError, isLoading])
+  }, [isSuccess, isError, isPending])
 
   useEffect(() => {
     if (pointsSent) {
-      resetSignature() 
+      reset() 
       polling.current = false 
       dispatch(notification({
         id: "qrCodeAuthentication",
@@ -226,11 +218,19 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
 
             { token.tokenised == 1n ? 
 
-              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()}  >
+              <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
+                types, 
+                primaryType: 'RequestGift',
+                message
+              })}  >
                 Claim Voucher
               </Button>
               :
-              <Button appearance = {"greenEmpty"} onClick={() => handleSigning()} >
+              <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
+                types, 
+                primaryType: 'RequestGift',
+                message
+              })} >
                 Claim Gift
               </Button>
            

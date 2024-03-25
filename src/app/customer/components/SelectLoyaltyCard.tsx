@@ -27,7 +27,7 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
     let loyaltyCard: LoyaltyCard
     let loyaltyPointsUpdated: {cardAddress: EthAddress | undefined, points: Number}[] = []
 
-    if (loyaltyCards) { 
+    if (loyaltyCards && publicClient) { 
 
       try {
         for await (loyaltyCard of loyaltyCards) {

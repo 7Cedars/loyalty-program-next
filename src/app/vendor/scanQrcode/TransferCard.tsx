@@ -1,18 +1,15 @@
-// TODO 
-
-import { Dispatch, SetStateAction, useRef } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { EthAddress, QrData, Transaction } from "@/types";
 import { Button } from "@/app/ui/Button";
 import { 
-  useContractWrite, 
-  useWaitForTransaction, 
+  useWriteContract, 
+  useWaitForTransactionReceipt, 
   useAccount, 
-  useContractRead, 
+  useReadContract, 
   usePublicClient 
 } from "wagmi";
 import { parseEthAddress, parseTransferSingleLogs, parseBigInt } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi"; 
-import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
@@ -24,13 +21,11 @@ import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import MintCards from "../components/MintCards";
-import { useLatestVendorTransaction } from "@/app/hooks/useLatestTransaction";
 
 type RedeemTokenProps = {
   qrData: QrData | undefined;  
   setData: Dispatch<SetStateAction<QrData | undefined>>; 
 }
-// use Setdata to reset qrdata when action is completed. 
 
 export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
@@ -40,74 +35,53 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const [ lastCardTransferred, setLastCardTransferred] = useState<BigInt | undefined>() 
   const [customerAddress, setCustomerAddress] = useState<EthAddress | undefined >() 
   const { height, width } = useScreenDimensions()
+  const { writeContract,  isError: isErrorWriteContract, isSuccess: isSuccessWriteContract } = useWriteContract()
   const dispatch = useDispatch() 
   const { address } = useAccount() 
   const publicClient = usePublicClient()
-  const polling = useRef<boolean>(false) 
-  const { pointsReceived, pointsSent, tokenReceived, tokenSent } = useLatestVendorTransaction(polling.current) 
-
-  console.log("transferSingles: ", transferSingles) 
 
   const getTransferSingleData = async () => {
     console.log("getTransferSingleData called")
 
-    const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
-      abi: loyaltyProgramAbi, 
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-      eventName: 'TransferSingle', 
-      args: {
-        from: parseEthAddress(address)
-      },
-      fromBlock: 25888893n
-    });
-
-    setTransferSingles(parseTransferSingleLogs(transferSingleLogs))
-  
+    if (publicClient) {
+      const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
+        abi: loyaltyProgramAbi, 
+        address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+        eventName: 'TransferSingle', 
+        args: {
+          from: parseEthAddress(address)
+        },
+        fromBlock: 25888893n
+      });
+      setTransferSingles(parseTransferSingleLogs(transferSingleLogs))
+    }
   }
 
-  const loyaltyCardsMinted = useContractRead(
+  const {data: loyaltyCardsMinted, isError: isErrorReadContract } = useReadContract(
     {
       address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
       abi: loyaltyProgramAbi,
       functionName: "getNumberLoyaltyCardsMinted", 
-      args: [], 
-      onError(error) {
-        dispatch(notification({
-          id: "getNumberLoyaltyCardsMinted",
-          message: `Something went wrong. Data did not load.`, 
-          colour: "red",
-          isVisible: true
-        }))
-        console.log('addLoyaltyGift Error', error)
-      }, 
-      onSuccess(data: any) {
-        console.log("data from getNumberLoyaltyCardsMinted: ", data)
-      },
-    }
-  )
+      args: [] 
+    })
 
-  const transferCard = useContractWrite(
-    {
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-      abi: loyaltyProgramAbi,
-      functionName: "safeTransferFrom", 
-      args: [address, customerAddress,  Number(lastCardTransferred) + 1, 1, ""], 
-      onError(error) {
-        dispatch(notification({
-          id: "transferLoyaltyCard",
-          message: `Something went wrong. Loyalty card has not been transferred.`, 
-          colour: "red",
-          isVisible: true
-        }))
-        console.log('transferLoyaltyCard Error', error)
-      }, 
-      onSuccess(data) {
-        setHashTransaction(data.hash)
-      },
+  useEffect(() => {
+    if (isErrorWriteContract) {
+      dispatch(notification({
+        id: "transferLoyaltyCard",
+        message: `Something went wrong. Loyalty card has not been transferred.`, 
+        colour: "red",
+        isVisible: true
+      }))
     }
-  )
+  }, [isErrorWriteContract])
 
-  const { data, isError, isLoading, isSuccess } = useWaitForTransaction(
+  useEffect(() => {
+    if (isSuccessWriteContract)  setHashTransaction(data)
+  }, [isSuccessWriteContract])
+
+
+  const { data, isError, isLoading, isSuccess } = useWaitForTransactionReceipt(
     { 
       confirmations: 1,
       hash: hashTransaction 
@@ -140,15 +114,6 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
     getTransferSingleData()
   }, [])
 
-  console.log(
-    "Data prior to render:", 
-    {
-    customerAddress: customerAddress,
-    lastCardTransferred: lastCardTransferred, 
-    loyaltyCardsMinted: loyaltyCardsMinted, 
-    selectedLoyaltyProgram: selectedLoyaltyProgram
-  })
-
   return (
     <div className=" w-full grid grid-cols-1 gap-1 overflow-x-auto">
 
@@ -156,14 +121,14 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
         <TitleText title = "Transfer Loyalty Card" subtitle="Transfer a single card to a customer." size = {2} />
       </div>
 
-      { loyaltyCardsMinted.data ? 
+      { loyaltyCardsMinted ? 
         <div className="flex justify-center"> 
           <p className="p-2 w-1/2 text-center border-b border-slate-700">
-            {`${ Number(parseBigInt(loyaltyCardsMinted?.data)) - Number(lastCardTransferred)} loyalty cards left.`}
+            {`${ Number(parseBigInt(loyaltyCardsMinted))- Number(lastCardTransferred)} loyalty cards left.`}
           </p>
         </div>
         :
-        <MintCards modal = {modal} setModal = {setModal} /> 
+        <MintCards /> 
       }
 
       {customerAddress ? 
@@ -187,7 +152,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
 
           { modal === 'cards' ? 
             <div> 
-              <MintCards modal = {modal} setModal = {setModal} /> 
+              <MintCards /> 
             </div>
             : 
             null 
@@ -225,7 +190,12 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
                 </div> 
                 :
                 <div className="p-3 flex ">
-                  <Button onClick={ transferCard.write } appearance="grayEmpty">
+                  <Button appearance="grayEmpty" onClick={() => writeContract({ 
+                    abi: loyaltyProgramAbi,
+                    address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+                    functionName: "safeTransferFrom", 
+                    args: [address, customerAddress,  Number(lastCardTransferred) + 1, 1, ""]
+                    })} >
                       Transfer Loyalty Card
                   </Button>
                 </div>

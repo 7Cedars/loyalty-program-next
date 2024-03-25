@@ -23,6 +23,7 @@ export default function ChooseProgram()  {
 
   const getLoyaltyProgramAddresses = async () => {
     setStatusFetchingAddresses("isLoading")
+    if (publicClient)
     try { 
         const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
           abi: loyaltyProgramAbi, 

@@ -24,7 +24,7 @@ export default function RequestCard()  {
 
   console.log("cardReceived: ", cardReceived)
 
-  if (selectedLoyaltyProgram) {
+  if (selectedLoyaltyProgram && publicClient) {
     publicClient.watchContractEvent({
       abi: loyaltyProgramAbi,
       eventName: 'TransferSingle', 

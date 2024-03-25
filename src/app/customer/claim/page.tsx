@@ -56,7 +56,7 @@ export default function Page() {
 
   const fetchCardBalance = async () => {
     console.log("fetchCardBalance TRIGGERED, selectedLoyaltyCard: ", selectedLoyaltyCard)
-    if (selectedLoyaltyCard)
+    if (selectedLoyaltyCard && publicClient)
       try {
         const loyaltyCardPoints = await publicClient.readContract({
           address: parseEthAddress(selectedLoyaltyCard.loyaltyProgramAddress), 
@@ -89,6 +89,7 @@ export default function Page() {
     status.current = "isLoading"
     console.log("getAddedGifts called")
 
+    if (publicClient)
     try {
       const addedGifts: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
@@ -114,7 +115,7 @@ export default function Page() {
     let loyaltyGift: LoyaltyGift
     let loyaltyGiftsUpdated: LoyaltyGift[] = []
 
-    if (data) { 
+    if (data && publicClient) { 
       try {
         for await (loyaltyGift of data) {
           const isClaimable: unknown = await publicClient.readContract({

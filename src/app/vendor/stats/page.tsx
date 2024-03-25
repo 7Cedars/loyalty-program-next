@@ -49,6 +49,7 @@ export default function Page() {
 
   const getTransferSingleTo = async () => {
     statusTransferSingleTo.current = "isLoading"
+    if (publicClient)
     try { 
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
@@ -70,6 +71,7 @@ export default function Page() {
 
   const getTransferSingleFrom = async () => {
     statusTransferSingleFrom.current = "isLoading"
+    if (publicClient)
     try { 
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
@@ -91,7 +93,7 @@ export default function Page() {
 
   const getTransferBatchTo = async () => {
     statusTransferBatchTo.current = "isLoading"
-
+    if (publicClient)
     try { 
       const transferBatchLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
@@ -118,7 +120,7 @@ export default function Page() {
     let transaction: Transaction
     let transactionUpdated: Transaction[] = []
 
-    if (transactions) { 
+    if (transactions && publicClient) { 
       try {
         for await (transaction of transactions) {
         const data: unknown = await publicClient.getBlock({
@@ -218,12 +220,12 @@ export default function Page() {
         { 
           modal === 'points' ? 
             <div className="p-3 px-4 grid grid-cols-1 h-full">
-              <MintPoints modal = {modal} setModal = {setModal} /> 
+              <MintPoints /> 
             </div>
         :
           modal === 'cards' ? 
             <div> 
-              <MintCards modal = {modal} setModal = {setModal} /> 
+              <MintCards /> 
             </div>
         : 
           status == "isLoading" ? 
@@ -408,8 +410,6 @@ export default function Page() {
             </div>
           </div>
       }
-      {/* <div className="pb-6" /> */}
-      
     </div> 
   )
 }

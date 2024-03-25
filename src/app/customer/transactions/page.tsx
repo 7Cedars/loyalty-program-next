@@ -46,6 +46,7 @@ export default function Page() {
 
   const getTransactionsTo = async () => {
     statusTransactionsTo.current = "isLoading"
+    if (publicClient)
     try { 
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
@@ -68,7 +69,7 @@ export default function Page() {
 
   const getTransactionsFrom = async () => {
     statusTransactionsFrom.current = "isLoading"
-
+    if (publicClient)
     try { 
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
@@ -91,6 +92,7 @@ export default function Page() {
 
   const getTokensTo = async () => {
     statusTokensTo.current = "isLoading"
+    if (publicClient)
     try {
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyGiftAbi, 
@@ -111,6 +113,7 @@ export default function Page() {
 
   const getTokensFrom = async () => {
     statusTokensFrom.current = "isLoading"
+    if (publicClient)
     try {
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyGiftAbi, 
@@ -136,7 +139,7 @@ export default function Page() {
     let transaction: Transaction
     let transactionUpdated: Transaction[] = []
 
-    if (transactions) { 
+    if (transactions && publicClient) { 
       try {
         for await (transaction of transactions) {
         const data: unknown = await publicClient.getBlock({
