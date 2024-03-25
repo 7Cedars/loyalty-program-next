@@ -23,17 +23,6 @@ export const useVendorAccount = () => {
   const statusFetchBalances = useRef<Status>("isIdle") 
   const [status, setStatus] = useState<Status>("isIdle") 
 
-  console.log("useState @useVendorAccount: ", {
-    mintedCards: mintedCards, 
-    balances: balances
-  })
-  
-  console.log("status at transactions: ", {
-    statusMintedCards: statusMintedCards, 
-    statusFetchBalances: statusFetchBalances, 
-    status: status
-  })
-
   /// Fetch number of Cards Minted ///  
   const fetchMintedCards = async () => {
     if (selectedLoyaltyProgram && publicClient) {
@@ -62,11 +51,6 @@ export const useVendorAccount = () => {
       statusFetchBalances.current = "isLoading"
       const tokenIds = Array.from({length: mintedCards + 1}, (_, index) => index);
       const addressArray = new Array(mintedCards + 1).fill(selectedLoyaltyProgram.programOwner)   
-
-      console.log({
-        tokenIds: tokenIds, 
-        addressArray: addressArray
-      })
 
       if (tokenIds.length == addressArray.length && publicClient)
         try {

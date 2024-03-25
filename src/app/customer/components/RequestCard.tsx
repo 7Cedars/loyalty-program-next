@@ -22,8 +22,6 @@ export default function RequestCard()  {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const dispatch = useDispatch() 
 
-  console.log("cardReceived: ", cardReceived)
-
   if (selectedLoyaltyProgram && publicClient) {
     publicClient.watchContractEvent({
       abi: loyaltyProgramAbi,

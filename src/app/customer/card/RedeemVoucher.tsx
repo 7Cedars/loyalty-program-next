@@ -45,7 +45,6 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
           functionName: 'getNonceLoyaltyCard',
           args: [selectedLoyaltyCard?.cardAddress]
         })
-        console.log("rawNonceData: ", rawNonceData)
         const nonceData = parseBigInt(rawNonceData); 
         setNonceData(nonceData)
         } catch (error) {

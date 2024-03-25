@@ -41,8 +41,6 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const publicClient = usePublicClient()
 
   const getTransferSingleData = async () => {
-    console.log("getTransferSingleData called")
-
     if (publicClient) {
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 

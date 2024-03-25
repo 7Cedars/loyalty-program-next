@@ -33,9 +33,6 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { writeContract, isError, isSuccess, data } = useWriteContract()
 
-  console.log("QRDATA @claim gift: ", qrData)
-  console.log("loyaltyGifts @claim gift: ", loyaltyGifts)
-
   useEffect(() => {
     if (!loyaltyGifts && qrData) {
             

@@ -14,6 +14,7 @@ import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
 import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import Image from "next/image";
 import { useAppSelector } from "@/redux/hooks";
+import { config } from '../../../../config' 
 
 type setSelectedTokenProps = {
   token: LoyaltyGift; 
@@ -27,9 +28,7 @@ export default function Page() {
   const [activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyGift[] >([]) 
   const [inactiveLoyaltyGifts, setInactiveLoyaltyGifts] = useState<LoyaltyGift[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
-  const publicClient = usePublicClient()
-
-  console.log("loyaltyGifts @selectGifts: ", loyaltyGifts)
+  const publicClient = usePublicClient({config,})
 
   const getTokenSelection = async () => {
     setStatusTokenSelection("isLoading")
@@ -49,7 +48,7 @@ export default function Page() {
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'RemovedLoyaltyGiftClaimable', 
         fromBlock: 25888893n,
-        toBlock: 16330050n
+        // toBlock: 16330050n
       }); 
       const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
 
@@ -81,12 +80,7 @@ export default function Page() {
       console.log(error)
     }
   }
-
-  console.log({
-    ActiveLoyaltyGifts: activeLoyaltyGifts, 
-    InactiveLoyaltyGifts: inactiveLoyaltyGifts
-  })
-
+  
   useEffect(() => {
     if (!loyaltyGifts) fetchGifts()
     if (loyaltyGifts) getTokenSelection() 

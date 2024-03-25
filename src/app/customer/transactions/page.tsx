@@ -34,16 +34,6 @@ export default function Page() {
   const statusBlockData= useRef<Status>("isIdle") 
   const [status, setStatus] = useState<Status>("isIdle") 
 
-  console.log("transactions: ", transactions)
-  console.log("status at transactions: ", {
-    statusTransactionsTo: statusTransactionsTo, 
-    statusTransactionsFrom: statusTransactionsFrom, 
-    statusTokensTo: statusTokensTo, 
-    statusTokensFrom: statusTokensFrom, 
-    statusBlockData: statusBlockData, 
-    status: status
-  })
-
   const getTransactionsTo = async () => {
     statusTransactionsTo.current = "isLoading"
     if (publicClient)
@@ -58,7 +48,6 @@ export default function Page() {
         fromBlock: 25888893n
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
-      // console.log("incoming getTransactionsTo transactions: ", transactions)
       setTransactionsPointsTo([...transactions])
       statusTransactionsTo.current = "isSuccess" 
     } catch (error) {
@@ -134,7 +123,6 @@ export default function Page() {
 
   const getBlockData = async () => {
     statusBlockData.current = "isLoading"
-    console.log("getBlockData Triggered!")
 
     let transaction: Transaction
     let transactionUpdated: Transaction[] = []

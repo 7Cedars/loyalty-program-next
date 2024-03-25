@@ -13,7 +13,6 @@ export function useUrlProgramAddress() {
   const { progAddress }  = getProgAddressFromUseSearchParams(params);
 
   const putProgAddressInUrl = (progAddress: EthAddress | null) => {
-    console.log("putProgAddressInUrl called.")
     let newParams = new URLSearchParams(params.toString());
     if (progAddress) {
       newParams.set('prog', progAddress)

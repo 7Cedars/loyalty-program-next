@@ -27,10 +27,6 @@ export const useLatestCustomerTransaction = (polling: boolean) => {
       pollingInterval: 5_000, 
       onLogs: (logs: Log[]) => setLatestReceived(parseTransferSingleLogs(logs)) 
     })
-    console.log("latestReceived: ", latestReceived)
-    console.log("latestSent: ", latestSent)
-    console.log("selectedLoyaltyProgram @latestTransaction: ", selectedLoyaltyProgram)
-    console.log("selectedLoyaltyCard @latestTransaction: ", selectedLoyaltyCard)
   
     publicClient.watchContractEvent({
       abi: loyaltyProgramAbi,
@@ -90,10 +86,6 @@ export const useLatestVendorTransaction = (polling: boolean) => {
       pollingInterval: 5_000, 
       onLogs: (logs: Log[]) => setLatestReceived(parseTransferSingleLogs(logs)) 
     })
-    console.log("latestReceived: ", latestReceived)
-    console.log("latestSent: ", latestSent)
-    console.log("selectedLoyaltyProgram @latestTransaction: ", selectedLoyaltyProgram)
-    console.log("selectedvendor @latestTransaction: ", address)
 
     publicClient.watchContractEvent({
       abi: loyaltyProgramAbi,

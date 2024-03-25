@@ -23,17 +23,7 @@ export const useLoyaltyPrograms = () => {
   const [ data, setData ] = useState<LoyaltyProgram[] | undefined>() 
   const [ loyaltyPrograms, setLoyaltyPrograms ] = useState<LoyaltyProgram[]>() 
 
-  // console.log("address: ", address)
-  console.log("status @useLoyaltyProgram: ", {
-    statusAtUri: statusAtUri.current, 
-    statusAtProgramOwner: statusAtProgramOwner.current, 
-    statusAtMetadata: statusAtMetadata.current
-  })
-  console.log("data: ", data)
-  console.log("loyaltyPrograms: ", loyaltyPrograms)
-
   const fetchPrograms = (requestedPrograms: LoyaltyProgram[] ) => {
-    console.log("FETCHPROGRAMS CALLLED, requestedPrograms: ", requestedPrograms)
     setStatus("isIdle")
     setData(undefined)
     setLoyaltyPrograms(undefined)
@@ -42,7 +32,6 @@ export const useLoyaltyPrograms = () => {
 
   const getLoyaltyProgramsUris = async (requestedPrograms: LoyaltyProgram[] ) => {
     statusAtUri.current = "isLoading" 
-    console.log("data @getLoyaltyProgramsUris: ", data)
 
     let loyaltyProgram: LoyaltyProgram
     let loyaltyProgramsUpdated: LoyaltyProgram[] = []
@@ -57,7 +46,6 @@ export const useLoyaltyPrograms = () => {
             functionName: 'uri',
             args: [0]
           })
-          console.log("uri: ", uri)
           loyaltyProgramsUpdated.push({...loyaltyProgram, uri: `${parseUri(uri)}`})
         }
         statusAtUri.current = "isSuccess" 
@@ -85,7 +73,6 @@ export const useLoyaltyPrograms = () => {
           abi: loyaltyProgramAbi,
           functionName: 'getOwner'
         })
-        console.log("getLoyaltyProgramOwner: ", owner)
         loyaltyProgramsUpdated.push({...loyaltyProgram, programOwner: `${parseEthAddress(owner)}`})
       }
       statusAtProgramOwner.current = "isSuccess" 

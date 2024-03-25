@@ -38,15 +38,6 @@ export default function Page() {
   const statusBlockData= useRef<Status>("isIdle") 
   const [status, setStatus] = useState<Status>("isIdle") 
 
-  console.log("transactions @stats vendor: ", transactions)
-  console.log("status at @stats vendor: ", {
-    statusTransferSingleTo: statusTransferSingleTo, 
-    statusTransferSingleFrom: statusTransferSingleFrom, 
-    statusTransferBatchTo: statusTransferBatchTo, 
-    statusBlockData: statusBlockData, 
-    status: status
-  })
-
   const getTransferSingleTo = async () => {
     statusTransferSingleTo.current = "isLoading"
     if (publicClient)

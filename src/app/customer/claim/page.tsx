@@ -43,19 +43,11 @@ export default function Page() {
   const polling = useRef<boolean>(false)
   const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction(polling.current) 
 
-  console.log("status @claim page: ", {
-    statusAtgiftAddress: statusAtAddedGifts.current,
-    statusAtUri: statusAtClaimableGifts.current, 
-    statusLoyaltyGifts: statusLoyaltyGifts
-  })
-  console.log("data @claim page: ", data)
-
   ///////////////////////////////////
   ///     Fetch Card Balance      ///
   ///////////////////////////////////
 
   const fetchCardBalance = async () => {
-    console.log("fetchCardBalance TRIGGERED, selectedLoyaltyCard: ", selectedLoyaltyCard)
     if (selectedLoyaltyCard && publicClient)
       try {
         const loyaltyCardPoints = await publicClient.readContract({
@@ -64,8 +56,6 @@ export default function Page() {
           functionName: 'getBalanceLoyaltyCard', 
           args: [ selectedLoyaltyCard.cardAddress ]
         });
-        console.log("fetchCardBalance TRIGGERED, loyaltyCardPoints: ", loyaltyCardPoints)
-
         const updatedLoyaltyCard = {...selectedLoyaltyCard, balance: Number(parseBigInt(loyaltyCardPoints))}
         dispatch(selectLoyaltyCard(updatedLoyaltyCard))
 
@@ -87,7 +77,6 @@ export default function Page() {
   const getAddedGifts = async () => {
     statusAtAddedGifts.current = "isLoading"
     status.current = "isLoading"
-    console.log("getAddedGifts called")
 
     if (publicClient)
     try {
@@ -110,7 +99,6 @@ export default function Page() {
 
   const getClaimableGifts = async () => {
     statusAtClaimableGifts.current = "isLoading"
-    console.log("getClaimableGifts called")
 
     let loyaltyGift: LoyaltyGift
     let loyaltyGiftsUpdated: LoyaltyGift[] = []
@@ -124,9 +112,7 @@ export default function Page() {
             functionName: 'getLoyaltyGiftsIsClaimable', 
             args: [loyaltyGift.giftAddress, loyaltyGift.giftId]
           })
-          console.log("isClaimable: ", isClaimable)
           isClaimable == 1n ? loyaltyGiftsUpdated.push(loyaltyGift) : null
-          console.log("loyaltyGiftsUpdated: ", loyaltyGiftsUpdated)
         }
         statusAtClaimableGifts.current = "isSuccess" 
         setData(loyaltyGiftsUpdated) 
@@ -167,7 +153,6 @@ export default function Page() {
   }, [ statusAtAddedGifts, statusAtClaimableGifts, data ])
 
   useEffect(() => {
-    console.log("useEffect with fetchCardBalance TRIGGERED")
     fetchCardBalance() 
     if (tokenReceived) {
       polling.current = false

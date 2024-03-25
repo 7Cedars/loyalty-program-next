@@ -5,9 +5,7 @@ function loggedMethod<This, Args extends any[], Return>(
   const methodName = String(context.name);
 
   function replacementMethod(this: This, ...args: Args): Return {
-      console.log(`LOG: Entering method '${methodName}' with args: ${args}.`)
       const result = target.call(this, ...args);
-      console.log(`LOG: Exiting method '${methodName}'.`)
       return result;
   }
 

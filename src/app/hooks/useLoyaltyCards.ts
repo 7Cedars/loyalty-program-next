@@ -23,16 +23,7 @@ export const useLoyaltyCards = () => {
   const [ data, setData ] = useState<LoyaltyCard[] | undefined>() 
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[]>() 
 
-  console.log("status @useLoyaltyCards: ", {
-    statusAtIds: statusAtIds.current,
-    statusAtCheckOwned: statusAtCheckOwned.current, 
-    statusAtAddress: statusAtAddress.current
-  })
-  console.log("data @useLoyaltyCards: ", data)
-  console.log("loyaltyCards: ", loyaltyCards)
-
   const fetchCards = ({userAddress, programAddress}: FetchCardsProps) => {
-    console.log("FETCH CARDS CALLED @useLoyaltyCards")
     setStatus("isIdle")
     setData(undefined)
     setLoyaltyCards(undefined)

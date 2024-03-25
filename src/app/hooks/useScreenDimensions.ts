@@ -8,9 +8,7 @@ import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 export const useScreenDimensions = () => {
 
   const [dimensions, setDimensions] = useState({height: 1, width: 1});
-
-  console.log("dimensions: ", dimensions)
-
+  
   const handleResize = () => {
     setDimensions({
       height: window.innerHeight, 

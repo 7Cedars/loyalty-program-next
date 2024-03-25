@@ -38,12 +38,6 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const { data: walletClient, status } = useWalletClient();
   const { data: signature, isPending, isError, isSuccess, signTypedData, reset } = useSignTypedData()
 
-  console.log("selectedLoyaltyCard?.cardAddress: ", selectedLoyaltyCard?.cardAddress)
-  console.log("parseEthAddress(selectedLoyaltyProgram?.programAddress): ", parseEthAddress(selectedLoyaltyProgram?.programAddress))
-  console.log("nonceData: ", nonceData)
-  console.log("chain: ",chain )
-  console.log("token: ", token)
-
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
       if (publicClient)
@@ -54,7 +48,6 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
           functionName: 'getNonceLoyaltyCard',
           args: [selectedLoyaltyCard?.cardAddress]
         })
-        console.log("rawNonceData: ", rawNonceData)
         const nonceData = parseBigInt(rawNonceData); 
         setNonceData(nonceData)
         } catch (error) {
@@ -95,8 +88,6 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   //   chainId: chain?.id,
   //   verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
   // } as const
-
-  // console.log("domain: ", domain)
   
   // The named list of all type definitions
   const types = {
@@ -117,9 +108,6 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
     cost: `${token?.metadata?.attributes[1].value} points`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const
-
-  console.log("message: ", message)
-  
 
   useEffect(() => { 
     if (isPending) {

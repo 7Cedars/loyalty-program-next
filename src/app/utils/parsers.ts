@@ -168,7 +168,6 @@ const parseArgsLoyaltyGift = (args: unknown): {issuer: EthAddress, tokenised: Bi
 }
 
 const parseArgsTransferSingle = (args: unknown): TransactionArgs => {
-  // console.log("parseArgsTransferSingle called ")
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');
   }
@@ -180,7 +179,6 @@ const parseArgsTransferSingle = (args: unknown): TransactionArgs => {
     'id' in args && 
     'value' in args
     ) { 
-      // console.log(parseNumber(args.id))
     return ({
       operator: parseEthAddress(args.operator),
       from: parseEthAddress(args.from), 
@@ -193,7 +191,6 @@ const parseArgsTransferSingle = (args: unknown): TransactionArgs => {
 }
 
 const parseArgsTransferBatch = (args: unknown): TransactionArgs => {
-  // console.log("parseArgsTransferSingle called ")
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');
   }
@@ -205,7 +202,6 @@ const parseArgsTransferBatch = (args: unknown): TransactionArgs => {
     'ids' in args && 
     'values' in args
     ) { 
-      // console.log(parseNumber(args.id))
       if ( !isArray(args.ids) ) {
         throw new Error('args.ids is not an array');
       } 
@@ -308,7 +304,6 @@ export const parseTokenContractLogs = (logs: Log[]): LoyaltyGift[] => {
         'args' in log
         ) { 
           const tokenIds = parseArgsLoyaltyGift(log.args).tokenised 
-          console.log("tokenIds @parseTokenContractLogs" , tokenIds)
           const temp = tokenIds.map((tokenId, i) => ({
             giftAddress: parseEthAddress(log.address), 
             issuer: parseArgsLoyaltyGift(log.args).issuer, 
@@ -341,14 +336,10 @@ export const parseLoyaltyGiftLogs = (logs: Log[]): {giftAddress: EthAddress, gif
       }
 
       if ( 'args' in log ) {
-        console.log("parseArgsAddRemoveLoyaltyGift(log.args): ",log.args)
         return parseArgsAddRemoveLoyaltyGift(log.args)
       } 
         throw new Error('Incorrect data at LoyaltyGift logs: some fields are missing or incorrect');
     })
-
-    console.log("parsedLogs: ", parsedLogs)
-
     return parsedLogs as {giftAddress: EthAddress, giftId: number}[]
 
   } catch {
@@ -399,7 +390,6 @@ export const parseTransferSingleLogs = (logs: Log[]): Transaction[] => {
         'logIndex' in log && 
         'blockNumber' in log
         ) {
-        // console.log('lala' , log.args )
         return ({
           address: parseEthAddress(log.address),
           blockNumber: parseBigInt(log.blockNumber),
@@ -433,7 +423,6 @@ export const parseTransferBatchLogs = (logs: Log[]): Transaction[] => {
         'logIndex' in log && 
         'blockNumber' in log
         ) {
-        // console.log('lala' , log.args )
         return ({
           blockNumber: parseBigInt(log.blockNumber),
           logIndex: parseNumber(log.logIndex),
@@ -496,9 +485,6 @@ export const parseUri = (uri: unknown): string => {
 };
 
 export const parseMetadata = (metadata: unknown): Metadata => {
-
-  console.log("metadata @parseMetadata: ", metadata)
-
   if ( !metadata || typeof metadata !== 'object' ) {
     throw new Error('Incorrect or missing data');
   }
@@ -521,7 +507,6 @@ export const parseMetadata = (metadata: unknown): Metadata => {
 };
 
 export const parseQrData = (qrText: unknown): QrData => {
-  console.log("parseQrData CALLED:", qrText)
   if ( !qrText || typeof qrText !== 'string' ) {
     throw new Error('Incorrect or missing data');
   }
@@ -532,8 +517,7 @@ export const parseQrData = (qrText: unknown): QrData => {
       ) { 
         try {
           const data = qrText.split(";")
-          // console.log("DATA: ", data)
-          
+ 
           if (data[0].includes("giftPoints")) {
             return {
               type: "giftPoints",  

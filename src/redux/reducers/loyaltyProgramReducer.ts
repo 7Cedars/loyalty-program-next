@@ -15,11 +15,9 @@ export const selectedLoyaltyProgramSlice = createSlice({
   initialState: initialState,
   reducers: {
     selectLoyaltyProgram: (state, action: PayloadAction<LoyaltyProgram>) => {
-      console.log(`selectLoyaltyProgram called. Action Payload: ${Object.values(action.payload)} `)
       state.selectedLoyaltyProgram = action.payload
     }, 
     resetLoyaltyProgram: (state, action: PayloadAction<boolean>) => {
-      // console.log("prioritizeNotification called")
       if (action.payload === true) {
         state.selectedLoyaltyProgram = undefined
       }
