@@ -11,7 +11,6 @@ export default function UrlToLocalStorage() {
   const params = useSearchParams();
   const progAddress = params.get('prog') // parseEthAddress
   const progUri = params.get('proguri')  
-  const chainId = params.get('chainId')  
 
   const checked = useRef<boolean>(false)
 
@@ -19,13 +18,11 @@ export default function UrlToLocalStorage() {
     if (
       progAddress && 
       progUri && 
-      chainId && 
       !checked.current && 
       typeof window !== 'undefined'
       ) {
       localStorage.setItem("progAddress", progAddress)
       localStorage.setItem("progUri", progUri)
-      localStorage.setItem("progChainId", chainId)
       window.dispatchEvent(new Event("localStorageUpdated"));
       checked.current = true
     }

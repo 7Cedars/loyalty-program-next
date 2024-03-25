@@ -22,9 +22,7 @@ import { useWeb3Modal } from "@web3modal/wagmi/react";
 export default function Page()  {
   const [progAddress, setProgAddress] = useState<string | null  >(); 
   const [progUri, setProgUri] = useState<string | null >(); 
-  const [progChainId, setProgChainId] = useState<number | null >(); 
   const { data: walletClient, status } = useWalletClient();
-  const { open, close } = useWeb3Modal()
 
   console.log("walletClient: ", walletClient)
 
@@ -32,7 +30,6 @@ export default function Page()  {
     window.addEventListener('localStorageUpdated', () => {
       setProgAddress(localStorage.getItem("progAddress"))
       setProgUri(localStorage.getItem("progUri")) 
-      setProgChainId(Number(localStorage.getItem("progChainId")))  
     })
   }, [])
   
