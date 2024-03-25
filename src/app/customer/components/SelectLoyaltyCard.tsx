@@ -22,8 +22,6 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
   const dispatch = useDispatch() 
 
   const getLoyaltyCardsPoints = async () => {
-    console.log("getLoyaltyCardsPoints called")
-
     let loyaltyCard: LoyaltyCard
     let loyaltyPointsUpdated: {cardAddress: EthAddress | undefined, points: Number}[] = []
 
@@ -38,9 +36,6 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
               functionName: 'getBalanceLoyaltyCard', 
               args: [ loyaltyCard.cardId ]
             });
-
-            console.log("loyaltyCardPointsData: ", loyaltyCardPointsData)
-
             loyaltyPointsUpdated.push({cardAddress: loyaltyCard.cardAddress, points: Number(parseBigInt(loyaltyCardPointsData))})
 
             if (loyaltyPointsUpdated) setLoyaltyCardPoints(loyaltyPointsUpdated)

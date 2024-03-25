@@ -9,11 +9,7 @@ type SelectedTokenProps = {
 }
 
 export default function SelectToken( {token, disabled, onClick}: SelectedTokenProps ) {
-
-  // console.log("data loyaltyGifts: ", token)
   let appearance = `h-72 w-40 m-2 grid grid-cols-1 border rounded-lg border-gray-200 ${ disabled ? 'opacity-50' : null} `
-
-  // console.log("token @SelectToken: ", token)
 
   return (
      

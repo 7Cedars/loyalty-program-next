@@ -24,12 +24,9 @@ export const notificationsSlice = createSlice({
     */
 
     notification: (state, action: PayloadAction<Notification>) => {
-      console.log(`addNotification called. Action Payload: ${Object.values(action.payload)} `)
       let notificationIds = state.notifications.map(notification => notification.id)
       let index = notificationIds.indexOf(action.payload.id)
-
       let notificationVisibles= state.notifications.map(notification => notification.isVisible)
-      console.log("notificationIds: ", notificationIds, notificationVisibles); 
 
       if (index === -1) { 
         const newNotification: Notification = {
@@ -45,9 +42,7 @@ export const notificationsSlice = createSlice({
       }
       
       notificationIds = state.notifications.map(notification => notification.id)
-      index = notificationIds.indexOf(action.payload.id) 
-
-      // console.log("INDEX notification2: ", index)
+      index = notificationIds.indexOf(action.payload.id)
 
       action.payload.message ? 
         state.notifications[index].message = action.payload.message : null 
@@ -66,14 +61,8 @@ export const notificationsSlice = createSlice({
 
       action.payload.progressInPercent ? 
         state.notifications[index].progressInPercent = action.payload.progressInPercent : null
-
-      //  console.log("action.payload.visible: ", action.payload.visible)
-      // console.log("state.notifications[index]", Object.keys(state.notifications[index]),  Object.values(state.notifications[index]))
-
-
     }, 
     prioritizeNotification: (state, action: PayloadAction<string>) => {
-      // console.log("prioritizeNotification called")
       const notificationIds = state.notifications.map(notification => notification.id)
       const index = notificationIds.indexOf(action.payload) 
 
@@ -83,8 +72,6 @@ export const notificationsSlice = createSlice({
       }
     }, 
     updateNotificationVisibility: (state, action: PayloadAction< UpdateVisibiltyProps >) => {
-      // console.log("updateNotificationVisibility CALLED: ", action.payload)
-
       const selectedNotification = state.notifications.find(notification => notification.id === action.payload.id)
       if (selectedNotification) { 
         selectedNotification.isVisible = action.payload.isVisible; 
@@ -95,18 +82,6 @@ export const notificationsSlice = createSlice({
         }
 
     },
-    // purgeInvisibleNotifications: (state, action: PayloadAction<NotificationId>) => {
-    //   console.log("removeNotification called")
-    //   state.notifications.filter(
-    //     notification => { notification.id !== action.payload.id } 
-    //   )
-    // }, 
-    // deleteNotifications: (state, action: PayloadAction<NotificationId>) => {
-    //   console.log("removeNotification called")
-    //   state.notifications.filter(
-    //     notification => { notification.id !== action.payload.id } 
-    //   )
-    // }
   }
 })
 

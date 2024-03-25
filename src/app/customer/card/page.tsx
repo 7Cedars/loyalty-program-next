@@ -36,8 +36,6 @@ export default function Page() {
   const polling = useRef<boolean>(false) 
   const { tokenReceived, tokenSent, latestSent } = useLatestCustomerTransaction(polling.current) 
 
-  console.log("claimedVouchers: ", claimedVouchers)
-
   ///////////////////////////////////
   ///     Fetch Card Balance      ///
   ///////////////////////////////////
@@ -71,8 +69,6 @@ export default function Page() {
   ///////////////////////////////////
 
   const getClaimedLoyaltyVouchers = async () => {
-    console.log("getClaimedLoyaltyVouchers called")
-    console.log("latestSent @redeem token: ", latestSent)
     statusGetClaimedVouchers.current = "isLoading"
 
     if (publicClient) {

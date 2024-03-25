@@ -42,9 +42,6 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
         isVisible: true
       }))
     }
-    if (waitForTransaction.status) {
-      console.log("data waitForTransaction: ", waitForTransaction.status)
-    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waitForTransaction.isSuccess, waitForTransaction.status ])
 
@@ -62,12 +59,6 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
   useEffect(() => {
     if (isSuccess)  setHashTransaction(data)
   }, [isSuccess])
-
-
-  const handleChange = (number: number) => {
-    setNumpadNumber(number)
-    console.log("NUMPAD number: ", number)
-  }
 
   return (
     <div className="flex flex-col justify-between justify-center pt-2 h-full">
@@ -90,7 +81,7 @@ export default function SendPoints({qrData, setData}: SendPointsProps)  {
         {`${numpadNumber} points`}
       </p>
       <div className="grid grid-cols-1 justify-items-center"> 
-        <NumPad onChange={(number: number) => handleChange(number) } /> 
+        <NumPad onChange={(number: number) => setNumpadNumber(number) } /> 
     
         <div className="w-72 mt-3 flex justify-center"> 
 

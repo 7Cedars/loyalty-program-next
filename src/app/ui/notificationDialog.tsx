@@ -27,17 +27,9 @@ export const NotificationDialog = () => {
   const { data: walletClient, status } = useWalletClient();
   const dispatch = useAppDispatch()
 
-  // const handleLoginRequest = () => {
-  //   open({view: "Networks"}) 
-  // }
-
-  console.log("walletClient: ", walletClient)
-
   const notificationToShow = notifications.findLast(notification => notification.isVisible !== false)
   let colour: "red" | "yellow" | "green" | "gray" | "invisible" = "gray"
   notificationToShow?.colour ? colour = notificationToShow?.colour : "gray" 
-
-  console.log("notificationToShow: ", notificationToShow)
 
   if (notificationToShow === undefined ) {
     return null 

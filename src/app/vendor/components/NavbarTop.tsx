@@ -17,11 +17,6 @@ const NavbarTop = ( ) => {
   const { open } = useWeb3Modal()
   // const { selectedLoyaltyProgram?.programAddress } = useUrlProgramAddress()
   const path = usePathname()
-  const { data: walletClient, status } = useWalletClient();
-
-  const handleLogin = () => {
-    walletClient ? open({view: "Account"}) : open({view: "Networks"})
-  }
 
   useEffect(() => {
     if (address && selectedNetworkId != undefined) {
@@ -62,7 +57,7 @@ const NavbarTop = ( ) => {
               Stats 
           </Link>
         </div> 
-        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => handleLogin()}> 
+        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open()}> 
            {text} 
         </button>
 

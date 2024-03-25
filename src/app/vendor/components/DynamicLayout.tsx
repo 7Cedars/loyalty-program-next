@@ -28,11 +28,6 @@ export const DynamicLayout = ({
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
 
-  console.log("address at DynamicLayout: ", address)
-  console.log("selectedLoyaltyProgram at DynamicLayout: ", selectedLoyaltyProgram)
-  console.log("userLoggedIn at DynamicLayout: ", selectedLoyaltyProgram)
-  console.log("modalVisible: ", modalVisible) 
-
   useEffect(() => {
     if (address != userLoggedIn) {
       setUserLoggedIn(undefined)
@@ -59,8 +54,6 @@ export const DynamicLayout = ({
     }
 
   }, [ , address])
-
-  console.log("selectedLoyaltyProgram: ", selectedLoyaltyProgram)
 
   if (!selectedLoyaltyProgram) {
     return (

@@ -57,7 +57,6 @@ export default function Page() {
               onResult={(result, error) => {
                 if (!!result) {
                   const qrData = parseQrData(result?.getText()) 
-                  console.log("qrData parsed: ", qrData)
                   setData(qrData);
                 }
                 if (!!error) {

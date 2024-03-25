@@ -37,9 +37,6 @@ export const DynamicLayout = ({
   const { status: statusUseLoyaltyPrograms, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms()
   const { status: statusUseLoyaltyCards, loyaltyCards, fetchCards } = useLoyaltyCards ()
 
-  console.log("statusUseLoyaltyPrograms: ", statusUseLoyaltyPrograms)
-  console.log("statusUseLoyaltyCards: ", statusUseLoyaltyCards)
-
   useEffect(() => {
     const progAddress = localStorage.getItem("progAddress") || ""
     if (
@@ -193,81 +190,3 @@ export const DynamicLayout = ({
   </div>
   </>
 )};
-
-/////////////////////////
-
-
-  // const getLoyaltyCardIds = async () => {
-  //   if (address != undefined && selectedLoyaltyProgram ) {
-  //     const transferSingleData: Log[] = await publicClient.getContractEvents( { 
-  //       abi: loyaltyProgramAbi,
-  //       address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-  //       eventName: 'TransferSingle',
-  //       args: {to: address}, 
-  //       fromBlock: 25888893n
-  //     });
-  //     const transferredTokens = parseTransferSingleLogs(transferSingleData)
-  //     const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)
-
-  //     if (loyaltyCardData && selectedLoyaltyProgram?.programAddress) { 
-  //       const data: LoyaltyCard[] = loyaltyCardData.map(item => { return ({
-  //         cardId: Number(item.ids[0]), 
-  //         loyaltyProgramAddress: parseEthAddress(selectedLoyaltyProgram?.programAddress)
-  //       })})
-  //       setLoyaltyCards(data) 
-  //     } 
-  //   }
-
-  //   console.log("loyaltyCards: ", loyaltyCards)
-  // }
-
-  // // CHECK BALANCE (if address still owns loyalty Cards!)
-
-  // const getLoyaltyCardData = async () => {
-  //   console.log("getLoyaltyCardAddresses called")
-
-  //   let loyaltyCard: LoyaltyCard
-  //   let loyaltyCardsUpdated: LoyaltyCard[] = []
-
-  //   if (loyaltyCards && loyaltyCards.length > 0  && selectedLoyaltyProgram ) { 
-  //     try {
-  //       for await (loyaltyCard of loyaltyCards) {
-
-  //           const cardAddress: unknown = await publicClient.readContract({
-  //             address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-  //             abi: loyaltyProgramAbi,
-  //             functionName: 'getTokenBoundAddress', 
-  //             args: [loyaltyCard.cardId]
-  //           })
-
-  //           const isOwned: unknown = await publicClient.readContract({
-  //             address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-  //             abi: loyaltyProgramAbi,
-  //             functionName: 'balanceOf', 
-  //             args: [address, loyaltyCard.cardId]
-  //           })
-
-  //           isOwned ? loyaltyCardsUpdated.push({...loyaltyCard, cardAddress: parseEthAddress(cardAddress)}) : null 
-
-  //         }
-  //         setLoyaltyCards(loyaltyCardsUpdated)
-
-  //       } catch (error) {
-  //         console.log(error)
-  //     }
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (!loyaltyCards && selectedLoyaltyProgram) { getLoyaltyCardIds() } // check when address has no cards what happens..  
-  //   if (
-  //     loyaltyCards && 
-  //     loyaltyCards.findIndex(loyaltyCard => loyaltyCard.cardAddress) === -1 
-  //     ) { 
-  //       getLoyaltyCardData() 
-  //     } 
-  // }, [ , loyaltyCards, selectedLoyaltyProgram ])
-
-  // useEffect(() => {
-  //   if (loyaltyCards) { setLoyaltyCards(undefined) } 
-  // }, [ address ])

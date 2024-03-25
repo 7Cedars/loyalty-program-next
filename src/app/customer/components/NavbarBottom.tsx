@@ -79,7 +79,7 @@ const NavbarBottom = ( ) => {
             Transactions
           </div>  
         </Link>
-        <button onClick = {() => open(address ? {view: "Account"} : {view: "Connect"} )} className={layoutLinks} > 
+        <button onClick = {() => open()} className={layoutLinks} > 
           <div className={layoutIconBox}> 
             <ArrowRightOnRectangleIcon
               className={layoutIcons}

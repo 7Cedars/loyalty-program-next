@@ -24,15 +24,6 @@ export const useLoyaltyGifts = () => {
   const statusAtAvailableTokens = useRef<Status>("isIdle") 
   const [data, setData] = useState<LoyaltyGift[] | undefined>() 
   const [loyaltyGifts, setLoyaltyGifts] = useState<LoyaltyGift[] | undefined>() 
-
-  console.log("status @useLoyaltyGifts: ", {
-    statusAtgiftAddress: statusAtgiftAddress.current,
-    statusAtUri: statusAtUri.current, 
-    statusAtMetadata: statusAtMetadata.current,
-    statusAtAvailableTokens: statusAtAvailableTokens.current
-  })
-  console.log("status @useLoyaltyGifts: ", status)
-  console.log("data @useLoyaltyGifts: ", data)
   
   const fetchGifts = (requestedTokens?: LoyaltyGift[] ) => {
     setStatus("isIdle")
@@ -47,7 +38,6 @@ export const useLoyaltyGifts = () => {
     if (requestedTokens) { 
       statusAtgiftAddress.current = "isSuccess"
       setData(requestedTokens)
-      console.log("requestedTokens: ", requestedTokens)
     } else { 
       if (publicClient)
       try { 

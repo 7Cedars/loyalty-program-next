@@ -23,8 +23,6 @@ export default function Page()  {
   const [progUri, setProgUri] = useState<string | null >(); 
   const { data: walletClient, status } = useWalletClient();
 
-  console.log("walletClient: ", walletClient)
-
   useEffect(() => {
     window.addEventListener('localStorageUpdated', () => {
       setProgAddress(localStorage.getItem("progAddress"))

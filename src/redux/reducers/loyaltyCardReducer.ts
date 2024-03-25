@@ -17,7 +17,6 @@ export const selectedLoyaltyProgramSlice = createSlice({
   initialState: initialState,
   reducers: {
     selectLoyaltyCard: (state, action: PayloadAction<LoyaltyCard>) => {
-      console.log(`selectLoyaltyProgram called. Action Payload: ${Object.values(action.payload)} `)
       state.selectedLoyaltyCard = action.payload
     }, 
     resetLoyaltyCard: (state, action: PayloadAction<boolean>) => {
