@@ -18,16 +18,17 @@ const metadata = {
 }
 
 // Create wagmiConfig
-const chains = [arbitrumSepolia] as const // Here place all chains 
+const chains = [arbitrumSepolia, sepolia] as const // Here place all chains 
 export const config = createConfig({
   chains: chains,
   transports: {
-    // [arbitrumSepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
-    [arbitrumSepolia.id]: http(), 
+    [sepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
+    [arbitrumSepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
+    // [arbitrumSepolia.id]: http(), 
   },
   connectors: [
     walletConnect({ projectId, metadata, showQrModal: false }),
-    // injected({ shimDisconnect: true }),
+    // injected({ shimDisconnect: true }), // not needed when using walletConnect connector. 
     emailConnector({ chains, options: { projectId } }) // this is ff-ing cool! Enable ERc-4337 account abstraction with one line of code. What the f! 
   ],
   ssr: true,
