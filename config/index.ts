@@ -31,7 +31,7 @@ export const config = createConfig({
     emailConnector({ chains, options: { projectId } }) // this is ff-ing cool! Enable ERc-4337 account abstraction with one line of code. What the f! 
   ],
   ssr: true,
-  storage: createStorage({
-    storage: cookieStorage
-  })
+  // storage: createStorage({
+  //   storage: cookieStorage
+  // })
 })
