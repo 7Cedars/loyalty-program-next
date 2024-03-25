@@ -20,9 +20,10 @@ createWeb3Modal({
   projectId,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
   enableOnramp: true, // Optional - false as default
-  chainImages: {
-    421614: 'public/images/arbitrumLogo.png' // public/images/arbitrum.svg' -- does nto work yet. 
-  }
+  // chainImages: {
+  //   421614: 'https://github.com/7Cedars/loyalty-program-next/blob/main/public/images/arbitrumLogo.png' // public/images/arbitrum.svg' -- does nto work yet. 
+  // },
+  allWallets: 'ONLY_MOBILE'
 })
 
 export default function Web3ModalProvider({

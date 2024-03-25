@@ -79,7 +79,7 @@ const NavbarBottom = ( ) => {
             Stats 
           </div> 
         </Link>
-        <button onClick = {() => open({view: "Networks"})} className={layoutLinks} > 
+        <button onClick = {() => open()} className={layoutLinks} > 
           <div className={layoutIconBox}> 
             <ArrowRightOnRectangleIcon
               className={layoutIcons}
