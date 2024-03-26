@@ -34,8 +34,6 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const {  pointsSent } = useLatestCustomerTransaction(polling.current) 
   const dispatch = useDispatch() 
   const {address, chain } = useAccount()
-  const {open} = useWeb3Modal()
-  const { data: walletClient, status } = useWalletClient();
   const { data: signature, isPending, isError, isSuccess, signTypedData, reset } = useSignTypedData()
 
   useEffect(() => {
@@ -62,12 +60,12 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const checkRequirementsMet = async () => {
     if (selectedLoyaltyCard && publicClient) {
       try {
-        const requirementsMetData: unknown = await publicClient.readContract({ 
+        await publicClient.readContract({ 
           address: parseEthAddress(token.giftAddress), 
           abi: loyaltyGiftAbi,
           functionName: 'requirementsLoyaltyGiftMet',
           args: [selectedLoyaltyCard.cardAddress, token.giftId, selectedLoyaltyCard.balance]
-        })
+          })
           setRequirementsMet(true)
         } catch {
           setRequirementsMet(false)
@@ -170,6 +168,10 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
       }))
     }
   }, [pointsSent])
+
+  console.log("token.tokenised: ", token.tokenised)
+  console.log("token: ", token)
+  console.log("requirementsMet: ", requirementsMet)
 
   return (
     <div className="grid grid-cols-1"> 
