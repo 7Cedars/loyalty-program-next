@@ -75,7 +75,18 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     if (isSuccess)  setHashTransaction(data)
   }, [isSuccess])
 
-
+  console.log("args claimgift: ", [
+    `${token?.metadata?.name}`, 
+    `${token?.metadata?.attributes[1].value} points`,
+    qrData?.loyaltyToken,
+    qrData?.loyaltyTokenId, 
+    qrData?.loyaltyCardId, 
+    qrData?.customerAddress,
+    token?.metadata?.attributes[1].value, 
+    qrData?.signature
+  ]
+  
+  )
   return (
     <div className="grid grid-cols-1 h-full justify-items-center content-between p-3"> 
 

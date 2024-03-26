@@ -25,11 +25,11 @@ type SelectedTokenProps = {
 export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const publicClient = usePublicClient()
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ requirementsMet, setRequirementsMet] = useState<boolean>() 
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
-  const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const polling = useRef<boolean>(false) 
   const {  pointsSent } = useLatestCustomerTransaction(polling.current) 
   const dispatch = useDispatch() 
@@ -82,13 +82,22 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   /// begin setup for encoding typed data /// 
   // depricated? How does it work without it?!  
   // 
-  // const domain = {
-  //   name: "Loyalty Program",
-  //   version: "1",
-  //   chainId: chain?.id,
-  //   verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
-  // } as const
+  const domain = {
+    name: selectedLoyaltyProgram?.metadata?.name,
+    version: "1",
+    chainId: chain?.id,
+    verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
+  } as const
+
+  console.log("domain: ", 
+  {
+    name: selectedLoyaltyProgram?.metadata?.name,
+    version: "1",
+    chainId: chain?.id,
+    verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
+  })
   
+  console.log("selectedLoyaltyProgram?.metadata?.name: ", selectedLoyaltyProgram?.metadata?.name,)
   // The named list of all type definitions
   const types = {
     RequestGift: [
@@ -103,11 +112,21 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   // // The message that will be hashed and signed
   const message = {
     from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
-    to:  parseEthAddress(selectedLoyaltyProgram?.programAddress),
+    to:  parseEthAddress(selectedLoyaltyCard?.loyaltyProgramAddress),
     gift: `${token?.metadata?.name}`,
     cost: `${token?.metadata?.attributes[1].value} points`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const
+
+  console.log("message: ", {
+    from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
+    to:  parseEthAddress(selectedLoyaltyProgram?.programAddress),
+    gift: `${token?.metadata?.name}`,
+    cost: `${token?.metadata?.attributes[1].value} points`,
+    nonce: nonceData ? parseBigInt(nonceData) : 0n,
+  })
+
+  console.log("nonceData: ", nonceData)
 
   useEffect(() => { 
     if (isPending) {
@@ -207,7 +226,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
             { token.tokenised == 1n ? 
 
               <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
-                // domain, 
+                domain, 
                 types, 
                 primaryType: 'RequestGift',
                 message

@@ -144,7 +144,7 @@ export default function Page() {
      <div className=" w-full h-full flex flex-col content-start overflow-auto">
 
       <div className="h-fit m-3 break-words"> 
-        <TitleText title = "Your Card" subtitle={`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.loyaltyProgramAddress}`} size={2} />
+        <TitleText title = "Your Card" subtitle={`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.cardAddress} @${selectedLoyaltyCard?.loyaltyProgramAddress}`} size={2} />
       </div>
       <div className="grid grid-cols-1 justify-items-center"> 
         <p className="pt-0 w-5/6 sm:w-1/2 text-lg text-center text-bold border-b border-slate-800 dark:border-slate-200 p-1">

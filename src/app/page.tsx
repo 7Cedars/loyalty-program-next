@@ -42,7 +42,7 @@ export default function Home() {
     if (walletClient && deployRequest) {
       const hash = await walletClient.deployContract({
         abi: loyaltyProgramAbi,
-        chain: arbitrumSepolia, // needs to be dynamic
+        chain: arbitrumSepolia, // £todo needs to be dynamic
         account: address,
         args: [
           deployRequest.uri,
