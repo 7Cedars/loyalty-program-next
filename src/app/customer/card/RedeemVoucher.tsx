@@ -58,7 +58,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   /// begin setup for encoding typed data /// 
   // depricated? 
   const domain = {
-    name: 'Loyalty Program',
+    name: selectedLoyaltyProgram?.metadata?.name,
     version: '1',
     chainId: chain?.id,
     verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)

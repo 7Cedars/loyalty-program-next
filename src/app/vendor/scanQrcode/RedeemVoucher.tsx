@@ -29,7 +29,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   const { status, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
   const dispatch = useDispatch() 
   const { tokenReceived } = useLatestVendorTransaction(true)
-  const { writeContract, isError, isSuccess, data } = useWriteContract()
+  const { writeContract, isError, isSuccess, data, error } = useWriteContract()
 
   useEffect(() => {
     if (!loyaltyGifts && qrData) {
@@ -60,11 +60,12 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
   useEffect(() => {
     if (isError) {
       dispatch(notification({
-        id: "claimGift",
+        id: "redeemToken",
           message: `Something went wrong. Gift not Claimed.`, 
           colour: "red",
           isVisible: true
       }))
+      console.log("redeemToken error: ", error)
     }
   }, [isError])
 

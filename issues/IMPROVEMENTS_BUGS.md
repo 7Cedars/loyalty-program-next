@@ -13,13 +13,17 @@ Even though repository is public, For now, it is for personal use only.
 
 ## Know bugs (in order of priority)
 - [ ]  @Vendor, landing: 'visit page' is broken. Fix. 
-- [x]  @Vendor, landing: 'visit page' theming is broken. Fix. 
+- [ ]  @Vendor, landing: 'visit page' theming is broken. Fix. -- still some buttons' ui broken. 
 - [ ]  @vendor, stats: balance not loading. Fix. -- problem does not exist at customer.. 
+- [ ]  @customer, claim gifts: -- claim gift or voucher distinction does not work. 
+- [ ]  @customer & vendor -- disconnected view: should also show reocnnecting... (without login button)
+- [ ]  @customer: should show if requirements are not met - does not work at the moment! 
+- [ ]  @customer, your card: Loyalty points do not update. 
 - [ ]  @customer, transactions: received points show up double. 
 - [ ]  @vendor (& @customer?) when their are no transactions, transaction overview hangs at 'retrieving transaction history...'  
 - [x]  @Vendor, Tokens: BUG: When tokens cannot be loaded it goes into a loop. Fix! 
 - [ ]  @Vendor, QrReader: Fix Bug that when no valid QR code is read - it just hangs. Needs to have notification + continue reading.
-- [ ]  @vendor, QrScan: Mint cards still shows, even if scanned a code. -- ONKY WHEN NO Cards have been minted!    
+- [ ]  @vendor, QrScan: Mint cards still shows, even if scanned a code. -- ONLY WHEN NO Cards have been minted!    
 - [ ]  @Everywhere: No testing has been implemented yet. Implement Cyprus 
 
 ## Improvements to implement (in order of priority)

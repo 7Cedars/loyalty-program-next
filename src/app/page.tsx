@@ -22,24 +22,26 @@ type DeployRequestProps = {
 }
 
 export default function Home() {
-  const {address} = useAccount(); 
+  const {address, status} = useAccount(); 
   const [transactionHash, setTransactionHash] = useState<Hex>(); 
   const { open, close } = useWeb3Modal()
-  const { data: walletClient, status } = useWalletClient();
+  const { data: walletClient } = useWalletClient();
   const [deployRequest, setDeployRequest] = useState<DeployRequestProps>();
   const [ selectIndex, setSelectedIndex ] = useState<number | undefined>(1);
 
   const handleDeployRequest = async (data: DeployRequestProps) => {
     // open({view: "Connect"})
     setDeployRequest(data)
-    walletClient ? null : open({view: "Connect"}) 
+    console.log("data @deploy: ", data)
   }
+
+ 
 
   const deployLoyaltyProgram = useCallback( async () => {
     const registry: EthAddress = parseEthAddress("0x000000006551c19487814612e58FE06813775758") 
     const implementation: EthAddress = parseEthAddress("0x0b651850F1b7EA080A0039119dEEE7Cc7516706E")  // 
 
-    if (walletClient && deployRequest) {
+    if (status === "connected" && walletClient && deployRequest) {
       const hash = await walletClient.deployContract({
         abi: loyaltyProgramAbi,
         chain: arbitrumSepolia, // £todo needs to be dynamic
@@ -56,7 +58,7 @@ export default function Home() {
       setDeployRequest(undefined)
       setTransactionHash(hash)
     }
-  },  [address, walletClient, deployRequest] )
+  },  [address, walletClient, deployRequest, status] )
 
   const { data, isError, isPending, isSuccess } = useWaitForTransactionReceipt(
     { 

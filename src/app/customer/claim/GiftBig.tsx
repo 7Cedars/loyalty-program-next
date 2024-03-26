@@ -235,6 +235,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
               </Button>
               :
               <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
+                domain,
                 types, 
                 primaryType: 'RequestGift',
                 message
