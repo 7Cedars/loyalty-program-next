@@ -16,6 +16,7 @@ const NavbarTop = ( ) => {
   const { address } = useAccount()
   const { selectedNetworkId } = useWeb3ModalState() 
   const [text, setText] = useState('')
+  const {status} = useAccount() 
   const { open, close } = useWeb3Modal()
   const path = usePathname()
 
@@ -58,7 +59,7 @@ const NavbarTop = ( ) => {
               Transactions 
           </Link>
         </div> 
-        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open()}> 
+        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => status === "connected" ? open({view: "Account"}) : open({view: 'Connect'}) }> 
            {text} 
         </button>
       </header>

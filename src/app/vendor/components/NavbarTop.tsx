@@ -11,7 +11,7 @@ import { usePathname } from 'next/navigation';
 const NavbarTop = ( ) => {
   const dimensions = useScreenDimensions();
   const layoutLinks: string = 'p-1 px-6 text-slate-400 aria-selected:text-slate-800'
-  const { address, isConnecting, isDisconnected } = useAccount()
+  const { address, status } = useAccount()
   const { selectedNetworkId } = useWeb3ModalState() 
   const [text, setText] = useState('')
   const { open } = useWeb3Modal()
@@ -57,7 +57,9 @@ const NavbarTop = ( ) => {
               Stats 
           </Link>
         </div> 
-        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => open()}> 
+        <button className="flex items-center divide-x p-3 divide-gray-400" onClick = {() => 
+          status === "connected" ? open({view: "Account"}) : open({view: 'Connect'}) 
+          }> 
            {text} 
         </button>
 
