@@ -118,7 +118,21 @@ export const DynamicLayout = ({
   )
 
   if (status != "connected") {
-    return  null 
+    return (
+      <>
+      <NavbarTop/>
+        <div className="grow justify-center w-full h-full max-w-4xl overflow-y-scroll">
+
+        <div className="static w-full max-w-4xl h-dvh z-1">
+          <div className="flex flex-col pt-14 h-full z-3">
+            <NotificationDialog/> 
+          </div> 
+        </div>
+
+        <NavbarBottom/>
+        </div> 
+      </>
+    )
   }
 
   return (

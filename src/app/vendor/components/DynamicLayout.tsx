@@ -28,7 +28,7 @@ export const DynamicLayout = ({
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   // const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
   console.log("status wagmi:" , status)
-  
+
 
   useEffect(() => {
     // walletConnect should take care of this... 
@@ -71,7 +71,13 @@ export const DynamicLayout = ({
   }, [ , status])
 
   if (status != "connected") {
-    return  null 
+    return (
+      <div className="static w-full max-w-4xl h-dvh z-1">
+        <div className="flex flex-col pt-14 h-full z-3">
+          <NotificationDialog/> 
+        </div> 
+      </div>
+    )
   }
 
   if (!selectedLoyaltyProgram && status === "connected") {
