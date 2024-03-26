@@ -354,10 +354,10 @@ export default function Page() {
                       </td>
                       <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
                         <div> 
-                          {`to customer address: ${transaction.to}`}
+                          {`to customer address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
                         </div>
                         <div> 
-                        {`Card ID: ${transaction.ids}`}
+                          {`Card ID: ${transaction.ids}`}
                         </div> 
                       </td>
                      </>

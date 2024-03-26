@@ -24,7 +24,6 @@ const colourSchemeText = {
 export const NotificationDialog = () => {
   const { notifications } = useAppSelector(state => state.notification)
   const { open, close } = useWeb3Modal()
-  const { data: walletClient, status } = useWalletClient();
   const dispatch = useAppDispatch()
 
   const notificationToShow = notifications.findLast(notification => notification.isVisible !== false)

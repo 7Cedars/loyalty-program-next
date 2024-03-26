@@ -198,7 +198,7 @@ export default function Home() {
               className="w-full h-2/3"
             />
             <a href="#deploy-program" className="h-16 flex mx-3">
-              <Button appearance="grayEmpty" onClick={() => {}}>
+              <Button appearance="grayEmptyDark" onClick={() => {}}>
                 Try it out
               </Button>
             </a> 
@@ -291,7 +291,7 @@ export default function Home() {
             </div> 
 
             <a href="/vendor/home" className="h-16 w-60 flex justify-center cols-span-1 sm:col-span-2 my-8 ">
-              <Button appearance="grayEmpty" onClick={() => {}}>
+              <Button appearance="grayEmptyDark" onClick={() => {}}>
                 Visit vendor website
               </Button>
             </a> 

@@ -12,11 +12,11 @@ Even though repository is public, For now, it is for personal use only.
 - Design of solidity frontend is on my Figma. 
 
 ## Know bugs (in order of priority)
-- [ ]  @Vendor, landing: 'visit page' is broken. Fix. 
-- [ ]  @Vendor, landing: 'visit page' theming is broken. Fix. -- still some buttons' ui broken. 
-- [ ]  @vendor, stats: balance not loading. Fix. -- problem does not exist at customer.. 
+- [x]  @Vendor, landing: 'visit page' is broken. Fix. 
+- [x]  @Vendor, landing: 'visit page' theming is broken. Fix. -- still some buttons' ui broken. 
+- [x]  @vendor, stats: balance not loading. Fix. -- problem does not exist at customer.. 
 - [ ]  @customer, claim gifts: -- claim gift or voucher distinction does not work. 
-- [ ]  @customer & vendor -- disconnected view: should also show reocnnecting... (without login button)
+- [x]  @customer & vendor -- disconnected view: should also show reocnnecting... (without login button)
 - [ ]  @customer: should show if requirements are not met - does not work at the moment! 
 - [ ]  @customer, your card: Loyalty points do not update. 
 - [ ]  @customer, transactions: received points show up double. 

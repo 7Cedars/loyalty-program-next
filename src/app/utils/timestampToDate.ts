@@ -18,7 +18,9 @@ export const toFullDateFormat = (timestamp: number): string => {
 
 export const toEurTimeFormat = (timestamp: number): string => {
   const date = new Date(timestamp * 1000) 
-  return `${date.getHours()}:${date.getMinutes()}`
+  let minutes = date.getMinutes().toString()
+  minutes.length == 1 ? minutes = `0${minutes}` : minutes
+  return `${date.getHours()}:${minutes}`
 }; 
 
 export const toTimestamp = (dateFormat: string): string => { 

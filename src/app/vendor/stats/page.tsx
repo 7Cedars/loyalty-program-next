@@ -22,7 +22,7 @@ import { toEurTimeFormat, toFullDateFormat } from "@/app/utils/timestampToDate";
  
 export default function Page() {
   const [ modal, setModal] = useState<'points' | 'cards' | undefined>()  
-  const { status: statusBalances, balances } = useVendorAccount() 
+  const { status: statusBalances, balances, refetchBalances } = useVendorAccount() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient(); 
   const { address } = useAccount() 
@@ -132,6 +132,8 @@ export default function Page() {
     getTransferSingleTo()
     getTransferSingleFrom()
     getTransferBatchTo()
+    
+    refetchBalances() 
   }, [ ])
 
   useEffect(() => {
@@ -349,7 +351,7 @@ export default function Page() {
                     </td>
                     <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
                       <div> 
-                        {`to customer address: ${transaction.to}`}
+                        {`to customer address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
                       </div>
                       <div> 
                       {`Card ID: ${transaction.ids}`}
