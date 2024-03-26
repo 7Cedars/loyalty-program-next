@@ -30,7 +30,7 @@ export default function Page() {
   const [ claimedVouchers, setClaimedVouchers ] = useState<LoyaltyGift[] | undefined>() 
   const [selectedVoucher, setSelectedVoucher] = useState<setSelectedVoucherProps | undefined>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()
-  const {address} = useAccount() 
+  const {address } = useAccount() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
   const polling = useRef<boolean>(false) 

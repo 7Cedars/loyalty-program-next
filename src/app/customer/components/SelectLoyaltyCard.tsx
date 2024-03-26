@@ -34,14 +34,14 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
               address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
               abi: loyaltyProgramAbi,
               functionName: 'getBalanceLoyaltyCard', 
-              args: [ loyaltyCard.cardId ]
+              args: [ loyaltyCard.cardAddress ]
             });
             loyaltyPointsUpdated.push({cardAddress: loyaltyCard.cardAddress, points: Number(parseBigInt(loyaltyCardPointsData))})
 
             if (loyaltyPointsUpdated) setLoyaltyCardPoints(loyaltyPointsUpdated)
           }
         } catch (error) {
-          console.log(error)
+          console.log("getBalanceLoyaltyCard error: ", error)
       }
     }
   }

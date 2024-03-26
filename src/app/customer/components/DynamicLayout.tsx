@@ -26,7 +26,7 @@ type ModalProps = {
 export const DynamicLayout = ({
   children 
 }: ModalProps) => {
-  const { address, chain }  = useAccount()
+  const { address, chain, status }  = useAccount()
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
   
   const dispatch = useAppDispatch()
@@ -76,31 +76,38 @@ export const DynamicLayout = ({
   }, [selectedLoyaltyProgram])
 
   useEffect(() => {
-    // if (address != userLoggedIn) {
-    //   setUserLoggedIn(undefined)
-    //   dispatch(resetLoyaltyCard(true))
-    // }
-
-    if (!address) {
+    if (status === "disconnected") {
       dispatch(notification({
-        id: "NotLoggedIn",
+        id: "notConnected",
         message: "You are not connected to a network.", 
         colour: "red",
         loginButton: true, 
         isVisible: true
       }))
+      dispatch(updateModalVisible(false))
       setUserLoggedIn(undefined)
-    }    
+    }
+
+    if (status === "connecting") {
+      dispatch(notification({
+        id: "notConnected",
+        message: "Connecting....", 
+        colour: "yellow",
+        loginButton: true, 
+        isVisible: true
+      }))
+    }  
     
-    if (address) {
+    if (status === "connected") {
       dispatch(updateNotificationVisibility({
-        id: "NotLoggedIn",
+        id: "notConnected",
         isVisible: false
       }))
+      dispatch(updateModalVisible(false)) // £todo: check if use of redux is necessary here. If not: simple useState will do. 
       setUserLoggedIn(address)
     }
 
-  }, [ , address])
+  }, [ , status])
 
   console.log(
     "pre render console log", 
@@ -109,6 +116,10 @@ export const DynamicLayout = ({
     "loyaltyCards: ", loyaltyCards, 
     "selectedLoyaltyCard: ", selectedLoyaltyCard  
   )
+
+  if (status != "connected") {
+    return  null 
+  }
 
   return (
     <>
