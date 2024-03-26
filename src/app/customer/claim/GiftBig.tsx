@@ -82,12 +82,12 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   /// begin setup for encoding typed data /// 
   // depricated? How does it work without it?!  
   // 
-  const domain = {
-    name: "Loyalty Program",
-    version: "1",
-    chainId: chain?.id,
-    verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
-  } as const
+  // const domain = {
+  //   name: "Loyalty Program",
+  //   version: "1",
+  //   chainId: chain?.id,
+  //   verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
+  // } as const
   
   // The named list of all type definitions
   const types = {
@@ -207,7 +207,7 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
             { token.tokenised == 1n ? 
 
               <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
-                domain, 
+                // domain, 
                 types, 
                 primaryType: 'RequestGift',
                 message

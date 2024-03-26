@@ -31,7 +31,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const dispatch = useDispatch() 
   const { pointsReceived } = useLatestVendorTransaction(true) 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const { writeContract, isError, isSuccess, data } = useWriteContract()
+  const { writeContract, isError, isSuccess, data, error } = useWriteContract()
 
   useEffect(() => {
     if (!loyaltyGifts && qrData) {
@@ -68,6 +68,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
           isVisible: true
       }))
     }
+    console.log("claimGift error: ", error)
   }, [isError])
 
   useEffect(() => {
