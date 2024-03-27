@@ -2,7 +2,7 @@ import {  LoyaltyGift, Status } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { loyaltyGiftAbi } from "@/context/abi";
 import { Log } from "viem"
-import { usePublicClient } from 'wagmi'
+import { useAccount, usePublicClient } from 'wagmi'
 import { 
   parseUri, 
   parseMetadata, 
@@ -10,12 +10,13 @@ import {
   parseEthAddress,
   parseBigInt,
 } from "@/app/utils/parsers";
-import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants"; // this should be possible to set at website.  
+import { SUPPORTED_CHAINS, WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants"; // this should be possible to set at website.  
 import { useAppSelector } from "@/redux/hooks";
 
 export const useLoyaltyGifts = () => {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient()
+  const {chain} = useAccount()  
 
   const [ status, setStatus ] = useState<Status>("isIdle")
   const statusAtgiftAddress = useRef<Status>("isIdle") 
@@ -39,13 +40,14 @@ export const useLoyaltyGifts = () => {
       statusAtgiftAddress.current = "isSuccess"
       setData(requestedTokens)
     } else { 
-      if (publicClient)
+      if (publicClient && chain)
       try { 
+        const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
         const logs: Log[] = await publicClient.getContractEvents({
           abi: loyaltyGiftAbi, 
           eventName: 'LoyaltyGiftDeployed', 
           // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, // This should be an editable list inside the front end. improvement for later. 
-          fromBlock: 25888893n
+          fromBlock: fromBlock?.fromBlock
         });
         const loyaltyGifts = parseTokenContractLogs(logs)
         statusAtgiftAddress.current = "isSuccess"

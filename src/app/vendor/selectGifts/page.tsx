@@ -8,9 +8,9 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { Log } from "viem"
-import { usePublicClient } from 'wagmi'
+import { useAccount, usePublicClient } from 'wagmi'
 import { parseEthAddress, parseLoyaltyGiftLogs} from "@/app/utils/parsers";
-import { WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
+import { SUPPORTED_CHAINS, WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
 import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import Image from "next/image";
 import { useAppSelector } from "@/redux/hooks";
@@ -28,18 +28,19 @@ export default function Page() {
   const [activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyGift[] >([]) 
   const [inactiveLoyaltyGifts, setInactiveLoyaltyGifts] = useState<LoyaltyGift[] >([]) 
   const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
-  const publicClient = usePublicClient({config,})
+  const publicClient = usePublicClient({config})
+  const {chain} = useAccount() 
 
   const getTokenSelection = async () => {
     setStatusTokenSelection("isLoading")
-    if(publicClient)
+    if(publicClient && chain)
     try {
+      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
       const addedGifts: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'AddedLoyaltyGift', 
-        fromBlock: 25888893n // this should be part of settings - it differs per block. - this is arbitrum Sepolia. -- see constants 
-        // toBlock: 16330050n - if this does not create problems: take out. 
+        fromBlock: fromBlock?.fromBlock
       }); 
       const addedGiftsEvents = parseLoyaltyGiftLogs(addedGifts)
 
@@ -47,8 +48,7 @@ export default function Page() {
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'RemovedLoyaltyGiftClaimable', 
-        fromBlock: 25888893n,
-        // toBlock: 16330050n
+        fromBlock: fromBlock?.fromBlock
       }); 
       const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
 

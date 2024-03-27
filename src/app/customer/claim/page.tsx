@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { Log } from "viem"
-import { usePublicClient } from 'wagmi'
+import { useAccount, usePublicClient } from 'wagmi'
 import { 
   parseEthAddress, 
   parseBigInt,
@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import Image from "next/image";
+import { SUPPORTED_CHAINS } from "@/context/constants";
 
 type setSelectedTokenProps = {
   token: LoyaltyGift; 
@@ -27,6 +28,7 @@ type setSelectedTokenProps = {
 }
 
 export default function Page() {
+  const {chain} = useAccount()
   const dispatch = useDispatch() 
   const publicClient = usePublicClient()
   const { status: statusLoyaltyGifts, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
@@ -78,13 +80,15 @@ export default function Page() {
     statusAtAddedGifts.current = "isLoading"
     status.current = "isLoading"
 
-    if (publicClient)
+    if (publicClient && chain)
+    
     try {
+      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
       const addedGifts: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'AddedLoyaltyGift', 
-        fromBlock: 25888893n
+        fromBlock: fromBlock?.fromBlock
       }); 
       const addedGiftsEvents: LoyaltyGift[] = Array.from(new Set(parseLoyaltyGiftLogs(addedGifts))) 
       statusAtAddedGifts.current = "isSuccess"

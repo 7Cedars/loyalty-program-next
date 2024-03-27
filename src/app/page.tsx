@@ -3,7 +3,7 @@
 import loyaltyProgramsData from "../../public/exampleLoyaltyPrograms.json"; // not that this is a very basic json file data format - can be used in many other cases as well. 
 import { TitleText } from "./ui/StandardisedFonts";
 import Image from "next/image";
-import { useAccount, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useWaitForTransactionReceipt, useSwitchChain } from "wagmi";
 import { optimismSepolia, foundry, sepolia, baseSepolia, arbitrumSepolia } from 'viem/chains'
 import { loyaltyProgramAbi } from "@/context/abi";
 import { loyaltyProgramBytecode } from "@/context/bytecode";
@@ -14,6 +14,7 @@ import { Button } from "./ui/Button";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useWalletClient } from "wagmi";
 import { parseEthAddress } from "./utils/parsers";
+import { SUPPORTED_CHAINS } from "@/context/constants";
 
 type DeployRequestProps = { 
   uri: string; 
@@ -28,6 +29,8 @@ export default function Home() {
   const { data: walletClient } = useWalletClient();
   const [deployRequest, setDeployRequest] = useState<DeployRequestProps>();
   const [ selectIndex, setSelectedIndex ] = useState<number | undefined>(1);
+  const { chain } = useAccount() 
+  const [ currentChain, setCurrentChain ] = useState<any>(); // £todo still needs to be properly types.. 
 
   const handleDeployRequest = async (data: DeployRequestProps) => {
     // open({view: "Connect"})
@@ -35,16 +38,25 @@ export default function Home() {
     console.log("data @deploy: ", data)
   }
 
- 
+  useEffect(() => {
+    const chainNames = SUPPORTED_CHAINS.map(chain => chain.name)
+    if (chain && !chainNames.includes(chain.name)) {
+      open({view: "Networks"})
+    }
+    if (chain && chainNames.includes(chain.name)) {
+      const selectChain = SUPPORTED_CHAINS.find(supportedChain => supportedChain.name === chain.name)
+      setCurrentChain(selectChain)
+    }
+  }, [chain])
 
   const deployLoyaltyProgram = useCallback( async () => {
     const registry: EthAddress = parseEthAddress("0x000000006551c19487814612e58FE06813775758") 
-    const implementation: EthAddress = parseEthAddress("0x0b651850F1b7EA080A0039119dEEE7Cc7516706E")  // 
+    const implementation: EthAddress = parseEthAddress(currentChain.accountImplementation)
 
     if (status === "connected" && walletClient && deployRequest) {
       const hash = await walletClient.deployContract({
         abi: loyaltyProgramAbi,
-        chain: arbitrumSepolia, // £todo needs to be dynamic
+        chain: chain, // £todo needs to be dynamic
         account: address,
         args: [
           deployRequest.uri,

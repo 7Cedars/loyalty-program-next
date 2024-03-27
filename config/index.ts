@@ -32,7 +32,7 @@ export const config = createConfig({
   connectors: [
     walletConnect({ projectId, metadata, showQrModal: false }),
     // injected({ shimDisconnect: true }), // not needed when using walletConnect connector. 
-    emailConnector({ chains, options: { projectId } }) // this is ff-ing cool! Enable ERc-4337 account abstraction with one line of code. What the f! 
+    emailConnector({ chains, options: { projectId } }) // this is ff-ing cool! Enable email login with one line of code. NB: this is NOT Accoutn abstraction.  
   ],
   ssr: true,
   // storage: createStorage({
