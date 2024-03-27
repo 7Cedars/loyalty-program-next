@@ -162,7 +162,7 @@ export default function Home() {
             <div className="m-3">
               <div className="font-bold text-slate-300 text-sm"> Deployable at any testnet with a ERC-6551 registry (v.0.3.1). </div>
               {/* FILL OUT TEST NETS HERE  */}
-              <div className="text-slate-400 text-sm"> This frontend runs on the Arbitrum Sepolia testnet. </div>      
+              <div className="text-slate-400 text-sm"> This frontend runs on the Polygon Mumbai testnet. </div>      
             </div> 
             <div className="m-3">
               <div className="font-bold text-slate-300 text-sm"> Want to know more? </div>
@@ -243,12 +243,14 @@ export default function Home() {
               )}
               </div> 
 
-              <div className='text-center text-slate-300 mb-4'>
+              <div className='text-center text-slate-300 mb-4 w-full flex justify-center '>
+                <div className="w-2/3">
                 {selectIndex && loyaltyProgramsData ? 
                   loyaltyProgramsData.items[selectIndex - 1].description
                   : 
                   null
                 }
+                </div>
               </div> 
 
               <div className='h-fit flex justify-center transition transition-all ease-in-out delay-150'>

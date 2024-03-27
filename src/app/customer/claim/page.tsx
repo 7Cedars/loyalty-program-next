@@ -33,6 +33,8 @@ export default function Page() {
   const publicClient = usePublicClient()
   const { status: statusLoyaltyGifts, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
 
+  console.log("loyaltyGifts @claimGift" , loyaltyGifts)
+
   const statusAtAddedGifts = useRef<Status>("isIdle") 
   const statusAtClaimableGifts = useRef<Status>("isIdle") 
   const status = useRef<Status>("isIdle") 

@@ -26,6 +26,7 @@ const chains = [
   // optimismSepolia, 
   polygonMumbai
 ] as const // Here place all chains 
+
 export const config = createConfig({
   chains: chains,
   transports: {
@@ -35,7 +36,7 @@ export const config = createConfig({
     // [arbitrumSepolia.id]: http(), 
     // [baseSepolia.id]: http(), 
     // [optimismSepolia.id]: http(), 
-    [polygonMumbai.id]: http()
+    [polygonMumbai.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_POLYGON_MUMBAI_API_RPC)
   },
   connectors: [
     walletConnect({ projectId, metadata, showQrModal: false }),

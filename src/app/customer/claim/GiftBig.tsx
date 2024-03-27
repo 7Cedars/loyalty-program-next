@@ -225,27 +225,23 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
         <div className="p-3 flex w-full"> 
           {/* { pointsSent ? */}
 
-            { token.tokenised == 1n ? 
-
-              <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
-                domain, 
-                types, 
-                primaryType: 'RequestGift',
-                message
-              })}  >
-                Claim Voucher
-              </Button>
-              :
-              <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
-                domain,
-                types, 
-                primaryType: 'RequestGift',
-                message
-              })} >
-                Claim Gift
-              </Button>
-           
+          {
+          
+          requirementsMet ? 
+            <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
+              domain, 
+              types, 
+              primaryType: 'RequestGift',
+              message
+            })}  >
+              Claim Gift
+            </Button>
+          : 
+            <Button appearance = {"grayEmpty"} disabled >
+              Your card does not meetthe requirements for this gift. 
+            </Button>
           }
+
           </div>
         </>
         : null
