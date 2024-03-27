@@ -34,7 +34,7 @@ export const SUPPORTED_CHAINS = [ // blocks to start check for data.
   {
     name: "polygonMumbai", 
     chainId: 80001, 
-    fromBlock: 47542800n, // TBI
+    fromBlock: 47542000n, 
     accountImplementation: "0x37dc8bd57ca11e64e93d5a6dbe253a7ef744f38e"
   }
 ]
