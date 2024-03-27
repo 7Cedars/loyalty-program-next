@@ -2,7 +2,7 @@ import { emailConnector } from '@web3modal/wagmi'
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
 
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi'
-import { optimismSepolia, foundry, sepolia, baseSepolia, arbitrumSepolia } from 'wagmi/chains'
+import { optimismSepolia, foundry, sepolia, baseSepolia, arbitrumSepolia, polygonMumbai } from 'wagmi/chains'
 import { walletConnect, injected } from 'wagmi/connectors'
 
 // Get projectId at https://cloud.walletconnect.com
@@ -18,13 +18,16 @@ const metadata = {
 }
 
 // Create wagmiConfig
-const chains = [arbitrumSepolia, sepolia] as const // Here place all chains 
+const chains = [arbitrumSepolia, sepolia, baseSepolia, optimismSepolia, polygonMumbai] as const // Here place all chains 
 export const config = createConfig({
   chains: chains,
   transports: {
     [sepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
     [arbitrumSepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
     // [arbitrumSepolia.id]: http(), 
+    [baseSepolia.id]: http(), 
+    [optimismSepolia.id]: http(), 
+    [polygonMumbai.id]: http()
   },
   connectors: [
     walletConnect({ projectId, metadata, showQrModal: false }),
