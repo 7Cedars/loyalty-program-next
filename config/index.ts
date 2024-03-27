@@ -18,10 +18,18 @@ const metadata = {
 }
 
 // Create wagmiConfig
-const chains = [arbitrumSepolia, sepolia, baseSepolia, optimismSepolia, polygonMumbai] as const // Here place all chains 
+const chains = [
+  foundry, 
+  arbitrumSepolia, 
+  sepolia, 
+  baseSepolia, 
+  optimismSepolia, 
+  polygonMumbai
+] as const // Here place all chains 
 export const config = createConfig({
   chains: chains,
   transports: {
+    [foundry.id]: http(), 
     [sepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
     [arbitrumSepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
     // [arbitrumSepolia.id]: http(), 

@@ -39,11 +39,11 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const chainNames = SUPPORTED_CHAINS.map(chain => chain.name)
-    if (chain && !chainNames.includes(chain.name)) {
+    const chainIds = SUPPORTED_CHAINS.map(chain => chain.chainId)
+    if (chain && !chainIds.includes(chain.id)) {
       open({view: "Networks"})
     }
-    if (chain && chainNames.includes(chain.name)) {
+    if (chain && chainIds.includes(chain.id)) {
       const selectChain = SUPPORTED_CHAINS.find(supportedChain => supportedChain.chainId === chain.id)
       setCurrentChain(selectChain)
     }

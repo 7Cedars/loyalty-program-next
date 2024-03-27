@@ -18,5 +18,23 @@ export const SUPPORTED_CHAINS = [ // blocks to start check for data.
     chainId: 421614, 
     fromBlock: 25888893n,
     accountImplementation: "0x0b651850F1b7EA080A0039119dEEE7Cc7516706E" 
+  },
+  {
+    name: "baseSepolia", 
+    chainId: 84532, 
+    fromBlock: 0n, // TBI
+    accountImplementation: "0x0b651850F1b7EA080A0039119dEEE7Cc7516706E" // NOT CORRECT ADDRESS!
+  },
+  {
+    name: "optimismSepolia", 
+    chainId: 11155420, 
+    fromBlock: 0n,  // TBI
+    accountImplementation: "0x0b651850F1b7EA080A0039119dEEE7Cc7516706E" // NOT CORRECT ADDRESS!
+  },
+  {
+    name: "polygonMumbai", 
+    chainId: 80001, 
+    fromBlock: 0n, // TBI
+    accountImplementation: "0x0b651850F1b7EA080A0039119dEEE7Cc7516706E" // NOT CORRECT ADDRESS!
   }
 ]
