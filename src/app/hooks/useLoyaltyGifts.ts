@@ -42,12 +42,12 @@ export const useLoyaltyGifts = () => {
     } else { 
       if (publicClient && chain)
       try { 
-        const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+        const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
         const logs: Log[] = await publicClient.getContractEvents({
           abi: loyaltyGiftAbi, 
           eventName: 'LoyaltyGiftDeployed', 
           // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, // This should be an editable list inside the front end. improvement for later. 
-          fromBlock: fromBlock?.fromBlock
+          fromBlock: selectedChain?.fromBlock
         });
         const loyaltyGifts = parseTokenContractLogs(logs)
         statusAtgiftAddress.current = "isSuccess"

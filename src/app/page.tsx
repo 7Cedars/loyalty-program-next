@@ -44,7 +44,7 @@ export default function Home() {
       open({view: "Networks"})
     }
     if (chain && chainNames.includes(chain.name)) {
-      const selectChain = SUPPORTED_CHAINS.find(supportedChain => supportedChain.name === chain.name)
+      const selectChain = SUPPORTED_CHAINS.find(supportedChain => supportedChain.chainId === chain.id)
       setCurrentChain(selectChain)
     }
   }, [chain])
@@ -85,7 +85,7 @@ export default function Home() {
 
   return (
     <main className="grid grid-cols-1 w-full h-fit overflow-y-auto shadow-2xl bg-slate-100 justify-items-center p-4">
-        <div className={`h-[80vh] grid grid-cols-1 sm:grid-cols-2 content-center w-full max-w-4xl sm:w-4/5 bg-slate-300 shadow-2xl rounded-t-lg p-8`}>
+        <div className={`h-[80vh] grid grid-cols-1 sm:grid-cols-2 content-center justify-items-center w-full max-w-4xl md:w-4/5 bg-slate-300 shadow-2xl rounded-t-lg p-8`}>
           <div className="grid grid-cols-1 content-center"> 
             <div className="grid grid-cols-1 pb-2 px-2">
               <div className={`text-center font-bold text-slate-700 text-2xl py-1`}>
@@ -99,18 +99,20 @@ export default function Home() {
             {/* <TitleText title="say hi to Loyal" subtitle="A one-stop, mobile first, solution for customer loyalty programs. " size = {2}/>   */}
             {/* Deployed in under a minute, no-server, no subscriptions or other lockins, open and versatile, while keeping vendors full control. */}
           </div>
-          <Image
-            src={"/images/vendorHomeScreen.svg"}
-            alt={"Example home screen"}
-            style = {{ objectFit: "fill" }} 
-            width={400}
-            height={600}
-            className="w-full"
-          />
+          <div className="flex items-center w-2/3 m-2"> 
+            <Image
+              src={"/images/vendorHomeScreen.svg"}
+              alt={"Example home screen"}
+              style = {{ objectFit: "fill" }} 
+              width={400}
+              height={600}
+              className="w-full"
+            />
+          </div>
         </div>
       
-        <div className={`min-h-[80vh] h-fit grid grid-cols-1 sm:grid-cols-2 content-center w-full max-w-4xl sm:w-4/5 bg-slate-700 shadow-2xl p-8`}>
-          <div className="grid grid-cols-1 sm:col-span-2 self-center">
+        <div className={`min-h-[80vh] h-fit grid grid-cols-1 md:grid-cols-2 content-center w-full max-w-4xl md:w-4/5 bg-slate-700 shadow-2xl p-8`}>
+          <div className="grid grid-cols-1 md:col-span-2 self-center">
             <div className="grid grid-cols-1 pb-2 px-2">
               <div className={`text-center font-bold text-slate-300 text-2xl py-1`}>
                 What is it?
@@ -119,16 +121,16 @@ export default function Home() {
             
           {/* <TitleText title="What is it?" size = {2} colourMode= {1}/>   */}
           </div> 
-          <div className="flex flex-col m-2 self-center"> 
+          <div className="flex flex-col m-2 self-center items-center"> 
             <Image
-              src={"/images/customerCardScreen.svg"}
+              src={"/images/vendorSelectGifts.svg"}
               alt={"Example home screen"}
               style = {{ objectFit: "fill" }} 
               width={400}
               height={600}
-              className="w-full h-2/3"
+              className="w-2/3 h-2/3 m-2"
             />
-            <a href="#deploy-program" className="h-16 flex mx-3">
+            <a href="#deploy-program" className="h-16 flex w-full">
               <Button appearance="grayEmptyLight" onClick={() => {}}>
                 Try it out
               </Button>
@@ -168,8 +170,8 @@ export default function Home() {
             </div>
         </div>
         </div>
-        <div className={`h-fit grid grid-cols-1 sm:grid-cols-2 w-full max-w-4xl h-full sm:w-4/5 bg-slate-300 shadow-2xl p-8`}>
-          <div className="cols-span-1 sm:col-span-2">
+        <div className={`h-fit grid grid-cols-1 md:grid-cols-2 w-full max-w-4xl h-full md:w-4/5 bg-slate-300 shadow-2xl p-8`}>
+          <div className="cols-span-1 md:col-span-2">
             <div className="grid grid-cols-1 pb-2 px-2">
               <div className={`text-center font-bold text-slate-700 text-2xl py-1`}>
                 Why use it?
@@ -200,16 +202,16 @@ export default function Home() {
               <div className="text-slate-400 text-sm"> Connect with similar shops across the globe effortlessly.  </div> 
             </div>
           </div>
-          <div className="flex flex-col m-2 self-center"> 
+          <div className="flex flex-col mx-6 my-4 self-center w-2/3"> 
             <Image
               src={"/images/vendorTransactionScreen.svg"}
               alt={"Example home screen"}
               style = {{ objectFit: "fill" }} 
               width={400}
               height={600}
-              className="w-full h-2/3"
+              className="w-full"
             />
-            <a href="#deploy-program" className="h-16 flex mx-3">
+            <a href="#deploy-program" className="h-16 flex w-full">
               <Button appearance="grayEmptyDark" onClick={() => {}}>
                 Try it out
               </Button>
@@ -217,7 +219,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className='h-fit w-full max-w-4xl  sm:w-4/5 bg-slate-700 shadow-2xl p-2 pt-6 pb-8 flex flex-col content-center'  id="deploy-program">
+        <div className='h-fit w-full max-w-4xl  md:w-4/5 bg-slate-700 shadow-2xl p-2 pt-6 pb-8 flex flex-col content-center'  id="deploy-program">
           <TitleText title="Want to try it out?" subtitle="Deploy any of these examples in less than two minutes" size = {2} colourMode={1}/>  
           
             <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-auto overscroll-auto mb-12 justify-items-center content-center"> 
@@ -295,14 +297,14 @@ export default function Home() {
               </div>
           </div>
 
-          <div className={`h-fit grid grid-cols-1 sm:grid-cols-2 w-full max-w-4xl h-full sm:w-4/5 bg-slate-300 shadow-2xl p-8 rounded-b-lg justify-items-center`}>
-              <div className="grid grid-cols-1 pb-2 px-20 cols-span-1 sm:col-span-2">
+          <div className={`h-fit grid grid-cols-1 md:grid-cols-2 w-full max-w-4xl h-full md:w-4/5 bg-slate-300 shadow-2xl p-8 rounded-b-lg justify-items-center`}>
+              <div className="grid grid-cols-1 pb-2 px-20 cols-span-1 md:col-span-2">
                 <div className={`text-center font-bold text-slate-700 text-2xl py-1`}>
                   Already have a program deployed?
                 </div>
             </div> 
 
-            <a href="/vendor/home" className="h-16 w-60 flex justify-center cols-span-1 sm:col-span-2 my-8 ">
+            <a href="/vendor/home" className="h-16 w-60 flex justify-center cols-span-1 md:col-span-2 my-8 ">
               <Button appearance="grayEmptyDark" onClick={() => {}}>
                 Visit vendor website
               </Button>

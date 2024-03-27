@@ -43,7 +43,7 @@ export default function Page() {
     statusTransferSingleTo.current = "isLoading"
     if (publicClient && chain)
     try {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -51,7 +51,7 @@ export default function Page() {
         args: {
           to: parseEthAddress(address)
         },
-        fromBlock: fromBlock?.fromBlock
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransferSingleTo([...transactions])
@@ -66,7 +66,7 @@ export default function Page() {
     statusTransferSingleFrom.current = "isLoading"
     if (publicClient && chain)
     try {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -74,7 +74,7 @@ export default function Page() {
         args: {
           from: parseEthAddress(address)
         },
-        fromBlock: fromBlock?.fromBlock
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransferSingleFrom([...transactions])
@@ -89,7 +89,7 @@ export default function Page() {
     statusTransferBatchTo.current = "isLoading"
     if (publicClient && chain)
     try {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferBatchLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
             address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -97,7 +97,7 @@ export default function Page() {
             args: {
               to: parseEthAddress(address)
             },
-            fromBlock: fromBlock?.fromBlock
+            fromBlock: selectedChain?.fromBlock
           });
       const transactions =  parseTransferBatchLogs(transferBatchLogs)
       setTransferBatchToTo([...transactions])

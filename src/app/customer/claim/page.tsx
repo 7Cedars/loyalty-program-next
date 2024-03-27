@@ -45,7 +45,7 @@ export default function Page() {
   const polling = useRef<boolean>(false)
   const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction(polling.current) 
 
-  ///////////////////////////////////
+  /////////////////////////////////// 
   ///     Fetch Card Balance      ///
   ///////////////////////////////////
 
@@ -83,12 +83,13 @@ export default function Page() {
     if (publicClient && chain)
     
     try {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
+      console.log("selectedChain: ", selectedChain)
       const addedGifts: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'AddedLoyaltyGift', 
-        fromBlock: fromBlock?.fromBlock
+        fromBlock: selectedChain?.fromBlock
       }); 
       const addedGiftsEvents: LoyaltyGift[] = Array.from(new Set(parseLoyaltyGiftLogs(addedGifts))) 
       statusAtAddedGifts.current = "isSuccess"

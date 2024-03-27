@@ -35,12 +35,12 @@ export default function Page() {
     setStatusTokenSelection("isLoading")
     if(publicClient && chain)
     try {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const addedGifts: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'AddedLoyaltyGift', 
-        fromBlock: fromBlock?.fromBlock
+        fromBlock: selectedChain?.fromBlock
       }); 
       const addedGiftsEvents = parseLoyaltyGiftLogs(addedGifts)
 
@@ -48,7 +48,7 @@ export default function Page() {
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
         eventName: 'RemovedLoyaltyGiftClaimable', 
-        fromBlock: fromBlock?.fromBlock
+        fromBlock: selectedChain?.fromBlock
       }); 
       const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
 

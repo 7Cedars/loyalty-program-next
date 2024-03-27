@@ -37,13 +37,13 @@ export const useLoyaltyCards = () => {
 
     if (publicClient && chain)
     try {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleData: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: programAddress, 
         eventName: 'TransferSingle', 
         args: {to: userAddress}, 
-        fromBlock: fromBlock?.fromBlock
+        fromBlock: selectedChain?.fromBlock
       });
       const transferredTokens = parseTransferSingleLogs(transferSingleData)
       const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)

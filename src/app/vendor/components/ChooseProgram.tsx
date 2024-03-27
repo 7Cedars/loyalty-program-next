@@ -26,12 +26,15 @@ export default function ChooseProgram()  {
     setStatusFetchingAddresses("isLoading")
     if (publicClient && chain)
     try {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
+      console.log("selectedChain: ", selectedChain)
+      console.log("SUPPORTED_CHAINS: ", SUPPORTED_CHAINS)
+      console.log("chain", chain)
       const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
           eventName: 'DeployedLoyaltyProgram', 
           args: {owner: address}, 
-          fromBlock: fromBlock?.fromBlock
+          fromBlock: selectedChain?.fromBlock
       });
       const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
       setAddresses(loyaltyProgramAddresses)

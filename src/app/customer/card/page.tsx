@@ -73,7 +73,7 @@ export default function Page() {
     statusGetClaimedVouchers.current = "isLoading"
 
     if (publicClient && chain) {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       try { 
         const claimedVouchersLogs: Log[] = await publicClient.getContractEvents({
           // address: loyaltyGift.giftAddress, 
@@ -82,7 +82,7 @@ export default function Page() {
           args: {
             to: selectedLoyaltyCard?.cardAddress
           },
-          fromBlock: fromBlock?.fromBlock
+          fromBlock: selectedChain?.fromBlock
         })
         const claimedVouchers = parseTransferSingleLogs(claimedVouchersLogs)
   
@@ -93,7 +93,7 @@ export default function Page() {
           args: {
             from: selectedLoyaltyCard?.cardAddress
           },
-          fromBlock: fromBlock?.fromBlock
+          fromBlock: selectedChain?.fromBlock
         })
         const redeemedVouchers = parseTransferSingleLogs(redeemedVouchersLogs)
         

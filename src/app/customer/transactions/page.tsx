@@ -40,7 +40,7 @@ export default function Page() {
     statusTransactionsTo.current = "isLoading"
     if (publicClient && chain)
     try {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -48,7 +48,7 @@ export default function Page() {
         args: {
           to: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: fromBlock?.fromBlock
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransactionsPointsTo([...transactions])
@@ -63,7 +63,7 @@ export default function Page() {
     statusTransactionsFrom.current = "isLoading"
     if (publicClient && chain)
     try { 
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -71,7 +71,7 @@ export default function Page() {
         args: {
           from: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: fromBlock?.fromBlock
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransactionsPointsFrom([...transactions])
@@ -87,14 +87,14 @@ export default function Page() {
     statusTokensTo.current = "isLoading"
     if (publicClient && chain)
     try {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyGiftAbi, 
         eventName: 'TransferSingle', 
         args: {
           to: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: fromBlock?.fromBlock
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransactionsTokensTo([...transactions])
@@ -109,14 +109,14 @@ export default function Page() {
     statusTokensFrom.current = "isLoading"
     if (publicClient && chain)
     try {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyGiftAbi, 
         eventName: 'TransferSingle', 
         args: {
           from: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: fromBlock?.fromBlock
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransactionsTokensFrom(transactions)

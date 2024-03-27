@@ -43,7 +43,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
 
   const getTransferSingleData = async () => {
     if (publicClient && chain) {
-      const fromBlock: any = SUPPORTED_CHAINS.find(block => block.name === chain.name)
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -51,7 +51,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
         args: {
           from: parseEthAddress(address)
         },
-        fromBlock: fromBlock?.fromBlock
+        fromBlock: selectedChain?.fromBlock
       });
       setTransferSingles(parseTransferSingleLogs(transferSingleLogs))
     }

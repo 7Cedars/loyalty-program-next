@@ -9,7 +9,7 @@ export const SUPPORTED_CHAINS = [ // blocks to start check for data.
   },
   {
     name: "sepolia", 
-    chainID: 11155111, 
+    chainId: 11155111, 
     fromBlock: 5000000n, 
     accountImplementation: "0x0b651850F1b7EA080A0039119dEEE7Cc7516706E" // NOT CORRECT ADDRESS!
   },
