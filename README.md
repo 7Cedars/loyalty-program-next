@@ -141,7 +141,7 @@ The repository consists of two dApps
 Some screenshots:
 | Home screen vendor | Transactions vendor | Card overview customer |
 | :--------: | :-------: | :-------: | 
-| <img src="public/images/vendorHomeScreen.svg" alt="my-Card-view" width="200" />  | <img src="public/images/vendorTransactionScreen.svg" alt="my-Card-view" width="200" />  | <img src="public/images/customerCardScreen.svg" alt="my-Card-view" width="200" />  |
+| <img src="public/images/vendorHomeScreen.png" alt="vendor-home-view" width="200" />  | <img src="public/images/vendorSelectGifts.png" alt="vendor-select-gift-view" width="200" />  | <img src="public/images/vendorTransactionScreen.png" alt="vendor-transaction-view" width="200" />  |
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
@@ -197,9 +197,9 @@ GitHub profile [https://github.com/7Cedars](https://github.com/7Cedars)
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* [React course Full stack dev... ]() <!-- React course Full stack dev  -->
-* [Readme File... ]() <!-- This readme file, page -->
-* [SpeedRunEthereum]() <!-- SpeedRunEthereum -->
+* I built this app after completing Matti Luukkainen's amazing [Fullstack open](https://fullstackopen.com/en/) course at the University of Helsinki. It comes highly recommended for anyone interested to learn React, Javascrip, Redux, Typescript - and a whole lot more of what is needed to become a fullstack dev. 
+* I took the template for the readme file from [Drew Othneil](https://github.com/othneildrew/Best-README-Template/blob/master/README.md?plain=1). 
+* And a special thanks should go out to [SpeedRunEthereum](https://speedrunethereum.com/) and [LearnWeb3](https://learnweb3.io/) for providing the first introductions to solidity coding. 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
