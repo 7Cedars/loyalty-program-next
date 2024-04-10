@@ -1,4 +1,6 @@
 import {  LoyaltyGift, Status } from "@/types";
+import { readContracts } from '@wagmi/core'
+import { config } from '../../../config'
 import { useEffect, useRef, useState } from "react";
 import { loyaltyGiftAbi } from "@/context/abi";
 import { Log } from "viem"
@@ -22,9 +24,12 @@ export const useLoyaltyGifts = () => {
   const statusAtgiftAddress = useRef<Status>("isIdle") 
   const statusAtUri = useRef<Status>("isIdle") 
   const statusAtMetadata = useRef<Status>("isIdle") 
-  const statusAtAvailableTokens = useRef<Status>("isIdle") 
+  const statusAtGetAdditionalInfo = useRef<Status>("isIdle")
+  const statusAtAvailableVouchers = useRef<Status>("isIdle") 
   const [data, setData] = useState<LoyaltyGift[] | undefined>() 
   const [loyaltyGifts, setLoyaltyGifts] = useState<LoyaltyGift[] | undefined>() 
+
+  console.log("loyaltyGifts: ", loyaltyGifts)
   
   const fetchGifts = (requestedTokens?: LoyaltyGift[] ) => {
     setStatus("isIdle")
@@ -43,16 +48,13 @@ export const useLoyaltyGifts = () => {
       if (publicClient && chain)
       try { 
         const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
-        console.log("selectedChain: ", selectedChain) 
         const logs: Log[] = await publicClient.getContractEvents({
           abi: loyaltyGiftAbi, 
           eventName: 'LoyaltyGiftDeployed', 
           // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, // This should be an editable list inside the front end. improvement for later. 
           fromBlock: selectedChain?.fromBlock
         });
-        console.log("logs: ", logs)
         const loyaltyGifts = parseTokenContractLogs(logs)
-        console.log("loyaltyGifts: ", loyaltyGifts) 
         statusAtgiftAddress.current = "isSuccess"
         setData(loyaltyGifts)
       } catch (error) {
@@ -113,30 +115,90 @@ export const useLoyaltyGifts = () => {
         console.log(error)
       }
     }
-  }  
+  } 
 
-  const getAvailableVouchers = async () => {
-    statusAtAvailableTokens.current = "isLoading" 
+  const getAdditionalInfo = async () => {
+    statusAtGetAdditionalInfo.current = "isLoading" 
 
     let item: LoyaltyGift
-    let loyaltyGiftsAvailableTokens: LoyaltyGift[] = []
+    let loyaltyGiftAdditionalInfo: LoyaltyGift[] = []
 
     if (data && selectedLoyaltyProgram && selectedLoyaltyProgram.programAddress && publicClient) { 
       try {
         for await (item of data) {
-            const availableTokens: unknown = await publicClient.readContract({
+
+          const giftContract = {
+            address: item.giftAddress,
+            abi: loyaltyGiftAbi,
+          } as const
+
+          const data = await readContracts(config, {
+            contracts: [
+              {
+                ...giftContract, 
+                functionName: 'getIsClaimable', 
+                args: [item.giftId]
+              }, 
+              {
+                ...giftContract, 
+                functionName: 'getCost', 
+                args: [item.giftId]
+              }, 
+              {
+                ...giftContract, 
+                functionName: 'getHasAdditionalRequirements', 
+                args: [item.giftId]
+              }, 
+            ], 
+          })
+
+          console.log("data @getAdditionalInfo: ", data)
+
+            if (
+              data[0].status == "success" && 
+              data[1].status == "success" && 
+              data[2].status == "success"
+            )
+              loyaltyGiftAdditionalInfo.push({
+                ...item, 
+                isClaimable: parseBigInt(data[0].result), 
+                cost: parseBigInt(data[1].result), 
+                hasAdditionalRequirements: parseBigInt(data[2].result)
+              })
+        } 
+        statusAtGetAdditionalInfo.current = "isSuccess"
+        setData(loyaltyGiftAdditionalInfo)
+      } catch (error) {
+        statusAtGetAdditionalInfo.current = "isError" 
+        console.log(error)
+      }
+    } 
+
+    statusAtGetAdditionalInfo.current = "isSuccess"
+  }
+
+  const getAvailableVouchers = async () => {
+    statusAtAvailableVouchers.current = "isLoading" 
+
+    let item: LoyaltyGift
+    let loyaltyGiftsAvailableVouchers: LoyaltyGift[] = []
+
+    if (data && selectedLoyaltyProgram && selectedLoyaltyProgram.programAddress && publicClient) { 
+      try {
+        for await (item of data) {
+            const availableVouchers: unknown = await publicClient.readContract({
               address: item.giftAddress, 
               abi: loyaltyGiftAbi,
               functionName: 'balanceOf', 
               args: [parseEthAddress(selectedLoyaltyProgram?.programAddress), item.giftId]
             })
 
-            loyaltyGiftsAvailableTokens.push({...item, availableTokens: Number(parseBigInt(availableTokens))})
+            loyaltyGiftsAvailableVouchers.push({...item, availableVouchers: Number(parseBigInt(availableVouchers))})
         } 
-        statusAtAvailableTokens.current = "isSuccess"
-        setData(loyaltyGiftsAvailableTokens)
+        statusAtAvailableVouchers.current = "isSuccess"
+        setData(loyaltyGiftsAvailableVouchers)
       } catch (error) {
-        statusAtAvailableTokens.current = "isError" 
+        statusAtAvailableVouchers.current = "isError" 
         console.log(error)
       }
     } 
@@ -160,7 +222,14 @@ export const useLoyaltyGifts = () => {
     if ( 
       data && 
       statusAtMetadata.current == "isSuccess" && 
-      statusAtAvailableTokens.current == "isIdle"
+      statusAtGetAdditionalInfo.current == "isIdle"
+      ) {
+        getAdditionalInfo() 
+    } 
+    if ( 
+      data && 
+      statusAtGetAdditionalInfo.current == "isSuccess" && 
+      statusAtAvailableVouchers.current == "isIdle"
       ) {
         getAvailableVouchers() 
     } 
@@ -171,7 +240,7 @@ export const useLoyaltyGifts = () => {
       statusAtgiftAddress.current == "isSuccess" && 
       statusAtUri.current == "isSuccess" && 
       statusAtMetadata.current == "isSuccess" && 
-      statusAtAvailableTokens.current == "isSuccess" 
+      statusAtAvailableVouchers.current == "isSuccess" 
       ) {
         setStatus("isSuccess")
         setLoyaltyGifts(data)
@@ -180,7 +249,7 @@ export const useLoyaltyGifts = () => {
       statusAtgiftAddress.current == "isLoading" ||
       statusAtUri.current == "isLoading" || 
       statusAtMetadata.current == "isLoading" || 
-      statusAtAvailableTokens.current == "isLoading" 
+      statusAtAvailableVouchers.current == "isLoading" 
       ) {
         setStatus("isLoading")
       }
