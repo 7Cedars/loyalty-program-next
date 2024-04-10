@@ -16,7 +16,8 @@ Even though repository is public, For now, it is for personal use only.
 - [x]  @Vendor, landing: 'visit page' theming is broken. Fix. -- still some buttons' ui broken. 
 - [x]  @vendor, stats: balance not loading. Fix. -- problem does not exist at customer.. 
 - [ ]  @customer, claim gifts: -- claim gift or voucher distinction does not work. 
-  - [ ]  This is because token addresses are loaded differently in this view. At useLoyaltyGift it skips the first step - in which tokenised was loaded. Will take quite a bit of work to fix. 
+  - [ ]  This is because token addresses are loaded differently in this view. At useLoyaltyGift it skips the first step - in which tokenised was loaded. Will take quite a bit of work to fix. Note that I probably will refactor gift contracts - which should also hel fix this bug. 
+- [ ]  @Vendor, select gifts: selecting gifts and minting should be decoupled: you should be able to mint gifts that are NOT selected to be claimed! (because many tokens can actually not be claimed..)
 - [x]  @customer & vendor -- disconnected view: should also show reocnnecting... (without login button)
 - [ ]  @customer: should show if requirements are not met - does not work at the moment! 
 - [ ]  @customer, your card: Loyalty points do not update. 
@@ -31,6 +32,7 @@ Even though repository is public, For now, it is for personal use only.
 ## Improvements to implement (in order of priority)
 <!-- go through this list and check how many I have already fixed -->
 - [ ]  @Vendor, QrReader, SendPoints: add mint points button + how many points left line. 
+- [ ]  @Vendor, Select gifts: create easy way to transfer gifts to customer (bypassing request logic)? 
 - [ ]  @LandingPage: update text to reflect only deployed on OP sepolia. 
 - [ ]  @Everywhere: create new content loyalty programs. Inkscape + metadata.  
 - [ ]  @LandingPage: update images of loyalty program. -- show off app. 

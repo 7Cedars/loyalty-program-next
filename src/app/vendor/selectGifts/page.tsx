@@ -31,6 +31,8 @@ export default function Page() {
   const publicClient = usePublicClient({config})
   const {chain} = useAccount() 
 
+  console.log("statusUseLoyaltyGifts: ", statusUseLoyaltyGifts)
+
   const getTokenSelection = async () => {
     setStatusTokenSelection("isLoading")
     if(publicClient && chain)

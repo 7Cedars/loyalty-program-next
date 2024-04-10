@@ -3,7 +3,7 @@ export const WHITELIST_TOKEN_ISSUERS_SEPOLIA = []
 export const SUPPORTED_CHAINS = [ // blocks to start check for data. 
   {
     name: "foundry", 
-    chainId: 33137, 
+    chainId: 31337, 
     fromBlock: 0n, 
     accountImplementation: "0x0b651850F1b7EA080A0039119dEEE7Cc7516706E" // TBI -- should use create2 to always have same address. 
   },

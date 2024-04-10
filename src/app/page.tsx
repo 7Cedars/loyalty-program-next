@@ -33,16 +33,13 @@ export default function Home() {
   const [ currentChain, setCurrentChain ] = useState<any>(); // £todo still needs to be properly types.. 
 
   const handleDeployRequest = async (data: DeployRequestProps) => {
-    // open({view: "Connect"})
     setDeployRequest(data)
     console.log("data @deploy: ", data)
   }
 
   useEffect(() => {
     const chainIds = SUPPORTED_CHAINS.map(chain => chain.chainId)
-    if (chain && !chainIds.includes(chain.id)) {
-      open({view: "Networks"})
-    }
+
     if (chain && chainIds.includes(chain.id)) {
       const selectChain = SUPPORTED_CHAINS.find(supportedChain => supportedChain.chainId === chain.id)
       setCurrentChain(selectChain)
