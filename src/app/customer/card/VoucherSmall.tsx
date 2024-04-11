@@ -8,7 +8,7 @@ type SelectedTokenProps = {
   onClick: () => void;
 }
 
-export default function SelectToken( {token, disabled, onClick}: SelectedTokenProps ) {
+export default function VoucherSmall( {token, disabled, onClick}: SelectedTokenProps ) {
   let appearance = `h-64 w-40 m-2 grid grid-cols-1 border rounded-lg border-gray-400`
 
   return (

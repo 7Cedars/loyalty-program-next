@@ -18,11 +18,11 @@ import { useWeb3Modal, useWeb3ModalState } from "@web3modal/wagmi/react";
 
 
 type SelectedTokenProps = {
-  token: LoyaltyGift
+  gift: LoyaltyGift
   disabled: boolean
 }
 
-export function TokenBig( {token, disabled}: SelectedTokenProps ) {
+export function TokenBig( {gift, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
@@ -61,10 +61,10 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
     if (selectedLoyaltyCard && publicClient) {
       try {
         await publicClient.readContract({ 
-          address: parseEthAddress(token.giftAddress), 
+          address: parseEthAddress(gift.giftAddress), 
           abi: loyaltyGiftAbi,
           functionName: 'requirementsLoyaltyGiftMet',
-          args: [selectedLoyaltyCard.cardAddress, token.giftId, selectedLoyaltyCard.balance]
+          args: [selectedLoyaltyCard.cardAddress, gift.giftId, selectedLoyaltyCard.balance]
           })
           setRequirementsMet(true)
         } catch {
@@ -111,16 +111,16 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
   const message = {
     from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
     to:  parseEthAddress(selectedLoyaltyCard?.loyaltyProgramAddress),
-    gift: `${token?.metadata?.name}`,
-    cost: `${token?.metadata?.attributes[1].value} points`,
+    gift: `${gift?.metadata?.name}`,
+    cost: `${gift?.metadata?.attributes[1].value} points`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const
 
   console.log("message: ", {
     from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
     to:  parseEthAddress(selectedLoyaltyProgram?.programAddress),
-    gift: `${token?.metadata?.name}`,
-    cost: `${token?.metadata?.attributes[1].value} points`,
+    gift: `${gift?.metadata?.name}`,
+    cost: `${gift?.metadata?.attributes[1].value} points`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   })
 
@@ -169,13 +169,9 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
     }
   }, [pointsSent])
 
-  console.log("token.tokenised: ", token.tokenised)
-  console.log("token: ", token)
-  console.log("requirementsMet: ", requirementsMet)
-
   return (
     <div className="grid grid-cols-1"> 
-      { token.metadata && !signature ? 
+      { gift.metadata && !signature ? 
         <>
         <div className="grid grid-cols-1 sm:grid-cols-2 h-fit w-full justify-items-center "> 
           <div className="rounded-lg w-max"> 
@@ -184,37 +180,37 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
                 className="rounded-lg"
                 width={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35  : 400}
                 height={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35 : 400}
-                src={token.metadata.imageUri}
+                src={gift.metadata.imageUri}
                 alt="Loyalty Gift icon"
               />
           </div>
           
           <div className="grid grid-cols-1 pt-2 content-between w-full h-fit">
             <div> 
-            <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
+            <TitleText title={gift.metadata.name} subtitle={gift.metadata.description} size={1} />
             
               <div className="text-center text-md flex flex-col pb-2 "> 
-                <div> {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`} </div> 
-                <div> {`Additional Requirements: ${token.metadata.attributes[2].value}`} </div> 
+                <div> {`Cost: ${gift.metadata.attributes[1].value} ${gift.metadata.attributes[1].trait_type}`} </div> 
+                <div> {`Additional Requirements: ${gift.metadata.attributes[2].value}`} </div> 
               </div> 
 
             </div>
             {pointsSent ? 
               <p className="text-center text-md font-bold p-8">
-                {token.metadata?.attributes[4].value}
+                {gift.metadata?.attributes[4].value}
               </p>
             :
             null
             }
             <div className="text-center text-md"> 
             <div className="text-center text-md text-slate-400"> 
-              {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
+              {`ID: ${gift.giftId} @${gift.giftAddress.slice(0,6)}...${gift.giftAddress.slice(36,42)}`}
             </div>
 
              
-              {token.tokenised == 1n ? 
+              {gift.isVoucher == 1n ? 
                 <div className="text-center text-md"> 
-                  {`Remaining vouchers: ${token.availableTokens}`}
+                  {`Remaining vouchers: ${gift.availableVouchers}`}
                 </div>
                 :
                 null
@@ -247,12 +243,12 @@ export function TokenBig( {token, disabled}: SelectedTokenProps ) {
         : null
         }
         
-        { token.metadata && signature ?
+        { gift.metadata && signature ?
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
             <div className="flex m-3 justify-center"> 
               <QRCode 
-                value={`type:claimGift;${token.giftAddress};${token.giftId};${selectedLoyaltyCard?.cardId};${address};${token.metadata.attributes[1].value};${signature}`}
+                value={`type:claimGift;${gift.giftAddress};${gift.giftId};${selectedLoyaltyCard?.cardId};${address};${gift.metadata.attributes[1].value};${signature}`}
                 style={{ 
                   height: "350px", 
                   width: "350px", 

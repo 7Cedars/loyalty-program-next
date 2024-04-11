@@ -125,7 +125,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
                 {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
               </div>
               <div className="text-center text-md"> 
-                {`Remaining vouchers: ${token.availableTokens}`}
+                {`Remaining vouchers: ${token.availableVouchers}`}
               </div>
             </div>
           </div>

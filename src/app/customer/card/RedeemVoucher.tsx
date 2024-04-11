@@ -17,11 +17,11 @@ import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import { RootState } from "@/redux/store";
 
 type SelectedTokenProps = {
-  token: LoyaltyGift
+  gift: LoyaltyGift
   disabled: boolean
 }
 
-export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
+export default function RedeemToken( {gift, disabled}: SelectedTokenProps)  {
   const { selectedLoyaltyCard } = useAppSelector((state: RootState) => state.selectedLoyaltyCard )
   const dimensions = useScreenDimensions();
   const { selectedLoyaltyProgram  } = useAppSelector((state: RootState) => state.selectedLoyaltyProgram )
@@ -78,7 +78,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   const message = {
     from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
     to:  parseEthAddress(selectedLoyaltyProgram?.programAddress),
-    voucher: `${token?.metadata?.name}`,
+    voucher: `${gift?.metadata?.name}`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const
 
@@ -133,7 +133,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
   return (
     <div className="grid grid-cols-1"> 
 
-      { token.metadata && !signature ? 
+      { gift.metadata && !signature ? 
         <>
         <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full justify-items-center "> 
           <div className="rounded-lg w-max"> 
@@ -142,29 +142,29 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
                 className="rounded-lg"
                 width={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35  : 400}
                 height={dimensions.width < 896 ?  Math.min(dimensions.height, dimensions.width) * .35 : 400}
-                src={token.metadata.imageUri}
+                src={gift.metadata.imageUri}
                 alt="Loyalty Token icon "
               />
           </div>
           
           <div className="grid grid-cols-1 pt-2 content-between w-full h-full">
             <div> 
-              <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
+              <TitleText title={gift.metadata.name} subtitle={gift.metadata.description} size={1} />
             </div>
             {tokenSent ? 
               <p className="text-center text-xl font-bold p-8">
-                {token.metadata?.attributes[6].value}
+                {gift.metadata?.attributes[6].value}
               </p>
             :
             null
             }
             <div className="text-center text-md"> 
               <div className="text-center text-md"> 
-                {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
+                {`ID: ${gift.giftId} @${gift.giftAddress.slice(0,6)}...${gift.giftAddress.slice(36,42)}`}
               </div>
-              {token.tokenised == 1n ? 
+              {gift.isVoucher == 1n ? 
                 <div className="text-center text-md"> 
-                  {`Remaining vouchers: ${token.availableTokens}`}
+                  {`Remaining vouchers: ${gift.availableVouchers}`}
                 </div>
                 :
                 null
@@ -186,12 +186,12 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
         : null
         }
         
-        { token.metadata && signature ?
+        { gift.metadata && signature ?
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 flex flex-col items-center"> 
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
             <div className="m-3 flex items-center"> 
               <QRCode 
-                value={`type:redeemToken;${token.giftAddress};${token.giftId};${selectedLoyaltyCard?.cardId};${address};${signature}`}
+                value={`type:redeemToken;${gift.giftAddress};${gift.giftId};${selectedLoyaltyCard?.cardId};${address};${signature}`}
                 style={{ 
                   height: "350px", 
                   width: "350px", 
@@ -220,7 +220,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
     //   <div className="grow"> 
     //     <div className="grid justify-center justify-items-center p-6">
     //         <QRCode 
-    //           value={`type:redeemToken;lp:${selectedLoyaltyProgram?.programAddress};lc:${selectedLoyaltyCard?.cardAddress};lt:${token.tokenAddress};ti:${token.tokenId};sg:${signature}`}
+    //           value={`type:redeemToken;lp:${selectedLoyaltyProgram?.programAddress};lc:${selectedLoyaltyCard?.cardAddress};lt:${gift.giftAddress};ti:${gift.giftId};sg:${signature}`}
     //           style={{ height: "400px", width: "350px", objectFit: "cover"  }}
     //           />
     //     </div>

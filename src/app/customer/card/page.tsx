@@ -175,7 +175,7 @@ export default function Page() {
             />
           </button>
             
-          <RedeemVoucher token={selectedVoucher?.token} disabled={false}  /> 
+          <RedeemVoucher gift={selectedVoucher?.token} disabled={false}  /> 
             
         </div>
       :

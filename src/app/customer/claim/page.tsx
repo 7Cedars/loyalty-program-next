@@ -203,7 +203,7 @@ export default function Page() {
             />
           </button>
 
-          <TokenBig token={selectedToken.token} disabled = {selectedToken.disabled} /> 
+          <TokenBig gift={selectedToken.token} disabled = {selectedToken.disabled} /> 
           
           {/* <div className="h-32" />  */}
           
@@ -241,7 +241,7 @@ export default function Page() {
             loyaltyGifts.map((gift: LoyaltyGift) => 
                 gift.metadata ? 
                 <div key = {`${gift.giftAddress}:${gift.giftId}`} >
-                  <TokenSmall token = {gift} disabled = {false} onClick={() => setSelectedToken({token: gift, disabled: false})}  /> 
+                  <TokenSmall gift = {gift} disabled = {false} onClick={() => setSelectedToken({token: gift, disabled: false})}  /> 
                 </div>
                 : null 
               )
