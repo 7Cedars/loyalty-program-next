@@ -1,4 +1,4 @@
-import {  LoyaltyGift, Status } from "@/types";
+import {  EthAddress, LoyaltyGift, Status } from "@/types";
 import { readContracts } from '@wagmi/core'
 import { config } from '../../../config'
 import { useEffect, useRef, useState } from "react";
@@ -28,6 +28,7 @@ export const useLoyaltyGifts = () => {
   const statusAtAvailableVouchers = useRef<Status>("isIdle") 
   const [data, setData] = useState<LoyaltyGift[] | undefined>() 
   const [loyaltyGifts, setLoyaltyGifts] = useState<LoyaltyGift[] | undefined>() 
+  const [loyaltyGiftContracts, setLoyaltyGiftContracts] = useState<EthAddress[] | undefined>() 
 
   console.log("loyaltyGifts: ", loyaltyGifts)
   
@@ -38,7 +39,7 @@ export const useLoyaltyGifts = () => {
     getLoyaltyGiftAddresses(requestedGifts)
   }
 
-  const updateAvaialbleVouchers = () => {
+  const updateAvailableVouchers = () => {
     setStatus("isIdle")
     statusAtAvailableVouchers.current = "isIdle"
     getAvailableVouchers() 
@@ -250,6 +251,10 @@ export const useLoyaltyGifts = () => {
       ) {
         setStatus("isSuccess")
         setLoyaltyGifts(data)
+
+        const dataContracts = Array.from(new Set(data?.map(item => item.giftAddress))) 
+        setLoyaltyGiftContracts(dataContracts)
+
       }
     if (
       statusAtgiftAddress.current == "isLoading" ||
@@ -261,5 +266,5 @@ export const useLoyaltyGifts = () => {
       }
   }, [ data ])
 
-  return {status, loyaltyGifts, fetchGifts, updateAvaialbleVouchers}
+  return {status, loyaltyGifts, loyaltyGiftContracts, fetchGifts, updateAvailableVouchers}
 }

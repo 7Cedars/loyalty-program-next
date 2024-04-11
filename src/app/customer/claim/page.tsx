@@ -116,7 +116,7 @@ export default function Page() {
           const isClaimable: unknown = await publicClient.readContract({
             address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
             abi: loyaltyProgramAbi,
-            functionName: 'getLoyaltyGiftsIsClaimable', 
+            functionName: 'getLoyaltyGiftIsClaimable', 
             args: [loyaltyGift.giftAddress, loyaltyGift.giftId]
           })
           isClaimable == 1n ? loyaltyGiftsUpdated.push(loyaltyGift) : null

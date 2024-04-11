@@ -53,7 +53,7 @@ export default function Home() {
     if (status === "connected" && walletClient && deployRequest) {
       const hash = await walletClient.deployContract({
         abi: loyaltyProgramAbi,
-        chain: chain, // £todo needs to be dynamic
+        chain: chain,
         account: address,
         args: [
           deployRequest.uri,
