@@ -31,19 +31,25 @@ export const useLoyaltyGifts = () => {
 
   console.log("loyaltyGifts: ", loyaltyGifts)
   
-  const fetchGifts = (requestedTokens?: LoyaltyGift[] ) => {
+  const fetchGifts = (requestedGifts?: LoyaltyGift[] ) => {
     setStatus("isIdle")
     setData(undefined)
     setLoyaltyGifts(undefined)
-    getLoyaltyGiftAddresses(requestedTokens)
+    getLoyaltyGiftAddresses(requestedGifts)
   }
 
-  const getLoyaltyGiftAddresses = async (requestedTokens?: LoyaltyGift[]) => {
+  const updateAvaialbleVouchers = () => {
+    setStatus("isIdle")
+    statusAtAvailableVouchers.current = "isIdle"
+    getAvailableVouchers() 
+  }
+
+  const getLoyaltyGiftAddresses = async (requestedGifts?: LoyaltyGift[]) => {
     statusAtgiftAddress.current = "isLoading"
 
-    if (requestedTokens) { 
+    if (requestedGifts) { 
       statusAtgiftAddress.current = "isSuccess"
-      setData(requestedTokens)
+      setData(requestedGifts)
     } else { 
       if (publicClient && chain)
       try { 
@@ -255,5 +261,5 @@ export const useLoyaltyGifts = () => {
       }
   }, [ data ])
 
-  return {status, loyaltyGifts, fetchGifts}
+  return {status, loyaltyGifts, fetchGifts, updateAvaialbleVouchers}
 }

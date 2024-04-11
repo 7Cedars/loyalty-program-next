@@ -71,11 +71,10 @@ export type LoyaltyCard = {
 // for now type for program and token are the same - but might change in the future 
 export type LoyaltyGift = {
   giftAddress: EthAddress; 
-  giftId: number 
+  giftId: number
   uri?: string ;
   metadata?: Metadata ;
   issuer?: EthAddress; 
-
   isClaimable?: BigInt;
   isVoucher?: BigInt; 
   cost?: BigInt; 

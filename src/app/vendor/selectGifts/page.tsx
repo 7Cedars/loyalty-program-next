@@ -1,7 +1,7 @@
 "use client"; 
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./GiftSmall";
-import TokenBig from "./GiftBig";
+import GiftBig from "./GiftBig";
 import { LoyaltyGift, Status } from "@/types";
 import { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -16,22 +16,20 @@ import Image from "next/image";
 import { useAppSelector } from "@/redux/hooks";
 import { config } from '../../../../config' 
 
-type setSelectedTokenProps = {
-  token: LoyaltyGift; 
+type setSelectedGiftProps = {
+  gift: LoyaltyGift; 
   disabled: boolean; 
 }
 
 export default function Page() {
-  const { status: statusUseLoyaltyGifts, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
+  const { status: statusUseLoyaltyGifts, loyaltyGifts, fetchGifts, updateAvaialbleVouchers } = useLoyaltyGifts()
   const [statusTokenSelection, setStatusTokenSelection] = useState<Status>()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const [activeLoyaltyGifts, setActiveLoyaltyGifts]  = useState<LoyaltyGift[] >([]) 
-  const [inactiveLoyaltyGifts, setInactiveLoyaltyGifts] = useState<LoyaltyGift[] >([]) 
-  const [selectedToken, setSelectedToken] = useState<setSelectedTokenProps | undefined>() 
+  const [ activeLoyaltyGifts, setActiveLoyaltyGifts ]  = useState<LoyaltyGift[] >([]) 
+  const [ inactiveLoyaltyGifts, setInactiveLoyaltyGifts ] = useState<LoyaltyGift[] >([]) 
+  const [selectedGift, setSelectedGift] = useState<setSelectedGiftProps | undefined>() 
   const publicClient = usePublicClient({config})
   const {chain} = useAccount() 
-
-  console.log("statusUseLoyaltyGifts: ", statusUseLoyaltyGifts)
 
   const getTokenSelection = async () => {
     setStatusTokenSelection("isLoading")
@@ -83,22 +81,38 @@ export default function Page() {
     }
   }
   
+  // NB: £bug minted vouchers are NOT updated on return from selected gift. £todo: FIX  
   useEffect(() => {
     if (!loyaltyGifts) fetchGifts()
     if (loyaltyGifts) getTokenSelection() 
-  }, [, selectedToken, loyaltyGifts]) 
+  }, [, selectedGift, loyaltyGifts])
+
+  const handleReturnToMainPage = () => {
+    updateAvaialbleVouchers() 
+    setSelectedGift(undefined)
+  }
+
+  useEffect(() => {
+    if (loyaltyGifts && selectedGift) {
+      const selected = loyaltyGifts.find(gift => 
+        gift.giftAddress == selectedGift?.gift.giftAddress && 
+        gift.giftId == selectedGift?.gift.giftId
+      )
+      selected ? setSelectedGift({...selectedGift, gift: selected}) : null 
+    }
+  }, [loyaltyGifts, selectedGift])
 
   return (
      <div className=" w-full h-full grid grid-cols-1 gap-1 overflow-x-auto">
         <div>
         <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={2} />
        </div>
-      { selectedToken ? 
+      { selectedGift && loyaltyGifts? 
       <div className="grid grid-cols-1 content-start border border-gray-700 rounded-lg m-3">
         <button 
           className="text-slate-800 dark:text-slate-200 font-bold p-3"
           type="submit"
-          onClick={() => setSelectedToken(undefined)} // should be true / false
+          onClick={() => handleReturnToMainPage()} // should be true / false
           >
           <ArrowLeftIcon
             className="h-7 w-7"
@@ -106,7 +120,7 @@ export default function Page() {
           />
         </button>
 
-        <TokenBig token={selectedToken.token} disabled = {selectedToken.disabled} /> 
+        <GiftBig selectedGift={selectedGift.gift} disabled = {selectedGift.disabled} updateGift = {() => updateAvaialbleVouchers()} /> 
       
       </div>
       :
@@ -147,10 +161,10 @@ export default function Page() {
                 <TitleText title = "Selected Gifts" size={0} />
               </div>
               { activeLoyaltyGifts.length > 0 ?  
-                  activeLoyaltyGifts.map((token: LoyaltyGift) => 
-                      token.metadata ? 
-                      <div key = {`${token.giftAddress}:${token.giftId}`} >
-                        <TokenSmall token = {token} disabled = {false} onClick={() => setSelectedToken({token: token, disabled: false})}  /> 
+                  activeLoyaltyGifts.map((gift: LoyaltyGift, i: number) => 
+                    gift.metadata ? 
+                      <div key = {`${gift.giftAddress}:${gift.giftId}`} >
+                        <TokenSmall gift = {gift} disabled = {false} onClick={() => setSelectedGift({gift: gift, disabled: false})}  /> 
                       </div>
                       : null 
                     )
@@ -164,10 +178,10 @@ export default function Page() {
                 <TitleText title = "Available Gifts" size={0} />
               </div>
               { inactiveLoyaltyGifts.length > 0 ? 
-                  inactiveLoyaltyGifts.map((token: LoyaltyGift) => 
-                    token.metadata ? 
-                      <div key = {`${token.giftAddress}:${token.giftId}`} >
-                        <TokenSmall token = {token} disabled = {true}  onClick={() => setSelectedToken({token: token, disabled: true})} /> 
+                  inactiveLoyaltyGifts.map((gift: LoyaltyGift, i: number) => 
+                    gift.metadata ? 
+                      <div key = {`${gift.giftAddress}:${gift.giftId}`} >
+                        <TokenSmall gift = {gift} disabled = {true}  onClick={() => setSelectedGift({gift: gift, disabled: true})} /> 
                       </div>
                       :
                       null 
