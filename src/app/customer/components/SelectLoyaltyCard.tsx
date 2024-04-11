@@ -13,7 +13,6 @@ import { useDispatch } from 'react-redux';
 import { useAppSelector } from '@/redux/hooks';
 import { selectLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
 import { parseBigInt } from '../../utils/parsers';
- 
 
 export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: LoyaltyCard[]}) {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
@@ -34,14 +33,14 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
               address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
               abi: loyaltyProgramAbi,
               functionName: 'getBalanceLoyaltyCard', 
-              args: [ loyaltyCard.cardId ]
+              args: [ loyaltyCard.cardAddress ]
             });
             loyaltyPointsUpdated.push({cardAddress: loyaltyCard.cardAddress, points: Number(parseBigInt(loyaltyCardPointsData))})
 
             if (loyaltyPointsUpdated) setLoyaltyCardPoints(loyaltyPointsUpdated)
           }
         } catch (error) {
-          console.log(error)
+          console.log("getBalanceLoyaltyCard error: ", error)
       }
     }
   }
@@ -53,7 +52,7 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
   return (
     <div> 
       <TitleText title = "Choose Loyalty Card" subtitle="Choose Card or request a new one." size={1} /> 
-      <div className="grid grid-rows-1 grid-flow-col h-full overflow-x-scroll overscroll-auto mb-12 justify-items-center"> 
+      <div className="grid grid-rows-1 grid-flow-col h-full overflow-auto mb-12 justify-items-center"> 
           
         { loyaltyCards && selectedLoyaltyProgram ? 
           loyaltyCards.map(card => 
@@ -91,6 +90,10 @@ export default function SelectLoyaltyCard({loyaltyCards}: {loyaltyCards: Loyalty
           : 
           null
         }
+
+        
+
+
 
       </div>
     </div>

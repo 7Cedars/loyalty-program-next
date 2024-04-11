@@ -6,7 +6,7 @@ type ButtonProps = {
   isFilled?: boolean;
   children: any;
   onClick?: () => void;
-  appearance?: "blueFilled" | "grayEmpty" | "grayFilled" | "grayEmpty" |  "greenFilled" | "greenEmpty" | "redFilled" | "redEmpty" | "grayEmptyLight"
+  appearance?: "blueFilled" | "grayEmpty" | "grayFilled" | "grayEmpty" |  "greenFilled" | "greenEmpty" | "redFilled" | "redEmpty" | "grayEmptyLight" | "grayEmptyDark"
 };
 
 export const Button = ({
@@ -21,6 +21,7 @@ export const Button = ({
     blueEmpty:   "rounded m-1 grow text-md py-2 px-4 border-2 border-blue-400 text-blue-400 hover:text-blue-700 hover:border-blue-700", 
     grayFilled:  "rounded m-1 grow text-md py-2 px-4 bg-gray-500 hover:bg-gray-600 text-white", 
     grayEmpty:   "rounded m-1 grow text-md py-2 px-4 border-2 border-slate-400 dark:text-slate-300 text-slate-700 hover:border-slate-700 dark:hover:border-slate-300", 
+    grayEmptyDark:  "rounded m-1 grow text-md py-2 px-4 border-2 border-slate-400 text-slate-700 hover:border-slate-700", 
     grayEmptyLight: "rounded m-1 grow text-md py-2 px-4 border-2 border-slate-400 text-slate-300 hover:border-slate-300", 
     greenFilled: "rounded m-1 grow text-md py-2 px-4 bg-green-500 hover:bg-green-600 text-white", 
     greenEmpty:  "rounded m-1 grow text-md py-2 px-4 border-2 border-green-400 text-green-400 hover:border-green-700 hover:text-green-700", 

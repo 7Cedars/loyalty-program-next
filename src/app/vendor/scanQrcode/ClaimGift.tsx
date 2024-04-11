@@ -31,7 +31,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
   const dispatch = useDispatch() 
   const { pointsReceived } = useLatestVendorTransaction(true) 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const { writeContract, isError, isSuccess, data } = useWriteContract()
+  const { writeContract, isError, isSuccess, data, error } = useWriteContract()
 
   useEffect(() => {
     if (!loyaltyGifts && qrData) {
@@ -68,13 +68,25 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
           isVisible: true
       }))
     }
+    console.log("claimGift error: ", error)
   }, [isError])
 
   useEffect(() => {
     if (isSuccess)  setHashTransaction(data)
   }, [isSuccess])
 
-
+  console.log("args claimgift: ", [
+    `${token?.metadata?.name}`, 
+    `${token?.metadata?.attributes[1].value} points`,
+    qrData?.loyaltyToken,
+    qrData?.loyaltyTokenId, 
+    qrData?.loyaltyCardId, 
+    qrData?.customerAddress,
+    token?.metadata?.attributes[1].value, 
+    qrData?.signature
+  ]
+  
+  )
   return (
     <div className="grid grid-cols-1 h-full justify-items-center content-between p-3"> 
 

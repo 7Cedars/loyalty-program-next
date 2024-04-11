@@ -1,13 +1,14 @@
 import { EthAddress, LoyaltyCard, Status } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { loyaltyProgramAbi } from "@/context/abi";
-import { usePublicClient } from 'wagmi'
+import { useAccount, usePublicClient } from 'wagmi'
 import { 
   parseBigInt,
   parseEthAddress,
   parseTransferSingleLogs,
 } from "@/app/utils/parsers";
 import { Log } from "viem"
+import { SUPPORTED_CHAINS } from "@/context/constants";
 
 type FetchCardsProps = {
   userAddress: EthAddress;
@@ -22,6 +23,7 @@ export const useLoyaltyCards = () => {
   const statusAtAddress = useRef<Status>("isIdle") 
   const [ data, setData ] = useState<LoyaltyCard[] | undefined>() 
   const [ loyaltyCards, setLoyaltyCards ] = useState<LoyaltyCard[]>() 
+  const { chain } = useAccount() 
 
   const fetchCards = ({userAddress, programAddress}: FetchCardsProps) => {
     setStatus("isIdle")
@@ -33,14 +35,15 @@ export const useLoyaltyCards = () => {
   const getLoyaltyCardIds = async (userAddress: EthAddress, programAddress: EthAddress) => {
     statusAtIds.current = "isLoading"
 
-    if (publicClient)
+    if (publicClient && chain)
     try {
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleData: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: programAddress, 
         eventName: 'TransferSingle', 
         args: {to: userAddress}, 
-        fromBlock: 25888893n
+        fromBlock: selectedChain?.fromBlock
       });
       const transferredTokens = parseTransferSingleLogs(transferSingleData)
       const loyaltyCardData = transferredTokens.filter(token => token.ids[0] != 0n)
@@ -114,8 +117,6 @@ export const useLoyaltyCards = () => {
       }
     }
   }
-
-
 
   useEffect(() => {
     if ( 

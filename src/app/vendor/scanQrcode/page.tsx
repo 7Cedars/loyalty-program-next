@@ -1,7 +1,7 @@
 "use client"; 
 
 import { QrReader } from 'react-qr-reader';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { useAccount } from 'wagmi';
@@ -17,23 +17,27 @@ import TransferCard from './TransferCard';
 
 export default function Page() {
   const [data, setData] = useState<QrData>(); 
-  const {address} = useAccount();  
+  const {status} = useAccount();  
   const dispatch = useDispatch();  
 
-  if (!address) {
-    dispatch(notification({
-      id: "NotLoggedIn",
-      message: "You are not connected to a network.", 
-      colour: "red",
-      loginButton: true, 
-      isVisible: true
-    }))
-  } else {
-    dispatch(updateNotificationVisibility({
-      id: "LoggedIn",
-      isVisible: false
-    }))
-  }
+  useEffect(() => {
+    if (status === "disconnected") {
+      dispatch(notification({
+        id: "notConnected",
+        message: "You are not connected to a network.", 
+        colour: "red",
+        loginButton: true, 
+        isVisible: true
+      }))
+    }
+  
+    if (status === "connected") {
+      dispatch(updateNotificationVisibility({
+        id: "LoggedIn",
+        isVisible: false
+      }))
+    }
+  }, [, status])
 
   return (
     <div className='h-full'>

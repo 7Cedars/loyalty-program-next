@@ -24,38 +24,73 @@ export const DynamicLayout = ({
   const dispatch = useAppDispatch()
   // const { modalVisible } = useAppSelector(state => state.userInput) 
   const [ modalVisible, setModalVisible ] = useState<boolean>(true); 
-  const { address }  = useAccount()
+  const { address, status }  = useAccount()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
+  // const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
+  console.log("status wagmi:" , status)
+
 
   useEffect(() => {
-    if (address != userLoggedIn) {
-      setUserLoggedIn(undefined)
-      dispatch(resetLoyaltyProgram(true))
-    }
+    // walletConnect should take care of this... 
+    // if (address != userLoggedIn) {
+    //   setUserLoggedIn(undefined)
+    //   dispatch(resetLoyaltyProgram(true))
+    // }
 
-    if (!address) {
+    if (status === "disconnected") {
       dispatch(notification({
-        id: "NotLoggedIn",
+        id: "notConnected",
         message: "You are not connected to a network.", 
         colour: "red",
         loginButton: true, 
         isVisible: true
       }))
-      setUserLoggedIn(undefined)
+      setModalVisible(false)
+      // setUserLoggedIn(undefined)
     }    
+
+    if (status === "connecting") {
+      dispatch(notification({
+        id: "notConnected",
+        message: "Connecting... One moment please.", 
+        colour: "yellow",
+        loginButton: false, 
+        isVisible: true
+      }))
+    }  
+
+
+    if (status === "reconnecting") {
+      dispatch(notification({
+        id: "notConnected",
+        message: "Reconnecting... One moment please.", 
+        colour: "yellow",
+        loginButton: false, 
+        isVisible: true
+      }))
+    }  
     
-    if (address) {
+    if (status === "connected") {
       dispatch(updateNotificationVisibility({
-        id: "NotLoggedIn",
+        id: "notConnected",
         isVisible: false
       }))
-      setUserLoggedIn(address)
+      setModalVisible(true)
     }
 
-  }, [ , address])
+  }, [ , status])
 
-  if (!selectedLoyaltyProgram) {
+  if (status != "connected") {
+    return (
+      <div className="static w-full max-w-4xl h-dvh z-1">
+        <div className="flex flex-col pt-14 h-full z-3">
+          <NotificationDialog/> 
+        </div> 
+      </div>
+    )
+  }
+
+  if (!selectedLoyaltyProgram && status === "connected") {
     return (
       <div className="static w-full max-w-4xl h-dvh z-1">
         <div className="flex flex-col pt-14 h-full z-3">

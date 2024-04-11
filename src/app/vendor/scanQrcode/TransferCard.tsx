@@ -21,6 +21,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import MintCards from "../components/MintCards";
+import { SUPPORTED_CHAINS } from "@/context/constants";
 
 type RedeemTokenProps = {
   qrData: QrData | undefined;  
@@ -37,11 +38,12 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const { height, width } = useScreenDimensions()
   const { writeContract,  isError: isErrorWriteContract, isSuccess: isSuccessWriteContract } = useWriteContract()
   const dispatch = useDispatch() 
-  const { address } = useAccount() 
+  const { address, chain } = useAccount() 
   const publicClient = usePublicClient()
 
   const getTransferSingleData = async () => {
-    if (publicClient) {
+    if (publicClient && chain) {
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -49,7 +51,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
         args: {
           from: parseEthAddress(address)
         },
-        fromBlock: 25888893n
+        fromBlock: selectedChain?.fromBlock
       });
       setTransferSingles(parseTransferSingleLogs(transferSingleLogs))
     }

@@ -57,7 +57,7 @@ export const notificationsSlice = createSlice({
         state.notifications[index].isVisible = action.payload.isVisible : null
 
       action.payload.loginButton ? 
-        state.notifications[index].loginButton = action.payload.loginButton : null
+        state.notifications[index].loginButton = action.payload.loginButton : false
 
       action.payload.progressInPercent ? 
         state.notifications[index].progressInPercent = action.payload.progressInPercent : null
