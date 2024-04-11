@@ -69,14 +69,17 @@ export const DynamicLayout = ({
         isVisible: true
       }))
     }  
+
+    if (status != "reconnecting") {
+      dispatch(updateNotificationVisibility({
+        id: "reconnecting",
+        isVisible: false
+      }))
+    }  
     
     if (status === "connected") {
       dispatch(updateNotificationVisibility({
         id: "notConnected",
-        isVisible: false
-      }))
-      dispatch(updateNotificationVisibility({
-        id: "reconnecting",
         isVisible: false
       }))
       setModalVisible(true)

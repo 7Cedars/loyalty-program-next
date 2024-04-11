@@ -107,14 +107,17 @@ export const DynamicLayout = ({
         isVisible: true
       }))
     }  
+
+    if (status != "reconnecting") {
+      dispatch(updateNotificationVisibility({
+        id: "reconnecting",
+        isVisible: false
+      }))
+    }  
     
     if (status === "connected") {
       dispatch(updateNotificationVisibility({
         id: "notConnected",
-        isVisible: false
-      }))
-      dispatch(updateNotificationVisibility({
-        id: "reconnecting",
         isVisible: false
       }))
       dispatch(updateModalVisible(false)) // £todo: check if use of redux is necessary here. If not: simple useState will do. 
