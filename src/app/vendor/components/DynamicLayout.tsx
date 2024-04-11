@@ -62,7 +62,7 @@ export const DynamicLayout = ({
 
     if (status === "reconnecting") {
       dispatch(notification({
-        id: "notConnected",
+        id: "reconnecting",
         message: "Reconnecting... One moment please.", 
         colour: "yellow",
         loginButton: false, 
@@ -73,6 +73,10 @@ export const DynamicLayout = ({
     if (status === "connected") {
       dispatch(updateNotificationVisibility({
         id: "notConnected",
+        isVisible: false
+      }))
+      dispatch(updateNotificationVisibility({
+        id: "reconnecting",
         isVisible: false
       }))
       setModalVisible(true)
