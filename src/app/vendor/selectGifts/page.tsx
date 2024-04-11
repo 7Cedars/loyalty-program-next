@@ -92,7 +92,7 @@ export default function Page() {
         <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={2} />
        </div>
       { selectedToken ? 
-      <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
+      <div className="grid grid-cols-1 content-start border border-gray-700 rounded-lg m-3">
         <button 
           className="text-slate-800 dark:text-slate-200 font-bold p-3"
           type="submit"

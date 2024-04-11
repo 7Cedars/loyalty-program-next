@@ -89,23 +89,28 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
             <div className="text-center text-lg text-slate-500 pb-4"> 
               {token.metadata.description}
             </div>
-            <div className="text-center text-lg"> 
-              {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
-            </div> 
-            <div className="text-center text-lg pb-4"> 
-              {`Additional requirements: ${token.metadata.attributes[2].value}`}
-            </div> 
+              {token.isClaimable == 1n ? 
+                <div className="text-center text-lg"> 
+                  {`Cost: ${token.cost} points`}
+                </div> 
+                :
+                null
+              }
+              {token.hasAdditionalRequirements == 1n ? 
+                <div className="text-center text-lg pb-4"> 
+                  {`Additional requirements: ${token.metadata.attributes[2].value}`}
+                </div> 
+                :
+                null
+              }
           </div>
-          {token.tokenised ? 
+          {token.isVoucher == 1n ? 
             <div className="text-center text-lg"> 
-              {`${token.availableTokens} remaining vouchers.`}
+              {`${token.availableVouchers} remaining vouchers.`}
             </div>
             :
-            <div className="text-center text-lg"> 
-              {`Unlimited supply, gift is redeemed immediately at the till.`}
-            </div>
+            null
           }
-
         </div>
         </>
         : 
@@ -142,7 +147,7 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
           </div> 
           : 
           <div className="grid grid-col-1 gap-0 w-full">
-            { token.tokenised ? 
+            { token.isVoucher == 1n ? 
               <div className="p-3 flex w-full"> 
                 <NumLine onClick = {(arg0) => mintVouchers({
                   abi: loyaltyProgramAbi,
