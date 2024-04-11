@@ -1,5 +1,5 @@
 "use client"; 
-import { LoyaltyGift } from "@/types";
+import { EthAddress, LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
@@ -13,13 +13,19 @@ import { NumLine } from "@/app/ui/NumLine";
 import { useAppSelector } from "@/redux/hooks";
 import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 
+type SelectedGift = {
+  address: EthAddress; 
+  id: number; 
+} 
+
 type SelectedGiftProps = {
-  selectedGift: LoyaltyGift;
+  allGifts: LoyaltyGift[]; 
+  selectedGift: SelectedGift;
   disabled: boolean;
-  // updateGift: () => void;
+  updateGift: () => void;
 }
 
-export default function GiftBig({selectedGift, disabled}: SelectedGiftProps ) {
+export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: SelectedGiftProps ) {
   const dimensions = useScreenDimensions();
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ hashTransaction, setHashTransaction] = useState<any>()
@@ -29,11 +35,13 @@ export default function GiftBig({selectedGift, disabled}: SelectedGiftProps ) {
   const { writeContract, isSuccess: isSuccessWriteContract, isError: isErrorWriteContract, data: writeContractData } = useWriteContract()
   const { writeContract: mintVouchers, isSuccess: isSuccessMintVouchers, data: mintVoucherData } = useWriteContract()
 
-  // const executeExternalUpdate= () => {
-  //   if(typeof updateGift === 'function'){
-  //     updateGift()
-  //   }    
-  // }
+  const executeExternalUpdate= () => {
+    if(typeof updateGift === 'function'){
+      updateGift()
+    }    
+  }
+
+  const gift = allGifts.find(gift => gift.giftAddress == selectedGift.address && gift.giftId == selectedGift.id)
 
   // selecting gift flow
   useEffect(() => {
@@ -74,17 +82,17 @@ export default function GiftBig({selectedGift, disabled}: SelectedGiftProps ) {
       hash: hashMintTransaction 
     })
 
-  // useEffect(() => { 
-  //   if (isSuccessMint) {
-  //     executeExternalUpdate() 
-  //   }
-  // }, [isSuccessMint])
+  useEffect(() => { 
+    if (isSuccessMint) {
+      executeExternalUpdate() 
+    }
+  }, [isSuccessMint])
   
   return (
     <div className="grid grid-cols-1"> 
 
       <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center "> 
-      { selectedGift.metadata
+      { gift && gift.metadata
         ? 
         <>
         <div className="rounded-lg w-max"> 
@@ -92,7 +100,7 @@ export default function GiftBig({selectedGift, disabled}: SelectedGiftProps ) {
               className="rounded-lg"
               width={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
               height={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
-              src={selectedGift.metadata.imageUri}
+              src={gift.metadata.imageUri}
               alt="Loyalty Token icon "
             />
         </div>
@@ -100,29 +108,35 @@ export default function GiftBig({selectedGift, disabled}: SelectedGiftProps ) {
         <div className="grid grid-cols-1 pt-2 content-between w-4/5 h-full">
           <div> 
             <div className="text-center text-lg text-slate-800 dark:text-slate-200 text-bold px-1"> 
-              {selectedGift.metadata.name}
+              {gift.metadata.name}
             </div>
             <div className="text-center text-lg text-slate-500 pb-4"> 
-              {selectedGift.metadata.description}
+              {gift.metadata.description}
             </div>
-              {selectedGift.isClaimable == 1n ? 
+              {gift.isClaimable == 1n ? 
                 <div className="text-center text-lg"> 
-                  {`Cost: ${selectedGift.cost} points`}
+                  {`Cost: ${gift.cost} points`}
                 </div> 
                 :
                 null
               }
-              {selectedGift.hasAdditionalRequirements == 1n ? 
-                <div className="text-center text-lg pb-4"> 
-                  {`Additional requirements: ${selectedGift.metadata.attributes[2].value}`}
+              {gift.hasAdditionalRequirements == 1n ? 
+                <div className="text-center text-lg"> 
+                  {`Additional requirements: ${gift.metadata.attributes[2].value}`}
                 </div> 
                 :
                 null
               }
+            <div className="text-center text-lg text-slate-500 break-words pt-4"> 
+              Gift address: {gift.giftAddress}
+            </div>
+            <div className="text-center text-lg text-slate-500 pb-4"> 
+              Gift Id: {gift.giftId}
+            </div>
           </div>
-          {selectedGift.isVoucher == 1n ? 
+          {gift.isVoucher == 1n ? 
             <div className="text-center text-lg"> 
-              {`${selectedGift.availableVouchers} remaining vouchers.`}
+              {`${gift.availableVouchers} remaining vouchers.`}
             </div>
             :
             null
@@ -151,41 +165,44 @@ export default function GiftBig({selectedGift, disabled}: SelectedGiftProps ) {
         </div> 
         :
         <div className="grid grid-col-1 gap-0 w-full">
-          { selectedGift.isVoucher == 1n ? 
+          { gift && gift.isVoucher == 1n ? 
             <div className="p-3 flex w-full"> 
               <NumLine onClick = {(arg0) => mintVouchers({
                 abi: loyaltyProgramAbi,
                 address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
                 functionName: "mintLoyaltyVouchers",
-                args: [selectedGift.giftAddress, [selectedGift.giftId], [arg0]]}
+                args: [gift.giftAddress, [gift.giftId], [arg0]]}
                 )} 
                 isLoading = {isLoadingMint} /> 
             </div>
             : null
           }
-          { isDisabled ? 
+          { gift && isDisabled && gift.isClaimable == 1n ? 
             <div className="p-3 flex "> 
               <Button appearance = {"greenEmpty"} onClick={() => writeContract({ 
                   abi: loyaltyProgramAbi,
                   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
                   functionName: "addLoyaltyGift", 
-                  args: [selectedGift.giftAddress, selectedGift.giftId]
+                  args: [gift.giftAddress, gift.giftId]
                 })} >
-                  Add Loyalty Gift
+                  Allow Customer to Claim Gift 
               </Button>
             </div> 
             : 
+            gift && gift.isClaimable == 1n ? 
             <div className="p-3 flex "> 
               <Button appearance = {"redEmpty"} onClick={() => writeContract({ 
                   abi: loyaltyProgramAbi,
                   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
                   functionName: "removeLoyaltyGiftClaimable", 
-                  args: [selectedGift.giftAddress, selectedGift.giftId]
+                  args: [gift.giftAddress, gift.giftId]
                 })
               } >
-                Remove Loyalty Gift
+                Disallow Customer to Claim Gift
               </Button>
             </div>
+            : 
+            null 
         } 
       </div> 
     }

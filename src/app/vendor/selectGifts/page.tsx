@@ -2,7 +2,7 @@
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
 import TokenSmall from "./GiftSmall";
 import GiftBig from "./GiftBig";
-import { LoyaltyGift, Status } from "@/types";
+import { EthAddress, LoyaltyGift, Status } from "@/types";
 import { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
@@ -16,8 +16,14 @@ import Image from "next/image";
 import { useAppSelector } from "@/redux/hooks";
 import { config } from '../../../../config' 
 
+type SelectedGift = {
+  address: EthAddress; 
+  id: number; 
+} 
+
+// Can I do without this> 
 type setSelectedGiftProps = {
-  gift: LoyaltyGift; 
+  selectedGift: SelectedGift;  
   disabled: boolean; 
 }
 
@@ -92,16 +98,6 @@ export default function Page() {
     setSelectedGift(undefined)
   }
 
-  useEffect(() => {
-    if (loyaltyGifts && selectedGift) {
-      const selected = loyaltyGifts.find(gift => 
-        gift.giftAddress == selectedGift?.gift.giftAddress && 
-        gift.giftId == selectedGift?.gift.giftId
-      )
-      selected ? setSelectedGift({...selectedGift, gift: selected}) : null 
-    }
-  }, [loyaltyGifts, selectedGift])
-
   return (
      <div className=" w-full h-full grid grid-cols-1 gap-1 overflow-x-auto">
         <div>
@@ -120,8 +116,12 @@ export default function Page() {
           />
         </button>
 
-        <GiftBig selectedGift={selectedGift.gift} disabled = {selectedGift.disabled} updateGift = {() => updateAvaialbleVouchers()} /> 
-      
+        <GiftBig 
+          allGifts= {loyaltyGifts} 
+          selectedGift={selectedGift.selectedGift} 
+          disabled = {selectedGift.disabled} 
+          updateGift = {() => updateAvaialbleVouchers() } 
+          /> 
       </div>
       :
       // <div className="grow flex flex-col items-center w-full h-full">
@@ -158,19 +158,23 @@ export default function Page() {
             // <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
             <>
               <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
-                <TitleText title = "Selected Gifts" size={0} />
+                <TitleText title = "Claimable Gifts" size={0} />
               </div>
               { activeLoyaltyGifts.length > 0 ?  
                   activeLoyaltyGifts.map((gift: LoyaltyGift, i: number) => 
-                    gift.metadata ? 
-                      <div key = {`${gift.giftAddress}:${gift.giftId}`} >
-                        <TokenSmall gift = {gift} disabled = {false} onClick={() => setSelectedGift({gift: gift, disabled: false})}  /> 
-                      </div>
-                      : null 
+                      gift.metadata ? 
+                        <div key = {`${gift.giftAddress}:${gift.giftId}`} >
+                          <TokenSmall gift = {gift} disabled = {false} onClick={() => setSelectedGift({selectedGift: {
+                              address: gift.giftAddress,
+                              id: gift.giftId
+                            }, disabled: false})}  /> 
+                        </div>
+                        : null 
                     )
+                    
                   : 
                   <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-                    <NoteText message="Selected gifts will appear here."/>
+                    <NoteText message="Gifts that can be claimed by customers will appear here."/>
                   </div>
               }
 
@@ -181,7 +185,10 @@ export default function Page() {
                   inactiveLoyaltyGifts.map((gift: LoyaltyGift, i: number) => 
                     gift.metadata ? 
                       <div key = {`${gift.giftAddress}:${gift.giftId}`} >
-                        <TokenSmall gift = {gift} disabled = {true}  onClick={() => setSelectedGift({gift: gift, disabled: true})} /> 
+                        <TokenSmall gift = {gift} disabled = {true}  onClick={() => setSelectedGift({selectedGift: {
+                              address: gift.giftAddress,
+                              id: gift.giftId
+                            }, disabled: true})} /> 
                       </div>
                       :
                       null 
