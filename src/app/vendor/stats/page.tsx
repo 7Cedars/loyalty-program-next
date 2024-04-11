@@ -19,13 +19,14 @@ import { useAppSelector } from "@/redux/hooks";
 import { useVendorAccount } from "@/app/hooks/useVendorAccount";
 import Image from "next/image";
 import { toEurTimeFormat, toFullDateFormat } from "@/app/utils/timestampToDate";
+import { SUPPORTED_CHAINS } from "@/context/constants";
  
 export default function Page() {
   const [ modal, setModal] = useState<'points' | 'cards' | undefined>()  
-  const { status: statusBalances, balances } = useVendorAccount() 
+  const { status: statusBalances, balances, refetchBalances } = useVendorAccount() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient(); 
-  const { address } = useAccount() 
+  const { address, chain } = useAccount() 
   
   const [ transferSingleTo, setTransferSingleTo ] = useState<Transaction[]>([]) 
   const [ transferSingleFrom, setTransferSingleFrom ] = useState<Transaction[]>([])  
@@ -40,8 +41,9 @@ export default function Page() {
 
   const getTransferSingleTo = async () => {
     statusTransferSingleTo.current = "isLoading"
-    if (publicClient)
-    try { 
+    if (publicClient && chain)
+    try {
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -49,7 +51,7 @@ export default function Page() {
         args: {
           to: parseEthAddress(address)
         },
-        fromBlock: 25888893n
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransferSingleTo([...transactions])
@@ -62,8 +64,9 @@ export default function Page() {
 
   const getTransferSingleFrom = async () => {
     statusTransferSingleFrom.current = "isLoading"
-    if (publicClient)
-    try { 
+    if (publicClient && chain)
+    try {
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -71,7 +74,7 @@ export default function Page() {
         args: {
           from: parseEthAddress(address)
         },
-        fromBlock: 25888893n
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransferSingleFrom([...transactions])
@@ -84,8 +87,9 @@ export default function Page() {
 
   const getTransferBatchTo = async () => {
     statusTransferBatchTo.current = "isLoading"
-    if (publicClient)
-    try { 
+    if (publicClient && chain)
+    try {
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferBatchLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
             address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -93,7 +97,7 @@ export default function Page() {
             args: {
               to: parseEthAddress(address)
             },
-            fromBlock: 25888893n
+            fromBlock: selectedChain?.fromBlock
           });
       const transactions =  parseTransferBatchLogs(transferBatchLogs)
       setTransferBatchToTo([...transactions])
@@ -132,6 +136,8 @@ export default function Page() {
     getTransferSingleTo()
     getTransferSingleFrom()
     getTransferBatchTo()
+    
+    refetchBalances() 
   }, [ ])
 
   useEffect(() => {
@@ -349,7 +355,7 @@ export default function Page() {
                     </td>
                     <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
                       <div> 
-                        {`to customer address: ${transaction.to}`}
+                        {`to customer address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
                       </div>
                       <div> 
                       {`Card ID: ${transaction.ids}`}

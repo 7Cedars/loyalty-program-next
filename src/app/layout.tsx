@@ -4,7 +4,7 @@ import './globals.css'
 import { headers } from 'next/headers'
 import { cookieToInitialState } from 'wagmi'
 import { config } from '../../config'
-import Web3ModalProvider from '../context/Web3ModalProvider'
+import Web3ModalProvider from '../context'
 import { ReduxProvider } from "../context/reduxProvider" 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -19,15 +19,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const initialState = cookieToInitialState(config, headers().get('cookie'))
+  // const initialState = cookieToInitialState(config, headers().get('cookie'))
   return (
     <html lang="en">
       <body>
-        <Web3ModalProvider initialState={initialState}>
-          <ReduxProvider>
-          {children}
-          </ReduxProvider>
-        </Web3ModalProvider>
+      <ReduxProvider>
+        <Web3ModalProvider > {/* initialState={initialState} */}
+            {children}
+          </Web3ModalProvider>
+        </ReduxProvider>
       </body>
     </html>
   )

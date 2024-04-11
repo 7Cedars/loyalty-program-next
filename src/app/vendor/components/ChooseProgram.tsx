@@ -11,33 +11,38 @@ import { useAccount, usePublicClient } from "wagmi";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { Log } from "viem";
 import { parseContractLogs } from "@/app/utils/parsers";
+import { SUPPORTED_CHAINS } from "@/context/constants";
 
 export default function ChooseProgram()  {
   const { status: statusUseLoyaltyPrograms, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms()
   const [ statusFetchingAddresses, setStatusFetchingAddresses ] = useState<Status>("isIdle")
   const [ status, setStatus ] = useState<Status>("isIdle")
   const [ addresses, setAddresses ] = useState<LoyaltyProgram[] | undefined>() 
-  const { address } = useAccount() 
+  const { address, chain } = useAccount() 
   const publicClient = usePublicClient(); 
   const dispatch = useDispatch() 
 
   const getLoyaltyProgramAddresses = async () => {
     setStatusFetchingAddresses("isLoading")
-    if (publicClient)
-    try { 
-        const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
-          abi: loyaltyProgramAbi, 
-            eventName: 'DeployedLoyaltyProgram', 
-            args: {owner: address}, 
-            fromBlock: 25888893n
-        });
-        const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
-        setAddresses(loyaltyProgramAddresses)
-        setStatusFetchingAddresses("isSuccess")
-      } catch (error) { 
-        setStatusFetchingAddresses("isError")
-        console.log(error)
-      }
+    if (publicClient && chain)
+    try {
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
+      console.log("selectedChain: ", selectedChain)
+      console.log("SUPPORTED_CHAINS: ", SUPPORTED_CHAINS)
+      console.log("chain", chain)
+      const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
+        abi: loyaltyProgramAbi, 
+          eventName: 'DeployedLoyaltyProgram', 
+          args: {owner: address}, 
+          fromBlock: selectedChain?.fromBlock
+      });
+      const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)
+      setAddresses(loyaltyProgramAddresses)
+      setStatusFetchingAddresses("isSuccess")
+    } catch (error) { 
+      setStatusFetchingAddresses("isError")
+      console.log(error)
+    }
   }
   
   // updating status 

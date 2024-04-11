@@ -72,11 +72,15 @@ export type LoyaltyCard = {
 export type LoyaltyGift = {
   giftAddress: EthAddress; 
   giftId: number 
-  tokenised?: BigInt 
-  issuer?: EthAddress; 
   uri?: string ;
   metadata?: Metadata ;
-  availableTokens?: number;  
+  issuer?: EthAddress; 
+
+  isClaimable?: BigInt;
+  isVoucher?: BigInt; 
+  cost?: BigInt; 
+  hasAdditionalRequirements?: BigInt; 
+  availableVouchers?: number;  
 } 
 
 export type QrData = {

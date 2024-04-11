@@ -20,9 +20,9 @@ const NavbarBottom = ( ) => {
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'
   const layoutIcons: string = 'h-7 w-7'
   const { open } = useWeb3Modal()
+  const { status } = useAccount() 
   const path = usePathname()
   // const { selectedLoyaltyProgram?.programAddress } = useUrlProgramAddress()
-  const { data: walletClient, status } = useWalletClient();
   
   return (
     dimensions.width >= 896 ? 
@@ -79,7 +79,7 @@ const NavbarBottom = ( ) => {
             Stats 
           </div> 
         </Link>
-        <button onClick = {() => open()} className={layoutLinks} > 
+        <button onClick = {() => status === "connected" ? open({view: "Account"}) : open({view: 'Connect'})} className={layoutLinks} > 
           <div className={layoutIconBox}> 
             <ArrowRightOnRectangleIcon
               className={layoutIcons}

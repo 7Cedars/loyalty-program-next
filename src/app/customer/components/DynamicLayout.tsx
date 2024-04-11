@@ -26,7 +26,7 @@ type ModalProps = {
 export const DynamicLayout = ({
   children 
 }: ModalProps) => {
-  const { address, chain }  = useAccount()
+  const { address, chain, status }  = useAccount()
   const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
   
   const dispatch = useAppDispatch()
@@ -76,31 +76,48 @@ export const DynamicLayout = ({
   }, [selectedLoyaltyProgram])
 
   useEffect(() => {
-    // if (address != userLoggedIn) {
-    //   setUserLoggedIn(undefined)
-    //   dispatch(resetLoyaltyCard(true))
-    // }
-
-    if (!address) {
+    if (status === "disconnected") {
       dispatch(notification({
-        id: "NotLoggedIn",
+        id: "notConnected",
         message: "You are not connected to a network.", 
         colour: "red",
         loginButton: true, 
         isVisible: true
       }))
+      dispatch(updateModalVisible(false))
       setUserLoggedIn(undefined)
-    }    
+    }
+
+    if (status === "connecting") {
+      dispatch(notification({
+        id: "notConnected",
+        message: "Connecting... One moment please.", 
+        colour: "yellow",
+        loginButton: false, 
+        isVisible: true
+      }))
+    }  
+
+    if (status === "reconnecting") {
+      dispatch(notification({
+        id: "notConnected",
+        message: "Reconnecting... One moment please.", 
+        colour: "yellow",
+        loginButton: false, 
+        isVisible: true
+      }))
+    }  
     
-    if (address) {
+    if (status === "connected") {
       dispatch(updateNotificationVisibility({
-        id: "NotLoggedIn",
+        id: "notConnected",
         isVisible: false
       }))
+      dispatch(updateModalVisible(false)) // £todo: check if use of redux is necessary here. If not: simple useState will do. 
       setUserLoggedIn(address)
     }
 
-  }, [ , address])
+  }, [ , status])
 
   console.log(
     "pre render console log", 
@@ -109,6 +126,24 @@ export const DynamicLayout = ({
     "loyaltyCards: ", loyaltyCards, 
     "selectedLoyaltyCard: ", selectedLoyaltyCard  
   )
+
+  if (status != "connected") {
+    return (
+      <>
+      <NavbarTop/>
+        <div className="grow justify-center w-full h-full max-w-4xl overflow-y-scroll">
+
+        <div className="static w-full max-w-4xl h-dvh z-1">
+          <div className="flex flex-col pt-14 h-full z-3">
+            <NotificationDialog/> 
+          </div> 
+        </div>
+
+        <NavbarBottom/>
+        </div> 
+      </>
+    )
+  }
 
   return (
     <>

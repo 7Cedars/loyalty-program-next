@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { TitleText } from "@/app/ui/StandardisedFonts";
 import { Button } from "@/app/ui/Button";
-import { useAccount, usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useSignTypedData } from "wagmi";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
@@ -57,12 +57,12 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
 
   /// begin setup for encoding typed data /// 
   // depricated? 
-  // const domain = {
-  //   name: 'Loyalty Program',
-  //   version: '1',
-  //   chainId: chain?.id,
-  //   verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
-  // } as const
+  const domain = {
+    name: selectedLoyaltyProgram?.metadata?.name,
+    version: '1',
+    chainId: chain?.id,
+    verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
+  } as const
 
   // The named list of all type definitions
   const types = {
@@ -174,6 +174,7 @@ export default function RedeemToken( {token, disabled}: SelectedTokenProps)  {
         </div>
         <div className="p-3 flex w-full"> 
             <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
+                domain, 
                 types, 
                 primaryType: 'RedeemVoucher',
                 message

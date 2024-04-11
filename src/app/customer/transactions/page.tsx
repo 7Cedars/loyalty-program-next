@@ -9,17 +9,19 @@ import {
   parseTransferSingleLogs, 
 } from "@/app/utils/parsers";
 import { loyaltyProgramAbi, loyaltyGiftAbi } from "@/context/abi";
-import {  usePublicClient } from "wagmi";
+import {  useAccount, usePublicClient } from "wagmi";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
 import { useAppSelector } from "@/redux/hooks";
 import Image from "next/image";
 import { toShortDateFormat, toFullDateFormat, toEurTimeFormat } from "@/app/utils/timestampToDate";
+import { SUPPORTED_CHAINS } from "@/context/constants";
 
 export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const {selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
   const publicClient = usePublicClient(); 
+  const { chain } = useAccount(); 
   
   const [transactionsPointsTo, setTransactionsPointsTo] = useState<Transaction[]>([]) 
   const [transactionsPointsFrom, setTransactionsPointsFrom] = useState<Transaction[]>([])  
@@ -36,8 +38,9 @@ export default function Page() {
 
   const getTransactionsTo = async () => {
     statusTransactionsTo.current = "isLoading"
-    if (publicClient)
-    try { 
+    if (publicClient && chain)
+    try {
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -45,7 +48,7 @@ export default function Page() {
         args: {
           to: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: 25888893n
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransactionsPointsTo([...transactions])
@@ -58,8 +61,9 @@ export default function Page() {
 
   const getTransactionsFrom = async () => {
     statusTransactionsFrom.current = "isLoading"
-    if (publicClient)
+    if (publicClient && chain)
     try { 
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -67,7 +71,7 @@ export default function Page() {
         args: {
           from: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: 25888893n
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransactionsPointsFrom([...transactions])
@@ -81,15 +85,16 @@ export default function Page() {
 
   const getTokensTo = async () => {
     statusTokensTo.current = "isLoading"
-    if (publicClient)
+    if (publicClient && chain)
     try {
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyGiftAbi, 
         eventName: 'TransferSingle', 
         args: {
           to: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: 25888893n
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransactionsTokensTo([...transactions])
@@ -102,15 +107,16 @@ export default function Page() {
 
   const getTokensFrom = async () => {
     statusTokensFrom.current = "isLoading"
-    if (publicClient)
+    if (publicClient && chain)
     try {
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       const transferSingleLogs: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyGiftAbi, 
         eventName: 'TransferSingle', 
         args: {
           from: selectedLoyaltyCard?.cardAddress
         },
-        fromBlock: 25888893n
+        fromBlock: selectedChain?.fromBlock
       });
       const transactions =  parseTransferSingleLogs(transferSingleLogs)
       setTransactionsTokensFrom(transactions)
@@ -354,10 +360,10 @@ export default function Page() {
                       </td>
                       <td scope="row" className="grow grid grid-cols-1 text-slate-800 dark:text-slate-200 p-4">
                         <div> 
-                          {`to customer address: ${transaction.to}`}
+                          {`to customer address: ${transaction.to.slice(0,6)}...${transaction.to.slice(38,42)}`}
                         </div>
                         <div> 
-                        {`Card ID: ${transaction.ids}`}
+                          {`Card ID: ${transaction.ids}`}
                         </div> 
                       </td>
                      </>

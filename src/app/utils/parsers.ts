@@ -150,18 +150,18 @@ const parseArgsAddRemoveLoyaltyGift = (args: unknown): {giftAddress: EthAddress,
   throw new Error(`Incorrect args format: ${args}`);
 }
 
-const parseArgsLoyaltyGift = (args: unknown): {issuer: EthAddress, tokenised: BigInt[]} => {
+const parseArgsLoyaltyGift = (args: unknown): {issuer: EthAddress, isVoucher: BigInt[]} => {
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');
   }
 
   if (
     'issuer' in args && 
-    'tokenised' in args
+    'isVoucher' in args
     ) { 
     return ({
       issuer: parseEthAddress(args.issuer), 
-      tokenised: parseTokenised(args.tokenised)
+      isVoucher: parseTokenised(args.isVoucher)
     })
   }
   throw new Error(`Incorrect args format: ${args}`);
@@ -303,12 +303,12 @@ export const parseTokenContractLogs = (logs: Log[]): LoyaltyGift[] => {
         'blockHash' in log && 
         'args' in log
         ) { 
-          const tokenIds = parseArgsLoyaltyGift(log.args).tokenised 
+          const tokenIds = parseArgsLoyaltyGift(log.args).isVoucher 
           const temp = tokenIds.map((tokenId, i) => ({
             giftAddress: parseEthAddress(log.address), 
             issuer: parseArgsLoyaltyGift(log.args).issuer, 
             giftId: i, 
-            tokenised: tokenId
+            isVoucher: tokenId
           }))
           return temp
         }

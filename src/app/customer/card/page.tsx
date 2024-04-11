@@ -17,6 +17,7 @@ import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import Image from "next/image";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
+import { SUPPORTED_CHAINS } from "@/context/constants";
 
 type setSelectedVoucherProps = {
   token: LoyaltyGift; 
@@ -30,7 +31,7 @@ export default function Page() {
   const [ claimedVouchers, setClaimedVouchers ] = useState<LoyaltyGift[] | undefined>() 
   const [selectedVoucher, setSelectedVoucher] = useState<setSelectedVoucherProps | undefined>() 
   const [ hashTransaction, setHashTransaction] = useState<any>()
-  const {address} = useAccount() 
+  const { address, chain } = useAccount() 
   const publicClient = usePublicClient()
   const dispatch = useDispatch() 
   const polling = useRef<boolean>(false) 
@@ -71,7 +72,8 @@ export default function Page() {
   const getClaimedLoyaltyVouchers = async () => {
     statusGetClaimedVouchers.current = "isLoading"
 
-    if (publicClient) {
+    if (publicClient && chain) {
+      const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       try { 
         const claimedVouchersLogs: Log[] = await publicClient.getContractEvents({
           // address: loyaltyGift.giftAddress, 
@@ -80,7 +82,7 @@ export default function Page() {
           args: {
             to: selectedLoyaltyCard?.cardAddress
           },
-          fromBlock: 25888893n
+          fromBlock: selectedChain?.fromBlock
         })
         const claimedVouchers = parseTransferSingleLogs(claimedVouchersLogs)
   
@@ -91,7 +93,7 @@ export default function Page() {
           args: {
             from: selectedLoyaltyCard?.cardAddress
           },
-          fromBlock: 25888893n
+          fromBlock: selectedChain?.fromBlock
         })
         const redeemedVouchers = parseTransferSingleLogs(redeemedVouchersLogs)
         
@@ -144,7 +146,7 @@ export default function Page() {
      <div className=" w-full h-full flex flex-col content-start overflow-auto">
 
       <div className="h-fit m-3 break-words"> 
-        <TitleText title = "Your Card" subtitle={`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.loyaltyProgramAddress}`} size={2} />
+        <TitleText title = "Your Card" subtitle={`#${selectedLoyaltyCard?.cardId} | ${selectedLoyaltyCard?.cardAddress} @${selectedLoyaltyCard?.loyaltyProgramAddress}`} size={2} />
       </div>
       <div className="grid grid-cols-1 justify-items-center"> 
         <p className="pt-0 w-5/6 sm:w-1/2 text-lg text-center text-bold border-b border-slate-800 dark:border-slate-200 p-1">
