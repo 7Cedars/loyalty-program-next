@@ -141,26 +141,32 @@ export default function Page() {
           loyaltyGiftContracts
           ?
           <>
-            <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 pt-4 w-full"> 
-               <TitleText title = "Claimable gifts" size={0} />
+            <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 pt-4 pb-6 w-full"> 
+              <TitleText title = "Claimable gifts" size={0} />
 
-              <div className="flex flex-row overflow-x-auto"> 
-                {claimableLoyaltyGifts.map((claimable: BigInt, i: number) => {
-                    const gift = loyaltyGifts[i] 
-                    console.log("claimable: ", claimable )
-                    return (
-                      claimable == 1n ? 
-                        <div key = {`${gift.giftAddress}:${gift.giftId}`} >
-                          <TokenSmall gift = {gift} disabled = {false} onClick={() => setSelectedGift({selectedGift: {
-                              address: gift.giftAddress,
-                              id: gift.giftId
-                            }, disabled: false})}  /> 
-                        </div>
-                        : 
-                        null
-                    )
-                })}
-              </div>
+              {claimableLoyaltyGifts.indexOf(1n) != -1 ? 
+                <div className="flex flex-row overflow-x-auto"> 
+                  {claimableLoyaltyGifts.map((claimable: BigInt, i: number) => {
+                      const gift = loyaltyGifts[i] 
+                      console.log("claimable: ", claimable )
+                      return (
+                        claimable == 1n ? 
+                          <div key = {`${gift.giftAddress}:${gift.giftId}`} >
+                            <TokenSmall gift = {gift} disabled = {false} onClick={() => setSelectedGift({selectedGift: {
+                                address: gift.giftAddress,
+                                id: gift.giftId
+                              }, disabled: false})}  /> 
+                          </div>
+                          : 
+                          null
+                      )
+                  })}
+                </div>
+                :
+                <div className="text-sm text-center text-gray-500 italic p-2">
+                  Gifts that can be claimed by customers will appear here. Select from below. 
+                </div>
+                }
             </div> 
 
             <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 pt-4 w-full"> 
@@ -201,136 +207,3 @@ export default function Page() {
     
   )
 }
-      
-            
-            // <>
-            //   <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
-            //     <TitleText title = "Claimable gifts" size={0} />
-            //   </div>
-            //   {/* £todo: make text if no gifts have been selected. "Gifts that customers can claim will appear here." */}
-              // { claimableLoyaltyGifts.map((claimable: BigInt, i: number) => {
-            //           const gift = loyaltyGifts[i]
-            //           claimable == 1n ? 
-            //             <div key = {`${gift.giftAddress}:${gift.giftId}`} >
-            //               <TokenSmall gift = {gift} disabled = {false} onClick={() => setSelectedGift({selectedGift: {
-            //                   address: gift.giftAddress,
-            //                   id: gift.giftId
-            //                 }, disabled: false})}  /> 
-            //             </div>
-            //             : null 
-            //           }
-            //         )
-            //   }
-
-            //   <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 pt-4 "> 
-            //     <TitleText title = "Available Gifts" size={0} />
-              
-
-            //   { loyaltyGiftContracts.map((contractAddress: EthAddress, i: number) => 
-            //     <div key = {contractAddress} > 
-            //     {contractAddress}
-            //     </div> 
-                 
-            //           //   <div key = {`${gift.giftAddress}:${gift.giftId}`} >
-            //           //     <TokenSmall gift = {gift} disabled = {false} onClick={() => setSelectedGift({selectedGift: {
-            //           //         address: gift.giftAddress,
-            //           //         id: gift.giftId
-            //           //       }, disabled: false})}  /> 
-            //           //   </div>
-            //           //   : null 
-            //           // }
-            //     )
-            //   }
-            //   </div>
-            
-            // </>
-             
-              
-            // }
-           
-
-
-
-{/* // claimableLoyaltyGifts[i] == 1n ?  */}
-
-              {/* { inactiveLoyaltyGifts.length > 0 ? 
-                  inactiveLoyaltyGifts.map((gift: LoyaltyGift, i: number) => 
-                    gift.metadata ? 
-                      <div key = {`${gift.giftAddress}:${gift.giftId}`} >
-                        <TokenSmall gift = {gift} disabled = {true}  onClick={() => setSelectedGift({selectedGift: {
-                              address: gift.giftAddress,
-                              id: gift.giftId
-                            }, disabled: true})} /> 
-                      </div>
-                      :
-                      null 
-                    )
-                  :
-                  <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-                    <NoteText message="Other available gifts will appear here."/>
-                  </div>
-              }
-            </>
-          :
-          <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
-            <NoteText message="Something went wrong. That's all I know."/>
-          </div> */}
-        // }
-        // </div>  */}
-      {/* // </div>  */}
-    {/* } */}
-    // <div className="h-16" />
-    // </div> 
-//   )
-// }
-
-
-  // const getGiftSelection = async () => {
-  //   setStatusGiftSelection("isLoading")
-  //   if(publicClient && chain)
-  //   try {
-  //     const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
-  //     const addedGifts: Log[] = await publicClient.getContractEvents( { 
-  //       abi: loyaltyProgramAbi, 
-  //       address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-  //       eventName: 'AddedLoyaltyGift', 
-  //       fromBlock: selectedChain?.fromBlock
-  //     }); 
-  //     const addedGiftsEvents = parseLoyaltyGiftLogs(addedGifts)
-
-  //     const removedGifts: Log[] = await publicClient.getContractEvents( { 
-  //       abi: loyaltyProgramAbi, 
-  //       address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
-  //       eventName: 'RemovedLoyaltyGiftClaimable', 
-  //       fromBlock: selectedChain?.fromBlock
-  //     }); 
-  //     const removedGiftsEvents = parseLoyaltyGiftLogs(removedGifts)
-
-  //     if (loyaltyGifts) {
-  //       let activeGifts: LoyaltyGift[] = [] 
-  //       let inactiveGifts: LoyaltyGift[] = [] 
-
-  //       loyaltyGifts.forEach((loyaltyToken, i) => { 
-          
-  //         const addedEventCount = addedGiftsEvents.filter(
-  //           event => event.giftAddress == loyaltyToken.giftAddress &&  event.giftId == loyaltyToken.giftId
-  //           ).length 
-  //         const removedEventCount = removedGiftsEvents.filter(
-  //           event => event.giftAddress == loyaltyToken.giftAddress &&  event.giftId == loyaltyToken.giftId
-  //           ).length
-
-  //         if (addedEventCount > removedEventCount) { 
-  //           activeGifts.push(loyaltyToken)
-  //         } else {
-  //           inactiveGifts.push(loyaltyToken)
-  //         }
-  //       })
-  //       setActiveLoyaltyGifts(activeGifts)
-  //       setInactiveLoyaltyGifts(inactiveGifts)
-  //       setStatusGiftSelection("isSuccess")
-  //     } 
-  //   } catch (error) { 
-  //     setStatusGiftSelection("isError")
-  //     console.log(error)
-  //   }
-  // }

@@ -9,7 +9,7 @@ Even though repository is public, For now, it is for personal use only.
 - Create an open and modular blockchain based framework for loyalty programs. 
 - Aimed at small and medium sized shops and companies. 
 - eventually deploy on multiple blockchains. 
-- Design of solidity frontend is on my Figma. 
+- Design of solidity frontend is on my Figma.
 
 ## Know bugs (in order of priority)
 - [x]  @Vendor, landing: 'visit page' is broken. Fix. 
