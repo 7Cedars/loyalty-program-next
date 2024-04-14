@@ -21,21 +21,23 @@ export default function GiftSmall( {gift, disabled, onClick}: SelectedTokenProps
               width={160}
               height={160}
               src={gift.metadata.imageUri}
-              alt="Loyalty Token icon "
+              alt="Loyalty Token icon"
             />
           <div className="grid grid-cols-1 p-2 content-start">
             <div className="text-center text-sm"> 
-              {gift.metadata.description}
+              {gift.metadata.name}
             </div>
             <div className="text-center text-sm text-gray-500 mt-1"> 
-              {`${gift.metadata.attributes[1].value} ${gift.metadata.attributes[1].trait_type}`}
+              {`${gift.cost} points`}
             </div> 
             { gift.isVoucher == 1n ? 
               <div className="text-center text-sm text-gray-500"> 
                 {`${Number(gift.availableVouchers)} vouchers remaining`}
               </div>
               :
-              null
+              <div className="text-center text-sm text-gray-500"> 
+               text here
+            </div>
             }
           </div> 
         </>

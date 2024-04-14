@@ -22,7 +22,7 @@ type SelectedTokenProps = {
   disabled: boolean
 }
 
-export function TokenBig( {gift, disabled}: SelectedTokenProps ) {
+export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
   const dimensions = useScreenDimensions();
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
