@@ -3,7 +3,7 @@ import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useAccount, usePublicClient, useSignTypedData, useWalletClient } from "wagmi";
+import { useAccount, usePublicClient, useSignTypedData, useWalletClient, useReadContract } from "wagmi";
 import { loyaltyGiftAbi, loyaltyProgramAbi} from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
@@ -30,11 +30,14 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ requirementsMet, setRequirementsMet] = useState<boolean>() 
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
+  const [ errorTest, setErrorTest ] = useState<any>() 
   const polling = useRef<boolean>(false) 
   const {  pointsSent } = useLatestCustomerTransaction(polling.current) 
   const dispatch = useDispatch() 
   const {address, chain } = useAccount()
   const { data: signature, isPending, isError, isSuccess, signTypedData, reset } = useSignTypedData()
+
+  console.log("Error test: ", errorTest)
 
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
@@ -57,25 +60,35 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
 
 
   // this function reverts if requirements are not met
-  const checkRequirementsMet = async () => {
-    if (selectedLoyaltyCard && publicClient) {
-      try {
-        await publicClient.readContract({ 
-          address: parseEthAddress(gift.giftAddress), 
-          abi: loyaltyGiftAbi,
-          functionName: 'requirementsLoyaltyGiftMet',
-          args: [selectedLoyaltyCard.cardAddress, gift.giftId, selectedLoyaltyCard.balance]
-          })
-          setRequirementsMet(true)
-        } catch {
-          setRequirementsMet(false)
-        }
-      }
-    }
+  const checkRequirementsMet = useReadContract({
+    abi: loyaltyGiftAbi,
+    address: parseEthAddress(gift.giftAddress),
+    functionName: 'requirementsLoyaltyGiftMet',
+    args: [selectedLoyaltyCard?.cardAddress, gift.giftId, selectedLoyaltyCard?.balance]
+  })
 
-  useEffect(() => {
-    checkRequirementsMet()
-  }, [ ] ) 
+  console.log("checkRequirementsMet: ", checkRequirementsMet)
+  
+  // async () => {
+  //   if (selectedLoyaltyCard && publicClient) {
+  //     try {
+  //       await publicClient.readContract({ 
+  //         address: parseEthAddress(gift.giftAddress), 
+  //         abi: loyaltyGiftAbi,
+  //         functionName: 'requirementsLoyaltyGiftMet',
+  //         args: [selectedLoyaltyCard.cardAddress, gift.giftId, selectedLoyaltyCard.balance]
+  //         })
+  //         setRequirementsMet(true)
+  //       } catch (error) {
+  //         setRequirementsMet(false)
+  //         setErrorTest(error)
+  //       }
+  //     }
+  //   }
+
+  // useEffect(() => {
+  //   checkRequirementsMet()
+  // }, [ ] ) 
 
   /// begin setup for encoding typed data /// 
   // depricated? How does it work without it?!  
@@ -173,8 +186,8 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
     <div className="grid grid-cols-1"> 
       { gift.metadata && !signature ? 
         <>
-        <div className="grid grid-cols-1 sm:grid-cols-2 h-fit w-full justify-items-center "> 
-          <div className="rounded-lg w-max"> 
+        <div className="grid grid-cols-1 sm:grid-cols-2 h-fit w-full justify-items-center  "> 
+          <div className="rounded-lg w-max "> 
           
             <Image
                 className="rounded-lg"
@@ -185,15 +198,13 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
               />
           </div>
           
-          <div className="grid grid-cols-1 pt-2 content-between w-full h-fit">
+          <div className="flex flex-col pt-2 px-2 content-between w-full h-fit">
             <div> 
             <TitleText title={gift.metadata.name} subtitle={gift.metadata.description} size={1} />
+            <div className="text-center text-md text-slate-400"> 
+              {`ID: ${gift.giftId} @${gift.giftAddress.slice(0,6)}...${gift.giftAddress.slice(36,42)}`}
+            </div>
             
-              <div className="text-center text-md flex flex-col pb-2 "> 
-                <div> {`Cost: ${gift.metadata.attributes[1].value} ${gift.metadata.attributes[1].trait_type}`} </div> 
-                <div> {`Additional Requirements: ${gift.metadata.attributes[2].value}`} </div> 
-              </div> 
-
             </div>
             {pointsSent ? 
               <p className="text-center text-md font-bold p-8">
@@ -203,18 +214,27 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
             null
             }
             <div className="text-center text-md"> 
-            <div className="text-center text-md text-slate-400"> 
-              {`ID: ${gift.giftId} @${gift.giftAddress.slice(0,6)}...${gift.giftAddress.slice(36,42)}`}
-            </div>
+            
 
-             
+            <div className="text-center text-md flex flex-col pb-2 pt-6 "> 
+              <div> {`Cost: ${gift.cost} points`} </div> 
+              {gift.hasAdditionalRequirements == 1n ? 
+                <div className="text-center text-md"> 
+                  {`Additional requirements: ${gift.metadata.attributes[0].value}`}
+                </div>
+                :
+                null
+              }
               {gift.isVoucher == 1n ? 
                 <div className="text-center text-md"> 
                   {`Remaining vouchers: ${gift.availableVouchers}`}
                 </div>
                 :
-                null
+                <div className="text-center text-md"> 
+                  {`This gift is not a voucher. You will receive your gift at the till.`}
+                </div>
               }
+            </div> 
             </div>
           </div>
         </div>
@@ -266,7 +286,7 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
         : 
         null 
         }
-      <div className="h-20" />
+      
     </div>
   );
 }

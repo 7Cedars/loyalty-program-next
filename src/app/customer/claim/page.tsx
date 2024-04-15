@@ -191,7 +191,7 @@ export default function Page() {
 
       { selectedGift ? 
       <div className="grid grid-cols-1 content-start">
-        <div className=" border border-gray-300 rounded-lg m-1">
+        <div className=" border border-gray-700 dark:border-gray-300  rounded-lg m-1">
           <button 
             className="text-slate-800 dark:text-slate-200 font-bold p-2 grid grid-cols-1 content-start"
             type="submit"
@@ -255,9 +255,11 @@ export default function Page() {
           }
           </div>
         </div> 
+        <div className="h-20" />
       </>
 
     }
+   
     </div>   
   );
 }

@@ -156,6 +156,11 @@ export const useLoyaltyGifts = () => {
                 functionName: 'getHasAdditionalRequirements', 
                 args: [item.giftId]
               }, 
+              {
+              ...giftContract, 
+                functionName: 'getIsVoucher', 
+                args: [item.giftId]
+              },
             ], 
           })
 
@@ -164,13 +169,15 @@ export const useLoyaltyGifts = () => {
             if (
               data[0].status == "success" && 
               data[1].status == "success" && 
-              data[2].status == "success"
+              data[2].status == "success" && 
+              data[3].status == "success"
             )
               loyaltyGiftAdditionalInfo.push({
                 ...item, 
                 isClaimable: parseBigInt(data[0].result), 
                 cost: parseBigInt(data[1].result), 
-                hasAdditionalRequirements: parseBigInt(data[2].result)
+                hasAdditionalRequirements: parseBigInt(data[2].result), 
+                isVoucher: parseBigInt(data[3].result)
               })
         } 
         statusAtGetAdditionalInfo.current = "isSuccess"

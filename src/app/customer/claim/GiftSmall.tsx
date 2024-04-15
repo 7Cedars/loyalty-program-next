@@ -31,13 +31,11 @@ export default function GiftSmall( {gift, disabled, onClick}: SelectedTokenProps
               {`${gift.cost} points`}
             </div> 
             { gift.isVoucher == 1n ? 
-              <div className="text-center text-sm text-gray-500"> 
+              <div className="text-center text-sm text-gray-500 pt-2"> 
                 {`${Number(gift.availableVouchers)} vouchers remaining`}
               </div>
               :
-              <div className="text-center text-sm text-gray-500"> 
-               text here
-            </div>
+              null
             }
           </div> 
         </>

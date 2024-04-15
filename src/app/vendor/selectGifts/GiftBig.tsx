@@ -122,7 +122,7 @@ export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: 
               }
               {gift.hasAdditionalRequirements == 1n ? 
                 <div className="text-center text-lg"> 
-                  {`Additional requirements: ${gift.metadata.attributes[2].value}`}
+                  {`Additional requirements: ${gift.metadata.attributes[0].value}`}
                 </div> 
                 :
                 null
