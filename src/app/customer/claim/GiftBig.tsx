@@ -6,7 +6,7 @@ import { Button } from "@/app/ui/Button";
 import { useAccount, usePublicClient, useSignTypedData, useWalletClient, useReadContract } from "wagmi";
 import { loyaltyGiftAbi, loyaltyProgramAbi} from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { parseBigInt, parseEthAddress } from "@/app/utils/parsers";
+import { parseBigInt, parseEthAddress, parseFailureReason } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useEffect, useState, useRef } from "react";
@@ -29,6 +29,7 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
   const publicClient = usePublicClient()
   const [ nonceData, setNonceData ] = useState<BigInt>()
   const [ requirementsMet, setRequirementsMet] = useState<boolean>() 
+  const [ whyRequirementsNotMet, setWhyRequirementsNotMet] = useState<string>("") 
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const [ errorTest, setErrorTest ] = useState<any>() 
   const polling = useRef<boolean>(false) 
@@ -60,56 +61,33 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
 
 
   // this function reverts if requirements are not met
-  const checkRequirementsMet = useReadContract({
+  const {data, failureReason, isSuccess: isSuccessFetchRequirementsMet, isError: isErrorFetchRequirementsMet } = useReadContract({
     abi: loyaltyGiftAbi,
     address: parseEthAddress(gift.giftAddress),
     functionName: 'requirementsLoyaltyGiftMet',
     args: [selectedLoyaltyCard?.cardAddress, gift.giftId, selectedLoyaltyCard?.balance]
   })
+  console.log("checkRequirementsMet data: ", data, "failureReason: ", failureReason?.shortMessage )
 
-  console.log("checkRequirementsMet: ", checkRequirementsMet)
+  useEffect(() => {
+
+    if (isErrorFetchRequirementsMet && failureReason != null) {
+      console.log("Failure reason caught: ",  failureReason.shortMessage)
+      const reasonRequirementsNotMet = parseFailureReason(failureReason.shortMessage)
+      setWhyRequirementsNotMet(reasonRequirementsNotMet); 
+    }
+  }, [isErrorFetchRequirementsMet, failureReason])
+
+
+
   
-  // async () => {
-  //   if (selectedLoyaltyCard && publicClient) {
-  //     try {
-  //       await publicClient.readContract({ 
-  //         address: parseEthAddress(gift.giftAddress), 
-  //         abi: loyaltyGiftAbi,
-  //         functionName: 'requirementsLoyaltyGiftMet',
-  //         args: [selectedLoyaltyCard.cardAddress, gift.giftId, selectedLoyaltyCard.balance]
-  //         })
-  //         setRequirementsMet(true)
-  //       } catch (error) {
-  //         setRequirementsMet(false)
-  //         setErrorTest(error)
-  //       }
-  //     }
-  //   }
-
-  // useEffect(() => {
-  //   checkRequirementsMet()
-  // }, [ ] ) 
-
-  /// begin setup for encoding typed data /// 
-  // depricated? How does it work without it?!  
-  // 
   const domain = {
     name: selectedLoyaltyProgram?.metadata?.name,
     version: "1",
     chainId: chain?.id,
     verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
   } as const
-
-  console.log("domain: ", 
-  {
-    name: selectedLoyaltyProgram?.metadata?.name,
-    version: "1",
-    chainId: chain?.id,
-    verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
-  })
   
-  console.log("selectedLoyaltyProgram?.metadata?.name: ", selectedLoyaltyProgram?.metadata?.name,)
-  // The named list of all type definitions
   const types = {
     RequestGift: [
       { name: 'from', type: 'address' },
@@ -128,16 +106,6 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
     cost: `${gift?.metadata?.attributes[1].value} points`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const
-
-  console.log("message: ", {
-    from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
-    to:  parseEthAddress(selectedLoyaltyProgram?.programAddress),
-    gift: `${gift?.metadata?.name}`,
-    cost: `${gift?.metadata?.attributes[1].value} points`,
-    nonce: nonceData ? parseBigInt(nonceData) : 0n,
-  })
-
-  console.log("nonceData: ", nonceData)
 
   useEffect(() => { 
     if (isPending) {
@@ -254,7 +222,7 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
             </Button>
           : 
             <Button appearance = {"grayEmpty"} disabled >
-              Your card does not meetthe requirements for this gift. 
+              Your card does not meet the requirements for this gift{whyRequirementsNotMet} 
             </Button>
           }
 

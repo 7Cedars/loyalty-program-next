@@ -11,7 +11,7 @@ import {
 } from "@/types";
 import { Url } from "url";
 import { isBooleanObject } from "util/types";
-import { Hex, Log, getAddress } from "viem";
+import { Hex, Log, ReadContractErrorType, getAddress } from "viem";
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -567,4 +567,19 @@ export const parseQrData = (qrText: unknown): QrData => {
         }
       
        throw new Error('Incorrect data at QrData: some fields are missing or incorrect');
+};
+
+
+export const parseFailureReason = (failureShortMessage: unknown): string => {
+  if ( !failureShortMessage || typeof failureShortMessage !== 'string' ) {
+    throw new Error('Incorrect or missing data at failureShortMessage');
+  }
+
+  else { 
+    try {
+      return( failureShortMessage.replace(/.*(?=:)/, ""))
+    } catch (error) {
+      throw new Error(`failureShortMessage caught error: ${error}`);
+    }
+  }
 };
