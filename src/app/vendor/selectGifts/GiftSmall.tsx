@@ -41,9 +41,7 @@ export default function GiftSmall( {gift, disabled, onClick}: SelectedGiftProps 
                 {`${Number(gift.availableVouchers)} vouchers left`}
               </div>
               :
-              <div className="text-center text-sm text-gray-500"> 
-                {`Unlimited supply`}
-              </div>
+              null
             }
           </div> 
         </>

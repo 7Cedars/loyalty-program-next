@@ -103,7 +103,7 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
     from: parseEthAddress(selectedLoyaltyCard?.cardAddress),
     to:  parseEthAddress(selectedLoyaltyCard?.loyaltyProgramAddress),
     gift: `${gift?.metadata?.name}`,
-    cost: `${gift?.metadata?.attributes[1].value} points`,
+    cost: `${gift?.cost} points`,
     nonce: nonceData ? parseBigInt(nonceData) : 0n,
   } as const
 
@@ -176,7 +176,7 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
             </div>
             {pointsSent ? 
               <p className="text-center text-md font-bold p-8">
-                {gift.metadata?.attributes[4].value}
+                {gift.metadata?.attributes[2].value}
               </p>
             :
             null
@@ -198,9 +198,7 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
                   {`Remaining vouchers: ${gift.availableVouchers}`}
                 </div>
                 :
-                <div className="text-center text-md"> 
-                  {`This gift is not a voucher. You will receive your gift at the till.`}
-                </div>
+                null
               }
             </div> 
             </div>
@@ -211,7 +209,7 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
 
           {
           
-          requirementsMet ? 
+          isSuccessFetchRequirementsMet ? 
             <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
               domain, 
               types, 
@@ -258,12 +256,3 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
     </div>
   );
 }
-
-
-
-
-  // NEED TO REQUEST NONCE... 
-  // const encodedFunctionCall: Hex = encodeFunctionData({
-  //   abi: loyaltyProgramAbi, 
-  //   functionName: "getNonceLoyaltyCard"
-  // })

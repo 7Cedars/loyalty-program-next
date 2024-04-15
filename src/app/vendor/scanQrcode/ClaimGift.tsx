@@ -77,12 +77,12 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
 
   console.log("args claimgift: ", [
     `${token?.metadata?.name}`, 
-    `${token?.metadata?.attributes[1].value} points`,
+    `${token?.cost} points`,
     qrData?.loyaltyToken,
     qrData?.loyaltyTokenId, 
     qrData?.loyaltyCardId, 
     qrData?.customerAddress,
-    token?.metadata?.attributes[1].value, 
+    token?.cost, 
     qrData?.signature
   ]
   
@@ -127,12 +127,12 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
             <div> 
               <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
               <div className="text-center text-md text-gray-900 pb-2"> 
-                {`Cost: ${token.metadata.attributes[1].value} loyalty points`}
+                {`Cost: ${token.cost} loyalty points`}
               </div>
             </div>
             {pointsReceived?  
             <p className="text-center text-xl font-bold p-8">
-              {token.metadata?.attributes[3].value}
+              {token.metadata?.attributes[1].value}
             </p>
             :
             null
@@ -170,12 +170,12 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
               functionName: "claimLoyaltyGift", 
               args: [
                 `${token?.metadata?.name}`, 
-                `${token?.metadata?.attributes[1].value} points`,
+                `${token?.cost} points`,
                 qrData?.loyaltyToken,
                 qrData?.loyaltyTokenId, 
                 qrData?.loyaltyCardId, 
                 qrData?.customerAddress,
-                token?.metadata?.attributes[1].value, 
+                token?.cost, 
                 qrData?.signature
               ]
             })} >

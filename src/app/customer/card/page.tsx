@@ -76,7 +76,6 @@ export default function Page() {
       const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       try { 
         const claimedVouchersLogs: Log[] = await publicClient.getContractEvents({
-          // address: loyaltyGift.giftAddress, 
           abi: loyaltyGiftAbi,
           eventName: 'TransferSingle', 
           args: {
@@ -87,7 +86,6 @@ export default function Page() {
         const claimedVouchers = parseTransferSingleLogs(claimedVouchersLogs)
   
         const redeemedVouchersLogs: Log[] = await publicClient.getContractEvents({
-          // address: loyaltyGift.giftAddress, 
           abi: loyaltyGiftAbi,
           eventName: 'TransferSingle', 
           args: {
