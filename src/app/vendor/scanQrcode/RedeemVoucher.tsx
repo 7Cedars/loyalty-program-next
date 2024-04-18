@@ -113,7 +113,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
             <div> 
               <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
             </div>
-            {tokenReceived?  
+            {tokenReceived && token.metadata?.attributes[5] ?  
               <p className="text-center text-xlfont-bold p-4">
                 {token.metadata?.attributes[5].value}
               </p>

@@ -1,7 +1,6 @@
 "use client";
 
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
-import VoucherSmall from "./VoucherSmall";
 import { LoyaltyGift, Status } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -18,6 +17,7 @@ import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import Image from "next/image";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import { SUPPORTED_CHAINS } from "@/context/constants";
+import { GiftSmall } from "@/app/components/GiftSmall";
 
 type setSelectedVoucherProps = {
   token: LoyaltyGift; 
@@ -207,7 +207,7 @@ export default function Page() {
               claimedVouchers.map((token: LoyaltyGift, i) => 
                   token.metadata ? 
                   <div key = {i} >
-                    <VoucherSmall token = {token} disabled = {false} onClick={() => setSelectedVoucher({token: token, disabled: false})}  /> 
+                    <GiftSmall gift = {token} disabled = {false} onClick={() => setSelectedVoucher({token: token, disabled: false})}  /> 
                   </div>
                   : null 
                 )

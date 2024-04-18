@@ -25,15 +25,24 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
   const [selectedVoucher, setSelectedVoucher] = useState<LoyaltyGift>()
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
+  const [hashVoucherTransferTransaction, setHashVoucherTransferTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { address } = useAccount()
-  const { writeContract, isError, isSuccess, data } = useWriteContract()
+  const { writeContract, isError, isSuccess, data, error } = useWriteContract()
+  const { 
+    writeContract: writeTransferVoucher, 
+    isError: isErrorTransferVoucher, 
+    isSuccess: isSuccessTransferVoucher, 
+    data: dataTransferVoucher, 
+    error: errorTransferVoucher 
+  } = useWriteContract()
 
-  console.log("loyaltyGifts @SendPointsOrVouchers: ", loyaltyGifts )
-  console.log("selectedVoucher @SendPointsOrVouchers: ", selectedVoucher )
-  console.log("qrData @SendPointsOrVouchers: ", qrData )
+  useEffect(() => {
+    !loyaltyGifts ? fetchGifts() : null  
+  }, [loyaltyGifts])
 
+  // data flow transfer points
   const waitForTransaction = useWaitForTransactionReceipt(
     { 
       confirmations: 1,
@@ -62,6 +71,7 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
         colour: "red",
         isVisible: true
       }))
+      console.log(error)
     }
   }, [isError])
 
@@ -69,16 +79,61 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
     if (isSuccess)  setHashTransaction(data)
   }, [isSuccess])
 
+  // data flow transfer voucher
   useEffect(() => {
-    !loyaltyGifts ? fetchGifts() : null  
-  }, [loyaltyGifts])
+    if (isSuccessTransferVoucher)  setHashVoucherTransferTransaction(dataTransferVoucher)
+  }, [isSuccessTransferVoucher])
+
+   const waitForVoucherTransferTransaction = useWaitForTransactionReceipt(
+    { 
+      confirmations: 1,
+      hash: hashVoucherTransferTransaction,
+      // timeout: 30_000,
+    }
+  ) 
+
+  useEffect(() => { 
+    if (waitForVoucherTransferTransaction.isSuccess) {
+      dispatch(notification({
+        id: "transferVoucher",
+        message: `Success. Voucher sent.`, 
+        colour: "green",
+        isVisible: true
+      }))
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [waitForVoucherTransferTransaction.isSuccess, waitForVoucherTransferTransaction.status ])
+
+  useEffect(() => {
+    if (isErrorTransferVoucher) {
+      dispatch(notification({
+        id: "transferVoucher",
+        message: `Something went wrong. Voucher not sent.`, 
+        colour: "red",
+        isVisible: true
+      }))
+      console.log(errorTransferVoucher)
+    }
+  }, [isErrorTransferVoucher])
 
   return (
     <div className="flex flex-col justify-between justify-center pt-2 h-full w-full">
       <TitleText title = "Send Points or Voucher" size = {2} />
 
       { selectedVoucher && qrData?.loyaltyCardAddress ? 
-        <GiftBig loyaltyCardAddress = {qrData?.loyaltyCardAddress } gift = {selectedVoucher} updateGift={() => {}} /> 
+        <GiftBig loyaltyCardAddress = {qrData?.loyaltyCardAddress } gift = {selectedVoucher} transferVoucher={() => {
+          writeTransferVoucher({ 
+                abi: loyaltyProgramAbi,
+                address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+                functionName: "transferLoyaltyVoucher", 
+                args: [
+                  selectedLoyaltyProgram?.programOwner, 
+                  qrData?.loyaltyCardAddress, 
+                  selectedVoucher.giftId, 
+                  selectedVoucher.giftAddress
+                ]
+              })}
+        } /> 
       :
       <>
 
@@ -122,7 +177,7 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
               </div>
             </Button>
             : 
-            <Button appearance = {"blueFilled"} onClick={() => writeContract({ 
+            <Button appearance = {"blueEmpty"} onClick={() => writeContract({ 
                 abi: loyaltyProgramAbi,
                 address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
                 functionName: 'safeTransferFrom',

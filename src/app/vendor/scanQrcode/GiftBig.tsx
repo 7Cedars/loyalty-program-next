@@ -15,27 +15,32 @@ import { TitleText } from "@/app/ui/StandardisedFonts";
 type SelectedGiftProps = {
   loyaltyCardAddress: EthAddress; 
   gift: LoyaltyGift;
-  updateGift: () => void;
+  transferVoucher: () => void;
 }
 
-export default function GiftBig({gift, loyaltyCardAddress, updateGift}: SelectedGiftProps ) {
+export default function GiftBig({gift, loyaltyCardAddress, transferVoucher}: SelectedGiftProps ) {
   const dimensions = useScreenDimensions();
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const dispatch = useDispatch() 
-  const { writeContract, isSuccess: isSuccessWrite, data } = useWriteContract()
+  // const { writeContract, isSuccess: isSuccessWrite, data } = useWriteContract()
 
-  console.log("loyaltyCardAddress @GiftBig: ", loyaltyCardAddress )
+  // console.log("data @GiftBig: ", {
+  //   loyaltyCardAddress: loyaltyCardAddress,
+  //   selectedLoyaltyProgram: selectedLoyaltyProgram?.programOwner,
+  //   giftId: gift.giftId, 
+  //   giftAddress: gift.giftAddress
+  // })
 
-  const executeExternalUpdate= () => {
-    if(typeof updateGift === 'function'){
-      updateGift()
-    }    
-  }
+  // const executeExternalUpdate= () => {
+  //   if(typeof updateGift === 'function'){
+  //     updateGift()
+  //   }    
+  // }
 
-  useEffect(() => {
-    if (isSuccessWrite) setHashTransaction(data)
-  }, [isSuccessWrite])
+  // useEffect(() => {
+  //   if (isSuccessWrite) setHashTransaction(data)
+  // }, [isSuccessWrite])
 
   const { isLoading, isSuccess, isError }  = useWaitForTransactionReceipt(
     { 
@@ -46,13 +51,14 @@ export default function GiftBig({gift, loyaltyCardAddress, updateGift}: Selected
     // include dispatch to notification flow. 
   
   return (
-    <div className="grid grid-cols-1 border rounded-lg border-slate-800 dark:border-slate-200 m-2"> 
-
+    <div className="grid grid-cols-1 border rounded-lg border-slate-800 dark:border-slate-200 m-2 p-2"> 
+      <TitleText title = "Transfer voucher" subtitle="Send a voucher to customer for free, skipping any requirements or transfer of points." size={1} />
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center "> 
       { gift && gift.metadata
         ? 
         <>
-        <TitleText title = "Transfer voucher" subtitle="Send a voucher to customer for free, skipping any requirements or transfer of points." size={1} />
+        
         <div className="rounded-lg w-max pt-2"> 
           <Image
               className="rounded-lg"
@@ -108,7 +114,6 @@ export default function GiftBig({gift, loyaltyCardAddress, updateGift}: Selected
       
       <div className="p-3 flex m-1"> 
       { isLoading ? 
-        
           <Button appearance = {"grayEmpty"} disabled >
             <div className="flex justify-center items-center">
               <Image
@@ -136,17 +141,25 @@ export default function GiftBig({gift, loyaltyCardAddress, updateGift}: Selected
             </div>
           </Button>
         : 
-          <Button appearance = {"blueEmpty"} onClick={() => writeContract({ 
-              abi: loyaltyProgramAbi,
-              address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-              functionName: "transferLoyaltyVoucher", 
-              args: [
-                loyaltyCardAddress, 
-                selectedLoyaltyProgram?.programOwner, 
-                gift.giftId, 
-                gift.giftAddress
-              ]
-            })} >
+          <Button appearance = {"blueEmpty"} onClick={() => transferVoucher() } >
+            {/* // writeContract({ 
+            //   abi: loyaltyProgramAbi,
+            //   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+            //   functionName: "transferLoyaltyVoucher", 
+            //   args: [
+            //     loyaltyCardAddress, 
+            //     selectedLoyaltyProgram?.programOwner, 
+            //     gift.giftId, 
+            //     gift.giftAddress
+            //   ]
+            // })} > */}
+              {/* <Button appearance = {"redEmpty"} onClick={() => writeContract({ 
+                  abi: loyaltyProgramAbi,
+                  address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
+                  functionName: "removeLoyaltyGiftClaimable", 
+                  args: [gift.giftAddress, gift.giftId]
+                })
+              } >  */}
               Transfer voucher
           </Button>
         } 
