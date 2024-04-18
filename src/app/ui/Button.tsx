@@ -6,7 +6,7 @@ type ButtonProps = {
   isFilled?: boolean;
   children: any;
   onClick?: () => void;
-  appearance?: "blueFilled" | "grayEmpty" | "grayFilled" | "grayEmpty" |  "greenFilled" | "greenEmpty" | "redFilled" | "redEmpty" | "grayEmptyLight" | "grayEmptyDark"
+  appearance?: "blueEmpty" | "blueFilled" | "grayEmpty" | "grayFilled" | "grayEmpty" |  "greenFilled" | "greenEmpty" | "redFilled" | "redEmpty" | "grayEmptyLight" | "grayEmptyDark"
 };
 
 export const Button = ({

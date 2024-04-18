@@ -204,7 +204,7 @@ export const useLoyaltyGifts = () => {
               address: item.giftAddress, 
               abi: loyaltyGiftAbi,
               functionName: 'balanceOf', 
-              args: [parseEthAddress(selectedLoyaltyProgram?.programAddress), item.giftId]
+              args: [parseEthAddress(selectedLoyaltyProgram?.programOwner), item.giftId]
             })
 
             loyaltyGiftsAvailableVouchers.push({...item, availableVouchers: Number(parseBigInt(availableVouchers))})

@@ -1,6 +1,6 @@
 "use client"; 
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
-import GiftSmall from "./GiftSmall";
+import { GiftSmall } from "../../components/GiftSmall";
 import { GiftBig } from "./GiftBig";
 import { LoyaltyGift, Status } from "@/types";
 import { useEffect, useRef, useState } from "react";

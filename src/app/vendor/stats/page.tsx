@@ -13,8 +13,8 @@ import {
 } from "wagmi";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
-import MintPoints from "../components/MintPoints";
-import MintCards from "../components/MintCards";
+import MintPoints from "../vendorComponents/MintPoints";
+import MintCards from "../vendorComponents/MintCards";
 import { useAppSelector } from "@/redux/hooks";
 import { useVendorAccount } from "@/app/hooks/useVendorAccount";
 import Image from "next/image";

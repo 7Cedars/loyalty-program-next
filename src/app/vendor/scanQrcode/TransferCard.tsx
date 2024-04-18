@@ -20,7 +20,7 @@ import Image from "next/image";
 import { useAppSelector } from "@/redux/hooks";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
-import MintCards from "../components/MintCards";
+import MintCards from "../vendorComponents/MintCards";
 import { SUPPORTED_CHAINS } from "@/context/constants";
 
 type RedeemTokenProps = {

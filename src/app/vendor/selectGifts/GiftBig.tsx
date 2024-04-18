@@ -145,6 +145,8 @@ export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: 
         </>
         : 
         null 
+
+        
         }
       </div>
 
@@ -166,7 +168,7 @@ export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: 
         :
         <div className="grid grid-col-1 gap-0 w-full">
           { gift && gift.isVoucher == 1n ? 
-            <div className="p-3 flex w-full"> 
+            <div className="px-3 flex w-full"> 
               <NumLine onClick = {(arg0) => mintVouchers({
                 abi: loyaltyProgramAbi,
                 address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
@@ -178,7 +180,7 @@ export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: 
             : null
           }
           { gift && isDisabled && gift.isClaimable == 1n ? 
-            <div className="p-3 flex "> 
+            <div className="px-3 pt-6 flex "> 
               <Button appearance = {"greenEmpty"} onClick={() => writeContract({ 
                   abi: loyaltyProgramAbi,
                   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
@@ -190,7 +192,7 @@ export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: 
             </div> 
             : 
             gift && gift.isClaimable == 1n ? 
-            <div className="p-3 flex "> 
+            <div className="px-3 flex "> 
               <Button appearance = {"redEmpty"} onClick={() => writeContract({ 
                   abi: loyaltyProgramAbi,
                   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
@@ -203,7 +205,13 @@ export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: 
             </div>
             : 
             null 
-        } 
+          } 
+          {/* has to be conditional on isVoucher? and availableVouchers > 0 */}
+          {/* <div className="px-3 flex "> 
+            <Button appearance = {"blueEmpty"} >
+                Transfer gift
+            </Button>
+           </div>  */}
       </div> 
     }
   </div> 

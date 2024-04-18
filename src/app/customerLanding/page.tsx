@@ -1,7 +1,7 @@
 "use client"; 
 
 import { Suspense, useEffect, useState } from "react"
-import UrlToLocalStorage from "../customer/components/UrlToLocalStorage"
+import UrlToLocalStorage from "../customer/customerComponents/UrlToLocalStorage"
 import Image from "next/image"
 import { Button } from "../ui/Button";
 import Link from "next/link";

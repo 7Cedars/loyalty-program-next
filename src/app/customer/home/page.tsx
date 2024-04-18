@@ -10,7 +10,7 @@ import { resetLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
 import { useEffect, useRef } from "react";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
-import { DynamicLayout } from "../components/DynamicLayout";
+import { DynamicLayout } from "../customerComponents/DynamicLayout";
 
 export default function Page()  {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )

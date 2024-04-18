@@ -1,6 +1,6 @@
 "use client"; 
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
-import TokenSmall from "./GiftSmall";
+import { GiftSmall } from "../../components/GiftSmall";
 import GiftBig from "./GiftBig";
 import { EthAddress, LoyaltyGift, Status } from "@/types";
 import { useEffect, useRef, useState } from "react";
@@ -31,7 +31,6 @@ export default function Page() {
   const { status: statusUseLoyaltyGifts, loyaltyGifts, loyaltyGiftContracts, fetchGifts, updateAvailableVouchers } = useLoyaltyGifts()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ claimableLoyaltyGifts, setClaimableLoyaltyGifts ]  = useState<BigInt[] >([]) 
-  const [ inactiveLoyaltyGifts, setInactiveLoyaltyGifts ] = useState<LoyaltyGift[] >([]) 
   const [selectedGift, setSelectedGift] = useState<setSelectedGiftProps | undefined>() 
   const publicClient = usePublicClient({config})
   const {chain} = useAccount() 
@@ -69,7 +68,6 @@ export default function Page() {
       }
   }
   
-  // NB: £bug minted vouchers are NOT updated on return from selected gift. £todo: FIX  
   useEffect(() => {
     if (!loyaltyGifts) fetchGifts()
     if (loyaltyGifts) getGiftSelection() 
@@ -86,27 +84,27 @@ export default function Page() {
         <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={2} />
        </div>
       { selectedGift && loyaltyGifts? 
-      <div className="grid grid-cols-1 content-start border border-gray-700 rounded-lg m-3">
-        <button 
-          className="text-slate-800 dark:text-slate-200 font-bold p-3"
-          type="submit"
-          onClick={() => handleReturnToMainPage()} // should be true / false
-          >
-          <ArrowLeftIcon
-            className="h-7 w-7"
-            aria-hidden="true"
-          />
-        </button>
+        <div className="grid grid-cols-1 content-start border border-gray-700 rounded-lg m-3">
+          <button 
+            className="text-slate-800 dark:text-slate-200 font-bold p-3"
+            type="submit"
+            onClick={() => handleReturnToMainPage()} // should be true / false
+            >
+            <ArrowLeftIcon
+              className="h-7 w-7"
+              aria-hidden="true"
+            />
+          </button>
 
-        <GiftBig 
-          allGifts= {loyaltyGifts} 
-          selectedGift={selectedGift.selectedGift} 
-          disabled = {selectedGift.disabled} 
-          updateGift = {() => updateAvailableVouchers() } 
-          /> 
-      </div>
+          <GiftBig 
+            allGifts= {loyaltyGifts} 
+            selectedGift={selectedGift.selectedGift} 
+            disabled = {selectedGift.disabled} 
+            updateGift = {() => updateAvailableVouchers() } 
+            /> 
+        </div>
       :
-      // <div className="grow flex flex-col items-center w-full h-full">
+      
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 p-4 justify-items-center content-start">
           { 
           statusUseLoyaltyGifts == "isLoading" || 
@@ -150,15 +148,15 @@ export default function Page() {
                       const gift = loyaltyGifts[i] 
                       console.log("claimable: ", claimable )
                       return (
-                        claimable == 1n ? 
-                          <div key = {`${gift.giftAddress}:${gift.giftId}`} >
-                            <TokenSmall gift = {gift} disabled = {false} onClick={() => setSelectedGift({selectedGift: {
-                                address: gift.giftAddress,
-                                id: gift.giftId
-                              }, disabled: false})}  /> 
-                          </div>
-                          : 
-                          null
+                          claimable == 1n ? 
+                            <div key = {`${gift.giftAddress}:${gift.giftId}`} >
+                              <GiftSmall gift = {gift} disabled = {false} onClick={() => setSelectedGift({selectedGift: {
+                                  address: gift.giftAddress,
+                                  id: gift.giftId
+                                }, disabled: false})}  /> 
+                            </div>
+                            : 
+                            null
                       )
                   })}
                 </div>
@@ -167,14 +165,16 @@ export default function Page() {
                   Gifts that can be claimed by customers will appear here. Select from below. 
                 </div>
                 }
+
+
             </div> 
 
             <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 pt-4 w-full"> 
               <TitleText title = "Available Gifts" size={0} />
             
-              { loyaltyGiftContracts.map((contractAddress: EthAddress, i: number) => 
+              { loyaltyGiftContracts.map((contractAddress: EthAddress, i:number) => 
                 <>
-                  <div key = {contractAddress} className="w-full text-sm text-slate-500 text-start ps-2 pt-6"> 
+                  <div key = {contractAddress} className="w-full text-md text-slate-800 dark:text-slate-200 text-start ps-3 pt-6"> 
                   Gift Contract: {contractAddress.slice(0, 6)}...{contractAddress.slice(36, 42)}
                   </div> 
 
@@ -182,7 +182,7 @@ export default function Page() {
                   {loyaltyGifts.map((gift: LoyaltyGift, i: number) =>
                     gift.giftAddress == contractAddress ? 
                       <div key = {`${gift.giftAddress}:${gift.giftId}`} > 
-                        <TokenSmall gift = {gift} disabled = { claimableLoyaltyGifts[i] == 0n} onClick={() => setSelectedGift({selectedGift: {
+                        <GiftSmall gift = {gift} disabled = { claimableLoyaltyGifts[i] == 0n} onClick={() => setSelectedGift({selectedGift: {
                           address: gift.giftAddress,
                           id: gift.giftId
                         }, disabled: claimableLoyaltyGifts[i] == 0n})}  /> 

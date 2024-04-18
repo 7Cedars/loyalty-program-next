@@ -47,7 +47,6 @@ export default function Home() {
   }, [chain])
 
   const deployLoyaltyProgram = useCallback( async () => {
-    const registry: EthAddress = parseEthAddress("0x000000006551c19487814612e58FE06813775758") 
     const implementation: EthAddress = parseEthAddress(currentChain.accountImplementation)
 
     if (status === "connected" && walletClient && deployRequest) {
@@ -59,7 +58,6 @@ export default function Home() {
           deployRequest.uri,
           deployRequest.name,
           deployRequest.version,
-          registry, // registry 
           implementation // deployArgs.erc65511Implementation
         ],
         bytecode: loyaltyProgramBytecode,

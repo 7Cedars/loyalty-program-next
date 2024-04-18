@@ -2,9 +2,9 @@
 // notification area, and otherwise it will not load... 
 
 import '../globals.css'
-import NavbarTop from "./components/NavbarTop"; 
-import NavbarBottom from './components/NavbarBottom';
-import { DynamicLayout } from './components/DynamicLayout';
+import NavbarTop from "./customerComponents/NavbarTop"; 
+import NavbarBottom from './customerComponents/NavbarBottom';
+import { DynamicLayout } from './customerComponents/DynamicLayout';
 
 export default function layout({
   children,

@@ -10,7 +10,7 @@ import { ViewFinder } from '@/app/ui/ViewFinder';
 import { QrData } from '@/types';
 import { parseQrData } from '@/app/utils/parsers';
 
-import SendPoints from './SendPoints';
+import SendPoints from './SendPointsOrVoucher';
 import ClaimGift from './ClaimGift';
 import RedeemToken from './RedeemVoucher';
 import TransferCard from './TransferCard';
