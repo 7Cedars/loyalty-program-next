@@ -128,9 +128,9 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
                 functionName: "transferLoyaltyVoucher", 
                 args: [
                   selectedLoyaltyProgram?.programOwner, 
-                  qrData?.loyaltyCardAddress, 
-                  selectedVoucher.giftId, 
-                  selectedVoucher.giftAddress
+                  qrData?.loyaltyCardAddress,                    
+                  selectedVoucher.giftAddress, 
+                  selectedVoucher.giftId
                 ]
               })}
         } /> 

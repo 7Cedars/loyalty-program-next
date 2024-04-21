@@ -23,32 +23,12 @@ export default function GiftBig({gift, loyaltyCardAddress, transferVoucher}: Sel
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const dispatch = useDispatch() 
-  // const { writeContract, isSuccess: isSuccessWrite, data } = useWriteContract()
-
-  // console.log("data @GiftBig: ", {
-  //   loyaltyCardAddress: loyaltyCardAddress,
-  //   selectedLoyaltyProgram: selectedLoyaltyProgram?.programOwner,
-  //   giftId: gift.giftId, 
-  //   giftAddress: gift.giftAddress
-  // })
-
-  // const executeExternalUpdate= () => {
-  //   if(typeof updateGift === 'function'){
-  //     updateGift()
-  //   }    
-  // }
-
-  // useEffect(() => {
-  //   if (isSuccessWrite) setHashTransaction(data)
-  // }, [isSuccessWrite])
 
   const { isLoading, isSuccess, isError }  = useWaitForTransactionReceipt(
     { 
       confirmations: 1,
       hash: hashTransaction 
     })
-
-    // include dispatch to notification flow. 
   
   return (
     <div className="grid grid-cols-1 border rounded-lg border-slate-800 dark:border-slate-200 m-2 p-2"> 
@@ -142,24 +122,6 @@ export default function GiftBig({gift, loyaltyCardAddress, transferVoucher}: Sel
           </Button>
         : 
           <Button appearance = {"blueEmpty"} onClick={() => transferVoucher() } >
-            {/* // writeContract({ 
-            //   abi: loyaltyProgramAbi,
-            //   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-            //   functionName: "transferLoyaltyVoucher", 
-            //   args: [
-            //     loyaltyCardAddress, 
-            //     selectedLoyaltyProgram?.programOwner, 
-            //     gift.giftId, 
-            //     gift.giftAddress
-            //   ]
-            // })} > */}
-              {/* <Button appearance = {"redEmpty"} onClick={() => writeContract({ 
-                  abi: loyaltyProgramAbi,
-                  address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-                  functionName: "removeLoyaltyGiftClaimable", 
-                  args: [gift.giftAddress, gift.giftId]
-                })
-              } >  */}
               Transfer voucher
           </Button>
         } 

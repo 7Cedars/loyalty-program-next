@@ -82,7 +82,7 @@ export type LoyaltyGift = {
   availableVouchers?: number;  
 } 
 
-export type QrData = {
+export type QrData = undefined | {
   type: "giftPoints" | "redeemToken" | "requestCard" | "claimGift"; 
   loyaltyProgram?: EthAddress; 
   loyaltyCardAddress?: EthAddress; 

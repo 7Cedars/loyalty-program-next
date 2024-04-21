@@ -3,7 +3,7 @@ import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi"; 
+import { useWriteContract } from "wagmi"; 
 import { loyaltyProgramAbi } from "@/context/abi";
 import { parseEthAddress, parseNumber } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";

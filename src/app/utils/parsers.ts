@@ -517,6 +517,13 @@ export const parseQrData = (qrText: unknown): QrData => {
       ) { 
         try {
           const data = qrText.split(";")
+          if (data[0].includes("giftPoints")) {
+
+            return {
+              type: "giftPoints",  
+              loyaltyCardAddress: parseEthAddress(data[1])
+              }
+          } 
 
           if (data[0].includes("claimGift")) {
 
@@ -553,33 +560,26 @@ export const parseQrData = (qrText: unknown): QrData => {
         } catch (error) {
           throw new Error(`parseQrData caught error: ${error}`);
         }
-       }
-       
-    else 
-
-      try {
-        return {
-            type: "giftPoints", 
-            loyaltyCardAddress: parseEthAddress(qrText)
-            } 
-        } catch (error) {
-          throw new Error(`Incorrect data at QrData: type not recognised ${error}`);
-        }
-      
-       throw new Error('Incorrect data at QrData: some fields are missing or incorrect');
+      }
 };
 
 
-export const parseFailureReason = (failureShortMessage: unknown): string => {
-  if ( !failureShortMessage || typeof failureShortMessage !== 'string' ) {
-    throw new Error('Incorrect or missing data at failureShortMessage');
+export const parseRequirementReply = (rawReply: unknown): boolean | string  => {
+  try {
+    String(rawReply)
+  } catch {
+    throw new Error('Incorrect or missing data at rawReply');
   }
 
-  else { 
-    try {
-      return( failureShortMessage.replace(/.*(?=:)/, ""))
-    } catch (error) {
-      throw new Error(`failureShortMessage caught error: ${error}`);
-    }
+  if (typeof rawReply === 'boolean') {
+    return rawReply
+  }
+
+  if (typeof rawReply !== 'boolean') {
+    return String(rawReply).split("\n")[1]
+  }
+
+  else {
+    return false 
   }
 };

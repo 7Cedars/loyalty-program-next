@@ -6,7 +6,7 @@ import { Button } from "@/app/ui/Button";
 import { useAccount, usePublicClient, useSignTypedData, useWalletClient, useReadContract } from "wagmi";
 import { loyaltyGiftAbi, loyaltyProgramAbi} from "@/context/abi";
 import { useUrlProgramAddress } from "@/app/hooks/useUrl";
-import { parseBigInt, parseEthAddress, parseFailureReason } from "@/app/utils/parsers";
+import { parseBigInt, parseEthAddress, parseRequirementReply } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useEffect, useState, useRef } from "react";
@@ -28,8 +28,7 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const publicClient = usePublicClient()
   const [ nonceData, setNonceData ] = useState<BigInt>()
-  const [ requirementsMet, setRequirementsMet] = useState<boolean>() 
-  const [ whyRequirementsNotMet, setWhyRequirementsNotMet] = useState<string>("") 
+  const [ whyRequirementsNotMet, setWhyRequirementsNotMet] = useState<string | undefined>("") 
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const [ errorTest, setErrorTest ] = useState<any>() 
   const polling = useRef<boolean>(false) 
@@ -37,8 +36,6 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
   const dispatch = useDispatch() 
   const {address, chain } = useAccount()
   const { data: signature, isPending, isError, isSuccess, signTypedData, reset } = useSignTypedData()
-
-  console.log("Error test: ", errorTest)
 
   useEffect(() => {
     const getNonceLoyaltyCard = async () => {
@@ -61,25 +58,24 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
 
 
   // this function reverts if requirements are not met
-  const {data, failureReason, isSuccess: isSuccessFetchRequirementsMet, isError: isErrorFetchRequirementsMet } = useReadContract({
-    abi: loyaltyGiftAbi,
-    address: parseEthAddress(gift.giftAddress),
-    functionName: 'requirementsLoyaltyGiftMet',
-    args: [selectedLoyaltyCard?.cardAddress, gift.giftId, selectedLoyaltyCard?.balance]
-  })
-  console.log("checkRequirementsMet data: ", data, "failureReason: ", failureReason?.shortMessage )
-
-  useEffect(() => {
-
-    if (isErrorFetchRequirementsMet && failureReason != null) {
-      console.log("Failure reason caught: ",  failureReason.shortMessage)
-      const reasonRequirementsNotMet = parseFailureReason(failureReason.shortMessage)
-      setWhyRequirementsNotMet(reasonRequirementsNotMet); 
+  const checkRequirementsMet = async () => {
+    if (publicClient)
+    try {
+      const rawReply: unknown = await publicClient.readContract({ 
+        address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
+        abi: loyaltyProgramAbi,
+        functionName: 'checkRequirementsLoyaltyGiftMet',
+        args: [selectedLoyaltyCard?.cardAddress, gift.giftAddress, gift.giftId]
+      })
+      setWhyRequirementsNotMet(undefined) 
+      setNonceData(nonceData)
+      } catch (error) {
+        const reply = parseRequirementReply(error)
+        if (typeof reply === 'string') setWhyRequirementsNotMet(reply)
+      }
     }
-  }, [isErrorFetchRequirementsMet, failureReason])
 
-
-
+  checkRequirementsMet() 
   
   const domain = {
     name: selectedLoyaltyProgram?.metadata?.name,
@@ -205,11 +201,9 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
           </div>
         </div>
         <div className="p-3 flex w-full"> 
-          {/* { pointsSent ? */}
-
-          {
-          
-          isSuccessFetchRequirementsMet ? 
+         { 
+          !pointsSent ? 
+          whyRequirementsNotMet == undefined ? 
             <Button appearance = {"greenEmpty"} onClick={() => signTypedData({
               domain, 
               types, 
@@ -220,15 +214,16 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
             </Button>
           : 
             <Button appearance = {"grayEmpty"} disabled >
-              Your card does not meet the requirements for this gift{whyRequirementsNotMet} 
+              Your card does not meet the requirements for this gift: {whyRequirementsNotMet} 
             </Button>
+            : 
+            null
           }
-
-          </div>
+        </div>
         </>
-        : null
+        :
+        null
         }
-        
         { gift.metadata && signature ?
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4"> 
             <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
