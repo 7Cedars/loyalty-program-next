@@ -23,8 +23,8 @@ const chains = [
   // arbitrumSepolia, 
   // sepolia, 
   // baseSepolia, 
-  // optimismSepolia, 
-  polygonMumbai
+  optimismSepolia
+  // polygonMumbai
 ] as const // Here place all chains 
 
 export const config = createConfig({
@@ -35,8 +35,8 @@ export const config = createConfig({
     // [arbitrumSepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
     // [arbitrumSepolia.id]: http(), 
     // [baseSepolia.id]: http(), 
-    // [optimismSepolia.id]: http(), 
-    [polygonMumbai.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_POLYGON_MUMBAI_API_RPC)
+    [optimismSepolia.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_OPT_SEPOLIA_API_RPC), 
+    // [polygonMumbai.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_POLYGON_MUMBAI_API_RPC)
   },
   connectors: [
     walletConnect({ projectId, metadata, showQrModal: false }),
