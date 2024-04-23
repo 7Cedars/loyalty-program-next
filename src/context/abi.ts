@@ -772,6 +772,33 @@ export const loyaltyProgramAbi: Abi = [
 
 export const loyaltyGiftAbi: Abi = [
   {
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "loyaltyGiftUri",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "isClaimable",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      },
+      {
+        "name": "isVoucher",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      },
+      { "name": "cost", "type": "uint256[]", "internalType": "uint256[]" },
+      {
+        "name": "hasAdditionalRequirements",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
     "type": "function",
     "name": "balanceOf",
     "inputs": [
@@ -872,17 +899,13 @@ export const loyaltyGiftAbi: Abi = [
     "type": "function",
     "name": "requirementsLoyaltyGiftMet",
     "inputs": [
-      { "name": "loyaltyCard", "type": "address", "internalType": "address" },
+      { "name": "", "type": "address", "internalType": "address" },
       {
         "name": "loyaltyGiftId",
         "type": "uint256",
         "internalType": "uint256"
       },
-      {
-        "name": "loyaltyPoints",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
+      { "name": "", "type": "uint256", "internalType": "uint256" }
     ],
     "outputs": [
       { "name": "success", "type": "bool", "internalType": "bool" }
@@ -909,7 +932,7 @@ export const loyaltyGiftAbi: Abi = [
       { "name": "from", "type": "address", "internalType": "address" },
       { "name": "to", "type": "address", "internalType": "address" },
       { "name": "id", "type": "uint256", "internalType": "uint256" },
-      { "name": "value", "type": "uint256", "internalType": "uint256" },
+      { "name": "amount", "type": "uint256", "internalType": "uint256" },
       { "name": "data", "type": "bytes", "internalType": "bytes" }
     ],
     "outputs": [],
@@ -932,6 +955,13 @@ export const loyaltyGiftAbi: Abi = [
       { "name": "interfaceId", "type": "bytes4", "internalType": "bytes4" }
     ],
     "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "uri",
+    "inputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [{ "name": "", "type": "string", "internalType": "string" }],
     "stateMutability": "view"
   },
   {
@@ -1070,6 +1100,116 @@ export const loyaltyGiftAbi: Abi = [
       }
     ],
     "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "ERC1155InsufficientBalance",
+    "inputs": [
+      { "name": "sender", "type": "address", "internalType": "address" },
+      { "name": "balance", "type": "uint256", "internalType": "uint256" },
+      { "name": "needed", "type": "uint256", "internalType": "uint256" },
+      { "name": "tokenId", "type": "uint256", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ERC1155InvalidApprover",
+    "inputs": [
+      { "name": "approver", "type": "address", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ERC1155InvalidArrayLength",
+    "inputs": [
+      { "name": "idsLength", "type": "uint256", "internalType": "uint256" },
+      { "name": "valuesLength", "type": "uint256", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ERC1155InvalidOperator",
+    "inputs": [
+      { "name": "operator", "type": "address", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ERC1155InvalidReceiver",
+    "inputs": [
+      { "name": "receiver", "type": "address", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ERC1155InvalidSender",
+    "inputs": [
+      { "name": "sender", "type": "address", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ERC1155MissingApprovalForAll",
+    "inputs": [
+      { "name": "operator", "type": "address", "internalType": "address" },
+      { "name": "owner", "type": "address", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "LoyaltyGift__IncorrectInterface",
+    "inputs": [
+      { "name": "loyaltyGift", "type": "address", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "LoyaltyGift__IsNotVoucher",
+    "inputs": [
+      { "name": "loyaltyGift", "type": "address", "internalType": "address" },
+      {
+        "name": "loyaltyGiftId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "LoyaltyGift__LoyaltyProgramNotRecognised",
+    "inputs": [
+      { "name": "loyaltyToken", "type": "address", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "LoyaltyGift__NoVouchersAvailable",
+    "inputs": [
+      { "name": "loyaltyGift", "type": "address", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "LoyaltyGift__RequirementsNotMet",
+    "inputs": [
+      {
+        "name": "loyaltyToken",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "loyaltyGiftId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "LoyaltyGift__TransferToNonAffiliate",
+    "inputs": [
+      { "name": "loyaltyGift", "type": "address", "internalType": "address" }
+    ]
   }
 ]
  

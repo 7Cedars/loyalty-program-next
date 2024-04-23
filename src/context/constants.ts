@@ -28,8 +28,8 @@ export const SUPPORTED_CHAINS = [ // blocks to start check for data.
   {
     name: "optimismSepolia", 
     chainId: 11155420, 
-    fromBlock: 0n,  // TBI
-    accountImplementation: "0x0b651850F1b7EA080A0039119dEEE7Cc7516706E" // TBI
+    fromBlock: 11031690n,  
+    accountImplementation: "0x2ff1d4ef7c15cd418db2a893376dd84aa0a8e145"
   },
   {
     name: "polygonMumbai", 
