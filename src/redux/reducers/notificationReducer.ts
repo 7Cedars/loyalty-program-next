@@ -50,14 +50,11 @@ export const notificationsSlice = createSlice({
       action.payload.colour ? 
         state.notifications[index].colour = action.payload.colour : null
 
-      // Durantion still has to be coded - tough one.  
-      // action.payload.durationInMs ? 
-      //   state.notifications[index].durationInMs = action.payload.durationInMs : null
       action.payload.isVisible ? 
         state.notifications[index].isVisible = action.payload.isVisible : null
 
       action.payload.loginButton ? 
-        state.notifications[index].loginButton = action.payload.loginButton : false
+        state.notifications[index].loginButton = action.payload.loginButton : null
 
       action.payload.progressInPercent ? 
         state.notifications[index].progressInPercent = action.payload.progressInPercent : null

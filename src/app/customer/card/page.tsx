@@ -1,7 +1,6 @@
 "use client";
 
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
-import VoucherSmall from "./VoucherSmall";
 import { LoyaltyGift, Status } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -18,6 +17,7 @@ import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
 import Image from "next/image";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import { SUPPORTED_CHAINS } from "@/context/constants";
+import { GiftSmall } from "@/app/components/GiftSmall";
 
 type setSelectedVoucherProps = {
   token: LoyaltyGift; 
@@ -76,7 +76,6 @@ export default function Page() {
       const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
       try { 
         const claimedVouchersLogs: Log[] = await publicClient.getContractEvents({
-          // address: loyaltyGift.giftAddress, 
           abi: loyaltyGiftAbi,
           eventName: 'TransferSingle', 
           args: {
@@ -87,7 +86,6 @@ export default function Page() {
         const claimedVouchers = parseTransferSingleLogs(claimedVouchersLogs)
   
         const redeemedVouchersLogs: Log[] = await publicClient.getContractEvents({
-          // address: loyaltyGift.giftAddress, 
           abi: loyaltyGiftAbi,
           eventName: 'TransferSingle', 
           args: {
@@ -175,7 +173,7 @@ export default function Page() {
             />
           </button>
             
-          <RedeemVoucher token={selectedVoucher?.token} disabled={false}  /> 
+          <RedeemVoucher gift={selectedVoucher?.token} disabled={false}  /> 
             
         </div>
       :
@@ -209,7 +207,7 @@ export default function Page() {
               claimedVouchers.map((token: LoyaltyGift, i) => 
                   token.metadata ? 
                   <div key = {i} >
-                    <VoucherSmall token = {token} disabled = {false} onClick={() => setSelectedVoucher({token: token, disabled: false})}  /> 
+                    <GiftSmall gift = {token} disabled = {false} onClick={() => setSelectedVoucher({token: token, disabled: false})}  /> 
                   </div>
                   : null 
                 )

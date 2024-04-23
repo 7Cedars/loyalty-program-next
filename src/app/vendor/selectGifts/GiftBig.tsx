@@ -1,5 +1,5 @@
 "use client"; 
-import { LoyaltyGift } from "@/types";
+import { EthAddress, LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
@@ -11,40 +11,39 @@ import { notification } from "@/redux/reducers/notificationReducer";
 import { useEffect, useState } from "react";
 import { NumLine } from "@/app/ui/NumLine";
 import { useAppSelector } from "@/redux/hooks";
+import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 
-type SelectedTokenProps = {
-  token: LoyaltyGift
-  disabled: boolean
+type SelectedGift = {
+  address: EthAddress; 
+  id: number; 
+} 
+
+type SelectedGiftProps = {
+  allGifts: LoyaltyGift[]; 
+  selectedGift: SelectedGift;
+  disabled: boolean;
+  updateGift: () => void;
 }
 
-export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
+export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: SelectedGiftProps ) {
   const dimensions = useScreenDimensions();
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ hashTransaction, setHashTransaction] = useState<any>()
   const [ hashMintTransaction, setHashMintTransaction] = useState<any>()
   const [ isDisabled, setIsDisabled ] = useState<boolean>(disabled) 
   const dispatch = useDispatch() 
-  const { writeContract, isSuccess: isSuccessWriteContract, isError: isErrorWriteContract } = useWriteContract()
-  const { writeContract: mintVouchers, isSuccess: isSuccessMintVouchers } = useWriteContract()
+  const { writeContract, isSuccess: isSuccessWriteContract, isError: isErrorWriteContract, data: writeContractData } = useWriteContract()
+  const { writeContract: mintVouchers, isSuccess: isSuccessMintVouchers, data: mintVoucherData } = useWriteContract()
 
-  const { data, isError, isLoading, isSuccess } = useWaitForTransactionReceipt(
-    { 
-      confirmations: 1,
-      hash: hashTransaction 
-    })
+  const executeExternalUpdate= () => {
+    if(typeof updateGift === 'function'){
+      updateGift()
+    }    
+  }
 
-  const mintTransaction = useWaitForTransactionReceipt(
-    { 
-      confirmations: 1,
-      hash: hashMintTransaction 
-    })
+  const gift = allGifts.find(gift => gift.giftAddress == selectedGift.address && gift.giftId == selectedGift.id)
 
-  useEffect(() => { 
-    if (isSuccess) {
-      setIsDisabled(!isDisabled)
-    }
-  }, [isSuccess])
-
+  // selecting gift flow
   useEffect(() => {
     if (isErrorWriteContract) {
       dispatch(notification({
@@ -57,26 +56,51 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
   }, [isErrorWriteContract])
 
   useEffect(() => {
-    if (isSuccessWriteContract) setHashTransaction(data)
+    if (isSuccessWriteContract) setHashTransaction(writeContractData)
   }, [isSuccessWriteContract])
 
+  const { data, isError, isLoading, isSuccess } = useWaitForTransactionReceipt(
+    { 
+      confirmations: 1,
+      hash: hashTransaction 
+    })
+
+  useEffect(() => { 
+    if (isSuccess) {
+      setIsDisabled(!isDisabled)
+    }
+  }, [isSuccess])
+
+  // minting vouchers flow
   useEffect(() => {
-    if (isSuccessMintVouchers) setHashMintTransaction(data)
+    if (isSuccessMintVouchers) setHashMintTransaction(mintVoucherData)
   }, [isSuccessMintVouchers])
 
+  const { isLoading: isLoadingMint, isSuccess: isSuccessMint }  = useWaitForTransactionReceipt(
+    { 
+      confirmations: 1,
+      hash: hashMintTransaction 
+    })
+
+  useEffect(() => { 
+    if (isSuccessMint) {
+      executeExternalUpdate() 
+    }
+  }, [isSuccessMint])
+  
   return (
     <div className="grid grid-cols-1"> 
 
       <div className="grid grid-cols-1 sm:grid-cols-2 h-full w-full p-3 px-6 justify-items-center "> 
-      { token.metadata ? 
+      { gift && gift.metadata
+        ? 
         <>
         <div className="rounded-lg w-max"> 
-         
           <Image
               className="rounded-lg"
               width={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
               height={dimensions.width < 896 ? (dimensions.width - 100) / 2  : 400}
-              src={token.metadata.imageUri}
+              src={gift.metadata.imageUri}
               alt="Loyalty Token icon "
             />
         </div>
@@ -84,32 +108,45 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
         <div className="grid grid-cols-1 pt-2 content-between w-4/5 h-full">
           <div> 
             <div className="text-center text-lg text-slate-800 dark:text-slate-200 text-bold px-1"> 
-              {token.metadata.name}
+              {gift.metadata.name}
             </div>
             <div className="text-center text-lg text-slate-500 pb-4"> 
-              {token.metadata.description}
+              {gift.metadata.description}
             </div>
-            <div className="text-center text-lg"> 
-              {`Cost: ${token.metadata.attributes[1].value} ${token.metadata.attributes[1].trait_type}`}
-            </div> 
-            <div className="text-center text-lg pb-4"> 
-              {`Additional requirements: ${token.metadata.attributes[2].value}`}
-            </div> 
+              {gift.isClaimable == 1n ? 
+                <div className="text-center text-lg"> 
+                  {`Cost: ${gift.cost} points`}
+                </div> 
+                :
+                null
+              }
+              {gift.hasAdditionalRequirements == 1n ? 
+                <div className="text-center text-lg"> 
+                  {`Additional requirements: ${gift.metadata.attributes[0].value}`}
+                </div> 
+                :
+                null
+              }
+            <div className="text-center text-lg text-slate-500 break-words pt-4"> 
+              Gift address: {gift.giftAddress}
+            </div>
+            <div className="text-center text-lg text-slate-500 pb-4"> 
+              Gift Id: {gift.giftId}
+            </div>
           </div>
-          {token.tokenised ? 
+          {gift.isVoucher == 1n ? 
             <div className="text-center text-lg"> 
-              {`${token.availableTokens} remaining vouchers.`}
+              {`${gift.availableVouchers} remaining vouchers.`}
             </div>
             :
-            <div className="text-center text-lg"> 
-              {`Unlimited supply, gift is redeemed immediately at the till.`}
-            </div>
+            null
           }
-
         </div>
         </>
         : 
         null 
+
+        
         }
       </div>
 
@@ -129,44 +166,54 @@ export default function TokenBig( {token, disabled}: SelectedTokenProps ) {
           </Button>
         </div> 
         :
-        isDisabled ? 
-          <div className="p-3 flex "> 
-            <Button appearance = {"greenEmpty"} onClick={() => writeContract({ 
+        <div className="grid grid-col-1 gap-0 w-full">
+          { gift && gift.isVoucher == 1n ? 
+            <div className="px-3 flex w-full"> 
+              <NumLine onClick = {(arg0) => mintVouchers({
                 abi: loyaltyProgramAbi,
                 address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-                functionName: "addLoyaltyGift", 
-                args: [token.giftAddress, token.giftId]
-              })} >
-                Add Loyalty Gift
-            </Button>
-          </div> 
-          : 
-          <div className="grid grid-col-1 gap-0 w-full">
-            { token.tokenised ? 
-              <div className="p-3 flex w-full"> 
-                <NumLine onClick = {(arg0) => mintVouchers({
+                functionName: "mintLoyaltyVouchers",
+                args: [gift.giftAddress, [gift.giftId], [arg0]]}
+                )} 
+                isLoading = {isLoadingMint} /> 
+            </div>
+            : null
+          }
+          { gift && isDisabled && gift.isClaimable == 1n ? 
+            <div className="px-3 pt-6 flex "> 
+              <Button appearance = {"greenEmpty"} onClick={() => writeContract({ 
                   abi: loyaltyProgramAbi,
                   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-                  functionName: "mintLoyaltyVouchers",
-                  args: [token.giftAddress, [token.giftId], [arg0]]}
-                  )} 
-                  isLoading = {mintTransaction.isLoading} /> 
-              </div>
-              : null
-            }
-            <div className="p-3 flex "> 
+                  functionName: "addLoyaltyGift", 
+                  args: [gift.giftAddress, gift.giftId]
+                })} >
+                  Allow Customer to Claim Gift 
+              </Button>
+            </div> 
+            : 
+            gift && gift.isClaimable == 1n ? 
+            <div className="px-3 flex "> 
               <Button appearance = {"redEmpty"} onClick={() => writeContract({ 
                   abi: loyaltyProgramAbi,
                   address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
                   functionName: "removeLoyaltyGiftClaimable", 
-                  args: [token.giftAddress, token.giftId]
+                  args: [gift.giftAddress, gift.giftId]
                 })
               } >
-                Remove Loyalty Gift
+                Disallow Customer to Claim Gift
               </Button>
             </div>
-          </div>
-        } 
-      </div>      
-  );
+            : 
+            null 
+          } 
+          {/* has to be conditional on isVoucher? and availableVouchers > 0 */}
+          {/* <div className="px-3 flex "> 
+            <Button appearance = {"blueEmpty"} >
+                Transfer gift
+            </Button>
+           </div>  */}
+      </div> 
+    }
+  </div> 
+  )
 }

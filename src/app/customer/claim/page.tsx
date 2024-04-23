@@ -1,7 +1,7 @@
 "use client"; 
 import { TitleText, NoteText } from "@/app/ui/StandardisedFonts";
-import TokenSmall from "./GiftSmall";
-import { TokenBig } from "./GiftBig";
+import { GiftSmall } from "../../components/GiftSmall";
+import { GiftBig } from "./GiftBig";
 import { LoyaltyGift, Status } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -22,8 +22,8 @@ import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import Image from "next/image";
 import { SUPPORTED_CHAINS } from "@/context/constants";
 
-type setSelectedTokenProps = {
-  token: LoyaltyGift; 
+type setSelectedGiftProps = {
+  gift: LoyaltyGift; 
   disabled: boolean; 
 }
 
@@ -41,7 +41,7 @@ export default function Page() {
 
   const [data, setData] = useState<LoyaltyGift[]>()
   
-  const [ selectedToken, setSelectedToken ] = useState<setSelectedTokenProps | undefined>() 
+  const [ selectedGift, setSelectedToken ] = useState<setSelectedGiftProps | undefined>() 
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const polling = useRef<boolean>(false)
@@ -116,7 +116,7 @@ export default function Page() {
           const isClaimable: unknown = await publicClient.readContract({
             address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
             abi: loyaltyProgramAbi,
-            functionName: 'getLoyaltyGiftsIsClaimable', 
+            functionName: 'getLoyaltyGiftIsClaimable', 
             args: [loyaltyGift.giftAddress, loyaltyGift.giftId]
           })
           isClaimable == 1n ? loyaltyGiftsUpdated.push(loyaltyGift) : null
@@ -136,9 +136,9 @@ export default function Page() {
   }, [, statusAtAddedGifts ] ) 
 
   useEffect(() => {
-    if (selectedToken) polling.current = true
+    if (selectedGift) polling.current = true
     else polling.current = false   
-  }, [, selectedToken ] )
+  }, [, selectedGift ] )
 
   useEffect(() => {
     if (
@@ -189,9 +189,9 @@ export default function Page() {
         </div>
       </div>
 
-      { selectedToken ? 
+      { selectedGift ? 
       <div className="grid grid-cols-1 content-start">
-        <div className=" border border-gray-300 rounded-lg m-1">
+        <div className=" border border-gray-700 dark:border-gray-300  rounded-lg m-1">
           <button 
             className="text-slate-800 dark:text-slate-200 font-bold p-2 grid grid-cols-1 content-start"
             type="submit"
@@ -203,7 +203,7 @@ export default function Page() {
             />
           </button>
 
-          <TokenBig token={selectedToken.token} disabled = {selectedToken.disabled} /> 
+          <GiftBig gift={selectedGift.gift} disabled = {selectedGift.disabled} /> 
           
           {/* <div className="h-32" />  */}
           
@@ -241,7 +241,7 @@ export default function Page() {
             loyaltyGifts.map((gift: LoyaltyGift) => 
                 gift.metadata ? 
                 <div key = {`${gift.giftAddress}:${gift.giftId}`} >
-                  <TokenSmall token = {gift} disabled = {false} onClick={() => setSelectedToken({token: gift, disabled: false})}  /> 
+                  <GiftSmall gift = {gift} disabled = {false} onClick={() => setSelectedToken({gift: gift, disabled: false})}  /> 
                 </div>
                 : null 
               )
@@ -255,9 +255,11 @@ export default function Page() {
           }
           </div>
         </div> 
+        <div className="h-20" />
       </>
 
     }
+   
     </div>   
   );
 }

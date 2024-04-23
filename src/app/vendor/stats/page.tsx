@@ -13,8 +13,8 @@ import {
 } from "wagmi";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
-import MintPoints from "../components/MintPoints";
-import MintCards from "../components/MintCards";
+import MintPoints from "../vendorComponents/MintPoints";
+import MintCards from "../vendorComponents/MintCards";
 import { useAppSelector } from "@/redux/hooks";
 import { useVendorAccount } from "@/app/hooks/useVendorAccount";
 import Image from "next/image";
@@ -23,7 +23,7 @@ import { SUPPORTED_CHAINS } from "@/context/constants";
  
 export default function Page() {
   const [ modal, setModal] = useState<'points' | 'cards' | undefined>()  
-  const { status: statusBalances, balances, refetchBalances } = useVendorAccount() 
+  const { status: statusBalances, balances } = useVendorAccount() // refetchBalances
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient(); 
   const { address, chain } = useAccount() 
@@ -38,6 +38,8 @@ export default function Page() {
   const statusTransferBatchTo = useRef<Status>("isIdle") 
   const statusBlockData= useRef<Status>("isIdle") 
   const [status, setStatus] = useState<Status>("isIdle") 
+
+  console.log("balances: ", balances)
 
   const getTransferSingleTo = async () => {
     statusTransferSingleTo.current = "isLoading"
@@ -137,7 +139,7 @@ export default function Page() {
     getTransferSingleFrom()
     getTransferBatchTo()
     
-    refetchBalances() 
+    // refetchBalances() 
   }, [ ])
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { LoyaltyGift } from "@/types";
 import Image from "next/image";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import { Button } from "@/app/ui/Button";
-import { useWriteContract, useWaitForTransactionReceipt } from "wagmi"; 
+import { useWriteContract } from "wagmi"; 
 import { loyaltyProgramAbi } from "@/context/abi";
 import { parseEthAddress, parseNumber } from "@/app/utils/parsers";
 import { useDispatch } from "react-redux";
@@ -113,7 +113,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
             <div> 
               <TitleText title={token.metadata.name} subtitle={token.metadata.description} size={1} />
             </div>
-            {tokenReceived?  
+            {tokenReceived && token.metadata?.attributes[5] ?  
               <p className="text-center text-xlfont-bold p-4">
                 {token.metadata?.attributes[5].value}
               </p>
@@ -125,7 +125,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
                 {`ID: ${token.giftId} @${token.giftAddress.slice(0,6)}...${token.giftAddress.slice(36,42)}`}
               </div>
               <div className="text-center text-md"> 
-                {`Remaining vouchers: ${token.availableTokens}`}
+                {`Remaining vouchers: ${token.availableVouchers}`}
               </div>
             </div>
           </div>

@@ -17,7 +17,7 @@ export default function MintCards() {
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const { writeContract, isError, isPending, isSuccess, data } = useWriteContract()
+  const { writeContract, isError, error, isPending, isSuccess, data } = useWriteContract()
 
   const waitForTransaction = useWaitForTransactionReceipt(
     { 
@@ -47,6 +47,7 @@ export default function MintCards() {
         colour: "red",
         isVisible: true
       }))
+      console.log("mintLoyaltyCards error: ",  error)
     }
   }, [isError])
 

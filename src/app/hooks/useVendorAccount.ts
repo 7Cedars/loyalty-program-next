@@ -15,7 +15,6 @@ export const useVendorAccount = () => {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const dispatch = useDispatch() 
   
-  // const [ points, setPoints] = useState<number>() 
   const [ mintedCards, setMintedCards] = useState<number>()
   const [ balances, setBalances] = useState<{points: number, cards: number}>()  
   
@@ -23,8 +22,17 @@ export const useVendorAccount = () => {
   const statusFetchBalances = useRef<Status>("isIdle") 
   const [status, setStatus] = useState<Status>("isIdle") 
 
+  console.log({
+    statusMintedCards: statusMintedCards,
+    statusFetchBalances: statusFetchBalances, 
+    mintedCards: mintedCards, 
+    balances: balances,
+  })
+
   /// Fetch number of Cards Minted ///  
   const fetchMintedCards = async () => {
+    console.log("fetchMintedCards CALLED")
+
     if (selectedLoyaltyProgram && publicClient) {
       statusMintedCards.current = "isLoading"
       try {
@@ -36,7 +44,9 @@ export const useVendorAccount = () => {
         });
 
         const mintedCardsData = Number(parseBigInt(cardData))
+        console.log("mintedCardsData: ", mintedCardsData)
         setMintedCards(mintedCardsData)
+
         statusMintedCards.current = "isSuccess"
         } catch (error) {
           statusMintedCards.current = "isError"
@@ -47,7 +57,11 @@ export const useVendorAccount = () => {
 
   /// Fetch Balance of points [0] and all cards minted - upload to Redux /// 
   const fetchBalances = async () => {
-    if (selectedLoyaltyProgram && mintedCards) {
+    console.log("fetchBalances CALLED")
+    console.log("fetchBalances selectedLoyaltyProgram: ", selectedLoyaltyProgram )
+    console.log("fetchBalances mintedCards: ", mintedCards )
+
+    if (selectedLoyaltyProgram && mintedCards != undefined) {
       statusFetchBalances.current = "isLoading"
       const tokenIds = Array.from({length: mintedCards + 1}, (_, index) => index);
       const addressArray = new Array(mintedCards + 1).fill(selectedLoyaltyProgram.programOwner)   
@@ -72,14 +86,14 @@ export const useVendorAccount = () => {
   }
 
   // forces a refetchBalances. 
-  const refetchBalances = () => {
-    statusMintedCards.current = "isIdle"
-    statusFetchBalances.current = "isIdle"
-    fetchMintedCards()
-  }
+  // const refetchBalances = () => {
+  //   statusMintedCards.current = "isIdle"
+  //   statusFetchBalances.current = "isIdle"
+  //   fetchMintedCards()
+  // }
 
-  // forces a refetchBalances. 
   const setProgramBalances = () => {
+    console.log("setProgramBalances CALLED")
     if (selectedLoyaltyProgram && selectedLoyaltyProgram.balances) {
       const cards = selectedLoyaltyProgram.balances.slice(1,)
       const numberOfCards: number = cards.reduce(
@@ -107,7 +121,7 @@ export const useVendorAccount = () => {
     ) fetchMintedCards() 
     if (
       statusMintedCards.current == "isSuccess" &&
-      mintedCards && 
+      mintedCards != undefined && 
       statusFetchBalances.current == "isIdle" 
       ) fetchBalances()
   }, [, mintedCards, selectedLoyaltyProgram])
@@ -128,10 +142,6 @@ export const useVendorAccount = () => {
     ) setStatus("isSuccess")
   }, [balances, mintedCards])
 
-  return {status, mintedCards, balances, refetchBalances}
-}
-
-function dispatch(arg0: any) {
-  throw new Error("Function not implemented.");
+  return {status, mintedCards, balances } // refetchBalances
 }
 

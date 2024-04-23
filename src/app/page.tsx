@@ -47,19 +47,17 @@ export default function Home() {
   }, [chain])
 
   const deployLoyaltyProgram = useCallback( async () => {
-    const registry: EthAddress = parseEthAddress("0x000000006551c19487814612e58FE06813775758") 
     const implementation: EthAddress = parseEthAddress(currentChain.accountImplementation)
 
     if (status === "connected" && walletClient && deployRequest) {
       const hash = await walletClient.deployContract({
         abi: loyaltyProgramAbi,
-        chain: chain, // £todo needs to be dynamic
+        chain: chain,
         account: address,
         args: [
           deployRequest.uri,
           deployRequest.name,
           deployRequest.version,
-          registry, // registry 
           implementation // deployArgs.erc65511Implementation
         ],
         bytecode: loyaltyProgramBytecode,

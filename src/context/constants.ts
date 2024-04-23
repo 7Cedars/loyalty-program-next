@@ -5,7 +5,7 @@ export const SUPPORTED_CHAINS = [ // blocks to start check for data.
     name: "foundry", 
     chainId: 31337, 
     fromBlock: 0n, 
-    accountImplementation: "0x0b651850F1b7EA080A0039119dEEE7Cc7516706E" // TBI -- should use create2 to always have same address. 
+    accountImplementation: "0xD24087e42e80D8CA9BcCC21E0849160aEf1F7210" 
   },
   {
     name: "sepolia", 

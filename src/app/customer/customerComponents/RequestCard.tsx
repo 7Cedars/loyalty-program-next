@@ -36,7 +36,7 @@ export default function RequestCard()  {
     if (cardReceived) {
       dispatch(notification({
         id: "cardReceived",
-        message: `Success! Card with Id: ${cardReceived[0].ids[0]} received.`, 
+        message: `Success! Card with Id: ${cardReceived[0].ids[0]} received. Please refresh this page.`, 
         colour: "green",
         isVisible: true
       }))

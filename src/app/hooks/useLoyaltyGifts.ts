@@ -1,4 +1,4 @@
-import {  LoyaltyGift, Status } from "@/types";
+import {  EthAddress, LoyaltyGift, Status } from "@/types";
 import { readContracts } from '@wagmi/core'
 import { config } from '../../../config'
 import { useEffect, useRef, useState } from "react";
@@ -28,22 +28,29 @@ export const useLoyaltyGifts = () => {
   const statusAtAvailableVouchers = useRef<Status>("isIdle") 
   const [data, setData] = useState<LoyaltyGift[] | undefined>() 
   const [loyaltyGifts, setLoyaltyGifts] = useState<LoyaltyGift[] | undefined>() 
+  const [loyaltyGiftContracts, setLoyaltyGiftContracts] = useState<EthAddress[] | undefined>() 
 
   console.log("loyaltyGifts: ", loyaltyGifts)
   
-  const fetchGifts = (requestedTokens?: LoyaltyGift[] ) => {
+  const fetchGifts = (requestedGifts?: LoyaltyGift[] ) => {
     setStatus("isIdle")
     setData(undefined)
     setLoyaltyGifts(undefined)
-    getLoyaltyGiftAddresses(requestedTokens)
+    getLoyaltyGiftAddresses(requestedGifts)
   }
 
-  const getLoyaltyGiftAddresses = async (requestedTokens?: LoyaltyGift[]) => {
+  const updateAvailableVouchers = () => {
+    setStatus("isIdle")
+    statusAtAvailableVouchers.current = "isIdle"
+    getAvailableVouchers() 
+  }
+
+  const getLoyaltyGiftAddresses = async (requestedGifts?: LoyaltyGift[]) => {
     statusAtgiftAddress.current = "isLoading"
 
-    if (requestedTokens) { 
+    if (requestedGifts) { 
       statusAtgiftAddress.current = "isSuccess"
-      setData(requestedTokens)
+      setData(requestedGifts)
     } else { 
       if (publicClient && chain)
       try { 
@@ -149,6 +156,11 @@ export const useLoyaltyGifts = () => {
                 functionName: 'getHasAdditionalRequirements', 
                 args: [item.giftId]
               }, 
+              {
+              ...giftContract, 
+                functionName: 'getIsVoucher', 
+                args: [item.giftId]
+              },
             ], 
           })
 
@@ -157,13 +169,15 @@ export const useLoyaltyGifts = () => {
             if (
               data[0].status == "success" && 
               data[1].status == "success" && 
-              data[2].status == "success"
+              data[2].status == "success" && 
+              data[3].status == "success"
             )
               loyaltyGiftAdditionalInfo.push({
                 ...item, 
                 isClaimable: parseBigInt(data[0].result), 
                 cost: parseBigInt(data[1].result), 
-                hasAdditionalRequirements: parseBigInt(data[2].result)
+                hasAdditionalRequirements: parseBigInt(data[2].result), 
+                isVoucher: parseBigInt(data[3].result)
               })
         } 
         statusAtGetAdditionalInfo.current = "isSuccess"
@@ -190,7 +204,7 @@ export const useLoyaltyGifts = () => {
               address: item.giftAddress, 
               abi: loyaltyGiftAbi,
               functionName: 'balanceOf', 
-              args: [parseEthAddress(selectedLoyaltyProgram?.programAddress), item.giftId]
+              args: [parseEthAddress(selectedLoyaltyProgram?.programOwner), item.giftId]
             })
 
             loyaltyGiftsAvailableVouchers.push({...item, availableVouchers: Number(parseBigInt(availableVouchers))})
@@ -244,6 +258,10 @@ export const useLoyaltyGifts = () => {
       ) {
         setStatus("isSuccess")
         setLoyaltyGifts(data)
+
+        const dataContracts = Array.from(new Set(data?.map(item => item.giftAddress))) 
+        setLoyaltyGiftContracts(dataContracts)
+
       }
     if (
       statusAtgiftAddress.current == "isLoading" ||
@@ -255,5 +273,5 @@ export const useLoyaltyGifts = () => {
       }
   }, [ data ])
 
-  return {status, loyaltyGifts, fetchGifts}
+  return {status, loyaltyGifts, loyaltyGiftContracts, fetchGifts, updateAvailableVouchers}
 }

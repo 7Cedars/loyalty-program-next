@@ -10,7 +10,7 @@ import { resetLoyaltyCard } from '@/redux/reducers/loyaltyCardReducer';
 import { useEffect, useRef } from "react";
 import { notification } from "@/redux/reducers/notificationReducer";
 import { useLatestCustomerTransaction } from "@/app/hooks/useLatestTransaction";
-import { DynamicLayout } from "../components/DynamicLayout";
+import { DynamicLayout } from "../customerComponents/DynamicLayout";
 
 export default function Page()  {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
@@ -54,8 +54,8 @@ export default function Page()  {
             
         <div className="flex flex-col justify-between p-1 h-full">
           <div className="grid justify-center justify-items-center">
-              <QRCode 
-                value={`type:giftPoints;lp:${selectedLoyaltyProgram?.programAddress};lc:${selectedLoyaltyCard?.cardAddress}`}
+              <QRCode
+                value={`type:giftPoints;${selectedLoyaltyCard?.cardAddress}`}
                 style={{ 
                   height: "350px", 
                   width: "350px", 

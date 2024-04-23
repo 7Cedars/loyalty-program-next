@@ -19,29 +19,29 @@ const metadata = {
 
 // Create wagmiConfig
 const chains = [
-  foundry, 
+  // foundry, 
   // arbitrumSepolia, 
   // sepolia, 
   // baseSepolia, 
-  // optimismSepolia, 
+  optimismSepolia
   // polygonMumbai
 ] as const // Here place all chains 
 
 export const config = createConfig({
   chains: chains,
   transports: {
-    [foundry.id]: http(), 
+    // [foundry.id]: http(), 
     // [sepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
     // [arbitrumSepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
     // [arbitrumSepolia.id]: http(), 
     // [baseSepolia.id]: http(), 
-    // [optimismSepolia.id]: http(), 
+    [optimismSepolia.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_OPT_SEPOLIA_API_RPC), 
     // [polygonMumbai.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_POLYGON_MUMBAI_API_RPC)
   },
   connectors: [
     walletConnect({ projectId, metadata, showQrModal: false }),
     // injected({ shimDisconnect: true }), // not needed when using walletConnect connector. 
-    emailConnector({ chains, options: { projectId } }) // this is ff-ing cool! Enable email login with one line of code. NB: this is NOT Accoutn abstraction.  
+    emailConnector({ chains, options: { projectId } }) // this is ff-ing cool! Enable email login with one line of code. NB: this is NOT Account abstraction.  
   ],
   ssr: true,
   // storage: createStorage({

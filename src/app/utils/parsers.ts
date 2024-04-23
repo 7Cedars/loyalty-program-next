@@ -11,7 +11,7 @@ import {
 } from "@/types";
 import { Url } from "url";
 import { isBooleanObject } from "util/types";
-import { Hex, Log, getAddress } from "viem";
+import { Hex, Log, ReadContractErrorType, getAddress } from "viem";
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -517,14 +517,13 @@ export const parseQrData = (qrText: unknown): QrData => {
       ) { 
         try {
           const data = qrText.split(";")
- 
           if (data[0].includes("giftPoints")) {
+
             return {
               type: "giftPoints",  
-              loyaltyProgram: parseEthAddress(data[1].slice(3)), 
-              loyaltyCardAddress: parseEthAddress(data[2].slice(3))
-              } 
-          }
+              loyaltyCardAddress: parseEthAddress(data[1])
+              }
+          } 
 
           if (data[0].includes("claimGift")) {
 
@@ -561,9 +560,26 @@ export const parseQrData = (qrText: unknown): QrData => {
         } catch (error) {
           throw new Error(`parseQrData caught error: ${error}`);
         }
+      }
+};
 
-        throw new Error('Incorrect data at QrData: type not recognised');
-       }
-      
-       throw new Error('Incorrect data at QrData: some fields are missing or incorrect');
+
+export const parseRequirementReply = (rawReply: unknown): boolean | string  => {
+  try {
+    String(rawReply)
+  } catch {
+    throw new Error('Incorrect or missing data at rawReply');
+  }
+
+  if (typeof rawReply === 'boolean') {
+    return rawReply
+  }
+
+  if (typeof rawReply !== 'boolean') {
+    return String(rawReply).split("\n")[1]
+  }
+
+  else {
+    return false 
+  }
 };
