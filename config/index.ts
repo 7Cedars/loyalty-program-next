@@ -1,6 +1,4 @@
 import { emailConnector } from '@web3modal/wagmi'
-import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
-
 import { cookieStorage, createConfig, createStorage, http } from 'wagmi'
 import { optimismSepolia, foundry, sepolia, baseSepolia, arbitrumSepolia, polygonMumbai } from 'wagmi/chains'
 import { walletConnect, injected } from 'wagmi/connectors'
@@ -41,7 +39,7 @@ export const config = createConfig({
   connectors: [
     walletConnect({ projectId, metadata, showQrModal: false }),
     // injected({ shimDisconnect: true }), // not needed when using walletConnect connector. 
-    // emailConnector({ chains, options: { projectId } }) // this is ff-ing cool! Enable email login with one line of code. NB: this is NOT Account abstraction.  
+    emailConnector({ chains, options: { projectId } }) // this is ff-ing cool! Enable email login with one line of code. NB: this is NOT Account abstraction.  
   ],
   ssr: true,
   // storage: createStorage({
