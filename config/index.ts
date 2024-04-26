@@ -33,7 +33,7 @@ export const wagmiConfig = createConfig({
     // [arbitrumSepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
     // [arbitrumSepolia.id]: http(), 
     // [baseSepolia.id]: http(), 
-    [optimismSepolia.id]: webSocket(process.env.NEXT_PUBLIC_ALCHEMY_OPT_SEPOLIA_WSS) // 
+    [optimismSepolia.id]: webSocket(process.env.NEXT_PUBLIC_ALCHEMY_OPT_SEPOLIA_WSS)  // 
     // [polygonMumbai.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_POLYGON_MUMBAI_API_RPC)
   },
   connectors: [
