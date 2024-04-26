@@ -13,11 +13,10 @@ import { useAccount } from "wagmi";
 export default function Page()  {
   const dispatch = useDispatch() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const { chain } =  useAccount()
 
   return (
      
-    <div className="grid grid-cols-1 h-full content-between">
+    <div className="grid grid-cols-1 justify-items-center h-full content-between">
       
         <TitleText 
           title = {selectedLoyaltyProgram?.metadata ? selectedLoyaltyProgram.metadata.name : "Loyalty Card"} 

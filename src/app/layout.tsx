@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { headers } from 'next/headers'
 import { cookieToInitialState } from 'wagmi'
-import { config } from '../../config'
+import { wagmiConfig } from '../../config'
 import Web3ModalProvider from '../context'
 import { ReduxProvider } from "../context/reduxProvider" 
 

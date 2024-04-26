@@ -207,7 +207,7 @@ export default function Home() {
               className="w-full"
             />
             <a href="#deploy-program" className="h-16 flex w-full">
-              <Button appearance="grayEmptyDark" onClick={() => {}}>
+              <Button appearance="grayEmptyDark">
                 Try it out
               </Button>
             </a> 

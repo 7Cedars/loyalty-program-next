@@ -14,7 +14,7 @@ import { SUPPORTED_CHAINS, WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/con
 import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import Image from "next/image";
 import { useAppSelector } from "@/redux/hooks";
-import { config } from '../../../../config' 
+import { wagmiConfig } from '../../../../config' 
 
 type SelectedGift = {
   address: EthAddress; 
@@ -32,7 +32,7 @@ export default function Page() {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ claimableLoyaltyGifts, setClaimableLoyaltyGifts ]  = useState<BigInt[] >([]) 
   const [selectedGift, setSelectedGift] = useState<setSelectedGiftProps | undefined>() 
-  const publicClient = usePublicClient({config})
+  const publicClient = usePublicClient()
   const {chain} = useAccount() 
   const statusGiftSelection = useRef<Status>()
 

@@ -1,6 +1,6 @@
 import {  EthAddress, LoyaltyGift, Status } from "@/types";
 import { readContracts } from '@wagmi/core'
-import { config } from '../../../config'
+import { wagmiConfig } from '../../../config'
 import { useEffect, useRef, useState } from "react";
 import { loyaltyGiftAbi } from "@/context/abi";
 import { Log } from "viem"
@@ -139,7 +139,7 @@ export const useLoyaltyGifts = () => {
             abi: loyaltyGiftAbi,
           } as const
 
-          const data = await readContracts(config, {
+          const data = await readContracts(wagmiConfig, {
             contracts: [
               {
                 ...giftContract, 
