@@ -126,13 +126,13 @@ export const DynamicLayout = ({
 
   }, [ , status])
 
-  console.log(
-    "pre render console log", 
-    "selectedLoyaltyProgram: ", selectedLoyaltyProgram, 
-    "address", address, 
-    "loyaltyCards: ", loyaltyCards, 
-    "selectedLoyaltyCard: ", selectedLoyaltyCard  
-  )
+  // console.log(
+  //   "pre render console log", 
+  //   "selectedLoyaltyProgram: ", selectedLoyaltyProgram, 
+  //   "address", address, 
+  //   "loyaltyCards: ", loyaltyCards, 
+  //   "selectedLoyaltyCard: ", selectedLoyaltyCard  
+  // )
 
   if (status != "connected") {
     return (

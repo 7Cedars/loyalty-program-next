@@ -27,7 +27,7 @@ export const DynamicLayout = ({
   const { address, status }  = useAccount()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   // const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
-  console.log("status wagmi:" , status)
+  // console.log("status wagmi:" , status)
 
 
   useEffect(() => {

@@ -8,12 +8,13 @@ import { useWriteContract, useWaitForTransactionReceipt  } from "wagmi";
 import { useDispatch } from "react-redux";
 import { parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
-import { notification } from "@/redux/reducers/notificationReducer";
+import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { useAccount } from "wagmi";
 import { useAppSelector } from "@/redux/hooks";
 import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { GiftSmall } from "@/app/components/GiftSmall";
 import GiftBig from "./GiftBig";
+import { useVendorAccount } from "@/app/hooks/useVendorAccount";
 
 type SendPointsOrVoucherProps = {
   qrData: QrData | undefined;  
@@ -25,6 +26,7 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
   const [selectedVoucher, setSelectedVoucher] = useState<LoyaltyGift>()
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
+  const { balances } = useVendorAccount() 
   const [hashVoucherTransferTransaction, setHashVoucherTransferTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
@@ -78,6 +80,27 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
   useEffect(() => {
     if (isSuccess)  setHashTransaction(data)
   }, [isSuccess])
+
+  useEffect(() => {
+    if (
+      balances && 
+      numpadNumber >= balances?.points ) {
+          dispatch(notification({
+            id: "insuffienctPoints",
+            message: `You do not have enough points. Mint more on the Stats page.`, 
+            colour: "yellow",
+            isVisible: true
+          }))
+      }
+    if (
+      balances && 
+      numpadNumber < balances?.points ) {
+          dispatch(updateNotificationVisibility({
+            id: "insuffienctPoints",
+            isVisible: false
+          }))
+      }
+  }, [ , numpadNumber, balances])
 
   // data flow transfer voucher
   useEffect(() => {
@@ -136,15 +159,17 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
         } /> 
       :
       <>
-
-        <div className="w-full flex justify-center p-4"> 
-          <div className="w-1/2 border-t border-slate-800 dark:border-slate-200" /> 
+        
+        <div className="flex justify-center py-2"> 
+          <div className="w-1/2 pb-2 text-center border-b border-slate-800 dark:border-slate-200" />
+            {/* { balances ? `${balances.points} points remaining` : ''} */}
         </div>
         <TitleText title = "Send Loyalty Points" subtitle="Send loyalty points to a customer" size = {1} />
 
         {qrData?.loyaltyCardAddress? 
     
         <div className="grid grid-cols-1 w-full text-center justify-items-center"> 
+           
             <p>
               Points requested by card: 
             </p>
@@ -200,7 +225,7 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
         </div>
 
         {loyaltyGifts ? 
-          <div className="w-full flex flex-col"> 
+          <div className="w-full flex flex-col px-8"> 
             <TitleText title = "Transfer Voucher" subtitle="Send a voucher to customer for free." size={1} />
 
             { loyaltyGifts.find(gift => gift.availableVouchers &&  gift.availableVouchers > 0) != undefined ?

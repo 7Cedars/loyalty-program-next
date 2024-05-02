@@ -10,7 +10,7 @@ const colourSchemeDialog = {
   green: `border-green-600 bg-green-300`,
   yellow: `border-yellow-600 bg-yellow-300`,
   gray: `border-gray-600 bg-gray-300`, 
-  invisible: `border-purple-600 bg-purple-300`, 
+  invisible: `opacity-0`, 
 }
 
 const colourSchemeText = { 
@@ -18,7 +18,7 @@ const colourSchemeText = {
   green: `text-green-600`,
   yellow: `text-yellow-600`,
   gray: `text-gray-600`,
-  invisible: `text-purple-600`,
+  invisible: `opacity-0`,
 }
 
 export const NotificationDialog = () => {
@@ -26,11 +26,13 @@ export const NotificationDialog = () => {
   const { open, close } = useWeb3Modal()
   const dispatch = useAppDispatch()
 
+  console.log("notifications: ", notifications)
+
   const notificationToShow = notifications.findLast(notification => notification.isVisible !== false)
   let colour: "red" | "yellow" | "green" | "gray" | "invisible" = "gray"
   notificationToShow?.colour ? colour = notificationToShow?.colour : "gray" 
 
-  if (notificationToShow === undefined ) {
+  if (notificationToShow === undefined) {
     return null 
   }
 

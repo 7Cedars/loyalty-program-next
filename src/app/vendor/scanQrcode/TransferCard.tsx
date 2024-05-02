@@ -10,7 +10,7 @@ import {
 } from "wagmi";
 import { parseEthAddress, parseTransferSingleLogs, parseBigInt } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi"; 
-import { notification } from "@/redux/reducers/notificationReducer";
+import { notification, updateNotificationVisibility } from "@/redux/reducers/notificationReducer";
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { Log } from "viem";
@@ -22,6 +22,7 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useScreenDimensions } from "@/app/hooks/useScreenDimensions";
 import MintCards from "../vendorComponents/MintCards";
 import { SUPPORTED_CHAINS } from "@/context/constants";
+import { useVendorAccount } from "@/app/hooks/useVendorAccount";
 
 type RedeemTokenProps = {
   qrData: QrData | undefined;  
@@ -36,6 +37,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   const [ lastCardTransferred, setLastCardTransferred] = useState<BigInt | undefined>() 
   const [customerAddress, setCustomerAddress] = useState<EthAddress | undefined >() 
   const { height, width } = useScreenDimensions()
+  const { balances, refetchBalances } = useVendorAccount() 
   const { writeContract,  isError: isErrorWriteContract, isSuccess: isSuccessWriteContract } = useWriteContract()
   const dispatch = useDispatch() 
   const { address, chain } = useAccount() 
@@ -77,9 +79,11 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
   }, [isErrorWriteContract])
 
   useEffect(() => {
-    if (isSuccessWriteContract)  setHashTransaction(data)
+    if (isSuccessWriteContract)  {
+      setHashTransaction(data)
+      refetchBalances() 
+    }
   }, [isSuccessWriteContract])
-
 
   const { data, isError, isLoading, isSuccess } = useWaitForTransactionReceipt(
     { 
@@ -96,6 +100,7 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
         isVisible: true
       }))
     }
+    refetchBalances() 
   }, [isSuccess])
 
   useEffect(() => {
@@ -112,7 +117,25 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
 
   useEffect(() => {
     getTransferSingleData()
-  }, [])
+      if (
+        balances && 
+        balances?.cards == 0 ) {
+            dispatch(notification({
+              id: "insufficientCards",
+              message: `You do not have any Loyalty Cards. Mint some on the Stats page.`, 
+              colour: "yellow",
+              isVisible: true
+            }))
+        }
+      if (
+        balances && 
+        balances?.cards < 0 ) {
+            dispatch(updateNotificationVisibility({
+              id: "insufficientCards",
+              isVisible: false
+            }))
+        }
+    }, [ , balances])
 
   return (
     <div className=" w-full grid grid-cols-1 gap-1 overflow-x-auto">
@@ -121,16 +144,12 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
         <TitleText title = "Transfer Loyalty Card" subtitle="Transfer a single card to a customer." size = {2} />
       </div>
 
-      { loyaltyCardsMinted ? 
-        <div className="flex justify-center"> 
-          <p className="p-2 w-1/2 text-center border-b border-slate-700">
-            {`${ Number(parseBigInt(loyaltyCardsMinted))- Number(lastCardTransferred)} loyalty cards left.`}
-          </p>
-        </div>
-        :
-        <MintCards /> 
-      }
-
+      <div className="flex justify-center"> 
+        <p className="p-2 w-1/2 text-center border-b border-slate-700">
+          {balances  ? ` ${ balances.cards } loyalty cards left.` : ''}
+        </p>
+      </div>
+        
       {customerAddress ? 
 
         <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3" > 

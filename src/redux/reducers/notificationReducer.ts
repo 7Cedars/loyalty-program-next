@@ -26,7 +26,7 @@ export const notificationsSlice = createSlice({
     notification: (state, action: PayloadAction<Notification>) => {
       let notificationIds = state.notifications.map(notification => notification.id)
       let index = notificationIds.indexOf(action.payload.id)
-      let notificationVisibles= state.notifications.map(notification => notification.isVisible)
+      // let notificationVisibles= state.notifications.map(notification => notification.isVisible)
 
       if (index === -1) { 
         const newNotification: Notification = {
@@ -36,7 +36,7 @@ export const notificationsSlice = createSlice({
           durationInMs: "noTimer",
           loginButton: false, 
           progressInPercent: "noProgress",
-          isVisible: true
+          isVisible: false
         }
         state.notifications.push(newNotification)
       }

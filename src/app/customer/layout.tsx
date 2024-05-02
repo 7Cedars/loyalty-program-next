@@ -14,7 +14,7 @@ export default function layout({
 
   return (
     <div className="h-dvh w-dvh grid grid-cols-1 justify-items-center bg-slate-100 overflow-hidden bg-slate-200 dark:bg-slate-800">
-      <NavbarTop selection = {"vendor"}/>
+      <NavbarTop selection = {"customer"}/>
       <div className="absolute flex h-full w-full grid grid-cols-1 justify-items-center bg-slate-100 overflow-hidden">
         <DynamicLayout>
           {children}
