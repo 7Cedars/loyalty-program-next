@@ -6,16 +6,20 @@ import {
   SquaresPlusIcon,
   QrCodeIcon,
   HomeIcon, 
-  ChartBarSquareIcon
+  ChartBarSquareIcon,
+  GiftIcon,
+  CreditCardIcon
  } from '@heroicons/react/24/outline'
-import { useScreenDimensions } from '../../hooks/useScreenDimensions';
+import { useScreenDimensions } from '../hooks/useScreenDimensions';
 import { useAccount, useWalletClient } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { usePathname } from 'next/navigation';
 
-type AppMode = "customer" | "vendor"  
 
-const NavbarBottom = (appMode: AppMode) => {
+
+type AppMode = {selection: "customer" | "vendor"}
+
+const NavbarBottom = ({selection}: AppMode ) => {
   const dimensions = useScreenDimensions();  
   const layoutLinks: string = 'py-1 px-6 text-slate-400 aria-selected:text-slate-800 aria-selected:text-slate-800 dark:text-slate-600 dark:aria-selected:text-slate-200 dark:aria-selected:text-slate-200 grid grid-cols-1'
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'
@@ -32,52 +36,84 @@ const NavbarBottom = (appMode: AppMode) => {
     <header className="absolute bottom-0 z-10 flex justify-between h-12 w-full bg-slate-100/75 dark:bg-slate-900/75 text-sm border-t border-gray-400 px-4">
       
         <Link 
-          href={'/vendor/home'}
+          href={selection == 'vendor' ? '/vendor/home' : "/customer/home"}
+          aria-selected={selection == 'vendor' ? path == `/vendor/home` : path == "/customer/home" }
           className={layoutLinks}
-          aria-selected={path == `/vendor/home`}
           > 
           <div className='col-span-1 grid text-xs justify-items-center'> 
-            <HomeIcon
+            { selection == 'vendor' ?
+              <HomeIcon
+                className={layoutIcons}
+              />
+              :
+              <QrCodeIcon
               className={layoutIcons}
+              aria-hidden="true"
             />
+            }
             Home
           </div> 
         </Link>
         <Link 
-          href={'/vendor/scanQrcode'} 
+          href={selection == 'vendor' ? '/vendor/scanQrcode' : "/customer/claim"} 
+          aria-selected={selection == 'vendor' ? path == `/vendor/scanQrcode` : path == "/customer/claim" } 
           className={layoutLinks}
-          aria-selected={path == `/vendor/scanQrcode`}> 
+          >
           <div className={layoutIconBox}> 
-            <QrCodeIcon
+            { selection == 'vendor' ?
+              <>
+              <QrCodeIcon
+                className={layoutIcons}
+              />
+              Scan
+              </>
+              :
+              <>
+              <GiftIcon
               className={layoutIcons}
-            />
-            Scan
+              aria-hidden="true"
+              />
+              Claim
+              </>            
+            }
           </div>  
         </Link>
         <Link 
-          href={'/vendor/selectGifts' } 
+          href={selection == 'vendor' ? '/vendor/selectGifts' : '/customer/card'} 
+          aria-selected={selection == 'vendor' ? path == `/vendor/selectGifts` : path == "/customer/card" }  
           className={layoutLinks}
-          aria-selected={path == `/vendor/selectGifts`}
         > 
           <div className={layoutIconBox}> 
-            <SquaresPlusIcon
-              className={layoutIcons}
-              
-            />
-            Gifts
+          { selection == 'vendor' ?
+              <>
+              <SquaresPlusIcon
+                className={layoutIcons}
+                
+              />
+              Gifts
+              </>
+            :
+              <>
+               <CreditCardIcon
+                className={layoutIcons}
+                aria-hidden="true"
+              />
+              Card
+              </>
+            }
           </div> 
         </Link>
         <Link 
-          href={'/vendor/stats' }  
+          href={selection == 'vendor' ? '/vendor/stats' : "/customer/transactions"} 
+          aria-selected={selection == 'vendor' ? path == `/vendor/stats` : path == "/customer/transactions" }  
           className={layoutLinks}
-          aria-selected={path == `/vendor/stats`}
           > 
           <div className={layoutIconBox}> 
             <ChartBarSquareIcon
               className={layoutIcons}
               
             />
-            Stats 
+            {selection == 'vendor' ? "Stats" : "Transactions" }
           </div> 
         </Link>
         <button onClick = {() => status === "connected" ? open({view: "Account"}) : open({view: 'Connect'})} className={layoutLinks} > 

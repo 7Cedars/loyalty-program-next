@@ -15,7 +15,7 @@ import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import { useLoyaltyPrograms } from "@/app/hooks/useLoyaltyPrograms";
 import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
 import NavbarTop from "./NavbarTop";
-import NavbarBottom from "./NavbarBottom";
+import NavbarBottom from "../../components/NavbarBottom";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { useLoyaltyCards } from "@/app/hooks/useLoyaltyCards";
 
@@ -146,7 +146,7 @@ export const DynamicLayout = ({
           </div> 
         </div>
 
-        <NavbarBottom/>
+        <NavbarBottom selection = {"customer"}/>
         </div> 
       </>
     )
@@ -228,7 +228,7 @@ export const DynamicLayout = ({
           </div>
       </div>
     </div>
-    <NavbarBottom/>
+    <NavbarBottom selection = {"customer"}/>
   </div>
   </>
 )};

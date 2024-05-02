@@ -20,8 +20,9 @@ Even though repository is public, For now, it is for personal use only.
 - [x]  @Vendor, select gifts: selecting gifts and minting should be decoupled: you should be able to mint gifts that are NOT selected to be claimed! (because many tokens can actually not be claimed..)
 - [ ]  @Vendor, SelectGifts: gifts metadata of old gifts is still old. Have to link to correct URI. (and possibly reupload.) 
 - [x]  @customer & vendor -- disconnected view: should also show reocnnecting... (without login button)
-- [ ]  @customer: should show if requirements are not met - does not work at the moment! 
+- [x]  @customer: should show if requirements are not met - does not work at the moment! 
 - [ ]  @customer, your card: Loyalty points do not update. 
+- [ ]  @customer: when vsiting the customer url without going through customerLanding page first - it just keeps loading. It should give warning. 
 - [ ]  @customer, transactions: received points show up double. 
 - [ ]  @vendor (& @customer?) when their are no transactions, transaction overview hangs at 'retrieving transaction history...'  
 - [x]  @Vendor, Tokens: BUG: When tokens cannot be loaded it goes into a loop. Fix! 
