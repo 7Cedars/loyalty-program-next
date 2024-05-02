@@ -15,21 +15,23 @@ Even though repository is public, For now, it is for personal use only.
 - [x]  @Vendor, landing: 'visit page' is broken. Fix. 
 - [x]  @Vendor, landing: 'visit page' theming is broken. Fix. -- still some buttons' ui broken. 
 - [x]  @vendor, stats: balance not loading. Fix. -- problem does not exist at customer.. 
+- [ ]  @Vendor, QrReader: Fix Bug that when no valid QR code is read - it just hangs. Needs to have notification + continue reading.
+- [ ]  @vendor, QrScan: Mint cards still shows, even if scanned a code. -- ONLY WHEN NO Cards have been minted!
+- [ ]  @vendor (& @customer?) when their are no transactions, transaction overview hangs at 'retrieving transaction history...'  
 - [ ]  @customer, claim gifts: -- claim gift or voucher distinction does not work. 
   - [ ]  This is because token addresses are loaded differently in this view. At useLoyaltyGift it skips the first step - in which tokenised was loaded. Will take quite a bit of work to fix. Note that I probably will refactor gift contracts - which should also hel fix this bug. 
 - [x]  @Vendor, select gifts: selecting gifts and minting should be decoupled: you should be able to mint gifts that are NOT selected to be claimed! (because many tokens can actually not be claimed..)
-- [ ]  @Vendor, SelectGifts: gifts metadata of old gifts is still old. Have to link to correct URI. (and possibly reupload.) 
+- [ ]  @Vendor, SelectGifts: gifts metadata of old gifts is still old. Have to link to correct URI. (and possibly reupload.)
 - [x]  @customer & vendor -- disconnected view: should also show reocnnecting... (without login button)
 - [x]  @customer: should show if requirements are not met - does not work at the moment! 
 - [ ]  @customer, your card: Loyalty points do not update. 
 - [ ]  @customer: when vsiting the customer url without going through customerLanding page first - it just keeps loading. It should give warning. 
 - [ ]  @customer, transactions: received points show up double. 
-- [ ]  @vendor (& @customer?) when their are no transactions, transaction overview hangs at 'retrieving transaction history...'  
 - [x]  @Vendor, Tokens: BUG: When tokens cannot be loaded it goes into a loop. Fix! 
-- [ ]  @Vendor, QrReader: Fix Bug that when no valid QR code is read - it just hangs. Needs to have notification + continue reading.
-- [ ]  @vendor, QrScan: Mint cards still shows, even if scanned a code. -- ONLY WHEN NO Cards have been minted!
+
 - [ ]  @customer, home: add button to request new card. 
 - [x]  @everwhere: reconnecting message shows login -> remove. 
+- [ ]  @Everywhere: all images are now in svg. Any image that is not dynamic (pretty much all of them) should be in png. Avoids unexpected deformations. 
 - [ ]  @Everywhere: No testing has been implemented yet. Implement Cyprus 
 
 ## Improvements to implement (in order of priority)

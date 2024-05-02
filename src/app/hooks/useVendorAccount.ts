@@ -22,12 +22,12 @@ export const useVendorAccount = () => {
   const statusFetchBalances = useRef<Status>("isIdle") 
   const [status, setStatus] = useState<Status>("isIdle") 
 
-  console.log({
-    statusMintedCards: statusMintedCards,
-    statusFetchBalances: statusFetchBalances, 
-    mintedCards: mintedCards, 
-    balances: balances,
-  })
+  // console.log({
+  //   statusMintedCards: statusMintedCards,
+  //   statusFetchBalances: statusFetchBalances, 
+  //   mintedCards: mintedCards, 
+  //   balances: balances,
+  // })
 
   /// Fetch number of Cards Minted ///  
   const fetchMintedCards = async () => {
@@ -86,11 +86,11 @@ export const useVendorAccount = () => {
   }
 
   // forces a refetchBalances. 
-  // const refetchBalances = () => {
-  //   statusMintedCards.current = "isIdle"
-  //   statusFetchBalances.current = "isIdle"
-  //   fetchMintedCards()
-  // }
+  const refetchBalances = () => {
+    statusMintedCards.current = "isIdle"
+    statusFetchBalances.current = "isIdle"
+    fetchMintedCards()
+  }
 
   const setProgramBalances = () => {
     console.log("setProgramBalances CALLED")
@@ -142,6 +142,6 @@ export const useVendorAccount = () => {
     ) setStatus("isSuccess")
   }, [balances, mintedCards])
 
-  return {status, mintedCards, balances } // refetchBalances
+  return {status, mintedCards, balances, refetchBalances } // refetchBalances
 }
 

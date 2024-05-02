@@ -39,6 +39,13 @@ export default function Page() {
   const statusBlockData= useRef<Status>("isIdle") 
   const [status, setStatus] = useState<Status>("isIdle") 
 
+  console.log({
+    statusTransferSingleTo: statusTransferSingleTo,
+    statusTransferSingleFrom: statusTransferSingleFrom, 
+    statusTransferBatchTo: statusTransferBatchTo, 
+    statusBlockData: statusBlockData
+  })
+
   console.log("balances: ", balances)
 
   const getTransferSingleTo = async () => {
@@ -173,7 +180,17 @@ export default function Page() {
       transactions.length > 0 
     ) {
       getBlockData() 
-    }
+    } 
+
+    if (
+      statusTransferSingleTo.current == "isSuccess" && 
+      statusTransferSingleFrom.current == "isSuccess" &&
+      statusTransferBatchTo.current == "isSuccess" && 
+      statusBlockData.current == "isIdle"  && 
+      transactions.length == 0 
+    ) {
+      statusBlockData.current = "isSuccess" 
+    } 
   }, [ 
     transactions
   ])

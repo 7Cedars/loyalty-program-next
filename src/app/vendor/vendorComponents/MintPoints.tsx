@@ -10,11 +10,13 @@ import { parseEthAddress } from "@/app/utils/parsers";
 import { loyaltyProgramAbi } from "@/context/abi";
 import Image from "next/image";
 import { useAppSelector } from "@/redux/hooks";
+import { useVendorAccount } from "@/app/hooks/useVendorAccount";
 
 export default function MintPoints() {
   const [numpadNumber, setNumpadNumber] = useState<number>(0)
   const [hashTransaction, setHashTransaction] = useState<`0x${string}`>() 
   const dispatch = useDispatch() 
+  const {refetchBalances} = useVendorAccount()
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const { writeContract, isError, isSuccess, data } = useWriteContract()
 
@@ -34,6 +36,7 @@ export default function MintPoints() {
         colour: "green",
         isVisible: true
       }))
+      refetchBalances() 
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [waitForTransaction.isSuccess, waitForTransaction.status ])

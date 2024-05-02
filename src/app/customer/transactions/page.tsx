@@ -193,6 +193,18 @@ export default function Page() {
     ) {
       getBlockData() 
     }
+
+    if (
+      statusTransactionsTo.current == "isSuccess" && 
+      statusTransactionsFrom.current == "isSuccess" &&
+      statusTokensTo.current == "isSuccess" && 
+      statusTokensFrom.current == "isSuccess" && 
+      statusBlockData.current == "isIdle"  && 
+      transactions.length == 0 
+    ) {
+      statusBlockData.current = "isSuccess" 
+    } 
+
   }, [ 
     transactions
   ])
