@@ -15,11 +15,9 @@ import { useAccount, useWalletClient } from 'wagmi';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { usePathname } from 'next/navigation';
 
-
-
 type AppMode = {selection: "customer" | "vendor"}
 
-const NavbarBottom = ({selection}: AppMode ) => {
+const NavbarBottom = ({selection}: AppMode) => {
   const dimensions = useScreenDimensions();  
   const layoutLinks: string = 'py-1 px-6 text-slate-400 aria-selected:text-slate-800 aria-selected:text-slate-800 dark:text-slate-600 dark:aria-selected:text-slate-200 dark:aria-selected:text-slate-200 grid grid-cols-1'
   const layoutIconBox: string = 'col-span-1 grid text-xs justify-items-center'

@@ -2,8 +2,8 @@
 // notification area, and otherwise it will not load... 
 
 import '../globals.css'
-import NavbarTop from "./customerComponents/NavbarTop"; 
-import NavbarBottom from './customerComponents/NavbarBottom';
+import NavbarTop from "../components/NavbarTop"; 
+import NavbarBottom from '../components/NavbarBottom';
 import { DynamicLayout } from './customerComponents/DynamicLayout';
 
 export default function layout({
@@ -13,11 +13,15 @@ export default function layout({
 }) {
 
   return (
-    <div className="absolute flex h-full w-full grid grid-cols-1 justify-items-center bg-slate-100 overflow-hidden">
-       <DynamicLayout>
-        {children}
-      </DynamicLayout>
-    </div>
+    <div className="h-dvh w-dvh grid grid-cols-1 justify-items-center bg-slate-100 overflow-hidden bg-slate-200 dark:bg-slate-800">
+      <NavbarTop selection = {"vendor"}/>
+      <div className="absolute flex h-full w-full grid grid-cols-1 justify-items-center bg-slate-100 overflow-hidden">
+        <DynamicLayout>
+          {children}
+        </DynamicLayout>
+        <NavbarBottom selection = {"customer"}/>
+      </div>
+    </div> 
   )
 }
 

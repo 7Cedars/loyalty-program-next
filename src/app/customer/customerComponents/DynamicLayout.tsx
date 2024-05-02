@@ -14,8 +14,8 @@ import { parseEthAddress } from "@/app/utils/parsers";
 import { selectLoyaltyCard } from "@/redux/reducers/loyaltyCardReducer";
 import { useLoyaltyPrograms } from "@/app/hooks/useLoyaltyPrograms";
 import { selectLoyaltyProgram } from "@/redux/reducers/loyaltyProgramReducer";
-import NavbarTop from "./NavbarTop";
-import NavbarBottom from "../../components/NavbarBottom";
+// import NavbarTop from "./NavbarTop";
+// import NavbarBottom from "../../components/NavbarBottom";
 import { updateModalVisible } from "@/redux/reducers/userInputReducer";
 import { useLoyaltyCards } from "@/app/hooks/useLoyaltyCards";
 
@@ -137,7 +137,7 @@ export const DynamicLayout = ({
   if (status != "connected") {
     return (
       <>
-      <NavbarTop/>
+      {/* <NavbarTop/> */}
         <div className="grow justify-center w-full h-full max-w-4xl overflow-y-scroll">
 
         <div className="static w-full max-w-4xl h-dvh z-1">
@@ -146,7 +146,7 @@ export const DynamicLayout = ({
           </div> 
         </div>
 
-        <NavbarBottom selection = {"customer"}/>
+        {/* <NavbarBottom selection = {"customer"}/> */}
         </div> 
       </>
     )
@@ -154,7 +154,7 @@ export const DynamicLayout = ({
 
   return (
     <>
-    <NavbarTop/>
+    {/* <NavbarTop/> */}
       <div className="grow justify-center w-full h-full max-w-4xl overflow-y-scroll">
 
     <div className="relative grow w-full h-full max-w-4xl z-1">
@@ -228,7 +228,7 @@ export const DynamicLayout = ({
           </div>
       </div>
     </div>
-    <NavbarBottom selection = {"customer"}/>
+    {/* <NavbarBottom selection = {"customer"}/> */}
   </div>
   </>
 )};
