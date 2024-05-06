@@ -12,7 +12,7 @@ import {
   parseEthAddress,
   parseBigInt,
 } from "@/app/utils/parsers";
-import { SUPPORTED_CHAINS, WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants"; // this should be possible to set at website.  
+import { SUPPORTED_CHAINS, VERSION_GIFTS } from "@/context/constants";  
 import { useAppSelector } from "@/redux/hooks";
 
 export const useLoyaltyGifts = () => {
@@ -58,9 +58,11 @@ export const useLoyaltyGifts = () => {
         const logs: Log[] = await publicClient.getContractEvents({
           abi: loyaltyGiftAbi, 
           eventName: 'LoyaltyGiftDeployed', 
-          // args: {issuer: WHITELIST_TOKEN_ISSUERS_FOUNDRY}, // This should be an editable list inside the front end. improvement for later. 
+          args: {version: VERSION_GIFTS}, 
           fromBlock: selectedChain?.fromBlock
         });
+        console.log("raw_logs_GIFTS: ", logs)
+        console.log("VERSION_GIFTS: ", VERSION_GIFTS)
         const loyaltyGifts = parseTokenContractLogs(logs)
         statusAtgiftAddress.current = "isSuccess"
         setData(loyaltyGifts)

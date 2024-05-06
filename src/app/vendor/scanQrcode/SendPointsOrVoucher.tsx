@@ -15,6 +15,7 @@ import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import { GiftSmall } from "@/app/components/GiftSmall";
 import GiftBig from "./GiftBig";
 import { useVendorAccount } from "@/app/hooks/useVendorAccount";
+import { wagmiConfig } from "../../../../config"
 
 type SendPointsOrVoucherProps = {
   qrData: QrData | undefined;  
@@ -202,16 +203,16 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
               </div>
             </Button>
             : 
-            <Button appearance = {"blueEmpty"} onClick={() => writeContract({ 
+            <Button appearance = {"greenEmpty"} onClick={() => writeContract({
                 abi: loyaltyProgramAbi,
                 address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
                 functionName: 'safeTransferFrom',
                 args: [ 
-                  parseEthAddress(address), 
-                  parseEthAddress(qrData?.loyaltyCardAddress), 
+                  address, 
+                  qrData?.loyaltyCardAddress, 
                   0, 
                   numpadNumber, 
-                  ""],
+                  ""]
               })} >
               Transfer Points
             </Button>

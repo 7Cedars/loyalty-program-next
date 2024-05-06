@@ -47,7 +47,6 @@ export default function Home() {
   }, [chain])
 
   const deployLoyaltyProgram = useCallback( async () => {
-    const implementation: EthAddress = parseEthAddress(currentChain.accountImplementation)
 
     if (status === "connected" && walletClient && deployRequest) {
       const hash = await walletClient.deployContract({
@@ -57,8 +56,7 @@ export default function Home() {
         args: [
           deployRequest.uri,
           deployRequest.name,
-          deployRequest.version,
-          implementation // deployArgs.erc65511Implementation
+          deployRequest.version
         ],
         bytecode: loyaltyProgramBytecode,
       })
@@ -265,7 +263,7 @@ export default function Home() {
                         onClick={() => handleDeployRequest({
                           uri: loyaltyProgramsData.items[selectIndex -1].uri,  
                           name: loyaltyProgramsData.items[selectIndex -1].title,  
-                          version: "1"
+                          version: "alpha.2"
                         })}  
                       > 
                       Deploy

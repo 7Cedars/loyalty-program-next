@@ -9,9 +9,9 @@ import { selectLoyaltyProgram } from '@/redux/reducers/loyaltyProgramReducer';
 import { useLoyaltyPrograms } from '@/app/hooks/useLoyaltyPrograms';
 import { useAccount, usePublicClient } from "wagmi";
 import { loyaltyProgramAbi } from "@/context/abi";
-import { Log } from "viem";
+import { Log, keccak256, toHex } from "viem";
 import { parseContractLogs } from "@/app/utils/parsers";
-import { SUPPORTED_CHAINS } from "@/context/constants";
+import { SUPPORTED_CHAINS, VERSION_PROGRAM } from "@/context/constants";
 
 export default function ChooseProgram()  {
   const { status: statusUseLoyaltyPrograms, loyaltyPrograms, fetchPrograms } = useLoyaltyPrograms()
@@ -27,13 +27,10 @@ export default function ChooseProgram()  {
     if (publicClient && chain)
     try {
       const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
-      console.log("selectedChain: ", selectedChain)
-      console.log("SUPPORTED_CHAINS: ", SUPPORTED_CHAINS)
-      console.log("chain", chain)
       const loggedAdresses: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
           eventName: 'DeployedLoyaltyProgram', 
-          args: {owner: address}, 
+          args: { owner: address }, 
           fromBlock: selectedChain?.fromBlock
       });
       const loyaltyProgramAddresses = parseContractLogs(loggedAdresses)

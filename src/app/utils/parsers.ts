@@ -133,6 +133,14 @@ export const parseBalances = (balancesBigInt: unknown): number[] => {
   return balances as number[];
 };
 
+export const parseVersion = (version: unknown): string => {
+  if (!isString(version)) {
+    throw new Error(`Incorrect data, not a string: ${version}`);
+  }
+
+  return version as string;
+};
+
 const parseArgsAddRemoveLoyaltyGift = (args: unknown): {giftAddress: EthAddress, giftId: number}  => {
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');
@@ -150,18 +158,21 @@ const parseArgsAddRemoveLoyaltyGift = (args: unknown): {giftAddress: EthAddress,
   throw new Error(`Incorrect args format: ${args}`);
 }
 
-const parseArgsLoyaltyGift = (args: unknown): {issuer: EthAddress, isVoucher: BigInt[]} => {
+const parseArgsLoyaltyGift = (args: unknown): {issuer: EthAddress, version: string, numberOfGifts: BigInt} => {
   if ( !args || typeof args !== 'object' ) {
     throw new Error('Incorrect or missing data at args');
   }
 
   if (
     'issuer' in args && 
-    'isVoucher' in args
+    'version' in args && 
+    'numberOfGifts' in args
+
     ) { 
     return ({
       issuer: parseEthAddress(args.issuer), 
-      isVoucher: parseTokenised(args.isVoucher)
+      version: parseVersion(args.version), 
+      numberOfGifts: parseBigInt(args.numberOfGifts)
     })
   }
   throw new Error(`Incorrect args format: ${args}`);
@@ -303,13 +314,16 @@ export const parseTokenContractLogs = (logs: Log[]): LoyaltyGift[] => {
         'blockHash' in log && 
         'args' in log
         ) { 
-          const tokenIds = parseArgsLoyaltyGift(log.args).isVoucher 
-          const temp = tokenIds.map((tokenId, i) => ({
-            giftAddress: parseEthAddress(log.address), 
-            issuer: parseArgsLoyaltyGift(log.args).issuer, 
-            giftId: i, 
-            isVoucher: tokenId
-          }))
+          const numberOfGifts = Number(parseArgsLoyaltyGift(log.args).numberOfGifts)
+          const temp = [] 
+          for (let i = 0; i < numberOfGifts; i++) {
+            temp.push({
+              giftAddress: parseEthAddress(log.address), 
+              issuer: parseArgsLoyaltyGift(log.args).issuer, 
+              version: parseArgsLoyaltyGift(log.args).version, 
+              giftId: i
+            })
+          }
           return temp
         }
         throw new Error('Incorrect data at Token (gift) Contract logs: some fields are missing or incorrect');

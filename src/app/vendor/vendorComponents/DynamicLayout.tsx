@@ -18,25 +18,14 @@ type ModalProps = {
 export const DynamicLayout = ({
   children 
 }: ModalProps) => {
-
   // Note this ui modal dialog expects the use of redux. 
   // I can change this in other apps if needed.
   const dispatch = useAppDispatch()
-  // const { modalVisible } = useAppSelector(state => state.userInput) 
   const [ modalVisible, setModalVisible ] = useState<boolean>(true); 
   const { address, status }  = useAccount()
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
-  // const [ userLoggedIn, setUserLoggedIn ] = useState<EthAddress | undefined>() 
-  // console.log("status wagmi:" , status)
-
 
   useEffect(() => {
-    // walletConnect should take care of this... 
-    // if (address != userLoggedIn) {
-    //   setUserLoggedIn(undefined)
-    //   dispatch(resetLoyaltyProgram(true))
-    // }
-
     if (status === "disconnected") {
       dispatch(notification({
         id: "notConnected",
@@ -46,7 +35,6 @@ export const DynamicLayout = ({
         isVisible: true
       }))
       setModalVisible(false)
-      // setUserLoggedIn(undefined)
     }    
 
     if (status === "connecting") {
@@ -58,7 +46,6 @@ export const DynamicLayout = ({
         isVisible: true
       }))
     }  
-
 
     if (status === "reconnecting") {
       dispatch(notification({
