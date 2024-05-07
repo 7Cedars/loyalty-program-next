@@ -59,7 +59,7 @@ export default function RedeemToken( {gift, disabled}: SelectedTokenProps)  {
   // depricated? 
   const domain = {
     name: selectedLoyaltyProgram?.metadata?.name,
-    version: '1',
+    version: 'alpha.2',
     chainId: chain?.id,
     verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
   } as const

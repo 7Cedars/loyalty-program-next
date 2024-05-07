@@ -13,8 +13,6 @@ import { Log } from "viem";
 import { Transaction } from "@/types";
 import { parseTransferSingleLogs } from "@/app/utils/parsers";
 
-
-
 export default function RequestCard()  {
   const publicClient = usePublicClient();
   const [ cardReceived, setCardReceived ] = useState<Transaction[]>() 

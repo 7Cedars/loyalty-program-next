@@ -126,13 +126,13 @@ export const DynamicLayout = ({
 
   }, [ , status])
 
-  // console.log(
-  //   "pre render console log", 
-  //   "selectedLoyaltyProgram: ", selectedLoyaltyProgram, 
-  //   "address", address, 
-  //   "loyaltyCards: ", loyaltyCards, 
-  //   "selectedLoyaltyCard: ", selectedLoyaltyCard  
-  // )
+  console.log(
+    "pre render console log", 
+    "selectedLoyaltyProgram: ", selectedLoyaltyProgram, 
+    "address", address, 
+    "loyaltyCards: ", loyaltyCards, 
+    "selectedLoyaltyCard: ", selectedLoyaltyCard  
+  )
 
   if (status != "connected") {
     return (
@@ -203,8 +203,9 @@ export const DynamicLayout = ({
                     :
                     loyaltyCards && loyaltyCards.length == 0 ?
                       <RequestCard /> 
-                    : 
-                    loyaltyCards && loyaltyCards.length >= 1 && !selectedLoyaltyCard ? 
+                    :
+
+                    loyaltyCards && loyaltyCards.length > 0 && !selectedLoyaltyCard ? 
                       <div className="grid grid-cols-1 h-full content-between mb-12">
                         <SelectLoyaltyCard loyaltyCards = {loyaltyCards}/> 
                         <div className="h-16"/> 

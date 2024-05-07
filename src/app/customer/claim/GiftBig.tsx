@@ -79,7 +79,7 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
   
   const domain = {
     name: selectedLoyaltyProgram?.metadata?.name,
-    version: "1",
+    version: "alpha.2",
     chainId: chain?.id,
     verifyingContract: parseEthAddress(selectedLoyaltyProgram?.programAddress)
   } as const

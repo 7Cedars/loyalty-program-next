@@ -14,7 +14,6 @@ import { DynamicLayout } from "../customerComponents/DynamicLayout";
 
 export default function Page()  {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
-  const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram)
   const dispatch = useDispatch()
   const { pointsReceived } = useLatestCustomerTransaction(true) 
 
