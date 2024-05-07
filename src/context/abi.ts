@@ -1,14 +1,14 @@
 // NB! BEFORE publishing this project, I need to actually copy-paste ABIs. This setup is for dev only.  
 
 import { Abi } from "viem"
-import loyaltyProgram from "../../../loyalty-program-contracts/out/LoyaltyProgram.sol/LoyaltyProgram.json"
-import loyaltyGift from "../../../loyalty-gifts-contracts/out/LoyaltyGift.sol/LoyaltyGift.json"
-import erc6551Account from "../../../loyalty-program-contracts/out/LoyaltyCard6551Account.sol/LoyaltyCard6551Account.json"
+// import loyaltyProgram from "../../../loyalty-program-contracts/out/LoyaltyProgram.sol/LoyaltyProgram.json"
+// import loyaltyGift from "../../../loyalty-gifts-contracts/out/LoyaltyGift.sol/LoyaltyGift.json"
+// import erc6551Account from "../../../loyalty-program-contracts/out/LoyaltyCard6551Account.sol/LoyaltyCard6551Account.json"
 
 // export const loyaltyProgramAbi: Abi = JSON.parse(JSON.stringify(loyaltyProgram.abi)) // why?! why, why, why? It is NOT possible to directly import it. 
 // export const loyaltyGiftAbi: Abi  = JSON.parse(JSON.stringify(loyaltyGift.abi)) 
 // export const ER C6551AccountAbi: Abi = JSON.parse(JSON.stringify(erc6551Account.abi)) 
-
+ 
 // console.log("loyaltyGiftAbi:", loyaltyGiftAbi)
 
 export const loyaltyProgramAbi: Abi = [ {
