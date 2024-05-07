@@ -16,14 +16,14 @@ const metadata = {
 }
 
 export const wagmiConfig = createConfig({
-  chains: [sepolia], //  foundry,  arbitrumSepolia, sepolia,  baseSepolia,  optimismSepolia, polygonMumbai
+  chains: [optimismSepolia], //  foundry,  arbitrumSepolia, sepolia,  baseSepolia,  optimismSepolia, polygonMumbai
   transports: {
     // [foundry.id]: http(), 
-    [sepolia.id]: http(`process.env.NEXT_PUBLIC_ALCHEMY_SEP_API_RPC`), 
+    // [sepolia.id]: http(`process.env.NEXT_PUBLIC_ALCHEMY_SEP_API_RPC`), 
     // [arbitrumSepolia.id]: http(`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ARB_SEP_API_KEY}`), 
     // [arbitrumSepolia.id]: http(), 
     // [baseSepolia.id]: http(), 
-    // [optimismSepolia.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_OPT_SEPOLIA_API_RPC)  // 
+    [optimismSepolia.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_OPT_SEPOLIA_API_RPC)  // 
     // [polygonMumbai.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_POLYGON_MUMBAI_API_RPC)
   },
   connectors: [
