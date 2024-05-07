@@ -27,7 +27,7 @@ export const SUPPORTED_CHAINS = [ // blocks to start check for data.
   {
     name: "optimismSepolia", 
     chainId: 11155420, 
-    fromBlock: 119747653n
+    fromBlock: 11147192n
   },
   {
     name: "polygonMumbai", 
