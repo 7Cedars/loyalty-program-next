@@ -78,7 +78,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
 
       <TitleText title = "Redeem Voucher" subtitle="Exchange voucher for gift to customer." size = {2} />
 
-      <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
+      <div className="grid grid-cols-1 content-start border border-gray-700 dark:border-gray-300 rounded-lg m-3">
 
         <div className="w-full grid-span-2 gap-2"> 
           <button 
@@ -135,7 +135,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
         }
 
         { hashTransaction && !tokenReceived ? 
-       <Button appearance = {"grayEmpty"} onClick={() => {}} >
+       <Button appearance = {"grayEmpty"} disabled >
           <div className="flex justify-center items-center">
             <Image
               className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
@@ -149,7 +149,7 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
         </Button>
         :
         <div className="flex w-full p-2"> 
-          <Button appearance = {"greenEmpty"}onClick={() => writeContract({ 
+          <Button appearance = {"greenEmpty"} onClick={() => writeContract({ 
               abi: loyaltyProgramAbi,
               address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
               functionName: "redeemLoyaltyVoucher", 
@@ -168,7 +168,6 @@ export default function RedeemToken( {qrData, setData}: SendPointsProps ) {
         } 
 
       </div>
-
-      <div className='pb-16'/>
+      <div className='pb-20'/>
     </div>
   )}

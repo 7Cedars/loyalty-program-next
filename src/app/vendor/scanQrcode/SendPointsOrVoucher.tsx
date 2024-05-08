@@ -190,7 +190,7 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
 
           { waitForTransaction.isLoading ? 
           
-            <Button appearance = {"grayEmpty"} onClick={() => {}} >
+            <Button appearance = {"grayEmpty"} disabled = {true} >
               <div className="flex justify-center items-center">
                 <Image
                   className="rounded-lg opacity-25 flex-none mx-3 animate-spin"

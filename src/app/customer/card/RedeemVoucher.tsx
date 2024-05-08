@@ -83,6 +83,17 @@ export default function RedeemToken( {gift, disabled}: SelectedTokenProps)  {
   } as const
 
   useEffect(() => { 
+    if (signature) {
+      dispatch(notification({
+        id: "redeemToken",
+        message: `Let vendor scan this Qrcode to receive your gift.`, 
+        colour: "yellow",
+        isVisible: true
+      }))
+    }
+  }, [signature])
+
+  useEffect(() => { 
     if (isError) {
       polling.current = false  
       dispatch(notification({
@@ -166,7 +177,7 @@ export default function RedeemToken( {gift, disabled}: SelectedTokenProps)  {
         
         { gift.metadata && signature ?
           <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 flex flex-col items-center"> 
-            <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} />
+            {/* <TitleText title = "" subtitle = "Let vendor scan this Qrcode to receive your gift" size={1} /> */}
             <div className="m-3 flex items-center"> 
               <QRCode 
                 value={`type:redeemToken;${gift.giftAddress};${gift.giftId};${selectedLoyaltyCard?.cardId};${address};${signature}`}

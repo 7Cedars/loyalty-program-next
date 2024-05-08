@@ -121,7 +121,7 @@ export default function GiftBig({gift, loyaltyCardAddress, transferVoucher}: Sel
             </div>
           </Button>
         : 
-          <Button appearance = {"blueEmpty"} onClick={() => transferVoucher() } >
+          <Button appearance = {"greenEmpty"} onClick={() => transferVoucher() } >
               Transfer voucher
           </Button>
         } 

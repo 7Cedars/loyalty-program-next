@@ -73,6 +73,7 @@ export default function Page() {
         <div className='pb-24'/>
       </div>
     }
+     <div className='pb-16'/>
     </div>
   );
 }

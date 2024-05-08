@@ -150,7 +150,7 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
         }
 
         { hashTransaction && !pointsReceived ? 
-        <Button appearance = {"grayEmpty"} onClick={() => {}} disabled={true} >
+        <Button appearance = {"grayEmpty"} disabled  >
          <div className="flex justify-center items-center">
            <Image
              className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
@@ -188,6 +188,3 @@ export default function ClaimGift( {qrData, setData}: SendPointsProps ) {
     </div>
   )}
 
-function len(messageHashOne: string) {
-  throw new Error("Function not implemented.");
-}
