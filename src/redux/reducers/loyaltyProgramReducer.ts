@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { LoyaltyProgram } from '../../types'
 
-
 interface LoyaltyProgramState {
   selectedLoyaltyProgram: LoyaltyProgram | undefined 
 }

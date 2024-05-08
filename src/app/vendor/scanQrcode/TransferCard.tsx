@@ -5,7 +5,6 @@ import {
   useWriteContract, 
   useWaitForTransactionReceipt, 
   useAccount, 
-  useReadContract, 
   usePublicClient 
 } from "wagmi";
 import { parseEthAddress, parseTransferSingleLogs, parseBigInt } from "@/app/utils/parsers";

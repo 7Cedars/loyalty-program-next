@@ -38,12 +38,12 @@ export default function Page() {
     contracts: [
       {
         ...loyaltyProgram,
-        functionName: 'transferSingle',
+        functionName: 'TransferSingle',
         args: [{from: parseEthAddress(address)}],
       },
       {
         ...loyaltyProgram,
-        functionName: 'transferSingle',
+        functionName: 'TransferSingle',
         args: [{to: parseEthAddress(address)}],
       },
       {
