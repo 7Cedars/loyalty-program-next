@@ -156,7 +156,7 @@ export default function Page() {
       </div>
 
       { selectedVoucher ? 
-        <div className="grid grid-cols-1 content-start border border-gray-300 rounded-lg m-3">
+        <div className="grid grid-cols-1 content-start border border-gray-700 dark:border-gray-300 rounded-lg m-3">
           <button 
             className="text-slate-800 dark:text-slate-200 font-bold p-3"
             type="submit"
@@ -220,6 +220,7 @@ export default function Page() {
         </>
         : null  
     }
+    <div className="h-20" />
     </div> 
   );
 }

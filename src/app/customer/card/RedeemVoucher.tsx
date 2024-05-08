@@ -83,24 +83,6 @@ export default function RedeemToken( {gift, disabled}: SelectedTokenProps)  {
   } as const
 
   useEffect(() => { 
-    if (isPending) {
-      dispatch(notification({
-        id: "qrCodeAuthentication",
-        message: `Please provide your signature in your blockchain wallet app.`, 
-        colour: "yellow",
-        isVisible: true
-      }))
-    }
-    if (isSuccess) {
-      polling.current = true   
-      setIsDisabled(!isDisabled)
-      dispatch(notification({
-        id: "qrCodeAuthentication",
-        message: `Qrcode succesfully authenticated`, 
-        colour: "green",
-        isVisible: true
-      }))
-    }
     if (isError) {
       polling.current = false  
       dispatch(notification({
@@ -111,10 +93,6 @@ export default function RedeemToken( {gift, disabled}: SelectedTokenProps)  {
       }))
     }
   }, [isSuccess, isError, isPending])
-
-  // useEffect(() => {
-  //   if (selectedVoucher) polling.current = true 
-  // }, [selectedVoucher])
 
   useEffect(() => {
     if (tokenSent) {
@@ -179,7 +157,7 @@ export default function RedeemToken( {gift, disabled}: SelectedTokenProps)  {
                 primaryType: 'RedeemVoucher',
                 message
               })} >
-              Redeem Voucher
+              Sign message to redeem voucher
             </Button>
           </div>
         </>
@@ -209,7 +187,6 @@ export default function RedeemToken( {gift, disabled}: SelectedTokenProps)  {
         : 
         null 
         }
-        <div className="h-20" />
     </div>
   )
 }

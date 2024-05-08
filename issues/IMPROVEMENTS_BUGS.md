@@ -12,12 +12,22 @@ Even though repository is public, For now, it is for personal use only.
 - Design of solidity frontend is on my Figma.
 
 ## Know bugs (in order of priority)
+- [ ]  @everywhere, unify UI language 
+  - [ ]  disabled button = emptyGray & 50% opacity. 
+  - [ ]  contractWrite positive: = emptyGreen
+  - [ ]  contractWrite negative: = emptyRed
+  - [ ]  Go to other place in app = emptyGray 
+  - [ ]  messaging to user should happen through button with two exceptions: 
+    - [ ]  positive interaction blockchain = green notification 
+    - [ ]  error with blockchain = red notification. 
+  - [ ] 
+- [ ]  @Vendor, QrReader, sent cards: when no card is available, button should be disabled 
 - [x]  @Vendor, landing: 'visit page' is broken. Fix. 
 - [x]  @Vendor, landing: 'visit page' theming is broken. Fix. -- still some buttons' ui broken. 
 - [x]  @vendor, stats: balance not loading. Fix. -- problem does not exist at customer.. 
 - [ ]  @Vendor, QrReader: Fix Bug that when no valid QR code is read - it just hangs. Needs to have notification + continue reading.
 - [ ]  @Vendor, QrReader, send card: it seems multiple cards of same cardID can be send to same (also different?) addresses. FIX later.
-- [ ]  @Vendor, QrReader, sent cards: Fix Bug that when no card are available, no message shows. 
+- [x]  @Vendor, QrReader, sent cards: Fix Bug that when no card are available, no message shows. 
 - [ ]  @Vendor, QrReader, sent cards: Fix Bug that number cards does not update (and that multiple cards of same id can be sent?!). 
 - [x]  @vendor, QrScan: Mint cards still shows, even if scanned a code. -- ONLY WHEN NO Cards have been minted!
 - [x]  @vendor (& @customer?) when their are no transactions, transaction overview hangs at 'retrieving transaction history...'  

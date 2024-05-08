@@ -104,25 +104,6 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
   } as const
 
   useEffect(() => { 
-    if (isPending) {
-      dispatch(notification({
-        id: "qrCodeAuthentication",
-        message: `Please sign your request in your blockchain wallet app.`, 
-        colour: "yellow",
-        isVisible: true
-      }))
-    }
-    if (isSuccess) {
-      setIsDisabled(!isDisabled)
-      polling.current = true 
-
-      dispatch(notification({
-        id: "qrCodeAuthentication",
-        message: `Qrcode succesfully authenticated`, 
-        colour: "green",
-        isVisible: true
-      }))
-    }
     if (isError) {
       dispatch(notification({
         id: "qrCodeAuthentication",
@@ -210,7 +191,7 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
               primaryType: 'RequestGift',
               message
             })}  >
-              Claim Gift
+              Sign message to request gift
             </Button>
           : 
             <Button appearance = {"grayEmpty"} disabled >
@@ -247,7 +228,6 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
         : 
         null 
         }
-      
     </div>
   );
 }
