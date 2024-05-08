@@ -49,9 +49,9 @@ export default function Page() {
       {
         ...loyaltyProgram,
         functionName: 'TransferBatch',
-        args: [[{to: parseEthAddress(address)}],],
+        args: [{to: parseEthAddress(address)}],
       }
-    ],
+    ]
   })
 
   console.log("RESULT STAT DATA FETCH: ", result)

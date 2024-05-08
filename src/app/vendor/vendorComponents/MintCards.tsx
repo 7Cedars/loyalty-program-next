@@ -70,7 +70,7 @@ export default function MintCards() {
 
         { waitForTransaction.isLoading ? 
         
-          <Button appearance = {"grayEmpty"} onClick={() => {}} >
+          <Button appearance = {"grayEmpty"} disabled >
             <div className="flex justify-center items-center">
               <Image
                 className="rounded-lg opacity-25 flex-none mx-3 animate-spin"
@@ -83,7 +83,7 @@ export default function MintCards() {
             </div>
           </Button>
           : 
-          <Button appearance = {"grayFilled"} onClick={() => writeContract({ 
+          <Button appearance = {"greenEmpty"} onClick={() => writeContract({ 
             abi: loyaltyProgramAbi,
             address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
             functionName: 'mintLoyaltyCards',
