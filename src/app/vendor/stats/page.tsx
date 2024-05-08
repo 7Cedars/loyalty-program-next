@@ -9,7 +9,8 @@ import { parseEthAddress, parseTransferSingleLogs, parseTransferBatchLogs, parse
 import { loyaltyProgramAbi } from "@/context/abi";
 import { 
   useAccount, 
-  usePublicClient 
+  usePublicClient, 
+  useReadContracts
 } from "wagmi";
 import { useEffect } from "react";
 import { NoteText } from "@/app/ui/StandardisedFonts";
@@ -27,6 +28,33 @@ export default function Page() {
   const { selectedLoyaltyProgram  } = useAppSelector(state => state.selectedLoyaltyProgram )
   const publicClient = usePublicClient(); 
   const { address, chain } = useAccount() 
+
+  const loyaltyProgram = {
+    address: selectedLoyaltyProgram?.programAddress,
+    abi: loyaltyProgramAbi,
+  } as const
+
+  const result = useReadContracts({
+    contracts: [
+      {
+        ...loyaltyProgram,
+        functionName: 'transferSingle',
+        args: [{from: parseEthAddress(address)}],
+      },
+      {
+        ...loyaltyProgram,
+        functionName: 'transferSingle',
+        args: [{to: parseEthAddress(address)}],
+      },
+      {
+        ...loyaltyProgram,
+        functionName: 'TransferBatch',
+        args: [[{to: parseEthAddress(address)}],],
+      }
+    ],
+  })
+
+  console.log("RESULT STAT DATA FETCH: ", result)
   
   const [ transferSingleTo, setTransferSingleTo ] = useState<Transaction[]>([]) 
   const [ transferSingleFrom, setTransferSingleFrom ] = useState<Transaction[]>([])  

@@ -59,14 +59,6 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
     }
   }
 
-  const {data: loyaltyCardsMinted, isError: isErrorReadContract } = useReadContract(
-    {
-      address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
-      abi: loyaltyProgramAbi,
-      functionName: "getNumberLoyaltyCardsMinted", 
-      args: [] 
-    })
-
   useEffect(() => {
     if (isErrorWriteContract) {
       dispatch(notification({
@@ -100,18 +92,16 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
         isVisible: true
       }))
     }
-    refetchBalances() 
+    refetchBalances()
   }, [isSuccess])
 
   useEffect(() => {
-
     if (transferSingles && transferSingles.length > 0) {
       const transferredLoyaltyCards = transferSingles.map(item => item.ids[0])
       setLastCardTransferred(bigIntMax(transferredLoyaltyCards))
     } else {
       setLastCardTransferred(1n)
     }
-
     setCustomerAddress(qrData?.customerAddress)
   }, [, qrData?.customerAddress, transferSingles])
 

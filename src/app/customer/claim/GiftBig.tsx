@@ -104,6 +104,17 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
   } as const
 
   useEffect(() => { 
+    if (signature) {
+      dispatch(notification({
+        id: "claimGift",
+        message: `Let vendor scan this Qrcode to receive your gift.`, 
+        colour: "yellow",
+        isVisible: true
+      }))
+    }
+  }, [signature])
+
+  useEffect(() => { 
     if (isError) {
       dispatch(notification({
         id: "qrCodeAuthentication",
