@@ -34,7 +34,6 @@ export const useLoyaltyGifts = () => {
   const statusAtAvailableVouchers = useRef<Status>("isIdle") 
   const [data, setData] = useState<LoyaltyGift[] | undefined>() 
   const [loyaltyGifts, setLoyaltyGifts] = useState<LoyaltyGift[] | undefined>() 
-  const [loyaltyGiftContracts, setLoyaltyGiftContracts] = useState<EthAddress[] | undefined>() 
 
   console.log("loyaltyGifts: ", loyaltyGifts)
   console.log("status: ", status)
@@ -240,9 +239,7 @@ export const useLoyaltyGifts = () => {
         } 
         statusAtAvailableVouchers.current = "isSuccess"
         
-        // resetting redux. 
-        // dispatch(resetLoyaltyGifts(true))
-        
+        // resetting redux.
         setData(loyaltyGiftsAvailableVouchers)
       } catch (error) {
         statusAtAvailableVouchers.current = "isError" 
@@ -292,11 +289,8 @@ export const useLoyaltyGifts = () => {
         setStatus("isSuccess")
 
         setLoyaltyGifts(data)
+        dispatch(resetLoyaltyGifts(true))
         if (data) dispatch(addLoyaltyGifts(data)) 
-          
-        // not better to place this somewhere else? 
-        const dataContracts = Array.from(new Set(data?.map(item => item.giftAddress))) 
-        setLoyaltyGiftContracts(dataContracts)
 
       }
     if (
@@ -309,7 +303,7 @@ export const useLoyaltyGifts = () => {
       }
   }, [ data ])
 
-  return {status, loyaltyGifts, loyaltyGiftContracts, fetchGifts, updateAvailableVouchers}
+  return {status, loyaltyGifts, fetchGifts, updateAvailableVouchers}
 }
 
 function dispatch(arg0: any) {
