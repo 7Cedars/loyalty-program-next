@@ -27,7 +27,7 @@ export function GiftSmall( {gift, disabled, onClick}: SelectedGiftProps ) {
             <div className="text-center text-sm"> 
               {gift.metadata.name}
             </div>
-            { gift.isClaimable == 1n ? 
+            { gift.isClaimable == 1 ? 
               <div className="text-center text-sm text-gray-500 mt-1"> 
                 {`${gift.cost} points`}
               </div> 
@@ -36,7 +36,7 @@ export function GiftSmall( {gift, disabled, onClick}: SelectedGiftProps ) {
                 {`Cannot be exchanged for points.`}
               </div>
             }            
-            { gift.isVoucher == 1n? 
+            { gift.isVoucher == 1? 
               <div className="text-center text-sm text-gray-500"> 
                 {`${Number(gift.availableVouchers)} vouchers left`}
               </div>

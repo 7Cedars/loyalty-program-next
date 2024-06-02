@@ -26,7 +26,7 @@ Even though repository is public, For now, it is for personal use only.
 - [x]  @Vendor, landing: 'visit page' is broken. Fix. 
 - [x]  @Vendor, landing: 'visit page' theming is broken. Fix. -- still some buttons' ui broken. 
 - [x]  @vendor, stats: balance not loading. Fix. -- problem does not exist at customer.. 
-- [ ]  @Vendor, QrReader: Fix Bug that when no valid QR code is read - it just hangs. Needs to have notification + continue reading.
+- [ ]  @Vendor, QrReader: Fix Bug that when no valid QR code is read - it just hangs. Needs to have notification + continue reading. (more or less ok now I think)
 - [ ]  @Vendor, QrReader, send card: it seems multiple cards of same cardID can be send to same (also different?) addresses. FIX later.
 - [x]  @Vendor, QrReader, sent cards: Fix Bug that when no card are available, no message shows. 
 - [ ]  @Vendor, QrReader, sent cards: Fix Bug that number cards does not update (and that multiple cards of same id can be sent?!). 

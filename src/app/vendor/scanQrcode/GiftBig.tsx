@@ -57,14 +57,14 @@ export default function GiftBig({gift, loyaltyCardAddress, transferVoucher}: Sel
             <div className="text-center text-lg text-slate-500 pb-4"> 
               {gift.metadata.description}
             </div>
-              {gift.isClaimable == 1n ? 
+              {gift.isClaimable == 1 ? 
                 <div className="text-center text-lg"> 
                   {`Cost: ${gift.cost} points`}
                 </div> 
                 :
                 null
               }
-              {gift.hasAdditionalRequirements == 1n ? 
+              {gift.hasAdditionalRequirements == 1 ? 
                 <div className="text-center text-lg"> 
                   {`Additional requirements: ${gift.metadata.attributes[0].value}`}
                 </div> 
@@ -78,7 +78,7 @@ export default function GiftBig({gift, loyaltyCardAddress, transferVoucher}: Sel
               Gift Id: {gift.giftId}
             </div>
           </div>
-          {gift.isVoucher == 1n ? 
+          {gift.isVoucher == 1 ? 
             <div className="text-center text-lg"> 
               {`${gift.availableVouchers} remaining vouchers.`}
             </div>
