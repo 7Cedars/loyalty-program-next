@@ -174,14 +174,14 @@ export function GiftBig( {gift, disabled}: SelectedTokenProps ) {
 
             <div className="text-center text-md flex flex-col pb-2 pt-6 "> 
               <div> {`Cost: ${gift.cost} points`} </div> 
-              {gift.hasAdditionalRequirements == 1n ? 
+              {gift.hasAdditionalRequirements == 1 ? 
                 <div className="text-center text-md"> 
                   {`Additional requirements: ${gift.metadata.attributes[0].value}`}
                 </div>
                 :
                 null
               }
-              {gift.isVoucher == 1n ? 
+              {gift.isVoucher == 1 ? 
                 <div className="text-center text-md"> 
                   {`Remaining vouchers: ${gift.availableVouchers}`}
                 </div>

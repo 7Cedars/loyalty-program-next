@@ -3,13 +3,15 @@ import userInputReducer from './reducers/userInputReducer'
 import notificationReducer from  './reducers/notificationReducer'
 import loyaltyProgramReducer from './reducers/loyaltyProgramReducer'
 import loyaltyCardReducer from './reducers/loyaltyCardReducer'
+import loyaltyGiftReducer from './reducers/loyaltyGiftReducer'
 
 export const store = configureStore({
   reducer: {
     userInput: userInputReducer, 
     notification: notificationReducer, 
     selectedLoyaltyProgram: loyaltyProgramReducer,
-    selectedLoyaltyCard: loyaltyCardReducer
+    selectedLoyaltyCard: loyaltyCardReducer,
+    loyaltyGifts: loyaltyGiftReducer
   }
 })
 

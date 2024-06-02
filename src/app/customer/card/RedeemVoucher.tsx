@@ -151,7 +151,7 @@ export default function RedeemToken( {gift, disabled}: SelectedTokenProps)  {
               <div className="text-center text-md"> 
                 {`ID: ${gift.giftId} @${gift.giftAddress.slice(0,6)}...${gift.giftAddress.slice(36,42)}`}
               </div>
-              {gift.isVoucher == 1n ? 
+              {gift.isVoucher == 1 ? 
                 <div className="text-center text-md"> 
                   {`Remaining vouchers: ${gift.availableVouchers}`}
                 </div>

@@ -1,29 +1,29 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { LoyaltyGift } from '../../types'
 
-interface LoyaltyGiftState {
-  loyaltyGifts: LoyaltyGift[]
+interface FetchedLoyaltyGiftState {
+  fetchedLoyaltyGifts: LoyaltyGift[]
 }
 
-const initialState: LoyaltyGiftState = {
-  loyaltyGifts: []
+const initialState: FetchedLoyaltyGiftState = {
+  fetchedLoyaltyGifts: []
 }
 
-export const loyaltyGiftsSlice = createSlice({
-  name: 'loyaltyGifts',
+export const fetchedLoyaltyGiftsSlice = createSlice({
+  name: 'fetchedLoyaltyGifts',
   initialState: initialState,
   reducers: {
-    saveLoyaltyGifts: (state, action: PayloadAction<LoyaltyGift[]>) => {
-      state.loyaltyGifts = action.payload
+    addLoyaltyGifts: (state, action: PayloadAction<LoyaltyGift[]>) => {
+      state.fetchedLoyaltyGifts.push(...action.payload)
     }, 
     resetLoyaltyGifts: (state, action: PayloadAction<boolean>) => {
       if (action.payload === true) {
-        state.loyaltyGifts = []
+        state.fetchedLoyaltyGifts = []
       }
     }, 
   }
 })
 
-export const { saveLoyaltyGifts, resetLoyaltyGifts } = loyaltyGiftsSlice.actions
+export const { addLoyaltyGifts, resetLoyaltyGifts } = fetchedLoyaltyGiftsSlice.actions
 
-export default loyaltyGiftsSlice.reducer
+export default fetchedLoyaltyGiftsSlice.reducer

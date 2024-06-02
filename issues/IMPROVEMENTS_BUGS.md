@@ -12,7 +12,8 @@ Even though repository is public, For now, it is for personal use only.
 - Design of solidity frontend is on my Figma.
 
 ## Know bugs (in order of priority)
-- [ ]  @everywhere, unify UI language 
+- [ ] @everywhere clean up console.logs  
+- [ ] @everywhere, unify UI language (WIP - should check how far I've gotten. )  
   - [ ]  disabled button = emptyGray & 50% opacity. 
   - [ ]  contractWrite positive: = emptyGreen
   - [ ]  contractWrite negative: = emptyRed
@@ -20,7 +21,7 @@ Even though repository is public, For now, it is for personal use only.
   - [ ]  messaging to user should happen through button with two exceptions: 
     - [ ]  positive interaction blockchain = green notification 
     - [ ]  error with blockchain = red notification. 
-  - [ ] 
+- [ ]  @landing: add red message on top: this is a test app / MVP. 
 - [ ]  @Vendor, QrReader, sent cards: when no card is available, button should be disabled 
 - [x]  @Vendor, landing: 'visit page' is broken. Fix. 
 - [x]  @Vendor, landing: 'visit page' theming is broken. Fix. -- still some buttons' ui broken. 

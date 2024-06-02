@@ -1,4 +1,4 @@
-import {  EthAddress, LoyaltyGift, Status } from "@/types";
+import { EthAddress, LoyaltyGift, Status } from "@/types";
 import { readContracts } from '@wagmi/core'
 import { wagmiConfig } from '../../../config'
 import { useEffect, useRef, useState } from "react";
@@ -11,14 +11,20 @@ import {
   parseTokenContractLogs,
   parseEthAddress,
   parseBigInt,
+  parseBigIntToNumber
 } from "@/app/utils/parsers";
 import { SUPPORTED_CHAINS, VERSION_GIFTS } from "@/context/constants";  
 import { useAppSelector } from "@/redux/hooks";
+import { resetLoyaltyGifts, addLoyaltyGifts } from "@/redux/reducers/loyaltyGiftReducer";
+import { useDispatch } from "react-redux";
 
 export const useLoyaltyGifts = () => {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const { fetchedLoyaltyGifts } = useAppSelector(state => state.loyaltyGifts )
+
   const publicClient = usePublicClient()
   const {chain} = useAccount()  
+  const dispatch = useDispatch() 
 
   const [ status, setStatus ] = useState<Status>("isIdle")
   const statusAtgiftAddress = useRef<Status>("isIdle") 
@@ -31,12 +37,33 @@ export const useLoyaltyGifts = () => {
   const [loyaltyGiftContracts, setLoyaltyGiftContracts] = useState<EthAddress[] | undefined>() 
 
   console.log("loyaltyGifts: ", loyaltyGifts)
-  
+  console.log("status: ", status)
+  console.log("status extended: ", {
+    statusAtgiftAddress: statusAtgiftAddress, 
+    statusAtUri: statusAtUri, 
+    statusAtMetadata: statusAtMetadata, 
+    statusAtGetAdditionalInfo: statusAtGetAdditionalInfo, 
+    statusAtAvailableVouchers: statusAtAvailableVouchers
+  })
+
   const fetchGifts = (requestedGifts?: LoyaltyGift[] ) => {
     setStatus("isIdle")
     setData(undefined)
     setLoyaltyGifts(undefined)
-    getLoyaltyGiftAddresses(requestedGifts)
+
+    // some prep work: 
+    // filtering requested gifts along gift addresses already fetched. 
+    // additional note: gifts are fetched per address, not per each individual gift. Hence we do not need to check if an individual gift has already been loaded.  
+    if (requestedGifts) {
+      const giftAddresses = fetchedLoyaltyGifts.map(gift => gift.giftAddress); 
+      const giftsToFetch = requestedGifts.filter(gift => 
+        !giftAddresses.includes(gift.giftAddress)
+      )
+      getLoyaltyGiftAddresses(giftsToFetch) 
+    } else { 
+      // if there are no fetched gifts, fetch all, else :do nothing.  
+      fetchedLoyaltyGifts.length == 0 ? getLoyaltyGiftAddresses() : null  
+    }
   }
 
   const updateAvailableVouchers = () => {
@@ -176,10 +203,10 @@ export const useLoyaltyGifts = () => {
             )
               loyaltyGiftAdditionalInfo.push({
                 ...item, 
-                isClaimable: parseBigInt(data[0].result), 
-                cost: parseBigInt(data[1].result), 
-                hasAdditionalRequirements: parseBigInt(data[2].result), 
-                isVoucher: parseBigInt(data[3].result)
+                isClaimable: parseBigIntToNumber(data[0].result), 
+                cost: parseBigIntToNumber(data[1].result), 
+                hasAdditionalRequirements: parseBigIntToNumber(data[2].result), 
+                isVoucher: parseBigIntToNumber(data[3].result)
               })
         } 
         statusAtGetAdditionalInfo.current = "isSuccess"
@@ -212,6 +239,10 @@ export const useLoyaltyGifts = () => {
             loyaltyGiftsAvailableVouchers.push({...item, availableVouchers: Number(parseBigInt(availableVouchers))})
         } 
         statusAtAvailableVouchers.current = "isSuccess"
+        
+        // resetting redux. 
+        // dispatch(resetLoyaltyGifts(true))
+        
         setData(loyaltyGiftsAvailableVouchers)
       } catch (error) {
         statusAtAvailableVouchers.current = "isError" 
@@ -259,8 +290,11 @@ export const useLoyaltyGifts = () => {
       statusAtAvailableVouchers.current == "isSuccess" 
       ) {
         setStatus("isSuccess")
-        setLoyaltyGifts(data)
 
+        setLoyaltyGifts(data)
+        if (data) dispatch(addLoyaltyGifts(data)) 
+          
+        // not better to place this somewhere else? 
         const dataContracts = Array.from(new Set(data?.map(item => item.giftAddress))) 
         setLoyaltyGiftContracts(dataContracts)
 
@@ -276,4 +310,8 @@ export const useLoyaltyGifts = () => {
   }, [ data ])
 
   return {status, loyaltyGifts, loyaltyGiftContracts, fetchGifts, updateAvailableVouchers}
+}
+
+function dispatch(arg0: any) {
+  throw new Error("Function not implemented.");
 }

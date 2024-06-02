@@ -104,6 +104,14 @@ export const parseBigInt = (number: unknown): bigint => {
   return number as bigint;
 };
 
+export const parseBigIntToNumber = (bigint: unknown): number => {
+  if (!isBigInt(bigint)) {
+    throw new Error(`Incorrect number, not a bigInt: ${bigint}`);
+  }
+  const number = Number(bigint); 
+  return number as number;
+};
+
 const parseTokenised = (tokenised: unknown): BigInt[] => {
   if (!isArray(tokenised)) {
     throw new Error(`Incorrect data, not an array: ${tokenised}`);
