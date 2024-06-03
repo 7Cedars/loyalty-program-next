@@ -47,7 +47,7 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-      <a href="#about-the-project">About The Project</a>
+      <a href="#about">About</a>
       <ul>
         <li><a href="#built-with">Built With</a></li>
       </ul>
@@ -71,7 +71,7 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## About
 A front-end dApp demonstration of a web3 protocol for customer engagement. Try it out [here](https://loyalty-program-psi.vercel.app/). 
 
 This dApp interacts with two solidity protocols. 
@@ -106,7 +106,6 @@ To get a local copy up and running do the following.
 
 ### Installation
 <!-- NB: I have to check if I missed anyting £todo -->
-
 1. Get a free alchemy API Key at [alchemy.com](https://docs.alchemy.com/docs/alchemy-quickstart-guide)
 2. Setup a project at walletConnect cloud [WalletConnect](https://cloud.walletconnect.com/app) and create a wallet ID.  
 3. Clone the repo
@@ -119,7 +118,7 @@ To get a local copy up and running do the following.
    ```
 5. Create a .env file in the root directory and add the following lines: 
    ```js
-   const NEXT_PUBLIC_ALCHEMY_API_KEY = 'your alchemy API Key';
+   const NEXT_PUBLIC_ALCHEMY_API_KEY = 'https://eth-sepolia.g.alchemy.com/v2/...';
    const NEXT_PUBLIC_WALLETCONNECT_ID = 'Your wallet Connect project id';
    ```
 6. run 
@@ -138,23 +137,21 @@ The repository consists of two dApps
 - A vendor dApp in which loyalty points and loyalty cards can be minted; loyalty gifts can be selected and gift vouchers minted; and a Qrcode scanner to read customer requests. It also provides a transaction overview. 
 - A customer dApp that creates Qrcodes to request loyalty points, exchanging points for gifts or vouchers, and redeem vouchers for gifts. It also includes a transaction overview.
 
-Some screenshots:
-| Home screen vendor | Transactions vendor | Card overview customer |
+Some screenshots from the vendor app:
+| Home screen |  Select gifts | Transactions |  
 | :--------: | :-------: | :-------: | 
 | <img src="public/images/vendorHomeScreen.png" alt="vendor-home-view" width="200" />  | <img src="public/images/vendorSelectGifts.png" alt="vendor-select-gift-view" width="200" />  | <img src="public/images/vendorTransactionScreen.png" alt="vendor-transaction-view" width="200" />  |
 
-_For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ROADMAP -->
-## Roadmap
+## Known issues
 
-- [ ] Implement Cypress testing throughout app. At the moment it is untested. 
-- [ ] Code clean up and optimisation. 
-- [ ] Add interface at vendor app for selecting external gift contracts. 
-- [ ] Implement account abstraction. 
-- [ ] ... 
+- [ ] This front end app is currently untested. Implementing testing with Cypress is a priority. 
+- [ ] There are several open bugs (the transaction view is incorrect, sometimes the QR reader hangs, etc). See `IMPROVEMENTS_BUGS.md` for a more detailed list of bugs that need to be resolved.   
+- [ ] In future versions a more advanced interface should be added for vendors to select external gift contracts.  
+- [ ] The UX of this app would be greatly improved with account abstraction. It is high on the wish list, but I did not have the time yet to implement this.
 
 See the [open issues](https://github.com/7Cedars/loyalty-program-next/issues) for a full list of proposed features (and known issues).
 
