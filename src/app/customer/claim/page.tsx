@@ -32,6 +32,7 @@ export default function Page() {
   const dispatch = useDispatch() 
   const publicClient = usePublicClient()
   const { status: statusLoyaltyGifts, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
+  const { fetchedLoyaltyGifts } = useAppSelector(state => state.loyaltyGifts )
 
   console.log("loyaltyGifts @claimGift" , loyaltyGifts)
 
@@ -46,6 +47,13 @@ export default function Page() {
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const polling = useRef<boolean>(false)
   const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction(polling.current) 
+
+  console.log("status.current:", status.current)
+  console.log("statusAtAddedGifts.current:", statusAtAddedGifts.current) 
+  console.log("statusAtClaimableGifts.current:", statusAtClaimableGifts.current)
+  console.log("fetchedLoyaltyGifts:", fetchedLoyaltyGifts)
+  console.log("statusLoyaltyGifts: ", statusLoyaltyGifts)
+  console.log("data:", data)
 
   /////////////////////////////////// 
   ///     Fetch Card Balance      ///
@@ -86,7 +94,6 @@ export default function Page() {
     
     try {
       const selectedChain: any = SUPPORTED_CHAINS.find(block => block.chainId === chain.id)
-      console.log("selectedChain: ", selectedChain)
       const addedGifts: Log[] = await publicClient.getContractEvents( { 
         abi: loyaltyProgramAbi, 
         address: parseEthAddress(selectedLoyaltyProgram?.programAddress), 
@@ -132,13 +139,10 @@ export default function Page() {
   }
 
   useEffect(() => {
-    if (statusAtAddedGifts.current == "isIdle") getAddedGifts()
-  }, [, statusAtAddedGifts ] ) 
-
-  useEffect(() => {
-    if (selectedGift) polling.current = true
-    else polling.current = false   
-  }, [, selectedGift ] )
+    if (
+      statusAtAddedGifts.current == "isIdle"
+    ) getAddedGifts()
+  }, [, statusAtAddedGifts, fetchedLoyaltyGifts ] ) 
 
   useEffect(() => {
     if (
@@ -158,6 +162,12 @@ export default function Page() {
         status.current = "isSuccess"
       } 
   }, [ statusAtAddedGifts, statusAtClaimableGifts, data ])
+
+  useEffect(() => {
+    if (selectedGift) polling.current = true
+    else polling.current = false   
+  }, [, selectedGift ] )
+
 
   useEffect(() => {
     fetchCardBalance() 
@@ -237,8 +247,8 @@ export default function Page() {
             </div> 
           :
           statusLoyaltyGifts === "isSuccess" && 
-          loyaltyGifts ?
-            loyaltyGifts.map((gift: LoyaltyGift) => 
+          fetchedLoyaltyGifts.length > 0 ?
+          fetchedLoyaltyGifts.map((gift: LoyaltyGift) => 
                 gift.metadata ? 
                 <div key = {`${gift.giftAddress}:${gift.giftId}`} >
                   <GiftSmall gift = {gift} disabled = {false} onClick={() => setSelectedToken({gift: gift, disabled: false})}  /> 
@@ -246,7 +256,8 @@ export default function Page() {
                 : null 
               )
           : 
-          statusLoyaltyGifts === "isSuccess" && !loyaltyGifts ?
+          statusLoyaltyGifts === "isSuccess" && 
+          fetchedLoyaltyGifts.length == 0 ?
             <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 m-6"> 
               <NoteText message="No gifts available. Ask vendor to enable gifts."/>
             </div>

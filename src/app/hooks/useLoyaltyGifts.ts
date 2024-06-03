@@ -15,7 +15,7 @@ import {
 } from "@/app/utils/parsers";
 import { SUPPORTED_CHAINS, VERSION_GIFTS } from "@/context/constants";  
 import { useAppSelector } from "@/redux/hooks";
-import { resetLoyaltyGifts, addLoyaltyGifts } from "@/redux/reducers/loyaltyGiftReducer";
+import { saveLoyaltyGifts } from "@/redux/reducers/loyaltyGiftReducer";
 import { useDispatch } from "react-redux";
 
 export const useLoyaltyGifts = () => {
@@ -33,10 +33,12 @@ export const useLoyaltyGifts = () => {
   const statusAtGetAdditionalInfo = useRef<Status>("isIdle")
   const statusAtAvailableVouchers = useRef<Status>("isIdle") 
   const [data, setData] = useState<LoyaltyGift[] | undefined>() 
+  const [giftsRequested, setGiftsRequested] = useState<LoyaltyGift[] | undefined>()
   const [loyaltyGifts, setLoyaltyGifts] = useState<LoyaltyGift[] | undefined>() 
 
   console.log("loyaltyGifts: ", loyaltyGifts)
   console.log("status: ", status)
+  console.log("giftsRequested: ", giftsRequested)
   console.log("status extended: ", {
     statusAtgiftAddress: statusAtgiftAddress, 
     statusAtUri: statusAtUri, 
@@ -49,20 +51,7 @@ export const useLoyaltyGifts = () => {
     setStatus("isIdle")
     setData(undefined)
     setLoyaltyGifts(undefined)
-
-    // some prep work: 
-    // filtering requested gifts along gift addresses already fetched. 
-    // additional note: gifts are fetched per address, not per each individual gift. Hence we do not need to check if an individual gift has already been loaded.  
-    if (requestedGifts) {
-      const giftAddresses = fetchedLoyaltyGifts.map(gift => gift.giftAddress); 
-      const giftsToFetch = requestedGifts.filter(gift => 
-        !giftAddresses.includes(gift.giftAddress)
-      )
-      getLoyaltyGiftAddresses(giftsToFetch) 
-    } else { 
-      // if there are no fetched gifts, fetch all, else :do nothing.  
-      fetchedLoyaltyGifts.length == 0 ? getLoyaltyGiftAddresses() : null  
-    }
+    getLoyaltyGiftAddresses(requestedGifts)
   }
 
   const updateAvailableVouchers = () => {
@@ -287,12 +276,10 @@ export const useLoyaltyGifts = () => {
       statusAtAvailableVouchers.current == "isSuccess" 
       ) {
         setStatus("isSuccess")
-
+        if (data) dispatch(saveLoyaltyGifts(data)) 
         setLoyaltyGifts(data)
-        dispatch(resetLoyaltyGifts(true))
-        if (data) dispatch(addLoyaltyGifts(data)) 
-
       }
+
     if (
       statusAtgiftAddress.current == "isLoading" ||
       statusAtUri.current == "isLoading" || 

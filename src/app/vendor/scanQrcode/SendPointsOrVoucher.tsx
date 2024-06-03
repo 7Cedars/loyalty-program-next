@@ -41,6 +41,11 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
     error: errorTransferVoucher 
   } = useWriteContract()
 
+  console.log("balances: ", balances)
+  console.log("bigint numpadNumber: ", BigInt(numpadNumber))
+  console.log("address: ", address)
+  console.log("qrData?.loyaltyCardAddress: ", qrData?.loyaltyCardAddress)
+
   useEffect(() => {
     !loyaltyGifts ? fetchGifts() : null  
   }, [loyaltyGifts])
@@ -82,27 +87,6 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
     if (isSuccess)  setHashTransaction(data)
   }, [isSuccess])
 
-  useEffect(() => {
-    if (
-      balances && 
-      numpadNumber >= balances?.points ) {
-          dispatch(notification({
-            id: "insuffienctPoints",
-            message: `You do not have enough points. Mint more on the Stats page.`, 
-            colour: "yellow",
-            isVisible: true
-          }))
-      }
-    if (
-      balances && 
-      numpadNumber < balances?.points ) {
-          dispatch(updateNotificationVisibility({
-            id: "insuffienctPoints",
-            isVisible: false
-          }))
-      }
-  }, [ , numpadNumber, balances])
-
   // data flow transfer voucher
   useEffect(() => {
     if (isSuccessTransferVoucher)  setHashVoucherTransferTransaction(dataTransferVoucher)
@@ -140,6 +124,7 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
     }
   }, [isErrorTransferVoucher])
 
+  
   return (
     <div className="flex flex-col justify-between justify-center pt-2 h-full w-full">
       <TitleText title = "Send Points or Voucher" size = {2} />
@@ -188,8 +173,15 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
       
           <div className="w-72 mt-3 flex justify-center"> 
 
-          { waitForTransaction.isLoading ? 
-          
+          { 
+          balances?.points == undefined || numpadNumber > balances?.points ? 
+            <Button appearance = {"grayEmpty"} disabled = {true} >
+              <div className="flex justify-center items-center">
+                Insufficient points 
+              </div>
+            </Button>
+          :
+          waitForTransaction.isLoading && balances?.points && numpadNumber <= balances?.points ? 
             <Button appearance = {"grayEmpty"} disabled = {true} >
               <div className="flex justify-center items-center">
                 <Image
@@ -202,7 +194,8 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
                 Waiting for confirmation... 
               </div>
             </Button>
-            : 
+          : 
+          balances?.points && numpadNumber <= balances?.points ?
             <Button appearance = {"greenEmpty"} onClick={() => writeContract({
                 abi: loyaltyProgramAbi,
                 address: parseEthAddress(selectedLoyaltyProgram?.programAddress),
@@ -210,12 +203,18 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
                 args: [ 
                   address, 
                   qrData?.loyaltyCardAddress, 
-                  0, 
-                  numpadNumber, 
+                  0n, 
+                  BigInt(numpadNumber), 
                   ""]
               })} >
               Transfer Points
             </Button>
+          :
+          <Button appearance = {"redEmpty"} disabled = {true} >
+            <div className="flex justify-center items-center">
+              Something went wrong 
+            </div>
+          </Button>
           }
           
           </div>

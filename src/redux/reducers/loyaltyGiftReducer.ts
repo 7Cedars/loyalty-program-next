@@ -13,17 +13,12 @@ export const fetchedLoyaltyGiftsSlice = createSlice({
   name: 'fetchedLoyaltyGifts',
   initialState: initialState,
   reducers: {
-    addLoyaltyGifts: (state, action: PayloadAction<LoyaltyGift[]>) => {
-      state.fetchedLoyaltyGifts.push(...action.payload)
-    }, 
-    resetLoyaltyGifts: (state, action: PayloadAction<boolean>) => {
-      if (action.payload === true) {
-        state.fetchedLoyaltyGifts = []
-      }
-    }, 
+    saveLoyaltyGifts: (state, action: PayloadAction<LoyaltyGift[]>) => {
+      state.fetchedLoyaltyGifts = action.payload
+    }
   }
 })
 
-export const { addLoyaltyGifts, resetLoyaltyGifts } = fetchedLoyaltyGiftsSlice.actions
+export const { saveLoyaltyGifts } = fetchedLoyaltyGiftsSlice.actions
 
 export default fetchedLoyaltyGiftsSlice.reducer
