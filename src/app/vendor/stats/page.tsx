@@ -29,7 +29,6 @@ export default function Page() {
   const publicClient = usePublicClient(); 
   const { address, chain } = useAccount() 
 
-
   const [ transferSingleTo, setTransferSingleTo ] = useState<Transaction[]>([]) 
   const [ transferSingleFrom, setTransferSingleFrom ] = useState<Transaction[]>([])  
   const [ transferBatchTo, setTransferBatchToTo ] = useState<Transaction[]>([]) 
@@ -40,18 +39,6 @@ export default function Page() {
   const statusTransferBatchTo = useRef<Status>("isIdle") 
   const statusBlockData= useRef<Status>("isIdle") 
   const [status, setStatus] = useState<Status>("isIdle") 
-
-  console.log({
-    statusTransferSingleTo: statusTransferSingleTo,
-    statusTransferSingleFrom: statusTransferSingleFrom, 
-    statusTransferBatchTo: statusTransferBatchTo, 
-    statusBlockData: statusBlockData
-  })
-
-  console.log("balances: ", balances)
-
-
-
 
   const getTransferSingleTo = async () => {
     statusTransferSingleTo.current = "isLoading"

@@ -41,11 +41,6 @@ export default function SendPoints({qrData, setData}: SendPointsOrVoucherProps) 
     error: errorTransferVoucher 
   } = useWriteContract()
 
-  console.log("balances: ", balances)
-  console.log("bigint numpadNumber: ", BigInt(numpadNumber))
-  console.log("address: ", address)
-  console.log("qrData?.loyaltyCardAddress: ", qrData?.loyaltyCardAddress)
-
   useEffect(() => {
     !loyaltyGifts ? fetchGifts() : null  
   }, [loyaltyGifts])

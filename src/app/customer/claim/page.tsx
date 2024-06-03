@@ -33,27 +33,15 @@ export default function Page() {
   const publicClient = usePublicClient()
   const { status: statusLoyaltyGifts, loyaltyGifts, fetchGifts } = useLoyaltyGifts()
   const { fetchedLoyaltyGifts } = useAppSelector(state => state.loyaltyGifts )
-
-  console.log("loyaltyGifts @claimGift" , loyaltyGifts)
-
   const statusAtAddedGifts = useRef<Status>("isIdle") 
   const statusAtClaimableGifts = useRef<Status>("isIdle") 
   const status = useRef<Status>("isIdle") 
-
   const [data, setData] = useState<LoyaltyGift[]>()
-  
   const [ selectedGift, setSelectedToken ] = useState<setSelectedGiftProps | undefined>() 
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram)
   const { selectedLoyaltyCard } = useAppSelector(state => state.selectedLoyaltyCard )
   const polling = useRef<boolean>(false)
   const { tokenReceived, latestReceived, pointsReceived, pointsSent } = useLatestCustomerTransaction(polling.current) 
-
-  console.log("status.current:", status.current)
-  console.log("statusAtAddedGifts.current:", statusAtAddedGifts.current) 
-  console.log("statusAtClaimableGifts.current:", statusAtClaimableGifts.current)
-  console.log("fetchedLoyaltyGifts:", fetchedLoyaltyGifts)
-  console.log("statusLoyaltyGifts: ", statusLoyaltyGifts)
-  console.log("data:", data)
 
   /////////////////////////////////// 
   ///     Fetch Card Balance      ///

@@ -31,7 +31,6 @@ export default function Home() {
 
   const handleDeployRequest = async (data: DeployRequestProps) => {
     setDeployRequest(data)
-    console.log("data @deploy: ", data)
   }
 
   useEffect(() => {

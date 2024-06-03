@@ -38,10 +38,6 @@ export default function Page() {
   const {chain} = useAccount() 
   const statusGiftSelection = useRef<Status>()
 
-  console.log("fetchedLoyaltyGifts: ", fetchedLoyaltyGifts)
-  console.log("statusGiftSelection: ", statusGiftSelection)
-  console.log("loyaltyGiftContracts: ", loyaltyGiftContracts)
-
   const getGiftSelection = async () => {
     statusGiftSelection.current = "isLoading"
       

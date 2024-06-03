@@ -22,17 +22,8 @@ export const useVendorAccount = () => {
   const statusFetchBalances = useRef<Status>("isIdle") 
   const [status, setStatus] = useState<Status>("isIdle") 
 
-  // console.log({
-  //   statusMintedCards: statusMintedCards,
-  //   statusFetchBalances: statusFetchBalances, 
-  //   mintedCards: mintedCards, 
-  //   balances: balances,
-  // })
-
   /// Fetch number of Cards Minted ///  
   const fetchMintedCards = async () => {
-    console.log("fetchMintedCards CALLED")
-
     if (selectedLoyaltyProgram && publicClient) {
       statusMintedCards.current = "isLoading"
       try {
@@ -44,7 +35,6 @@ export const useVendorAccount = () => {
         });
 
         const mintedCardsData = Number(parseBigInt(cardData))
-        console.log("mintedCardsData: ", mintedCardsData)
         setMintedCards(mintedCardsData)
 
         statusMintedCards.current = "isSuccess"
@@ -55,12 +45,8 @@ export const useVendorAccount = () => {
     }
   }
 
-  /// Fetch Balance of points [0] and all cards minted - upload to Redux /// 
+  /// Fetch Balance of points [0] and all cards minted & upload to Redux /// 
   const fetchBalances = async () => {
-    console.log("fetchBalances CALLED")
-    console.log("fetchBalances selectedLoyaltyProgram: ", selectedLoyaltyProgram )
-    console.log("fetchBalances mintedCards: ", mintedCards )
-
     if (selectedLoyaltyProgram && mintedCards != undefined) {
       statusFetchBalances.current = "isLoading"
       const tokenIds = Array.from({length: mintedCards + 1}, (_, index) => index);
@@ -93,7 +79,6 @@ export const useVendorAccount = () => {
   }
 
   const setProgramBalances = () => {
-    console.log("setProgramBalances CALLED")
     if (selectedLoyaltyProgram && selectedLoyaltyProgram.balances) {
       const cards = selectedLoyaltyProgram.balances.slice(1,)
       const numberOfCards: number = cards.reduce(

@@ -36,17 +36,6 @@ export const useLoyaltyGifts = () => {
   const [giftsRequested, setGiftsRequested] = useState<LoyaltyGift[] | undefined>()
   const [loyaltyGifts, setLoyaltyGifts] = useState<LoyaltyGift[] | undefined>() 
 
-  console.log("loyaltyGifts: ", loyaltyGifts)
-  console.log("status: ", status)
-  console.log("giftsRequested: ", giftsRequested)
-  console.log("status extended: ", {
-    statusAtgiftAddress: statusAtgiftAddress, 
-    statusAtUri: statusAtUri, 
-    statusAtMetadata: statusAtMetadata, 
-    statusAtGetAdditionalInfo: statusAtGetAdditionalInfo, 
-    statusAtAvailableVouchers: statusAtAvailableVouchers
-  })
-
   const fetchGifts = (requestedGifts?: LoyaltyGift[] ) => {
     setStatus("isIdle")
     setData(undefined)
