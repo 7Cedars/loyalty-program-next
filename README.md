@@ -22,7 +22,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/7Cedars/loyalty-program-next"> 
-    <img src="public/images/iconLoyaltyProgram.svg" alt="Logo" width="80" height="80">
+    <img src="public/images/iconLoyaltyProgram.svg" alt="Logo" width="200" height="200">
   </a>
 
 <h3 align="center">Loyal: A Web3 Customer Engagement App</h3>
@@ -196,7 +196,7 @@ GitHub profile [https://github.com/7Cedars](https://github.com/7Cedars)
 
 * I built this app after completing Matti Luukkainen's amazing [Fullstack open](https://fullstackopen.com/en/) course at the University of Helsinki. It comes highly recommended for anyone interested to learn React, Javascrip, Redux, Typescript - and a whole lot more of what is needed to become a fullstack dev. 
 * I took the template for the readme file from [Drew Othneil](https://github.com/othneildrew/Best-README-Template/blob/master/README.md?plain=1). 
-* And a special thanks should go out to [SpeedRunEthereum](https://speedrunethereum.com/) and [LearnWeb3](https://learnweb3.io/) for providing the first introductions to solidity coding. 
+* And a special thanks should go out to [SpeedRunEthereum](https://speedrunethereum.com/) and [LearnWeb3](https://learnweb3.io/) for providing the first introductions to solidity. 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
