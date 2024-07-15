@@ -7,16 +7,21 @@ import { Abi } from "viem"
 
 // export const loyaltyProgramAbi: Abi = JSON.parse(JSON.stringify(loyaltyProgram.abi)) // why?! why, why, why? It is NOT possible to directly import it. 
 // export const loyaltyGiftAbi: Abi  = JSON.parse(JSON.stringify(loyaltyGift.abi)) 
-// export const ER C6551AccountAbi: Abi = JSON.parse(JSON.stringify(erc6551Account.abi)) 
+// export const ERC6551AccountAbi: Abi = JSON.parse(JSON.stringify(erc6551Account.abi)) 
  
 // console.log("loyaltyGiftAbi:", loyaltyGiftAbi)
 
 export const loyaltyProgramAbi: Abi = [ {
   "type": "constructor",
   "inputs": [
-    { "name": "_uri", "type": "string", "internalType": "string" },
+    { "name": "_uriProgram", "type": "string", "internalType": "string" },
     { "name": "_name", "type": "string", "internalType": "string" },
-    { "name": "_version", "type": "string", "internalType": "string" }
+    { "name": "_version", "type": "string", "internalType": "string" },
+    {
+      "name": "_erc6551_account",
+      "type": "address",
+      "internalType": "address"
+    }
   ],
   "stateMutability": "nonpayable"
 },
@@ -154,7 +159,7 @@ export const loyaltyProgramAbi: Abi = [ {
       "internalType": "uint256"
     }
   ],
-  "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+  "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
   "stateMutability": "view"
 },
 {
@@ -172,7 +177,7 @@ export const loyaltyProgramAbi: Abi = [ {
       "internalType": "uint256"
     }
   ],
-  "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+  "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
   "stateMutability": "view"
 },
 {
@@ -457,7 +462,7 @@ export const loyaltyProgramAbi: Abi = [ {
     {
       "name": "loyaltyGiftId",
       "type": "uint256",
-      "indexed": false,
+      "indexed": true,
       "internalType": "uint256"
     }
   ],
@@ -515,6 +520,19 @@ export const loyaltyProgramAbi: Abi = [ {
 },
 {
   "type": "event",
+  "name": "LoyaltyCardsMinted",
+  "inputs": [
+    {
+      "name": "numberOfCards",
+      "type": "uint256",
+      "indexed": false,
+      "internalType": "uint256"
+    }
+  ],
+  "anonymous": false
+},
+{
+  "type": "event",
   "name": "RemovedLoyaltyGiftClaimable",
   "inputs": [
     {
@@ -526,7 +544,7 @@ export const loyaltyProgramAbi: Abi = [ {
     {
       "name": "loyaltyGiftId",
       "type": "uint256",
-      "indexed": false,
+      "indexed": true,
       "internalType": "uint256"
     }
   ],
@@ -545,7 +563,7 @@ export const loyaltyProgramAbi: Abi = [ {
     {
       "name": "loyaltyGiftId",
       "type": "uint256",
-      "indexed": false,
+      "indexed": true,
       "internalType": "uint256"
     }
   ],
@@ -748,9 +766,20 @@ export const loyaltyProgramAbi: Abi = [ {
 { "type": "error", "name": "LoyaltyProgram__TransferDenied", "inputs": [] },
 {
   "type": "error",
+  "name": "LoyaltyProgram__VoucherNotOwnedBySender",
+  "inputs": []
+},
+{
+  "type": "error",
   "name": "LoyaltyProgram__VoucherTransferInvalid",
   "inputs": []
-}
+},
+{
+  "type": "error",
+  "name": "LoyaltyProgram__ZeroCheckFailed",
+  "inputs": []
+},
+{ "type": "error", "name": "ReentrancyGuardReentrantCall", "inputs": [] }
 ]
 
 //////////////////////////////////
@@ -1210,108 +1239,101 @@ export const loyaltyGiftAbi: Abi = [
 
 export const ERC6551AccountAbi: Abi = [
   { "type": "receive", "stateMutability": "payable" },
-  {
-    "type": "function",
-    "name": "execute",
-    "inputs": [
-      { "name": "to", "type": "address", "internalType": "address" },
-      { "name": "value", "type": "uint256", "internalType": "uint256" },
-      { "name": "data", "type": "bytes", "internalType": "bytes" },
-      { "name": "operation", "type": "uint8", "internalType": "uint8" }
-    ],
-    "outputs": [
-      { "name": "result", "type": "bytes", "internalType": "bytes" }
-    ],
-    "stateMutability": "payable"
-  },
-  {
-    "type": "function",
-    "name": "isValidSignature",
-    "inputs": [
-      { "name": "hash", "type": "bytes32", "internalType": "bytes32" },
-      { "name": "signature", "type": "bytes", "internalType": "bytes" }
-    ],
-    "outputs": [
-      { "name": "magicValue", "type": "bytes4", "internalType": "bytes4" }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "isValidSigner",
-    "inputs": [
-      { "name": "signer", "type": "address", "internalType": "address" },
-      { "name": "", "type": "bytes", "internalType": "bytes" }
-    ],
-    "outputs": [{ "name": "", "type": "bytes4", "internalType": "bytes4" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "onERC1155BatchReceived",
-    "inputs": [
-      { "name": "", "type": "address", "internalType": "address" },
-      { "name": "", "type": "address", "internalType": "address" },
-      { "name": "", "type": "uint256[]", "internalType": "uint256[]" },
-      { "name": "", "type": "uint256[]", "internalType": "uint256[]" },
-      { "name": "", "type": "bytes", "internalType": "bytes" }
-    ],
-    "outputs": [{ "name": "", "type": "bytes4", "internalType": "bytes4" }],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "onERC1155Received",
-    "inputs": [
-      { "name": "", "type": "address", "internalType": "address" },
-      { "name": "", "type": "address", "internalType": "address" },
-      { "name": "", "type": "uint256", "internalType": "uint256" },
-      { "name": "", "type": "uint256", "internalType": "uint256" },
-      { "name": "", "type": "bytes", "internalType": "bytes" }
-    ],
-    "outputs": [{ "name": "", "type": "bytes4", "internalType": "bytes4" }],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "owner",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "owner1155",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "state",
-    "inputs": [],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "supportsInterface",
-    "inputs": [
-      { "name": "interfaceId", "type": "bytes4", "internalType": "bytes4" }
-    ],
-    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
-    "stateMutability": "pure"
-  },
-  {
-    "type": "function",
-    "name": "token",
-    "inputs": [],
-    "outputs": [
-      { "name": "", "type": "uint256", "internalType": "uint256" },
-      { "name": "", "type": "address", "internalType": "address" },
-      { "name": "", "type": "uint256", "internalType": "uint256" }
-    ],
-    "stateMutability": "view"
-  }
+    {
+      "type": "function",
+      "name": "execute",
+      "inputs": [
+        { "name": "to", "type": "address", "internalType": "address" },
+        { "name": "value", "type": "uint256", "internalType": "uint256" },
+        { "name": "data", "type": "bytes", "internalType": "bytes" },
+        { "name": "operation", "type": "uint8", "internalType": "uint8" }
+      ],
+      "outputs": [
+        { "name": "result", "type": "bytes", "internalType": "bytes" }
+      ],
+      "stateMutability": "payable"
+    },
+    {
+      "type": "function",
+      "name": "isValidSignature",
+      "inputs": [
+        { "name": "hash", "type": "bytes32", "internalType": "bytes32" },
+        { "name": "signature", "type": "bytes", "internalType": "bytes" }
+      ],
+      "outputs": [
+        { "name": "magicValue", "type": "bytes4", "internalType": "bytes4" }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "isValidSigner",
+      "inputs": [
+        { "name": "signer", "type": "address", "internalType": "address" },
+        { "name": "", "type": "bytes", "internalType": "bytes" }
+      ],
+      "outputs": [{ "name": "", "type": "bytes4", "internalType": "bytes4" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "onERC1155BatchReceived",
+      "inputs": [
+        { "name": "", "type": "address", "internalType": "address" },
+        { "name": "", "type": "address", "internalType": "address" },
+        { "name": "", "type": "uint256[]", "internalType": "uint256[]" },
+        { "name": "", "type": "uint256[]", "internalType": "uint256[]" },
+        { "name": "", "type": "bytes", "internalType": "bytes" }
+      ],
+      "outputs": [{ "name": "", "type": "bytes4", "internalType": "bytes4" }],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "onERC1155Received",
+      "inputs": [
+        { "name": "", "type": "address", "internalType": "address" },
+        { "name": "", "type": "address", "internalType": "address" },
+        { "name": "", "type": "uint256", "internalType": "uint256" },
+        { "name": "", "type": "uint256", "internalType": "uint256" },
+        { "name": "", "type": "bytes", "internalType": "bytes" }
+      ],
+      "outputs": [{ "name": "", "type": "bytes4", "internalType": "bytes4" }],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "state",
+      "inputs": [],
+      "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "supportsInterface",
+      "inputs": [
+        { "name": "interfaceId", "type": "bytes4", "internalType": "bytes4" }
+      ],
+      "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+      "stateMutability": "pure"
+    },
+    {
+      "type": "function",
+      "name": "token",
+      "inputs": [],
+      "outputs": [
+        { "name": "", "type": "uint256", "internalType": "uint256" },
+        { "name": "", "type": "address", "internalType": "address" },
+        { "name": "", "type": "uint256", "internalType": "uint256" }
+      ],
+      "stateMutability": "view"
+    }
 ]
   

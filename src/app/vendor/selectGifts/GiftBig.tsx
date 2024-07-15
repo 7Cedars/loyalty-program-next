@@ -113,14 +113,14 @@ export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: 
             <div className="text-center text-lg text-slate-500 pb-4"> 
               {gift.metadata.description}
             </div>
-              {gift.isClaimable == 1n ? 
+              {gift.isClaimable == 1 ? 
                 <div className="text-center text-lg"> 
                   {`Cost: ${gift.cost} points`}
                 </div> 
                 :
                 null
               }
-              {gift.hasAdditionalRequirements == 1n ? 
+              {gift.hasAdditionalRequirements == 1 ? 
                 <div className="text-center text-lg"> 
                   {`Additional requirements: ${gift.metadata.attributes[0].value}`}
                 </div> 
@@ -134,7 +134,7 @@ export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: 
               Gift Id: {gift.giftId}
             </div>
           </div>
-          {gift.isVoucher == 1n ? 
+          {gift.isVoucher == 1 ? 
             <div className="text-center text-lg"> 
               {`${gift.availableVouchers} remaining vouchers.`}
             </div>
@@ -167,7 +167,7 @@ export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: 
         </div> 
         :
         <div className="grid grid-col-1 gap-0 w-full">
-          { gift && gift.isVoucher == 1n ? 
+          { gift && gift.isVoucher == 1 ? 
             <div className="px-3 flex w-full"> 
               <NumLine onClick = {(arg0) => mintVouchers({
                 abi: loyaltyProgramAbi,
@@ -179,7 +179,7 @@ export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: 
             </div>
             : null
           }
-          { gift && isDisabled && gift.isClaimable == 1n ? 
+          { gift && isDisabled && gift.isClaimable == 1 ? 
             <div className="px-3 pt-6 flex "> 
               <Button appearance = {"greenEmpty"} onClick={() => writeContract({ 
                   abi: loyaltyProgramAbi,
@@ -191,7 +191,7 @@ export default function GiftBig({allGifts, selectedGift, disabled, updateGift}: 
               </Button>
             </div> 
             : 
-            gift && gift.isClaimable == 1n ? 
+            gift && gift.isClaimable == 1 ? 
             <div className="px-3 flex "> 
               <Button appearance = {"redEmpty"} onClick={() => writeContract({ 
                   abi: loyaltyProgramAbi,

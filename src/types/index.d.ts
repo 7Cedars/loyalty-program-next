@@ -76,10 +76,10 @@ export type LoyaltyGift = {
   uri?: string ;
   metadata?: Metadata ;
   issuer?: EthAddress; 
-  isClaimable?: BigInt;
-  isVoucher?: BigInt; 
-  cost?: BigInt; 
-  hasAdditionalRequirements?: BigInt; 
+  isClaimable?: number;
+  isVoucher?: number; 
+  cost?: number; 
+  hasAdditionalRequirements?: number; 
   availableVouchers?: number;  
 } 
 

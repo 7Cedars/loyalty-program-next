@@ -29,33 +29,6 @@ export default function Page() {
   const publicClient = usePublicClient(); 
   const { address, chain } = useAccount() 
 
-  const loyaltyProgram = {
-    address: selectedLoyaltyProgram?.programAddress,
-    abi: loyaltyProgramAbi,
-  } as const
-
-  const result = useReadContracts({
-    contracts: [
-      {
-        ...loyaltyProgram,
-        functionName: 'TransferSingle',
-        args: [{from: parseEthAddress(address)}],
-      },
-      {
-        ...loyaltyProgram,
-        functionName: 'TransferSingle',
-        args: [{to: parseEthAddress(address)}],
-      },
-      {
-        ...loyaltyProgram,
-        functionName: 'TransferBatch',
-        args: [{to: parseEthAddress(address)}],
-      }
-    ]
-  })
-
-  console.log("RESULT STAT DATA FETCH: ", result)
-  
   const [ transferSingleTo, setTransferSingleTo ] = useState<Transaction[]>([]) 
   const [ transferSingleFrom, setTransferSingleFrom ] = useState<Transaction[]>([])  
   const [ transferBatchTo, setTransferBatchToTo ] = useState<Transaction[]>([]) 
@@ -66,15 +39,6 @@ export default function Page() {
   const statusTransferBatchTo = useRef<Status>("isIdle") 
   const statusBlockData= useRef<Status>("isIdle") 
   const [status, setStatus] = useState<Status>("isIdle") 
-
-  console.log({
-    statusTransferSingleTo: statusTransferSingleTo,
-    statusTransferSingleFrom: statusTransferSingleFrom, 
-    statusTransferBatchTo: statusTransferBatchTo, 
-    statusBlockData: statusBlockData
-  })
-
-  console.log("balances: ", balances)
 
   const getTransferSingleTo = async () => {
     statusTransferSingleTo.current = "isLoading"

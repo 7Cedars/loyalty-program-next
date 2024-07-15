@@ -3,17 +3,14 @@
 import loyaltyProgramsData from "../../public/exampleLoyaltyPrograms.json"; // not that this is a very basic json file data format - can be used in many other cases as well. 
 import { TitleText } from "./ui/StandardisedFonts";
 import Image from "next/image";
-import { useAccount, useWaitForTransactionReceipt, useSwitchChain } from "wagmi";
-import { optimismSepolia, foundry, sepolia, baseSepolia, arbitrumSepolia } from 'viem/chains'
+import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { loyaltyProgramBytecode } from "@/context/bytecode";
 import { useCallback, useEffect, useState } from "react";
 import { Hex } from "viem";
-import { EthAddress } from "@/types";
 import { Button } from "./ui/Button";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useWalletClient } from "wagmi";
-import { parseEthAddress } from "./utils/parsers";
 import { SUPPORTED_CHAINS } from "@/context/constants";
 
 type DeployRequestProps = { 
@@ -34,7 +31,6 @@ export default function Home() {
 
   const handleDeployRequest = async (data: DeployRequestProps) => {
     setDeployRequest(data)
-    console.log("data @deploy: ", data)
   }
 
   useEffect(() => {
@@ -78,6 +74,16 @@ export default function Home() {
 
   return (
     <main className="grid grid-cols-1 w-full h-fit overflow-y-auto shadow-2xl bg-slate-100 justify-items-center p-4">
+      <div className={`h-fit grid grid-cols-1 content-center justify-items-center w-full max-w-4xl md:w-4/5 bg-red-300 shadow-2xl rounded-lg py-2 px-8 m-4`}>
+        <div className={`text-center text-red-800 text-lg`}>
+          This is a Minimal Viable Product Demonstration
+        </div> 
+        <div className={`text-center text-red-800 text-sm md:px-12 px-2`}>
+          Its UI/UX is imperfect, the app is not optimised & may break at any time. I used this app as an educational project, so please be kind :)     
+        </div> 
+
+      </div>
+
         <div className={`h-[80vh] grid grid-cols-1 sm:grid-cols-2 content-center justify-items-center w-full max-w-4xl md:w-4/5 bg-slate-300 shadow-2xl rounded-t-lg p-8`}>
           <div className="grid grid-cols-1 content-center"> 
             <div className="grid grid-cols-1 pb-2 px-2">
@@ -155,7 +161,7 @@ export default function Home() {
             <div className="m-3">
               <div className="font-bold text-slate-300 text-sm"> Deployable at any testnet with a ERC-6551 registry (v.0.3.1). </div>
               {/* FILL OUT TEST NETS HERE  */}
-              <div className="text-slate-400 text-sm"> This frontend runs on the Polygon Mumbai testnet. </div>      
+              <div className="text-slate-400 text-sm"> This frontend runs on the Optimism Sepolia testnet. </div>      
             </div> 
             <div className="m-3">
               <div className="font-bold text-slate-300 text-sm"> Want to know more? </div>

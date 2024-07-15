@@ -26,8 +26,6 @@ export const NotificationDialog = () => {
   const { open, close } = useWeb3Modal()
   const dispatch = useAppDispatch()
 
-  console.log("notifications: ", notifications)
-
   const notificationToShow = notifications.findLast(notification => notification.isVisible !== false)
   let colour: "red" | "yellow" | "green" | "gray" | "invisible" = "gray"
   notificationToShow?.colour ? colour = notificationToShow?.colour : "gray" 

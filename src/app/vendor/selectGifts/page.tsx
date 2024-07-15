@@ -28,15 +28,15 @@ type setSelectedGiftProps = {
 }
 
 export default function Page() {
-  const { status: statusUseLoyaltyGifts, loyaltyGifts, loyaltyGiftContracts, fetchGifts, updateAvailableVouchers } = useLoyaltyGifts()
+  const { status: statusUseLoyaltyGifts, loyaltyGifts, fetchGifts, updateAvailableVouchers } = useLoyaltyGifts()
+  const { fetchedLoyaltyGifts } = useAppSelector(state => state.loyaltyGifts )
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
   const [ claimableLoyaltyGifts, setClaimableLoyaltyGifts ]  = useState<BigInt[] >([]) 
   const [selectedGift, setSelectedGift] = useState<setSelectedGiftProps | undefined>() 
+  const [loyaltyGiftContracts, setLoyaltyGiftContracts] = useState<EthAddress[] | undefined>() 
   const publicClient = usePublicClient()
   const {chain} = useAccount() 
   const statusGiftSelection = useRef<Status>()
-
-  console.log("claimableLoyaltyGifts: ", claimableLoyaltyGifts)
 
   const getGiftSelection = async () => {
     statusGiftSelection.current = "isLoading"
@@ -45,12 +45,12 @@ export default function Page() {
     let giftIsClaimable: BigInt[] = []
     
     if  (
-      loyaltyGifts != undefined && 
+      fetchedLoyaltyGifts.length != 0 && 
       publicClient && 
       chain
     )   
       try {
-        for await (item of loyaltyGifts) {
+        for await (item of fetchedLoyaltyGifts) {
           const isClaimableRaw: unknown = await publicClient.readContract({ 
             address: parseEthAddress(selectedLoyaltyProgram?.programAddress) , 
             abi: loyaltyProgramAbi,
@@ -69,12 +69,17 @@ export default function Page() {
   }
   
   useEffect(() => {
-    if (!loyaltyGifts) fetchGifts()
-    if (loyaltyGifts) getGiftSelection() 
-  }, [, selectedGift, loyaltyGifts])
+    if (fetchedLoyaltyGifts.length == 0) { 
+      fetchGifts() 
+    } else {
+      getGiftSelection() 
+      const dataContracts = Array.from(new Set(fetchedLoyaltyGifts.map(item => item.giftAddress))) 
+      setLoyaltyGiftContracts(dataContracts)
+
+    }
+  }, [ , selectedGift, loyaltyGifts, fetchedLoyaltyGifts])
 
   const handleReturnToMainPage = () => {
-    updateAvailableVouchers() 
     setSelectedGift(undefined)
   }
 
@@ -83,7 +88,7 @@ export default function Page() {
         <div>
         <TitleText title = "Select Loyalty Gifts" subtitle="View and select gifts that customers can claim with their loyalty points." size={2} />
        </div>
-      { selectedGift && loyaltyGifts? 
+      { selectedGift && fetchedLoyaltyGifts ? 
         <div className="grid grid-cols-1 content-start border border-gray-700 rounded-lg m-3">
           <button 
             className="text-slate-800 dark:text-slate-200 font-bold p-3"
@@ -97,7 +102,7 @@ export default function Page() {
           </button>
 
           <GiftBig 
-            allGifts= {loyaltyGifts} 
+            allGifts= {fetchedLoyaltyGifts} 
             selectedGift={selectedGift.selectedGift} 
             disabled = {selectedGift.disabled} 
             updateGift = {() => updateAvailableVouchers() } 
@@ -118,7 +123,7 @@ export default function Page() {
                   src={"/images/loading2.svg"}
                   alt="Loading icon"
                 />
-                { statusUseLoyaltyGifts == "isLoading" ? 
+                { statusUseLoyaltyGifts == "isLoading" && !fetchedLoyaltyGifts ? 
                     <div className="text-center text-slate-500 mt-6"> 
                       Retrieving gift contracts deployed on chain...   
                     </div>  
@@ -133,9 +138,8 @@ export default function Page() {
               </div>
             </div>
           : 
-          statusUseLoyaltyGifts == "isSuccess" &&  
-          statusGiftSelection.current == "isSuccess" && 
-          loyaltyGifts && 
+          statusGiftSelection.current == "isSuccess" &&
+          fetchedLoyaltyGifts.length > 0 &&  
           loyaltyGiftContracts
           ?
           <>
@@ -145,7 +149,7 @@ export default function Page() {
               {claimableLoyaltyGifts.indexOf(1n) != -1 ? 
                 <div className="flex flex-row overflow-x-auto"> 
                   {claimableLoyaltyGifts.map((claimable: BigInt, i: number) => {
-                      const gift = loyaltyGifts[i] 
+                      const gift = fetchedLoyaltyGifts[i] 
                       console.log("claimable: ", claimable )
                       return (
                           claimable == 1n ? 
@@ -179,7 +183,7 @@ export default function Page() {
                   </div> 
 
                   <div className="flex flex-row overflow-x-auto"> 
-                  {loyaltyGifts.map((gift: LoyaltyGift, i: number) =>
+                  {fetchedLoyaltyGifts.map((gift: LoyaltyGift, i: number) =>
                     gift.giftAddress == contractAddress ? 
                       <div key = {`${gift.giftAddress}:${gift.giftId}`} > 
                         <GiftSmall gift = {gift} disabled = { claimableLoyaltyGifts[i] == 0n} onClick={() => setSelectedGift({selectedGift: {

@@ -1,4 +1,4 @@
-import {  EthAddress, LoyaltyGift, Status } from "@/types";
+import { EthAddress, LoyaltyGift, Status } from "@/types";
 import { readContracts } from '@wagmi/core'
 import { wagmiConfig } from '../../../config'
 import { useEffect, useRef, useState } from "react";
@@ -11,14 +11,20 @@ import {
   parseTokenContractLogs,
   parseEthAddress,
   parseBigInt,
+  parseBigIntToNumber
 } from "@/app/utils/parsers";
 import { SUPPORTED_CHAINS, VERSION_GIFTS } from "@/context/constants";  
 import { useAppSelector } from "@/redux/hooks";
+import { saveLoyaltyGifts } from "@/redux/reducers/loyaltyGiftReducer";
+import { useDispatch } from "react-redux";
 
 export const useLoyaltyGifts = () => {
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
+  const { fetchedLoyaltyGifts } = useAppSelector(state => state.loyaltyGifts )
+
   const publicClient = usePublicClient()
   const {chain} = useAccount()  
+  const dispatch = useDispatch() 
 
   const [ status, setStatus ] = useState<Status>("isIdle")
   const statusAtgiftAddress = useRef<Status>("isIdle") 
@@ -27,11 +33,9 @@ export const useLoyaltyGifts = () => {
   const statusAtGetAdditionalInfo = useRef<Status>("isIdle")
   const statusAtAvailableVouchers = useRef<Status>("isIdle") 
   const [data, setData] = useState<LoyaltyGift[] | undefined>() 
+  const [giftsRequested, setGiftsRequested] = useState<LoyaltyGift[] | undefined>()
   const [loyaltyGifts, setLoyaltyGifts] = useState<LoyaltyGift[] | undefined>() 
-  const [loyaltyGiftContracts, setLoyaltyGiftContracts] = useState<EthAddress[] | undefined>() 
 
-  console.log("loyaltyGifts: ", loyaltyGifts)
-  
   const fetchGifts = (requestedGifts?: LoyaltyGift[] ) => {
     setStatus("isIdle")
     setData(undefined)
@@ -176,10 +180,10 @@ export const useLoyaltyGifts = () => {
             )
               loyaltyGiftAdditionalInfo.push({
                 ...item, 
-                isClaimable: parseBigInt(data[0].result), 
-                cost: parseBigInt(data[1].result), 
-                hasAdditionalRequirements: parseBigInt(data[2].result), 
-                isVoucher: parseBigInt(data[3].result)
+                isClaimable: parseBigIntToNumber(data[0].result), 
+                cost: parseBigIntToNumber(data[1].result), 
+                hasAdditionalRequirements: parseBigIntToNumber(data[2].result), 
+                isVoucher: parseBigIntToNumber(data[3].result)
               })
         } 
         statusAtGetAdditionalInfo.current = "isSuccess"
@@ -212,6 +216,8 @@ export const useLoyaltyGifts = () => {
             loyaltyGiftsAvailableVouchers.push({...item, availableVouchers: Number(parseBigInt(availableVouchers))})
         } 
         statusAtAvailableVouchers.current = "isSuccess"
+        
+        // resetting redux.
         setData(loyaltyGiftsAvailableVouchers)
       } catch (error) {
         statusAtAvailableVouchers.current = "isError" 
@@ -259,12 +265,10 @@ export const useLoyaltyGifts = () => {
       statusAtAvailableVouchers.current == "isSuccess" 
       ) {
         setStatus("isSuccess")
+        if (data) dispatch(saveLoyaltyGifts(data)) 
         setLoyaltyGifts(data)
-
-        const dataContracts = Array.from(new Set(data?.map(item => item.giftAddress))) 
-        setLoyaltyGiftContracts(dataContracts)
-
       }
+
     if (
       statusAtgiftAddress.current == "isLoading" ||
       statusAtUri.current == "isLoading" || 
@@ -275,5 +279,9 @@ export const useLoyaltyGifts = () => {
       }
   }, [ data ])
 
-  return {status, loyaltyGifts, loyaltyGiftContracts, fetchGifts, updateAvailableVouchers}
+  return {status, loyaltyGifts, fetchGifts, updateAvailableVouchers}
+}
+
+function dispatch(arg0: any) {
+  throw new Error("Function not implemented.");
 }

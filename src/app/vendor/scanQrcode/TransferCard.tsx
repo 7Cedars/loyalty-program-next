@@ -104,28 +104,6 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
     setCustomerAddress(qrData?.customerAddress)
   }, [, qrData?.customerAddress, transferSingles])
 
-  useEffect(() => {
-    getTransferSingleData()
-      if (
-        balances && 
-        balances?.cards == 0 ) {
-            dispatch(notification({
-              id: "insufficientCards",
-              message: `You do not have any Loyalty Cards. Mint some on the Stats page.`, 
-              colour: "yellow",
-              isVisible: true
-            }))
-        }
-      if (
-        balances && 
-        balances?.cards < 0 ) {
-            dispatch(updateNotificationVisibility({
-              id: "insufficientCards",
-              isVisible: false
-            }))
-        }
-    }, [ , balances])
-
   return (
     <div className=" w-full grid grid-cols-1 gap-1 overflow-x-auto">
 
@@ -181,7 +159,16 @@ export default function TransferCard({qrData, setData}: RedeemTokenProps)  {
             <div className="grid grid-cols-1 content-between ">
               {`Card requested by ${customerAddress.slice(0,6)}...${customerAddress.slice(36,42) }`}
               
-              { isLoading ? 
+              { balances?.cards == 0 ? 
+                <div className="p-3 flex"> 
+                <Button appearance = {"grayEmpty"} disabled >
+                  <div className="flex justify-center items-center">
+                    No loyalty cards
+                  </div>
+                </Button>
+                </div> 
+                : 
+                isLoading ? 
                 <div className="p-3 flex"> 
                   <Button appearance = {"grayEmpty"} disabled >
                     <div className="flex justify-center items-center">
