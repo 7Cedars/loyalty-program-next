@@ -133,7 +133,9 @@ export default function Page() {
                       Retrieving your gift selection...   
                     </div>  
                   :
-                  null 
+                  <div className="text-center text-slate-500 mt-6"> 
+                      Loading... (this can take up to a minute)   
+                  </div>  
                 }
               </div>
             </div>
