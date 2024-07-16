@@ -12,11 +12,14 @@ import { Button } from "./ui/Button";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useWalletClient } from "wagmi";
 import { SUPPORTED_CHAINS } from "@/context/constants";
+import { parseEthAddress } from "./utils/parsers";
+import { EthAddress } from "@/types";
 
 type DeployRequestProps = { 
   uri: string; 
   name: string; 
   version: string; 
+  address6551: EthAddress; 
 }
 
 export default function Home() {
@@ -52,7 +55,8 @@ export default function Home() {
         args: [
           deployRequest.uri,
           deployRequest.name,
-          deployRequest.version
+          deployRequest.version, 
+          deployRequest.address6551
         ],
         bytecode: loyaltyProgramBytecode,
       })
@@ -169,6 +173,7 @@ export default function Home() {
             </div>
         </div>
         </div>
+
         <div className={`h-fit grid grid-cols-1 md:grid-cols-2 w-full max-w-4xl h-full md:w-4/5 bg-slate-300 shadow-2xl p-8`}>
           <div className="cols-span-1 md:col-span-2">
             <div className="grid grid-cols-1 pb-2 px-2">
@@ -250,7 +255,7 @@ export default function Home() {
                   null
                 }
                 </div>
-              </div> 
+              </div>
 
               <div className='h-fit flex justify-center transition transition-all ease-in-out delay-150'>
                 <div className=" flex justify-center w-2/3 "> 
@@ -269,7 +274,8 @@ export default function Home() {
                         onClick={() => handleDeployRequest({
                           uri: loyaltyProgramsData.items[selectIndex -1].uri,  
                           name: loyaltyProgramsData.items[selectIndex -1].title,  
-                          version: "alpha.2"
+                          version: "alpha.3",
+                          address6551: parseEthAddress(currentChain.account6551Address)
                         })}  
                       > 
                       Deploy
@@ -296,7 +302,7 @@ export default function Home() {
                 }
                 </div>
               </div>
-          </div>
+            </div> 
 
           <div className={`h-fit grid grid-cols-1 md:grid-cols-2 w-full max-w-4xl h-full md:w-4/5 bg-slate-300 shadow-2xl p-8 rounded-b-lg justify-items-center`}>
               <div className="grid grid-cols-1 pb-2 px-20 cols-span-1 md:col-span-2">
