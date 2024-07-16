@@ -9,7 +9,7 @@ import { useUrlProgramAddress } from "@/app/hooks/useUrl";
 import { loyaltyProgramAbi } from "@/context/abi";
 import { Log } from "viem"
 import { useAccount, usePublicClient } from 'wagmi'
-import { parseBigInt, parseEthAddress, parseLoyaltyGiftLogs} from "@/app/utils/parsers";
+import { parseBigInt, parseEthAddress, parseLoyaltyGiftLogs, parseBoolean} from "@/app/utils/parsers";
 import { SUPPORTED_CHAINS, WHITELIST_TOKEN_ISSUERS_FOUNDRY } from "@/context/constants";
 import { useLoyaltyGifts } from "@/app/hooks/useLoyaltyGifts";
 import Image from "next/image";
@@ -31,7 +31,7 @@ export default function Page() {
   const { status: statusUseLoyaltyGifts, loyaltyGifts, fetchGifts, updateAvailableVouchers } = useLoyaltyGifts()
   const { fetchedLoyaltyGifts } = useAppSelector(state => state.loyaltyGifts )
   const { selectedLoyaltyProgram } = useAppSelector(state => state.selectedLoyaltyProgram )
-  const [ claimableLoyaltyGifts, setClaimableLoyaltyGifts ]  = useState<BigInt[] >([]) 
+  const [ claimableLoyaltyGifts, setClaimableLoyaltyGifts ]  = useState<Boolean[] >([]) 
   const [selectedGift, setSelectedGift] = useState<setSelectedGiftProps | undefined>() 
   const [loyaltyGiftContracts, setLoyaltyGiftContracts] = useState<EthAddress[] | undefined>() 
   const publicClient = usePublicClient()
@@ -42,7 +42,7 @@ export default function Page() {
     statusGiftSelection.current = "isLoading"
       
     let item: LoyaltyGift
-    let giftIsClaimable: BigInt[] = []
+    let giftIsClaimable: Boolean[] = []
     
     if  (
       fetchedLoyaltyGifts.length != 0 && 
@@ -57,7 +57,7 @@ export default function Page() {
             functionName: 'getLoyaltyGiftIsClaimable',
             args: [item.giftAddress, item.giftId]
           })
-          const isClaimable = parseBigInt(isClaimableRaw); 
+          const isClaimable = parseBoolean(isClaimableRaw); 
           giftIsClaimable.push(isClaimable)
         }
         statusGiftSelection.current = "isSuccess"
@@ -146,13 +146,13 @@ export default function Page() {
             <div className="col-span-1 xs:col-span-2 sm:col-span-3 md:col-span-4 pt-4 pb-6 w-full"> 
               <TitleText title = "Claimable gifts" size={0} />
 
-              {claimableLoyaltyGifts.indexOf(1n) != -1 ? 
+              {claimableLoyaltyGifts.indexOf(true) != -1 ? 
                 <div className="flex flex-row overflow-x-auto"> 
-                  {claimableLoyaltyGifts.map((claimable: BigInt, i: number) => {
+                  {claimableLoyaltyGifts.map((claimable: Boolean, i: number) => {
                       const gift = fetchedLoyaltyGifts[i] 
                       console.log("claimable: ", claimable )
                       return (
-                          claimable == 1n ? 
+                          claimable == true ? 
                             <div key = {`${gift.giftAddress}:${gift.giftId}`} >
                               <GiftSmall gift = {gift} disabled = {false} onClick={() => setSelectedGift({selectedGift: {
                                   address: gift.giftAddress,
@@ -186,10 +186,10 @@ export default function Page() {
                   {fetchedLoyaltyGifts.map((gift: LoyaltyGift, i: number) =>
                     gift.giftAddress == contractAddress ? 
                       <div key = {`${gift.giftAddress}:${gift.giftId}`} > 
-                        <GiftSmall gift = {gift} disabled = { claimableLoyaltyGifts[i] == 0n} onClick={() => setSelectedGift({selectedGift: {
+                        <GiftSmall gift = {gift} disabled = { claimableLoyaltyGifts[i] == false} onClick={() => setSelectedGift({selectedGift: {
                           address: gift.giftAddress,
                           id: gift.giftId
-                        }, disabled: claimableLoyaltyGifts[i] == 0n})}  /> 
+                        }, disabled: claimableLoyaltyGifts[i] == false})}  /> 
                       </div> 
                       :
                       null

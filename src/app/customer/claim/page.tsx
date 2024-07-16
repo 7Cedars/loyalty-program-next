@@ -114,7 +114,7 @@ export default function Page() {
             functionName: 'getLoyaltyGiftIsClaimable', 
             args: [loyaltyGift.giftAddress, loyaltyGift.giftId]
           })
-          isClaimable == 1 ? loyaltyGiftsUpdated.push(loyaltyGift) : null
+          isClaimable == true ? loyaltyGiftsUpdated.push(loyaltyGift) : null
         }
         statusAtClaimableGifts.current = "isSuccess" 
         setData(loyaltyGiftsUpdated) 

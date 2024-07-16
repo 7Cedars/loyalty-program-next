@@ -39,6 +39,19 @@ const isArray = (array: unknown): array is Array<unknown> => {
   return array instanceof Array;
 };
 
+const isBoolean = (bool: unknown): bool is boolean => {
+  // array.find(item => !isString(item)) 
+  return typeof bool === 'boolean' || bool instanceof Boolean;
+};
+
+export const parseBoolean = (bool: unknown): boolean => {
+  if (!isBoolean(bool)) {
+    throw new Error(`Incorrect bool, not a boolean: ${bool}`);
+  }
+
+  return bool as boolean;
+}
+
 const parseName = (name: unknown): string => {
   if (!isString(name)) {
     throw new Error(`Incorrect name, not a string: ${name}`);
